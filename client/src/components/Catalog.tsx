@@ -33,18 +33,24 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   // Update filters when activeCollection changes
   useEffect(() => {
     if (activeCollection === 'favorites') {
-      // For favorites, show all collections but filter by favorites
+      // For favorites, show all collections like "all" but with favorites filter enabled
       setFilters({ collection: '', color: '', size: '' });
-      setAdditionalFilters(prev => ({ ...prev, favorites: true }));
+      setAdditionalFilters(prev => ({ 
+        ...prev, 
+        favorites: true,
+        novelties: false,
+        discount: false,
+        inStock: false
+      }));
     } else if (activeCollection === 'all') {
       setFilters({ collection: '', color: '', size: '' });
-      setAdditionalFilters(prev => ({ ...prev, favorites: false }));
+      setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
     } else if (activeCollection === 'concrete') {
       setFilters({ collection: 'МАГИЯ БЕТОНА', color: '', size: '' });
-      setAdditionalFilters(prev => ({ ...prev, favorites: false }));
+      setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
     } else if (activeCollection === 'accessories') {
       setFilters({ collection: 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ', color: '', size: '' });
-      setAdditionalFilters(prev => ({ ...prev, favorites: false }));
+      setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
     } else {
       // For other collections (fabric, matte, marble)
       const collectionMap = {
@@ -55,7 +61,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       const collectionName = collectionMap[activeCollection as keyof typeof collectionMap];
       if (collectionName) {
         setFilters({ collection: collectionName, color: '', size: '' });
-        setAdditionalFilters(prev => ({ ...prev, favorites: false }));
+        setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
       }
     }
   }, [activeCollection]);
@@ -64,14 +70,14 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   const filteredProducts = useMemo(() => {
     let filtered = products;
 
-    // Filter by activeCollection first (except for favorites which shows all)
+    // Filter by activeCollection first (favorites and all show everything)
     if (activeCollection === 'accessories') {
       // Show only accessories
       filtered = filtered.filter(product => product.category === 'accessories');
-    } else if (activeCollection === 'favorites') {
-      // For favorites, don't filter by collection - show all products
-      // Filtering by favorites will be handled later
-    } else if (activeCollection !== 'all') {
+    } else if (activeCollection === 'favorites' || activeCollection === 'all') {
+      // For favorites and all, don't filter by collection - show all products
+      // Additional filtering will be handled later
+    } else {
       // Filter by specific collection
       filtered = filtered.filter(product => product.category === activeCollection);
     }
@@ -252,8 +258,8 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 </>
               )}
 
-              {/* Accessories Filter - Show only when accessories or all is selected */}
-              {(activeCollection === 'accessories' || activeCollection === 'all') && (
+              {/* Accessories Filter - Show only when accessories, all, or favorites is selected */}
+              {(activeCollection === 'accessories' || activeCollection === 'all' || activeCollection === 'favorites') && (
                 <div className="mb-6">
                   <h4 className="font-semibold text-primary mb-3">Комплектующие</h4>
                   <div className="space-y-2">
