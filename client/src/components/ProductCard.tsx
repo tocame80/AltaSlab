@@ -66,11 +66,16 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
         <h3 className="text-lg font-bold text-gray-900 mb-2">
           {product.collection === 'КОМПЛЕКТУЮЩИЕ' && product.color ? product.color : product.design}
         </h3>
-        <div className="text-sm text-gray-600 mb-1">
-          <span className="uppercase tracking-wide text-xs">ЦЕНА</span> 
-          <span className="ml-1 font-semibold transition-colors group-hover:text-[#E95D22]">
-            {product.price} РУБ. ЗА М²
-          </span>
+        <div className="flex justify-between items-center text-sm text-gray-600 mb-1">
+          <div>
+            <span className="uppercase tracking-wide text-xs">ЦЕНА</span> 
+            <span className="ml-1 font-semibold transition-colors group-hover:text-[#E95D22]">
+              {product.price} РУБ. ЗА М²
+            </span>
+          </div>
+          <div className="text-xs text-gray-500 text-right">
+            {product.format}
+          </div>
         </div>
       </div>
     </div>
