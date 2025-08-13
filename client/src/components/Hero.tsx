@@ -20,7 +20,15 @@ export default function Hero() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="btn-primary px-8 py-3 rounded-lg font-medium">
+              <button 
+                className="btn-primary px-8 py-3 rounded-lg font-medium"
+                onClick={() => {
+                  const catalogElement = document.getElementById('catalog');
+                  if (catalogElement) {
+                    catalogElement.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+              >
                 Смотреть каталог
               </button>
               <button className="btn-outline px-8 py-3 rounded-lg font-medium">

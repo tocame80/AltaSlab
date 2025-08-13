@@ -6,10 +6,11 @@ export default function Footer() {
           <div>
             <h4 className="font-bold text-lg mb-4">КАТАЛОГ</h4>
             <ul className="space-y-2 text-sm text-gray-300">
-              <li><a href="#" className="hover:text-accent transition-colors">МАГИЯ БЕТОНА</a></li>
-              <li><a href="#" className="hover:text-accent transition-colors">ТКАНЕВАЯ РОСКОШЬ</a></li>
-              <li><a href="#" className="hover:text-accent transition-colors">МАТОВАЯ ЭСТЕТИКА</a></li>
-              <li><a href="#" className="hover:text-accent transition-colors">МРАМОРНАЯ ФЕЕРИЯ</a></li>
+              <li><a href="#catalog" className="hover:text-accent transition-colors" onClick={() => window.dispatchEvent(new CustomEvent('navigate-to-collection', { detail: 'concrete' }))}>МАГИЯ БЕТОНА</a></li>
+              <li><a href="#catalog" className="hover:text-accent transition-colors" onClick={() => window.dispatchEvent(new CustomEvent('navigate-to-collection', { detail: 'fabric' }))}>ТКАНЕВАЯ РОСКОШЬ</a></li>
+              <li><a href="#catalog" className="hover:text-accent transition-colors" onClick={() => window.dispatchEvent(new CustomEvent('navigate-to-collection', { detail: 'matte' }))}>МАТОВАЯ ЭСТЕТИКА</a></li>
+              <li><a href="#catalog" className="hover:text-accent transition-colors" onClick={() => window.dispatchEvent(new CustomEvent('navigate-to-collection', { detail: 'marble' }))}>МРАМОРНАЯ ФЕЕРИЯ</a></li>
+              <li><a href="#catalog" className="hover:text-accent transition-colors" onClick={() => window.dispatchEvent(new CustomEvent('navigate-to-collection', { detail: 'accessories' }))}>КОМПЛЕКТУЮЩИЕ</a></li>
             </ul>
           </div>
           
@@ -47,9 +48,7 @@ export default function Footer() {
         
         <div className="border-t border-gray-700 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-gray-400">
-              ©2024. АЛЬТА СЛЭБ - SPC панели. Разработка сайта
-            </p>
+            <p className="text-sm text-gray-400">©2025. АЛЬТА СЛЭБ - SPC панели. Разработка сайта</p>
             <div className="flex space-x-4 mt-4 md:mt-0">
               <a href="#" className="text-gray-400 hover:text-accent transition-colors">
                 <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">

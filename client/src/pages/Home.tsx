@@ -11,7 +11,7 @@ import Calculator from '@/components/Calculator';
 import AboutCompany from '@/components/AboutCompany';
 import Contacts from '@/components/Contacts';
 import Footer from '@/components/Footer';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Collection } from '@/types';
 import { ChevronUp } from 'lucide-react';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
@@ -21,6 +21,25 @@ export default function Home() {
   const [activeCollection, setActiveCollection] = useState<Collection>('all');
   const { isVisible, scrollToTop } = useScrollToTop();
   const { favoriteCount } = useFavoritesContext();
+
+  // Listen for navigation events from footer
+  useEffect(() => {
+    const handleNavigateToCollection = (event: any) => {
+      const collection = event.detail as Collection;
+      setActiveCollection(collection);
+      // Scroll to catalog section
+      const catalogElement = document.getElementById('catalog');
+      if (catalogElement) {
+        catalogElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    window.addEventListener('navigate-to-collection', handleNavigateToCollection);
+    
+    return () => {
+      window.removeEventListener('navigate-to-collection', handleNavigateToCollection);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-white">
