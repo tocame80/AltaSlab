@@ -10,7 +10,7 @@ export interface Product {
   price: number;
   isPremium: boolean;
   image: string;
-  category: 'concrete' | 'fabric' | 'matte' | 'marble';
+  category: 'concrete' | 'fabric' | 'matte' | 'marble' | 'accessories';
   surface: string;
   color: string;
   barcode?: string;
