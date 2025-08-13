@@ -15,10 +15,12 @@ import { useState } from 'react';
 import { Collection } from '@/types';
 import { ChevronUp } from 'lucide-react';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { useFavoritesContext } from '@/contexts/FavoritesContext';
 
 export default function Home() {
   const [activeCollection, setActiveCollection] = useState<Collection>('all');
   const { isVisible, scrollToTop } = useScrollToTop();
+  const { favoriteCount } = useFavoritesContext();
 
   return (
     <div className="min-h-screen bg-white">
@@ -26,7 +28,8 @@ export default function Home() {
       <Hero />
       <CollectionsNav 
         activeCollection={activeCollection} 
-        onCollectionChange={setActiveCollection} 
+        onCollectionChange={setActiveCollection}
+        favoriteCount={favoriteCount}
       />
       <Catalog activeCollection={activeCollection} />
       <AboutMaterial />

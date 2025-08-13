@@ -3,9 +3,10 @@ import { Collection } from '@/types';
 interface CollectionsNavProps {
   activeCollection: Collection;
   onCollectionChange: (collection: Collection) => void;
+  favoriteCount?: number;
 }
 
-export default function CollectionsNav({ activeCollection, onCollectionChange }: CollectionsNavProps) {
+export default function CollectionsNav({ activeCollection, onCollectionChange, favoriteCount = 0 }: CollectionsNavProps) {
   const collections = [
     { key: 'all' as Collection, label: 'ВСЁ' },
     { key: 'concrete' as Collection, label: 'МАГИЯ БЕТОНА' },
@@ -29,6 +30,11 @@ export default function CollectionsNav({ activeCollection, onCollectionChange }:
               }`}
             >
               {collection.label}
+              {collection.key === 'favorites' && favoriteCount > 0 && (
+                <span className="ml-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                  {favoriteCount}
+                </span>
+              )}
             </button>
           ))}
         </nav>

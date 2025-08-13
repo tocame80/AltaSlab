@@ -3,12 +3,15 @@ import { products } from '@/data/products';
 import { Collection } from '@/types';
 import ProductCard from './ProductCard';
 import { ChevronDown } from 'lucide-react';
+import { useFavoritesContext } from '@/contexts/FavoritesContext';
 
 interface CatalogProps {
   activeCollection: Collection;
 }
 
 export default function Catalog({ activeCollection }: CatalogProps) {
+  const { favorites, toggleFavorite, isFavorite } = useFavoritesContext();
+  
   const [filters, setFilters] = useState({
     collection: '',
     color: '',
@@ -103,10 +106,9 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     if (additionalFilters.novelties) {
       filtered = filtered.filter(product => product.isPremium);
     }
-    if (additionalFilters.favorites && activeCollection !== 'favorites') {
-      // Show favorites when favorites filter is checked
-      const favoriteIds = ['8934', '8883', '8848', '8806', '8978'];
-      filtered = filtered.filter(product => favoriteIds.includes(product.id));
+    if (additionalFilters.favorites || activeCollection === 'favorites') {
+      // Show only favorite products
+      filtered = filtered.filter(product => favorites.has(product.id));
     }
     if (additionalFilters.discount) {
       // For demo purposes, show premium items as discounted
@@ -419,6 +421,8 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 <ProductCard 
                   key={product.id} 
                   product={product} 
+                  isFavorite={isFavorite(product.id)}
+                  onToggleFavorite={() => toggleFavorite(product.id)}
                   onClick={() => {
                     // For now, show an alert. Later can be replaced with navigation to product detail page
                     alert(`Переход к деталям продукта: ${product.design}\nЦена: ${product.price} руб. за м²\nАртикул: ${product.barcode}`);

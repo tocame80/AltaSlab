@@ -1,18 +1,19 @@
 import { Product } from '@/types';
 import { Heart } from 'lucide-react';
-import { useState } from 'react';
 
 interface ProductCardProps {
   product: Product;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
   onClick?: () => void;
 }
 
-export default function ProductCard({ product, onClick }: ProductCardProps) {
-  const [isFavorite, setIsFavorite] = useState(false);
-
+export default function ProductCard({ product, isFavorite = false, onToggleFavorite, onClick }: ProductCardProps) {
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsFavorite(!isFavorite);
+    if (onToggleFavorite) {
+      onToggleFavorite();
+    }
   };
 
   const handleCardClick = () => {
