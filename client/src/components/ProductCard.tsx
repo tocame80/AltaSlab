@@ -46,19 +46,36 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
       </div>
       <div className="p-4">
         <div className="text-gray-500 text-xs mb-1 uppercase tracking-wide">
-          {product.collection === 'КОМПЛЕКТУЮЩИЕ' ? product.design : product.collection}
+          {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 
+            (product.name.toLowerCase().includes('профиль') ? 'ПРОФИЛИ' : 'КЛЕЙ') : 
+            product.collection}
         </div>
         <h3 className="text-lg font-bold text-gray-900 mb-1">
-          {product.collection === 'КОМПЛЕКТУЮЩИЕ' && product.color && product.color !== 'transparent' ? product.color : product.design}
+          {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 
+            (product.name.toLowerCase().includes('профиль') ? 
+              (() => {
+                const name = product.name;
+                if (name.includes('под рассеивателем')) return `Профиль под рассеивателем ${product.color}`;
+                if (name.includes('соединительный')) return `Профиль соединительный ${product.color}`;
+                if (name.includes('торцевой')) return `Профиль торцевой ${product.color}`;
+                if (name.includes('угловой')) return `Профиль угловой ${product.color}`;
+                return `Профиль ${product.color}`;
+              })() : 
+              'Клей Альта Стик'
+            ) : 
+            product.design}
         </h3>
         <div className="text-sm text-gray-600 mb-2">
-          {product.format} {product.areaPerPackage}м²/уп ({product.piecesPerPackage}шт/уп)
+          {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 
+            `${product.format} (${product.piecesPerPackage}шт/уп)` :
+            `${product.format} ${product.areaPerPackage}м²/уп (${product.piecesPerPackage}шт/уп)`
+          }
         </div>
         <div className="flex justify-between items-center text-sm text-gray-600 mb-1">
           <div>
             <span className="uppercase tracking-wide text-xs">ЦЕНА</span> 
             <span className="ml-1 font-semibold transition-colors group-hover:text-[#E95D22]">
-              {product.price} РУБ. {product.collection === 'КОМПЛЕКТУЮЩИЕ' ? 'ЗА ШТ.' : 'ЗА УПАК.'}
+              {product.price} РУБ. {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'ЗА ШТ.' : 'ЗА УПАК.'}
             </span>
           </div>
         </div>
