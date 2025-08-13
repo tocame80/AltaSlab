@@ -70,7 +70,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
           <div>
             <span className="uppercase tracking-wide text-xs">ЦЕНА</span> 
             <span className="ml-1 font-semibold transition-colors group-hover:text-[#E95D22]">
-              {product.price} РУБ. ЗА М²
+              {product.price} РУБ. {product.collection === 'КОМПЛЕКТУЮЩИЕ' ? 'ЗА ШТ.' : 'ЗА М²'}
             </span>
           </div>
           <div className="text-xs text-gray-500 text-right">
