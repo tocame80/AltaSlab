@@ -1,16 +1,31 @@
 import { Product } from '@/types';
-import { Heart, Star } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { useState } from 'react';
 
 interface ProductCardProps {
   product: Product;
+  onClick?: () => void;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, onClick }: ProductCardProps) {
   const [isFavorite, setIsFavorite] = useState(false);
 
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsFavorite(!isFavorite);
+  };
+
+  const handleCardClick = () => {
+    if (onClick) {
+      onClick();
+    }
+  };
+
   return (
-    <div className="product-card bg-white rounded-lg overflow-hidden shadow-sm border border-muted cursor-pointer">
+    <div 
+      className="group product-card bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 cursor-pointer transition-all hover:shadow-md"
+      onClick={handleCardClick}
+    >
       <div className="relative">
         <div className="w-full" style={{ aspectRatio: '2/1' }}>
           <img 
@@ -20,36 +35,23 @@ export default function ProductCard({ product }: ProductCardProps) {
           />
         </div>
         <button
-          onClick={() => setIsFavorite(!isFavorite)}
-          className={`absolute top-3 left-3 w-7 h-7 rounded-full border border-white flex items-center justify-center transition-all ${
-            isFavorite ? 'bg-white text-accent' : 'hover:bg-white hover:text-accent'
+          onClick={handleFavoriteClick}
+          className={`absolute top-3 left-3 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center transition-all hover:bg-white ${
+            isFavorite ? 'text-red-500' : 'text-gray-600 hover:text-red-500'
           }`}
           aria-label="Добавить в избранное"
         >
-          <Heart size={14} className={isFavorite ? 'fill-current' : ''} />
+          <Heart size={16} className={isFavorite ? 'fill-current' : ''} />
         </button>
-        {product.isPremium && (
-          <span className="absolute top-3 right-3 bg-accent text-white px-2 py-1 text-xs rounded-full">
-            ПРЕМИУМ
-          </span>
-        )}
       </div>
       <div className="p-4">
-        <div className="text-muted text-xs mb-1">{product.collection}</div>
-        <h3 className="text-lg font-bold text-primary mb-2">{product.design}</h3>
-        <div className="text-xs text-muted mb-1">
-          ЦЕНА {product.isPremium && <Star size={10} className="inline fill-current text-accent" />} {product.price} руб. за м²
-        </div>
-        <div className="text-xs text-muted mb-3">
-          {product.format} • {product.areaPerPiece}м²/шт
-        </div>
-        <div className="flex gap-2">
-          <button className="bg-accent hover:bg-opacity-90 text-white px-3 py-2 rounded text-xs flex-1 transition-colors">
-            Узнать цену
-          </button>
-          <button className="border border-muted text-muted hover:border-accent hover:text-accent px-3 py-2 rounded text-xs flex-1 transition-colors">
-            Образец
-          </button>
+        <div className="text-gray-500 text-xs mb-1 uppercase tracking-wide">{product.collection}</div>
+        <h3 className="text-lg font-bold text-gray-900 mb-2">{product.design}</h3>
+        <div className="text-sm text-gray-600 mb-1">
+          <span className="uppercase tracking-wide text-xs">ЦЕНА</span> 
+          <span className="ml-1 font-semibold transition-colors group-hover:text-[#E95D22]">
+            {product.price} РУБ. ЗА М²
+          </span>
         </div>
       </div>
     </div>

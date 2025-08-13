@@ -308,7 +308,14 @@ export default function Catalog({ activeCollection }: CatalogProps) {
             {/* Product Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
               {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard 
+                  key={product.id} 
+                  product={product} 
+                  onClick={() => {
+                    // For now, show an alert. Later can be replaced with navigation to product detail page
+                    alert(`Переход к деталям продукта: ${product.design}\nЦена: ${product.price} руб. за м²\nАртикул: ${product.barcode}`);
+                  }}
+                />
               ))}
             </div>
 
