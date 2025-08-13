@@ -52,7 +52,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
           {product.collection === 'КОМПЛЕКТУЮЩИЕ' && product.color && product.color !== 'transparent' ? product.color : product.design}
         </h3>
         <div className="text-sm text-gray-600 mb-2">
-          {product.format} ({product.piecesPerPackage}шт/уп)
+          {product.format} {product.areaPerPackage}м²/уп ({product.piecesPerPackage}шт/уп)
         </div>
         <div className="flex justify-between items-center text-sm text-gray-600 mb-1">
           <div>
