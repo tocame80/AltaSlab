@@ -4,8 +4,8 @@ import altaSlabLogo from '../assets/alta-slab-logo.jpg';
 export const products: Product[] = [
   // МАГИЯ БЕТОНА (8 products: 8934-8941)
   {
-    id: 'mb-8934',
-    name: 'Панель SPC стеновая Альта Слэб Магия Бетона 300x600x2,4мм 4,32м2/уп Закат',
+    id: '8934',
+    name: 'Панель SPC стеновая Альта Слэб Магия Бетона 300x600x2,4мм 4,32м2/уп (24шт/уп) Закат',
     collection: 'МАГИЯ БЕТОНА',
     design: 'ЗАКАТ',
     format: '300×600×2,4мм',
@@ -16,14 +16,14 @@ export const products: Product[] = [
     isPremium: false,
     image: altaSlabLogo,
     category: 'concrete',
-    surface: 'Сатин',
+    surface: 'упак',
     color: 'Закат',
     barcode: '8934',
     packageBarcode: '8934'
   },
   {
-    id: 'mb-8935',
-    name: 'Панель SPC стеновая Альта Слэб Магия Бетона 600x1200x2,4мм 5,04м2/уп Закат',
+    id: '8938',
+    name: 'Панель SPC стеновая Альта Слэб Магия Бетона 600x1200x2,4мм 5,04м2/уп (7шт/уп) Закат',
     collection: 'МАГИЯ БЕТОНА',
     design: 'ЗАКАТ',
     format: '600×1200×2,4мм',
@@ -34,10 +34,10 @@ export const products: Product[] = [
     isPremium: false,
     image: altaSlabLogo,
     category: 'concrete',
-    surface: 'Сатин',
+    surface: 'упак',
     color: 'Закат',
-    barcode: '8935',
-    packageBarcode: '8935'
+    barcode: '8938',
+    packageBarcode: '8938'
   },
   {
     id: 'mb-8936',
