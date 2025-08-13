@@ -72,6 +72,20 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     return filtered;
   }, [activeCollection, filters, additionalFilters, sortBy]);
 
+  // Get colors and sizes for selected collection
+  const selectedCollectionProducts = useMemo(() => {
+    if (!filters.collection) return products;
+    return products.filter(product => product.collection === filters.collection);
+  }, [filters.collection]);
+
+  const availableColors = useMemo(() => {
+    return Array.from(new Set(selectedCollectionProducts.map(p => p.color)));
+  }, [selectedCollectionProducts]);
+
+  const availableSizes = useMemo(() => {
+    return Array.from(new Set(selectedCollectionProducts.map(p => p.format)));
+  }, [selectedCollectionProducts]);
+
   const getCollectionTitle = () => {
     switch (activeCollection) {
       case 'concrete': return 'МАГИЯ БЕТОНА';
@@ -121,7 +135,12 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         name="collection"
                         value={collection.key}
                         checked={filters.collection === collection.key}
-                        onChange={(e) => setFilters(prev => ({ ...prev, collection: e.target.value }))}
+                        onChange={(e) => setFilters(prev => ({ 
+                          ...prev, 
+                          collection: e.target.value,
+                          color: '', // Reset color when collection changes
+                          size: ''   // Reset size when collection changes
+                        }))}
                         className="mr-2"
                       />
                       <span className="text-secondary text-sm">{collection.label}</span>
@@ -130,41 +149,71 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 </div>
               </div>
 
-              {/* Colors Filter */}
-              <div className="mb-6">
-                <h4 className="font-semibold text-primary mb-3">Цвета</h4>
-                <div className="relative">
-                  <select
-                    value={filters.color}
-                    onChange={(e) => setFilters(prev => ({ ...prev, color: e.target.value }))}
-                    className="w-full border border-muted rounded-lg px-3 py-2 text-sm appearance-none pr-8"
-                  >
-                    <option value="">Все цвета</option>
-                    {uniqueColors.map(color => (
-                      <option key={color} value={color}>{color}</option>
+              {/* Colors Filter - Show only when collection is selected */}
+              {filters.collection && (
+                <div className="mb-6">
+                  <h4 className="font-semibold text-primary mb-3">Цвета</h4>
+                  <div className="space-y-2">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="color"
+                        value=""
+                        checked={filters.color === ''}
+                        onChange={(e) => setFilters(prev => ({ ...prev, color: e.target.value }))}
+                        className="mr-2"
+                      />
+                      <span className="text-secondary text-sm">Все цвета</span>
+                    </label>
+                    {availableColors.map(color => (
+                      <label key={color} className="flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          name="color"
+                          value={color}
+                          checked={filters.color === color}
+                          onChange={(e) => setFilters(prev => ({ ...prev, color: e.target.value }))}
+                          className="mr-2"
+                        />
+                        <span className="text-secondary text-sm">{color}</span>
+                      </label>
                     ))}
-                  </select>
-                  <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" />
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Size Filter */}
-              <div className="mb-6">
-                <h4 className="font-semibold text-primary mb-3">Размеры</h4>
-                <div className="relative">
-                  <select
-                    value={filters.size}
-                    onChange={(e) => setFilters(prev => ({ ...prev, size: e.target.value }))}
-                    className="w-full border border-muted rounded-lg px-3 py-2 text-sm appearance-none pr-8"
-                  >
-                    <option value="">Все размеры</option>
-                    {uniqueSizes.map(size => (
-                      <option key={size} value={size}>{size}</option>
+              {/* Size Filter - Show only when collection is selected */}
+              {filters.collection && (
+                <div className="mb-6">
+                  <h4 className="font-semibold text-primary mb-3">Размеры</h4>
+                  <div className="space-y-2">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="size"
+                        value=""
+                        checked={filters.size === ''}
+                        onChange={(e) => setFilters(prev => ({ ...prev, size: e.target.value }))}
+                        className="mr-2"
+                      />
+                      <span className="text-secondary text-sm">Все размеры</span>
+                    </label>
+                    {availableSizes.map(size => (
+                      <label key={size} className="flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          name="size"
+                          value={size}
+                          checked={filters.size === size}
+                          onChange={(e) => setFilters(prev => ({ ...prev, size: e.target.value }))}
+                          className="mr-2"
+                        />
+                        <span className="text-secondary text-sm">{size}</span>
+                      </label>
                     ))}
-                  </select>
-                  <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" />
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Additional Filters */}
               <div>
