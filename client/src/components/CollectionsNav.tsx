@@ -16,7 +16,7 @@ export default function CollectionsNav({ activeCollection, onCollectionChange }:
   ];
 
   return (
-    <div className="bg-white py-6 border-t">
+    <div className="bg-white py-6 border-t sticky top-0 z-40 shadow-sm">
       <div className="container mx-auto px-6">
         <nav className="collections-nav">
           {collections.map((collection) => (
