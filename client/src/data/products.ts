@@ -1016,7 +1016,7 @@ export const products: Product[] = [
     name: 'Клей для потолочно-стеновых SPC панелей Альта Стик 900 гр/600 мл (12шт/уп)',
     collection: 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ',
     design: 'КЛЕЙ',
-    format: 'тюбик 310мл',
+    format: '900 гр/600 мл',
     areaPerPiece: 0.0,
     piecesPerPackage: 12,
     areaPerPackage: 0.0,
