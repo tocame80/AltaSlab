@@ -79,7 +79,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   }, [filters.collection]);
 
   const availableColors = useMemo(() => {
-    return Array.from(new Set(selectedCollectionProducts.map(p => p.color)));
+    return Array.from(new Set(selectedCollectionProducts.map(p => p.color).filter(color => color !== '')));
   }, [selectedCollectionProducts]);
 
   const availableSizes = useMemo(() => {

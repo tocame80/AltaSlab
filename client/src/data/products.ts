@@ -425,6 +425,24 @@ export const products: Product[] = [
     packageBarcode: '14607175056112'
   },
   {
+    id: 'acc-1-silver',
+    name: 'Плинтус',
+    collection: 'КОМПЛЕКТУЮЩИЕ',
+    design: 'ПЛИНТУС',
+    format: '2000×14×50мм',
+    areaPerPiece: 0.1,
+    piecesPerPackage: 20,
+    areaPerPackage: 2.0,
+    price: 150,
+    isPremium: false,
+    image: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
+    category: 'accessories',
+    surface: 'Матовая',
+    color: 'Серебро',
+    barcode: '4607175056122',
+    packageBarcode: '14607175056119'
+  },
+  {
     id: 'acc-2',
     name: 'Угловой профиль',
     collection: 'КОМПЛЕКТУЮЩИЕ',
@@ -443,6 +461,24 @@ export const products: Product[] = [
     packageBarcode: '14607175056525'
   },
   {
+    id: 'acc-2-silver',
+    name: 'Угловой профиль',
+    collection: 'КОМПЛЕКТУЮЩИЕ',
+    design: 'УГЛОВОЙ ПРОФИЛЬ',
+    format: '2000×15×15мм',
+    areaPerPiece: 0.06,
+    piecesPerPackage: 20,
+    areaPerPackage: 1.2,
+    price: 120,
+    isPremium: false,
+    image: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
+    category: 'accessories',
+    surface: 'Матовая',
+    color: 'Серебро',
+    barcode: '4607175056535',
+    packageBarcode: '14607175056532'
+  },
+  {
     id: 'acc-3',
     name: 'Клей',
     collection: 'КОМПЛЕКТУЮЩИЕ',
@@ -456,7 +492,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'accessories',
     surface: 'Жидкий',
-    color: 'Белый',
+    color: '',
     barcode: '4607175056115',
     packageBarcode: '14607175056112'
   },
@@ -474,7 +510,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'accessories',
     surface: 'Жидкий',
-    color: 'Прозрачный',
+    color: '',
     barcode: '4607175056929',
     packageBarcode: '14607175056926'
   }
