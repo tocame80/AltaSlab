@@ -26,6 +26,10 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     inStock: false,
   });
   
+  const [visibleRows, setVisibleRows] = useState(5);
+  const ITEMS_PER_ROW = 4; // 4 items per row
+  const ROWS_TO_LOAD = 5; // Load 5 more rows at a time
+  
   // Update filters when activeCollection changes
   useEffect(() => {
     if (activeCollection === 'concrete') {
@@ -133,6 +137,14 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     return filtered;
   }, [activeCollection, filters, additionalFilters, sortBy]);
 
+  // Get visible products based on pagination
+  const visibleProducts = useMemo(() => {
+    const totalItemsToShow = visibleRows * ITEMS_PER_ROW;
+    return filteredProducts.slice(0, totalItemsToShow);
+  }, [filteredProducts, visibleRows]);
+
+  const hasMoreItems = visibleProducts.length < filteredProducts.length;
+
   // Get colors and sizes for selected collection
   const selectedCollectionProducts = useMemo(() => {
     if (!filters.collection) return products;
@@ -153,6 +165,15 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       return products.filter(product => product.collection === filters.collection);
     }
   }, [filters.collection]);
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setVisibleRows(5);
+  }, [activeCollection, filters, additionalFilters, sortBy]);
+
+  const loadMoreItems = () => {
+    setVisibleRows(prev => prev + ROWS_TO_LOAD);
+  };
 
   const availableColors = useMemo(() => {
     return Array.from(new Set(selectedCollectionProducts.map(p => p.color).filter(color => color !== '')));
@@ -415,7 +436,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
           <div className="flex-1">
             {/* Results Info */}
             <div className="flex justify-between items-center mb-6">
-              <span className="text-muted">Показано {filteredProducts.length} товаров</span>
+              <span className="text-muted">Показано {visibleProducts.length} из {filteredProducts.length} товаров</span>
               <div className="flex items-center gap-2">
                 <span className="text-muted">Сортировать</span>
                 <select
@@ -432,8 +453,8 @@ export default function Catalog({ activeCollection }: CatalogProps) {
             </div>
 
             {/* Product Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-              {filteredProducts.map((product) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+              {visibleProducts.map((product) => (
                 <ProductCard 
                   key={product.id} 
                   product={product} 
@@ -448,10 +469,13 @@ export default function Catalog({ activeCollection }: CatalogProps) {
             </div>
 
             {/* Load More Button */}
-            {filteredProducts.length > 0 && (
+            {hasMoreItems && (
               <div className="text-center">
-                <button className="btn-primary px-8 py-3 rounded-lg font-medium">
-                  Загрузить еще
+                <button 
+                  onClick={loadMoreItems}
+                  className="btn-primary px-8 py-3 rounded-lg font-medium"
+                >
+                  Показать еще
                 </button>
               </div>
             )}
