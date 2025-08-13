@@ -79,7 +79,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
           product.name.toLowerCase().includes('профиль')
         );
       } else if (filters.collection === 'КЛЕЙ') {
-        // Show only adhesive accessories containing "клей" in name
+        // Show only adhesive accessories containing "клей" in name  
         filtered = filtered.filter(product => 
           product.category === 'accessories' && 
           product.name.toLowerCase().includes('клей')
