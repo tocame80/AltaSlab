@@ -1,0 +1,178 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: hsl(0, 1%, 18%);
+  --color-accent: hsl(352, 21%, 67%);
+  --color-secondary: hsl(16, 13%, 43%);
+  --color-text: hsl(0, 0%, 56%);
+  --color-border: hsl(0, 0%, 52%);
+  --color-bg: hsl(0, 0%, 100%);
+  --font-sans: 'Inter', sans-serif;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    @apply font-sans antialiased bg-white;
+    font-family: var(--font-sans);
+    color: var(--color-primary);
+  }
+
+  h1 {
+    @apply text-5xl lg:text-6xl font-bold;
+    color: var(--color-primary);
+    letter-spacing: 2px;
+  }
+
+  h2 {
+    @apply text-4xl font-bold;
+    color: var(--color-primary);
+  }
+
+  h3 {
+    @apply text-2xl font-bold;
+    color: var(--color-primary);
+  }
+}
+
+@layer components {
+  .hero-bg {
+    background: linear-gradient(rgba(45, 44, 44, 0.7), rgba(45, 44, 44, 0.7));
+  }
+
+  .collections-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .product-card {
+    transition: all 0.3s ease;
+  }
+
+  .product-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .filter-dropdown {
+    transition: border-color 0.2s ease;
+  }
+
+  .filter-dropdown:hover {
+    border-color: var(--color-secondary);
+  }
+
+  .btn-primary {
+    background-color: var(--color-accent);
+    color: white;
+    transition: background-color 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-secondary);
+  }
+
+  .btn-outline {
+    border: 1px solid white;
+    color: white;
+    transition: all 0.2s ease;
+  }
+
+  .btn-outline:hover {
+    background-color: white;
+    color: var(--color-primary);
+  }
+
+  .nav-link {
+    color: var(--color-primary);
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+
+  .nav-link:hover {
+    color: var(--color-secondary);
+  }
+
+  .collection-link {
+    color: var(--color-text);
+    font-weight: 500;
+    padding-bottom: 8px;
+    transition: color 0.2s ease;
+    border-bottom: 2px solid transparent;
+  }
+
+  .collection-link:hover {
+    color: var(--color-primary);
+  }
+
+  .collection-link.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-accent);
+  }
+
+  .back-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background-color: var(--color-accent);
+    color: white;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    z-index: 50;
+  }
+
+  .back-to-top:hover {
+    background-color: var(--color-secondary);
+    transform: translateY(-2px);
+  }
+
+  .back-to-top.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+@layer utilities {
+  .text-primary {
+    color: var(--color-primary);
+  }
+
+  .text-accent {
+    color: var(--color-accent);
+  }
+
+  .text-secondary {
+    color: var(--color-secondary);
+  }
+
+  .text-muted {
+    color: var(--color-text);
+  }
+
+  .bg-primary {
+    background-color: var(--color-primary);
+  }
+
+  .bg-accent {
+    background-color: var(--color-accent);
+  }
+
+  .border-muted {
+    border-color: var(--color-border);
+  }
+}
