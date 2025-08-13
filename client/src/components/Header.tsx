@@ -1,11 +1,15 @@
 import { Mail, Search, Menu } from 'lucide-react';
 import { useState } from 'react';
+import { useScrollDirection } from '@/hooks/useScrollDirection';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const isHeaderVisible = useScrollDirection();
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
+    <header className={`bg-white shadow-sm sticky top-0 z-50 transition-transform duration-300 ${
+      isHeaderVisible ? 'translate-y-0' : '-translate-y-full'
+    }`}>
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
