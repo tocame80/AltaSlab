@@ -441,5 +441,41 @@ export const products: Product[] = [
     color: 'Серый',
     barcode: '4607175056528',
     packageBarcode: '14607175056525'
+  },
+  {
+    id: 'acc-3',
+    name: 'Клей',
+    collection: 'КОМПЛЕКТУЮЩИЕ',
+    design: 'КЛЕЙ',
+    format: '1000мл',
+    areaPerPiece: 1,
+    piecesPerPackage: 12,
+    areaPerPackage: 12,
+    price: 450,
+    isPremium: false,
+    image: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
+    category: 'accessories',
+    surface: 'Жидкий',
+    color: 'Белый',
+    barcode: '4607175056115',
+    packageBarcode: '14607175056112'
+  },
+  {
+    id: 'acc-4',
+    name: 'Герметик',
+    collection: 'КОМПЛЕКТУЮЩИЕ',
+    design: 'ГЕРМЕТИК',
+    format: '310мл',
+    areaPerPiece: 0.31,
+    piecesPerPackage: 24,
+    areaPerPackage: 7.44,
+    price: 250,
+    isPremium: false,
+    image: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
+    category: 'accessories',
+    surface: 'Жидкий',
+    color: 'Прозрачный',
+    barcode: '4607175056929',
+    packageBarcode: '14607175056926'
   }
 ];
