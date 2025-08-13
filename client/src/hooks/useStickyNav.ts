@@ -5,12 +5,12 @@ export function useStickyNav() {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Find the advantages section
-      const advantagesSection = document.querySelector('#advantages');
-      if (advantagesSection) {
-        const advantagesTop = advantagesSection.getBoundingClientRect().top;
-        // Stop being sticky when advantages section comes into view
-        setIsSticky(advantagesTop > 100);
+      // Find the catalog section
+      const catalogSection = document.querySelector('#catalog');
+      if (catalogSection) {
+        const catalogBottom = catalogSection.getBoundingClientRect().bottom;
+        // Stop being sticky when we've scrolled past the catalog section
+        setIsSticky(catalogBottom > 0);
       }
     };
 
