@@ -496,22 +496,5 @@ export const products: Product[] = [
     barcode: '4607175056115',
     packageBarcode: '14607175056112'
   },
-  {
-    id: 'acc-4',
-    name: 'Герметик',
-    collection: 'КОМПЛЕКТУЮЩИЕ',
-    design: 'ГЕРМЕТИК',
-    format: '310мл',
-    areaPerPiece: 0.31,
-    piecesPerPackage: 24,
-    areaPerPackage: 7.44,
-    price: 250,
-    isPremium: false,
-    image: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
-    category: 'glue',
-    surface: 'Жидкий',
-    color: '',
-    barcode: '4607175056929',
-    packageBarcode: '14607175056926'
-  }
+
 ];
