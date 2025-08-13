@@ -134,7 +134,22 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   // Get colors and sizes for selected collection
   const selectedCollectionProducts = useMemo(() => {
     if (!filters.collection) return products;
-    return products.filter(product => product.collection === filters.collection);
+    
+    if (filters.collection === 'ПРОФИЛИ') {
+      // Show only profile accessories containing "профиль" in name
+      return products.filter(product => 
+        product.category === 'accessories' && 
+        product.name.toLowerCase().includes('профиль')
+      );
+    } else if (filters.collection === 'КЛЕЙ') {
+      // Show only adhesive accessories containing "клей" in name  
+      return products.filter(product => 
+        product.category === 'accessories' && 
+        product.name.toLowerCase().includes('клей')
+      );
+    } else {
+      return products.filter(product => product.collection === filters.collection);
+    }
   }, [filters.collection]);
 
   const availableColors = useMemo(() => {
@@ -271,10 +286,9 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 </div>
               )}
 
-              {/* Colors Filter - Show only for panel collections */}
+              {/* Colors Filter - Show for panel collections and profiles */}
               {filters.collection && 
                filters.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && 
-               filters.collection !== 'ПРОФИЛИ' && 
                filters.collection !== 'КЛЕЙ' && 
                activeCollection !== 'accessories' && 
                activeCollection !== 'favorites' && (
