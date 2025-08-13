@@ -32,17 +32,18 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   
   // Update filters when activeCollection changes
   useEffect(() => {
-    if (activeCollection === 'concrete') {
-      setFilters({ collection: 'МАГИЯ БЕТОНА', color: '', size: '' });
-      setAdditionalFilters(prev => ({ ...prev, favorites: false }));
-    } else if (activeCollection === 'accessories') {
-      setFilters({ collection: 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ', color: '', size: '' });
-      setAdditionalFilters(prev => ({ ...prev, favorites: false }));
-    } else if (activeCollection === 'favorites') {
+    if (activeCollection === 'favorites') {
+      // For favorites, show all collections but filter by favorites
       setFilters({ collection: '', color: '', size: '' });
       setAdditionalFilters(prev => ({ ...prev, favorites: true }));
     } else if (activeCollection === 'all') {
       setFilters({ collection: '', color: '', size: '' });
+      setAdditionalFilters(prev => ({ ...prev, favorites: false }));
+    } else if (activeCollection === 'concrete') {
+      setFilters({ collection: 'МАГИЯ БЕТОНА', color: '', size: '' });
+      setAdditionalFilters(prev => ({ ...prev, favorites: false }));
+    } else if (activeCollection === 'accessories') {
+      setFilters({ collection: 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ', color: '', size: '' });
       setAdditionalFilters(prev => ({ ...prev, favorites: false }));
     } else {
       // For other collections (fabric, matte, marble)
@@ -63,14 +64,13 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   const filteredProducts = useMemo(() => {
     let filtered = products;
 
-    // Filter by activeCollection first
+    // Filter by activeCollection first (except for favorites which shows all)
     if (activeCollection === 'accessories') {
       // Show only accessories
       filtered = filtered.filter(product => product.category === 'accessories');
     } else if (activeCollection === 'favorites') {
-      // Show favorites (simulated by showing first few items of each collection)
-      const favoriteIds = ['8934', '8883', '8848', '8806', '8978'];
-      filtered = filtered.filter(product => favoriteIds.includes(product.id));
+      // For favorites, don't filter by collection - show all products
+      // Filtering by favorites will be handled later
     } else if (activeCollection !== 'all') {
       // Filter by specific collection
       filtered = filtered.filter(product => product.category === activeCollection);
@@ -112,8 +112,8 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     if (additionalFilters.novelties) {
       filtered = filtered.filter(product => product.isPremium);
     }
-    if (additionalFilters.favorites || activeCollection === 'favorites') {
-      // Show only favorite products
+    if (additionalFilters.favorites) {
+      // Show only favorite products when favorites filter is active
       filtered = filtered.filter(product => favorites.has(product.id));
     }
     if (additionalFilters.discount) {
@@ -217,7 +217,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
               <h3 className="text-lg font-bold text-primary mb-4">Фильтры</h3>
               
               {/* Show different filters based on active collection */}
-              {activeCollection !== 'accessories' && activeCollection !== 'favorites' && (
+              {activeCollection !== 'accessories' && (
                 <>
                   {/* Panel Collections Filter */}
                   <div className="mb-6">
