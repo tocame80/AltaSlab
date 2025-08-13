@@ -16,7 +16,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'concrete',
     surface: 'Матовая',
-    color: 'Серый',
+    color: 'Закат',
     barcode: '4607154340115',
     packageBarcode: '14607154340112'
   },
@@ -34,7 +34,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1604709177225-055f99402ea3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'concrete',
     surface: 'Матовая',
-    color: 'Серый',
+    color: 'Рассвет',
     barcode: '4607154340299',
     packageBarcode: '14607154340296'
   },
@@ -52,7 +52,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'concrete',
     surface: 'Матовая',
-    color: 'Бежевый',
+    color: 'Комета',
     barcode: '4607154340177',
     packageBarcode: '14607154340174'
   },
@@ -70,7 +70,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1604709177225-055f99402ea3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'concrete',
     surface: 'Матовая',
-    color: 'Серый',
+    color: 'Полнолуние',
     barcode: '4607154340214',
     packageBarcode: '14607154340211'
   },
@@ -88,9 +88,27 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'concrete',
     surface: 'Матовая',
-    color: 'Серый',
+    color: 'Азимут',
     barcode: '4607154340276',
     packageBarcode: '14607154340273'
+  },
+  {
+    id: 'concrete-6',
+    name: 'Метеорит',
+    collection: 'МАГИЯ БЕТОНА',
+    design: 'МЕТЕОРИТ',
+    format: '600×1200×2.4мм',
+    areaPerPiece: 0.72,
+    piecesPerPackage: 7,
+    areaPerPackage: 5.04,
+    price: 288,
+    isPremium: false,
+    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
+    category: 'concrete',
+    surface: 'Матовая',
+    color: 'Метеорит',
+    barcode: '4607154340283',
+    packageBarcode: '14607154340280'
   },
 
   // ТКАНЕВАЯ РОСКОШЬ
@@ -108,7 +126,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1586473219010-2ffc57b0d282?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'fabric',
     surface: 'Матовая',
-    color: 'Серый',
+    color: 'Гармонь',
     barcode: '4607154340269',
     packageBarcode: '14607154340266'
   },
@@ -126,7 +144,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1586473219010-2ffc57b0d282?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'fabric',
     surface: 'Матовая',
-    color: 'Синий',
+    color: 'Грейс',
     barcode: '4607154340337',
     packageBarcode: '14607154340334'
   },
@@ -144,7 +162,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1586473219010-2ffc57b0d282?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'fabric',
     surface: 'Матовая',
-    color: 'Серый',
+    color: 'Брут',
     barcode: '4607154340375',
     packageBarcode: '14607154340372'
   },
@@ -162,7 +180,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1586473219010-2ffc57b0d282?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'fabric',
     surface: 'Матовая',
-    color: 'Серый',
+    color: 'Тати',
     barcode: '4607154340412',
     packageBarcode: '14607154340419'
   },
@@ -180,7 +198,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1586473219010-2ffc57b0d282?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'fabric',
     surface: 'Матовая',
-    color: 'Серый',
+    color: 'Лора',
     barcode: '4607154340368',
     packageBarcode: '14607154340365'
   },
@@ -200,7 +218,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1615529182904-14819c35b1c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'matte',
     surface: 'Матовая',
-    color: 'Серый',
+    color: 'Везувий',
     barcode: '4607154350643',
     packageBarcode: '14607154350640'
   },
@@ -218,7 +236,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1615529182904-14819c35b1c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'matte',
     surface: 'Матовая',
-    color: 'Серый',
+    color: 'Манчестер',
     barcode: '4607154350827',
     packageBarcode: '14607154350824'
   },
@@ -236,7 +254,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1615529182904-14819c35b1c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'matte',
     surface: 'Матовая',
-    color: 'Серый',
+    color: 'Геката',
     barcode: '4607154350148',
     packageBarcode: '14607154350145'
   },
@@ -254,7 +272,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1615529182904-14819c35b1c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'matte',
     surface: 'Матовая',
-    color: 'Серый',
+    color: 'Коперник',
     barcode: '4607154350681',
     packageBarcode: '14607154350678'
   },
@@ -274,7 +292,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1615529162924-f9c62c5a5f65?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'marble',
     surface: 'Матовая',
-    color: 'Серый',
+    color: 'Мести',
     barcode: '4607154360373',
     packageBarcode: '14607154360370'
   },
@@ -292,7 +310,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1615529162924-f9c62c5a5f65?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'marble',
     surface: 'Матовая',
-    color: 'Белый',
+    color: 'Рейни',
     barcode: '4607154360571',
     packageBarcode: '14607154360568'
   },
@@ -310,7 +328,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1615529162924-f9c62c5a5f65?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'marble',
     surface: 'Матовая',
-    color: 'Серый',
+    color: 'Орисаба',
     barcode: '4607154360267',
     packageBarcode: '14607154360264'
   },
@@ -328,7 +346,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1615529162924-f9c62c5a5f65?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'marble',
     surface: 'Матовая',
-    color: 'Серый',
+    color: 'Клавер',
     barcode: '4607154360519',
     packageBarcode: '14607154360516'
   },
@@ -346,7 +364,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1615529162924-f9c62c5a5f65?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'marble',
     surface: 'Матовая',
-    color: 'Черный',
+    color: 'Сангай',
     barcode: '4607154360434',
     packageBarcode: '14607154360431'
   },
@@ -364,7 +382,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1615529162924-f9c62c5a5f65?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'marble',
     surface: 'Матовая',
-    color: 'Серый',
+    color: 'Кракатау',
     barcode: '4607154360526',
     packageBarcode: '14607154360523'
   },
@@ -382,7 +400,7 @@ export const products: Product[] = [
     image: 'https://images.unsplash.com/photo-1615529162924-f9c62c5a5f65?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'marble',
     surface: 'Матовая',
-    color: 'Черный',
+    color: 'Этна',
     barcode: '4607154360649',
     packageBarcode: '14607154360646'
   },
