@@ -190,7 +190,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
         <div className="flex gap-8">
           {/* Left Sidebar Filters */}
           <div className="w-80 flex-shrink-0">
-            <div className="bg-white p-6 rounded-lg shadow-sm sticky top-24">
+            <div className="bg-white p-6 rounded-lg shadow-sm sticky top-32">
               <h3 className="text-lg font-bold text-primary mb-4">Фильтры</h3>
               
               {/* Show different filters based on active collection */}
