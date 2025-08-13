@@ -12,6 +12,7 @@ export default function CollectionsNav({ activeCollection, onCollectionChange }:
     { key: 'fabric' as Collection, label: 'ТКАНЕВАЯ РОСКОШЬ' },
     { key: 'matte' as Collection, label: 'МАТОВАЯ ЭСТЕТИКА' },
     { key: 'marble' as Collection, label: 'МРАМОРНАЯ ФЕЕРИЯ' },
+    { key: 'accessories' as Collection, label: 'КОМПЛЕКТУЮЩИЕ' },
     { key: 'favorites' as Collection, label: 'ИЗБРАННОЕ' },
   ];
 

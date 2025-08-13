@@ -37,4 +37,4 @@ export interface CalculationResult {
   adhesiveTubes: number;
 }
 
-export type Collection = 'all' | 'concrete' | 'fabric' | 'matte' | 'marble' | 'favorites';
+export type Collection = 'all' | 'concrete' | 'fabric' | 'matte' | 'marble' | 'favorites' | 'accessories';

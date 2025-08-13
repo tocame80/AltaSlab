@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { products } from '@/data/products';
 import { Collection } from '@/types';
 import ProductCard from './ProductCard';
@@ -20,20 +20,76 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     discount: false,
     inStock: false,
   });
+  
+  // Update filters when activeCollection changes
+  useEffect(() => {
+    if (activeCollection === 'concrete') {
+      setFilters({ collection: 'МАГИЯ БЕТОНА', color: '', size: '' });
+      setAdditionalFilters(prev => ({ ...prev, favorites: false }));
+    } else if (activeCollection === 'accessories') {
+      setFilters({ collection: 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ', color: '', size: '' });
+      setAdditionalFilters(prev => ({ ...prev, favorites: false }));
+    } else if (activeCollection === 'favorites') {
+      setFilters({ collection: '', color: '', size: '' });
+      setAdditionalFilters(prev => ({ ...prev, favorites: true }));
+    } else if (activeCollection === 'all') {
+      setFilters({ collection: '', color: '', size: '' });
+      setAdditionalFilters(prev => ({ ...prev, favorites: false }));
+    } else {
+      // For other collections (fabric, matte, marble)
+      const collectionMap = {
+        'fabric': 'ТКАНЕВАЯ РОСКОШЬ',
+        'matte': 'МАТОВАЯ ЭСТЕТИКА', 
+        'marble': 'МРАМОРНАЯ ФЕЕРИЯ'
+      };
+      const collectionName = collectionMap[activeCollection as keyof typeof collectionMap];
+      if (collectionName) {
+        setFilters({ collection: collectionName, color: '', size: '' });
+        setAdditionalFilters(prev => ({ ...prev, favorites: false }));
+      }
+    }
+  }, [activeCollection]);
   const [sortBy, setSortBy] = useState('default');
 
   const filteredProducts = useMemo(() => {
     let filtered = products;
 
-    // Filter by collection
-    if (activeCollection !== 'all' && activeCollection !== 'favorites') {
+    // Filter by activeCollection first
+    if (activeCollection === 'accessories') {
+      // Show only accessories
+      filtered = filtered.filter(product => product.category === 'accessories');
+    } else if (activeCollection === 'favorites') {
+      // Show favorites (simulated by showing first few items of each collection)
+      const favoriteIds = ['8934', '8883', '8848', '8806', '8978'];
+      filtered = filtered.filter(product => favoriteIds.includes(product.id));
+    } else if (activeCollection !== 'all') {
+      // Filter by specific collection
       filtered = filtered.filter(product => product.category === activeCollection);
     }
 
-    // Apply filters
+    // Apply collection filters
     if (filters.collection) {
-      filtered = filtered.filter(product => product.collection === filters.collection);
+      if (filters.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ') {
+        // Show all accessories
+        filtered = filtered.filter(product => product.category === 'accessories');
+      } else if (filters.collection === 'ПРОФИЛИ') {
+        // Show only profile accessories containing "профиль" in name
+        filtered = filtered.filter(product => 
+          product.category === 'accessories' && 
+          product.name.toLowerCase().includes('профиль')
+        );
+      } else if (filters.collection === 'КЛЕЙ') {
+        // Show only adhesive accessories containing "клей" in name
+        filtered = filtered.filter(product => 
+          product.category === 'accessories' && 
+          product.name.toLowerCase().includes('клей')
+        );
+      } else {
+        // Filter by exact collection name
+        filtered = filtered.filter(product => product.collection === filters.collection);
+      }
     }
+    
     if (filters.color) {
       filtered = filtered.filter(product => 
         product.color.toLowerCase().includes(filters.color.toLowerCase())
@@ -43,20 +99,14 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       filtered = filtered.filter(product => product.format === filters.size);
     }
 
-    // Filter by specific accessory types
-    if (filters.collection === 'ПРОФИЛИ') {
-      filtered = filtered.filter(product => product.category === 'profile');
-    } else if (filters.collection === 'КЛЕЙ') {
-      filtered = filtered.filter(product => product.category === 'glue');
-    }
-
     // Apply additional filters
     if (additionalFilters.novelties) {
       filtered = filtered.filter(product => product.isPremium);
     }
-    if (additionalFilters.favorites) {
-      // For demo purposes, show all products when favorites is selected
-      // In a real app, this would filter by user's favorites
+    if (additionalFilters.favorites && activeCollection !== 'favorites') {
+      // Show favorites when favorites filter is checked
+      const favoriteIds = ['8934', '8883', '8848', '8806', '8978'];
+      filtered = filtered.filter(product => favoriteIds.includes(product.id));
     }
     if (additionalFilters.discount) {
       // For demo purposes, show premium items as discounted
@@ -99,6 +149,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       case 'fabric': return 'ТКАНЕВАЯ РОСКОШЬ';
       case 'matte': return 'МАТОВАЯ ЭСТЕТИКА';
       case 'marble': return 'МРАМОРНАЯ ФЕЕРИЯ';
+      case 'accessories': return 'КОМПЛЕКТУЮЩИЕ';
       case 'favorites': return 'ИЗБРАННОЕ';
       default: return 'ВСЁ';
     }
@@ -125,94 +176,106 @@ export default function Catalog({ activeCollection }: CatalogProps) {
             <div className="bg-white p-6 rounded-lg shadow-sm sticky top-24">
               <h3 className="text-lg font-bold text-primary mb-4">Фильтры</h3>
               
-              {/* Panel Collections Filter */}
-              <div className="mb-6">
-                <h4 className="font-semibold text-primary mb-3">Коллекции панелей</h4>
-                <div className="space-y-2">
-                  {[
-                    { key: '', label: 'Все коллекции' },
-                    { key: 'МАГИЯ БЕТОНА', label: 'Магия бетона' },
-                    { key: 'ТКАНЕВАЯ РОСКОШЬ', label: 'Тканевая роскошь' },
-                    { key: 'МАТОВАЯ ЭСТЕТИКА', label: 'Матовая эстетика' },
-                    { key: 'МРАМОРНАЯ ФЕЕРИЯ', label: 'Мраморная феерия' }
-                  ].map(collection => (
-                    <label key={collection.key} className="flex items-center cursor-pointer">
+              {/* Show different filters based on active collection */}
+              {activeCollection !== 'accessories' && activeCollection !== 'favorites' && (
+                <>
+                  {/* Panel Collections Filter */}
+                  <div className="mb-6">
+                    <h4 className="font-semibold text-primary mb-3">Коллекции панелей</h4>
+                    <div className="space-y-2">
+                      {[
+                        { key: '', label: 'Все коллекции' },
+                        { key: 'МАГИЯ БЕТОНА', label: 'Магия бетона' },
+                        { key: 'ТКАНЕВАЯ РОСКОШЬ', label: 'Тканевая роскошь' },
+                        { key: 'МАТОВАЯ ЭСТЕТИКА', label: 'Матовая эстетика' },
+                        { key: 'МРАМОРНАЯ ФЕЕРИЯ', label: 'Мраморная феерия' }
+                      ].map(collection => (
+                        <label key={collection.key} className="flex items-center cursor-pointer">
+                          <input
+                            type="radio"
+                            name="collection"
+                            value={collection.key}
+                            checked={filters.collection === collection.key}
+                            onChange={(e) => setFilters(prev => ({ 
+                              ...prev, 
+                              collection: e.target.value,
+                              color: '', // Reset color when collection changes
+                              size: '' // Reset size when collection changes
+                            }))}
+                            className="mr-2"
+                          />
+                          <span className="text-secondary text-sm">{collection.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Accessories Filter - Show only when accessories or all is selected */}
+              {(activeCollection === 'accessories' || activeCollection === 'all') && (
+                <div className="mb-6">
+                  <h4 className="font-semibold text-primary mb-3">Комплектующие</h4>
+                  <div className="space-y-2">
+                    <label className="flex items-center cursor-pointer">
                       <input
                         type="radio"
                         name="collection"
-                        value={collection.key}
-                        checked={filters.collection === collection.key}
+                        value="КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ"
+                        checked={filters.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ'}
                         onChange={(e) => setFilters(prev => ({ 
                           ...prev, 
                           collection: e.target.value,
-                          color: '', // Reset color when collection changes
-                          size: '' // Reset size when collection changes
+                          color: '', 
+                          size: '' 
                         }))}
                         className="mr-2"
                       />
-                      <span className="text-secondary text-sm">{collection.label}</span>
+                      <span className="text-secondary text-sm">Все комплектующие</span>
                     </label>
-                  ))}
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="collection"
+                        value="ПРОФИЛИ"
+                        checked={filters.collection === 'ПРОФИЛИ'}
+                        onChange={(e) => setFilters(prev => ({ 
+                          ...prev, 
+                          collection: e.target.value,
+                          color: '',
+                          size: ''
+                        }))}
+                        className="mr-2"
+                      />
+                      <span className="text-secondary text-sm">Профили</span>
+                    </label>
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="collection"
+                        value="КЛЕЙ"
+                        checked={filters.collection === 'КЛЕЙ'}
+                        onChange={(e) => setFilters(prev => ({ 
+                          ...prev, 
+                          collection: e.target.value,
+                          color: '',
+                          size: ''
+                        }))}
+                        className="mr-2"
+                      />
+                      <span className="text-secondary text-sm">Клей</span>
+                    </label>
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Accessories Filter */}
-              <div className="mb-6">
-                <h4 className="font-semibold text-primary mb-3">Комплектующие</h4>
-                <div className="space-y-2">
-                  <label className="flex items-center cursor-pointer">
-                    <input
-                      type="radio"
-                      name="collection"
-                      value="КОМПЛЕКТУЮЩИЕ"
-                      checked={filters.collection === 'КОМПЛЕКТУЮЩИЕ'}
-                      onChange={(e) => setFilters(prev => ({ 
-                        ...prev, 
-                        collection: e.target.value,
-                        color: '', // Reset color when switching to accessories
-                        size: '' // Reset size when switching to accessories
-                      }))}
-                      className="mr-2"
-                    />
-                    <span className="text-secondary text-sm">Все комплектующие</span>
-                  </label>
-                  <label className="flex items-center cursor-pointer">
-                    <input
-                      type="radio"
-                      name="collection"
-                      value="ПРОФИЛИ"
-                      checked={filters.collection === 'ПРОФИЛИ'}
-                      onChange={(e) => setFilters(prev => ({ 
-                        ...prev, 
-                        collection: e.target.value,
-                        color: '',
-                        size: ''
-                      }))}
-                      className="mr-2"
-                    />
-                    <span className="text-secondary text-sm">Профили</span>
-                  </label>
-                  <label className="flex items-center cursor-pointer">
-                    <input
-                      type="radio"
-                      name="collection"
-                      value="КЛЕЙ"
-                      checked={filters.collection === 'КЛЕЙ'}
-                      onChange={(e) => setFilters(prev => ({ 
-                        ...prev, 
-                        collection: e.target.value,
-                        color: '',
-                        size: ''
-                      }))}
-                      className="mr-2"
-                    />
-                    <span className="text-secondary text-sm">Клей</span>
-                  </label>
-                </div>
-              </div>
-
-              {/* Colors Filter - Show only when collection is selected */}
-              {filters.collection && (
+              {/* Colors Filter - Show only for panel collections */}
+              {filters.collection && 
+               filters.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && 
+               filters.collection !== 'ПРОФИЛИ' && 
+               filters.collection !== 'КЛЕЙ' && 
+               activeCollection !== 'accessories' && 
+               activeCollection !== 'favorites' && (
                 <div className="mb-6">
                   <h4 className="font-semibold text-primary mb-3">Цвета</h4>
                   <div className="space-y-2">
@@ -244,83 +307,89 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 </div>
               )}
 
-              {/* Size Filter - Show different sizes based on selection */}
-              <div className="mb-6">
-                <h4 className="font-semibold text-primary mb-3">
-                  {(filters.collection === 'КОМПЛЕКТУЮЩИЕ' || filters.collection === 'ПРОФИЛИ' || filters.collection === 'КЛЕЙ') ? 'Характеристики' : 'Размеры панелей'}
-                </h4>
-                <div className="space-y-2">
-                  <label className="flex items-center cursor-pointer">
-                    <input
-                      type="radio"
-                      name="size"
-                      value=""
-                      checked={filters.size === ''}
-                      onChange={(e) => setFilters(prev => ({ ...prev, size: e.target.value }))}
-                      className="mr-2"
-                    />
-                    <span className="text-secondary text-sm">
-                      {(filters.collection === 'КОМПЛЕКТУЮЩИЕ' || filters.collection === 'ПРОФИЛИ' || filters.collection === 'КЛЕЙ') ? 'Все характеристики' : 'Все размеры'}
-                    </span>
-                  </label>
-                  {availableSizes.map(size => (
-                    <label key={size} className="flex items-center cursor-pointer">
+              {/* Size/Characteristics Filter */}
+              {((filters.collection && activeCollection !== 'favorites') || activeCollection === 'accessories') && (
+                <div className="mb-6">
+                  <h4 className="font-semibold text-primary mb-3">
+                    {(filters.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' || filters.collection === 'ПРОФИЛИ' || filters.collection === 'КЛЕЙ' || activeCollection === 'accessories') ? 'Характеристики' : 'Размеры панелей'}
+                  </h4>
+                  <div className="space-y-2">
+                    <label className="flex items-center cursor-pointer">
                       <input
                         type="radio"
                         name="size"
-                        value={size}
-                        checked={filters.size === size}
+                        value=""
+                        checked={filters.size === ''}
                         onChange={(e) => setFilters(prev => ({ ...prev, size: e.target.value }))}
                         className="mr-2"
                       />
-                      <span className="text-secondary text-sm">{size}</span>
+                      <span className="text-secondary text-sm">
+                        {(filters.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' || filters.collection === 'ПРОФИЛИ' || filters.collection === 'КЛЕЙ' || activeCollection === 'accessories') ? 'Все характеристики' : 'Все размеры'}
+                      </span>
                     </label>
-                  ))}
+                    {availableSizes.map(size => (
+                      <label key={size} className="flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          name="size"
+                          value={size}
+                          checked={filters.size === size}
+                          onChange={(e) => setFilters(prev => ({ ...prev, size: e.target.value }))}
+                          className="mr-2"
+                        />
+                        <span className="text-secondary text-sm">{size}</span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Additional Filters */}
-              <div>
-                <h4 className="font-semibold text-primary mb-3">Дополнительно</h4>
-                <div className="space-y-2">
-                  <label className="flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={additionalFilters.novelties}
-                      onChange={(e) => setAdditionalFilters(prev => ({ ...prev, novelties: e.target.checked }))}
-                      className="mr-2"
-                    />
-                    <span className="text-secondary text-sm">Новинки</span>
-                  </label>
-                  <label className="flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={additionalFilters.favorites}
-                      onChange={(e) => setAdditionalFilters(prev => ({ ...prev, favorites: e.target.checked }))}
-                      className="mr-2"
-                    />
-                    <span className="text-secondary text-sm">Избранное</span>
-                  </label>
-                  <label className="flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={additionalFilters.discount}
-                      onChange={(e) => setAdditionalFilters(prev => ({ ...prev, discount: e.target.checked }))}
-                      className="mr-2"
-                    />
-                    <span className="text-secondary text-sm">Скидка</span>
-                  </label>
-                  <label className="flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={additionalFilters.inStock}
-                      onChange={(e) => setAdditionalFilters(prev => ({ ...prev, inStock: e.target.checked }))}
-                      className="mr-2"
-                    />
-                    <span className="text-secondary text-sm">В наличии</span>
-                  </label>
+              {/* Additional Filters - Show for panel collections and "Магия бетона" */}
+              {(activeCollection === 'concrete' || 
+                (activeCollection !== 'accessories' && activeCollection !== 'favorites' && filters.collection === 'МАГИЯ БЕТОНА') ||
+                activeCollection === 'all') && (
+                <div>
+                  <h4 className="font-semibold text-primary mb-3">Дополнительно</h4>
+                  <div className="space-y-2">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={additionalFilters.novelties}
+                        onChange={(e) => setAdditionalFilters(prev => ({ ...prev, novelties: e.target.checked }))}
+                        className="mr-2"
+                      />
+                      <span className="text-secondary text-sm">Новинки</span>
+                    </label>
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={additionalFilters.favorites}
+                        onChange={(e) => setAdditionalFilters(prev => ({ ...prev, favorites: e.target.checked }))}
+                        className="mr-2"
+                      />
+                      <span className="text-secondary text-sm">Избранное</span>
+                    </label>
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={additionalFilters.discount}
+                        onChange={(e) => setAdditionalFilters(prev => ({ ...prev, discount: e.target.checked }))}
+                        className="mr-2"
+                      />
+                      <span className="text-secondary text-sm">Скидка</span>
+                    </label>
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={additionalFilters.inStock}
+                        onChange={(e) => setAdditionalFilters(prev => ({ ...prev, inStock: e.target.checked }))}
+                        className="mr-2"
+                      />
+                      <span className="text-secondary text-sm">В наличии</span>
+                    </label>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
 
