@@ -383,9 +383,10 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 </div>
               )}
 
-              {/* Additional Filters - Show for panel collections and "Магия бетона" */}
+              {/* Additional Filters - Show for panel collections, favorites, and "Магия бетона" */}
               {(activeCollection === 'concrete' || 
-                (activeCollection !== 'accessories' && activeCollection !== 'favorites' && filters.collection === 'МАГИЯ БЕТОНА') ||
+                activeCollection === 'favorites' ||
+                (activeCollection !== 'accessories' && filters.collection === 'МАГИЯ БЕТОНА') ||
                 activeCollection === 'all') && (
                 <div>
                   <h4 className="font-semibold text-primary mb-3">Дополнительно</h4>
