@@ -289,7 +289,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
           <div className="flex-1">
             {/* Results Info */}
             <div className="flex justify-between items-center mb-6">
-              <span className="text-muted">Показано {filteredProducts.length} образцов</span>
+              <span className="text-muted">Показано {filteredProducts.length} товаров</span>
               <div className="flex items-center gap-2">
                 <span className="text-muted">Сортировать</span>
                 <select
