@@ -3,7 +3,7 @@ import { Product } from '../types';
 export const products: Product[] = [
   // МАГИЯ БЕТОНА
   {
-    id: 'mb-8234',
+    id: 'mb-8934',
     name: 'Панель SPC стеновая Альта Слэб Магия Бетона 300x600x2,4мм 4,32м2/уп Закат',
     collection: 'МАГИЯ БЕТОНА',
     design: 'ЗАКАТ',
@@ -11,17 +11,17 @@ export const products: Product[] = [
     areaPerPiece: 0.18,
     piecesPerPackage: 24,
     areaPerPackage: 4.32,
-    price: 814,
+    price: 4739.04,
     isPremium: false,
     image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'concrete',
     surface: 'Сатин',
     color: 'Сатин',
-    barcode: '4607154360191',
-    packageBarcode: '4607154361167'
+    barcode: '4607154360115',
+    packageBarcode: '4607154361129'
   },
   {
-    id: 'mb-8233',
+    id: 'mb-8935',
     name: 'Панель SPC стеновая Альта Слэб Магия Бетона 600x1200x2,4мм 5,04м2/уп Рассвет',
     collection: 'МАГИЯ БЕТОНА',
     design: 'РАССВЕТ',
@@ -29,17 +29,17 @@ export const products: Product[] = [
     areaPerPiece: 0.72,
     piecesPerPackage: 7,
     areaPerPackage: 5.04,
-    price: 814,
+    price: 5628.96,
     isPremium: false,
     image: 'https://images.unsplash.com/photo-1604709177225-055f99402ea3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'concrete',
     surface: 'Сатин',
     color: 'Сатин',
-    barcode: '4607154360299',
-    packageBarcode: '4607154361235'
+    barcode: '4607154360252',
+    packageBarcode: '4607154361211'
   },
   {
-    id: 'mb-8228',
+    id: 'mb-8932',
     name: 'Панель SPC стеновая Альта Слэб Магия Бетона 300x600x2,4мм 4,32м2/уп Комета',
     collection: 'МАГИЯ БЕТОНА',
     design: 'КОМЕТА',
@@ -47,7 +47,7 @@ export const products: Product[] = [
     areaPerPiece: 0.18,
     piecesPerPackage: 24,
     areaPerPackage: 4.32,
-    price: 814,
+    price: 4739.04,
     isPremium: false,
     image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600',
     category: 'concrete',
