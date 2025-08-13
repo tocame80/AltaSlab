@@ -138,8 +138,8 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         onChange={(e) => setFilters(prev => ({ 
                           ...prev, 
                           collection: e.target.value,
-                          color: '', // Reset color when collection changes
-                          size: ''   // Reset size when collection changes
+                          color: '' // Reset color when collection changes
+                          // Keep size filter unchanged
                         }))}
                         className="mr-2"
                       />
@@ -182,38 +182,36 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 </div>
               )}
 
-              {/* Size Filter - Show only when collection is selected */}
-              {filters.collection && (
-                <div className="mb-6">
-                  <h4 className="font-semibold text-primary mb-3">Размеры</h4>
-                  <div className="space-y-2">
-                    <label className="flex items-center cursor-pointer">
+              {/* Size Filter - Always visible */}
+              <div className="mb-6">
+                <h4 className="font-semibold text-primary mb-3">Размеры</h4>
+                <div className="space-y-2">
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="size"
+                      value=""
+                      checked={filters.size === ''}
+                      onChange={(e) => setFilters(prev => ({ ...prev, size: e.target.value }))}
+                      className="mr-2"
+                    />
+                    <span className="text-secondary text-sm">Все размеры</span>
+                  </label>
+                  {uniqueSizes.map(size => (
+                    <label key={size} className="flex items-center cursor-pointer">
                       <input
                         type="radio"
                         name="size"
-                        value=""
-                        checked={filters.size === ''}
+                        value={size}
+                        checked={filters.size === size}
                         onChange={(e) => setFilters(prev => ({ ...prev, size: e.target.value }))}
                         className="mr-2"
                       />
-                      <span className="text-secondary text-sm">Все размеры</span>
+                      <span className="text-secondary text-sm">{size}</span>
                     </label>
-                    {availableSizes.map(size => (
-                      <label key={size} className="flex items-center cursor-pointer">
-                        <input
-                          type="radio"
-                          name="size"
-                          value={size}
-                          checked={filters.size === size}
-                          onChange={(e) => setFilters(prev => ({ ...prev, size: e.target.value }))}
-                          className="mr-2"
-                        />
-                        <span className="text-secondary text-sm">{size}</span>
-                      </label>
-                    ))}
-                  </div>
+                  ))}
                 </div>
-              )}
+              </div>
 
               {/* Additional Filters */}
               <div>
