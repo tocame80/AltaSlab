@@ -13,6 +13,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     collection: '',
     color: '',
     size: '',
+    accessoryType: '',
   });
   const [additionalFilters, setAdditionalFilters] = useState({
     novelties: false,
@@ -41,6 +42,15 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     }
     if (filters.size) {
       filtered = filtered.filter(product => product.format === filters.size);
+    }
+
+    // Filter by accessory type when accessories are selected
+    if (filters.collection === 'КОМПЛЕКТУЮЩИЕ' && filters.accessoryType) {
+      if (filters.accessoryType === 'profiles') {
+        filtered = filtered.filter(product => product.category === 'profile');
+      } else if (filters.accessoryType === 'glue') {
+        filtered = filtered.filter(product => product.category === 'glue');
+      }
     }
 
     // Apply additional filters
@@ -169,6 +179,43 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                     />
                     <span className="text-secondary text-sm">Все комплектующие</span>
                   </label>
+                  {filters.collection === 'КОМПЛЕКТУЮЩИЕ' && (
+                    <div className="ml-4 space-y-2 border-l border-gray-200 pl-3">
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          name="accessory-type"
+                          value=""
+                          checked={!filters.accessoryType}
+                          onChange={() => setFilters(prev => ({ ...prev, accessoryType: '' }))}
+                          className="mr-2"
+                        />
+                        <span className="text-secondary text-xs">Все типы</span>
+                      </label>
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          name="accessory-type"
+                          value="profiles"
+                          checked={filters.accessoryType === 'profiles'}
+                          onChange={() => setFilters(prev => ({ ...prev, accessoryType: 'profiles' }))}
+                          className="mr-2"
+                        />
+                        <span className="text-secondary text-xs">Профили</span>
+                      </label>
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          name="accessory-type"
+                          value="glue"
+                          checked={filters.accessoryType === 'glue'}
+                          onChange={() => setFilters(prev => ({ ...prev, accessoryType: 'glue' }))}
+                          className="mr-2"
+                        />
+                        <span className="text-secondary text-xs">Клей и герметик</span>
+                      </label>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -208,7 +255,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
               {/* Size Filter - Show different sizes based on selection */}
               <div className="mb-6">
                 <h4 className="font-semibold text-primary mb-3">
-                  {filters.collection === 'КОМПЛЕКТУЮЩИЕ' ? 'Типы комплектующих' : 'Размеры панелей'}
+                  {filters.collection === 'КОМПЛЕКТУЮЩИЕ' ? 'Характеристики' : 'Размеры панелей'}
                 </h4>
                 <div className="space-y-2">
                   <label className="flex items-center cursor-pointer">
