@@ -10,14 +10,16 @@ interface CatalogProps {
 
 export default function Catalog({ activeCollection }: CatalogProps) {
   const [filters, setFilters] = useState({
-    series: '',
+    collection: '',
     color: '',
-    surface: '',
     size: '',
-    thickness: '',
-    priceSort: '',
   });
-  const [showNovelties, setShowNovelties] = useState(false);
+  const [additionalFilters, setAdditionalFilters] = useState({
+    novelties: false,
+    favorites: false,
+    discount: false,
+    inStock: false,
+  });
   const [sortBy, setSortBy] = useState('default');
 
   const filteredProducts = useMemo(() => {
@@ -29,25 +31,33 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     }
 
     // Apply filters
-    if (filters.series) {
-      filtered = filtered.filter(product => product.collection === filters.series);
+    if (filters.collection) {
+      filtered = filtered.filter(product => product.collection === filters.collection);
     }
     if (filters.color) {
       filtered = filtered.filter(product => 
         product.color.toLowerCase().includes(filters.color.toLowerCase())
       );
     }
-    if (filters.surface) {
-      filtered = filtered.filter(product => product.surface === filters.surface);
-    }
     if (filters.size) {
       filtered = filtered.filter(product => product.format === filters.size);
     }
 
-    // Show only novelties if checked
-    if (showNovelties) {
-      // For demo purposes, consider premium items as novelties
+    // Apply additional filters
+    if (additionalFilters.novelties) {
       filtered = filtered.filter(product => product.isPremium);
+    }
+    if (additionalFilters.favorites) {
+      // For demo purposes, show all products when favorites is selected
+      // In a real app, this would filter by user's favorites
+    }
+    if (additionalFilters.discount) {
+      // For demo purposes, show premium items as discounted
+      filtered = filtered.filter(product => product.isPremium);
+    }
+    if (additionalFilters.inStock) {
+      // For demo purposes, all products are in stock
+      // In a real app, this would filter by stock status
     }
 
     // Sort products
@@ -60,7 +70,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     }
 
     return filtered;
-  }, [activeCollection, filters, showNovelties, sortBy]);
+  }, [activeCollection, filters, additionalFilters, sortBy]);
 
   const getCollectionTitle = () => {
     switch (activeCollection) {
@@ -88,145 +98,165 @@ export default function Catalog({ activeCollection }: CatalogProps) {
           </p>
         </div>
 
-        {/* Filters */}
-        <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-4">
-            <div className="relative">
-              <select
-                value={filters.series}
-                onChange={(e) => setFilters(prev => ({ ...prev, series: e.target.value }))}
-                className="filter-dropdown border border-muted rounded-lg px-4 py-2 bg-white w-full appearance-none pr-8"
-              >
-                <option value="">Серия</option>
-                {uniqueCollections.map(collection => (
-                  <option key={collection} value={collection}>{collection}</option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" />
-            </div>
+        <div className="flex gap-8">
+          {/* Left Sidebar Filters */}
+          <div className="w-80 flex-shrink-0">
+            <div className="bg-white p-6 rounded-lg shadow-sm sticky top-24">
+              <h3 className="text-lg font-bold text-primary mb-4">Фильтры</h3>
+              
+              {/* Collections Filter */}
+              <div className="mb-6">
+                <h4 className="font-semibold text-primary mb-3">Коллекции</h4>
+                <div className="space-y-2">
+                  {[
+                    { key: '', label: 'Все коллекции' },
+                    { key: 'МАГИЯ БЕТОНА', label: 'Магия бетона' },
+                    { key: 'ТКАНЕВАЯ РОСКОШЬ', label: 'Тканевая роскошь' },
+                    { key: 'МАТОВАЯ ЭСТЕТИКА', label: 'Матовая эстетика' },
+                    { key: 'МРАМОРНАЯ ФЕЕРИЯ', label: 'Мраморная феерия' }
+                  ].map(collection => (
+                    <label key={collection.key} className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="collection"
+                        value={collection.key}
+                        checked={filters.collection === collection.key}
+                        onChange={(e) => setFilters(prev => ({ ...prev, collection: e.target.value }))}
+                        className="mr-2"
+                      />
+                      <span className="text-secondary text-sm">{collection.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
 
-            <div className="relative">
-              <select
-                value={filters.color}
-                onChange={(e) => setFilters(prev => ({ ...prev, color: e.target.value }))}
-                className="filter-dropdown border border-muted rounded-lg px-4 py-2 bg-white w-full appearance-none pr-8"
-              >
-                <option value="">Цвет</option>
-                {uniqueColors.map(color => (
-                  <option key={color} value={color}>{color}</option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" />
-            </div>
+              {/* Colors Filter */}
+              <div className="mb-6">
+                <h4 className="font-semibold text-primary mb-3">Цвета</h4>
+                <div className="relative">
+                  <select
+                    value={filters.color}
+                    onChange={(e) => setFilters(prev => ({ ...prev, color: e.target.value }))}
+                    className="w-full border border-muted rounded-lg px-3 py-2 text-sm appearance-none pr-8"
+                  >
+                    <option value="">Все цвета</option>
+                    {uniqueColors.map(color => (
+                      <option key={color} value={color}>{color}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" />
+                </div>
+              </div>
 
-            <div className="relative">
-              <select
-                value={filters.surface}
-                onChange={(e) => setFilters(prev => ({ ...prev, surface: e.target.value }))}
-                className="filter-dropdown border border-muted rounded-lg px-4 py-2 bg-white w-full appearance-none pr-8"
-              >
-                <option value="">Поверхность</option>
-                {uniqueSurfaces.map(surface => (
-                  <option key={surface} value={surface}>{surface}</option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" />
-            </div>
+              {/* Size Filter */}
+              <div className="mb-6">
+                <h4 className="font-semibold text-primary mb-3">Размеры</h4>
+                <div className="relative">
+                  <select
+                    value={filters.size}
+                    onChange={(e) => setFilters(prev => ({ ...prev, size: e.target.value }))}
+                    className="w-full border border-muted rounded-lg px-3 py-2 text-sm appearance-none pr-8"
+                  >
+                    <option value="">Все размеры</option>
+                    {uniqueSizes.map(size => (
+                      <option key={size} value={size}>{size}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" />
+                </div>
+              </div>
 
-            <div className="relative">
-              <select
-                value={filters.size}
-                onChange={(e) => setFilters(prev => ({ ...prev, size: e.target.value }))}
-                className="filter-dropdown border border-muted rounded-lg px-4 py-2 bg-white w-full appearance-none pr-8"
-              >
-                <option value="">Размеры</option>
-                {uniqueSizes.map(size => (
-                  <option key={size} value={size}>{size}</option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" />
-            </div>
-
-            <div className="relative">
-              <select
-                className="filter-dropdown border border-muted rounded-lg px-4 py-2 bg-white w-full appearance-none pr-8"
-              >
-                <option>Толщина</option>
-                <option>2.4мм</option>
-              </select>
-              <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" />
-            </div>
-
-            <div className="relative">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="filter-dropdown border border-muted rounded-lg px-4 py-2 bg-white w-full appearance-none pr-8"
-              >
-                <option value="default">Цена</option>
-                <option value="price-asc">По возрастанию</option>
-                <option value="price-desc">По убыванию</option>
-              </select>
-              <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" />
+              {/* Additional Filters */}
+              <div>
+                <h4 className="font-semibold text-primary mb-3">Дополнительно</h4>
+                <div className="space-y-2">
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={additionalFilters.novelties}
+                      onChange={(e) => setAdditionalFilters(prev => ({ ...prev, novelties: e.target.checked }))}
+                      className="mr-2"
+                    />
+                    <span className="text-secondary text-sm">Новинки</span>
+                  </label>
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={additionalFilters.favorites}
+                      onChange={(e) => setAdditionalFilters(prev => ({ ...prev, favorites: e.target.checked }))}
+                      className="mr-2"
+                    />
+                    <span className="text-secondary text-sm">Избранное</span>
+                  </label>
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={additionalFilters.discount}
+                      onChange={(e) => setAdditionalFilters(prev => ({ ...prev, discount: e.target.checked }))}
+                      className="mr-2"
+                    />
+                    <span className="text-secondary text-sm">Скидка</span>
+                  </label>
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={additionalFilters.inStock}
+                      onChange={(e) => setAdditionalFilters(prev => ({ ...prev, inStock: e.target.checked }))}
+                      className="mr-2"
+                    />
+                    <span className="text-secondary text-sm">В наличии</span>
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="novelties"
-              checked={showNovelties}
-              onChange={(e) => setShowNovelties(e.target.checked)}
-              className="mr-2"
-            />
-            <label htmlFor="novelties" className="text-secondary cursor-pointer">
-              НОВИНКИ
-            </label>
+          {/* Right Content Area */}
+          <div className="flex-1">
+            {/* Results Info */}
+            <div className="flex justify-between items-center mb-6">
+              <span className="text-muted">Показано {filteredProducts.length} образцов</span>
+              <div className="flex items-center gap-2">
+                <span className="text-muted">Сортировать</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="text-accent border-none bg-transparent cursor-pointer"
+                >
+                  <option value="default">По умолчанию</option>
+                  <option value="price-asc">По цене (возр.)</option>
+                  <option value="price-desc">По цене (убыв.)</option>
+                  <option value="name">По названию</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Product Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+              {filteredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+
+            {/* Load More Button */}
+            {filteredProducts.length > 0 && (
+              <div className="text-center">
+                <button className="btn-primary px-8 py-3 rounded-lg font-medium">
+                  Загрузить еще
+                </button>
+              </div>
+            )}
+
+            {/* No Results */}
+            {filteredProducts.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-muted text-lg">
+                  По выбранным фильтрам товары не найдены. Попробуйте изменить критерии поиска.
+                </p>
+              </div>
+            )}
           </div>
         </div>
-
-        {/* Results Info */}
-        <div className="flex justify-between items-center mb-8">
-          <span className="text-muted">Показано {filteredProducts.length} образцов</span>
-          <div className="flex items-center gap-2">
-            <span className="text-muted">Сортировать</span>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="text-accent border-none bg-transparent cursor-pointer"
-            >
-              <option value="default">По умолчанию</option>
-              <option value="price-asc">По цене (возр.)</option>
-              <option value="price-desc">По цене (убыв.)</option>
-              <option value="name">По названию</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Product Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-
-        {/* Load More Button */}
-        {filteredProducts.length > 0 && (
-          <div className="text-center">
-            <button className="btn-primary px-8 py-3 rounded-lg font-medium">
-              Загрузить еще
-            </button>
-          </div>
-        )}
-
-        {/* No Results */}
-        {filteredProducts.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-muted text-lg">
-              По выбранным фильтрам товары не найдены. Попробуйте изменить критерии поиска.
-            </p>
-          </div>
-        )}
       </div>
     </section>
   );

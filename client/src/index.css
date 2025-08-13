@@ -5,7 +5,7 @@
 
 :root {
   --color-primary: hsl(0, 1%, 18%);
-  --color-accent: hsl(352, 21%, 67%);
+  --color-accent: #E95D22;
   --color-secondary: hsl(16, 13%, 43%);
   --color-text: hsl(0, 0%, 56%);
   --color-border: hsl(0, 0%, 52%);
@@ -68,7 +68,7 @@
   }
 
   .filter-dropdown:hover {
-    border-color: var(--color-secondary);
+    border-color: var(--color-accent);
   }
 
   .btn-primary {
@@ -78,7 +78,7 @@
   }
 
   .btn-primary:hover {
-    background-color: var(--color-secondary);
+    background-color: #d14d1a;
   }
 
   .btn-outline {
@@ -99,7 +99,7 @@
   }
 
   .nav-link:hover {
-    color: var(--color-secondary);
+    color: var(--color-accent);
   }
 
   .collection-link {
@@ -137,7 +137,7 @@
   }
 
   .back-to-top:hover {
-    background-color: var(--color-secondary);
+    background-color: #d14d1a;
     transform: translateY(-2px);
   }
 
