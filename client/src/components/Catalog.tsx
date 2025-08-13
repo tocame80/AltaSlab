@@ -313,8 +313,8 @@ export default function Catalog({ activeCollection }: CatalogProps) {
               {filters.collection && 
                filters.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && 
                filters.collection !== 'КЛЕЙ' && 
-               activeCollection !== 'accessories' && 
-               activeCollection !== 'favorites' && (
+               activeCollection !== 'favorites' && 
+               (activeCollection !== 'accessories' || filters.collection === 'ПРОФИЛИ') && (
                 <div className="mb-6">
                   <h4 className="font-semibold text-primary mb-3">Цвета</h4>
                   <div className="space-y-2">
