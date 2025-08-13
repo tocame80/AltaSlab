@@ -118,9 +118,9 @@ export default function Catalog({ activeCollection }: CatalogProps) {
             <div className="bg-white p-6 rounded-lg shadow-sm sticky top-24">
               <h3 className="text-lg font-bold text-primary mb-4">Фильтры</h3>
               
-              {/* Collections Filter */}
+              {/* Panel Collections Filter */}
               <div className="mb-6">
-                <h4 className="font-semibold text-primary mb-3">Коллекции</h4>
+                <h4 className="font-semibold text-primary mb-3">Коллекции панелей</h4>
                 <div className="space-y-2">
                   {[
                     { key: '', label: 'Все коллекции' },
@@ -138,14 +138,37 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         onChange={(e) => setFilters(prev => ({ 
                           ...prev, 
                           collection: e.target.value,
-                          color: '' // Reset color when collection changes
-                          // Keep size filter unchanged
+                          color: '', // Reset color when collection changes
+                          size: '' // Reset size when collection changes
                         }))}
                         className="mr-2"
                       />
                       <span className="text-secondary text-sm">{collection.label}</span>
                     </label>
                   ))}
+                </div>
+              </div>
+
+              {/* Accessories Filter */}
+              <div className="mb-6">
+                <h4 className="font-semibold text-primary mb-3">Комплектующие</h4>
+                <div className="space-y-2">
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="collection"
+                      value="КОМПЛЕКТУЮЩИЕ"
+                      checked={filters.collection === 'КОМПЛЕКТУЮЩИЕ'}
+                      onChange={(e) => setFilters(prev => ({ 
+                        ...prev, 
+                        collection: e.target.value,
+                        color: '', // Reset color when switching to accessories
+                        size: '' // Reset size when switching to accessories
+                      }))}
+                      className="mr-2"
+                    />
+                    <span className="text-secondary text-sm">Все комплектующие</span>
+                  </label>
                 </div>
               </div>
 
@@ -182,9 +205,11 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 </div>
               )}
 
-              {/* Size Filter - Always visible */}
+              {/* Size Filter - Show different sizes based on selection */}
               <div className="mb-6">
-                <h4 className="font-semibold text-primary mb-3">Размеры</h4>
+                <h4 className="font-semibold text-primary mb-3">
+                  {filters.collection === 'КОМПЛЕКТУЮЩИЕ' ? 'Типы комплектующих' : 'Размеры панелей'}
+                </h4>
                 <div className="space-y-2">
                   <label className="flex items-center cursor-pointer">
                     <input
@@ -195,9 +220,11 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                       onChange={(e) => setFilters(prev => ({ ...prev, size: e.target.value }))}
                       className="mr-2"
                     />
-                    <span className="text-secondary text-sm">Все размеры</span>
+                    <span className="text-secondary text-sm">
+                      {filters.collection === 'КОМПЛЕКТУЮЩИЕ' ? 'Все комплектующие' : 'Все размеры'}
+                    </span>
                   </label>
-                  {uniqueSizes.map(size => (
+                  {availableSizes.map(size => (
                     <label key={size} className="flex items-center cursor-pointer">
                       <input
                         type="radio"
