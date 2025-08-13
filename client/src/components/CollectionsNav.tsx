@@ -1,4 +1,5 @@
 import { Collection } from '@/types';
+import { useStickyNav } from '@/hooks/useStickyNav';
 
 interface CollectionsNavProps {
   activeCollection: Collection;
@@ -7,6 +8,7 @@ interface CollectionsNavProps {
 }
 
 export default function CollectionsNav({ activeCollection, onCollectionChange, favoriteCount = 0 }: CollectionsNavProps) {
+  const isSticky = useStickyNav();
   const collections = [
     { key: 'all' as Collection, label: 'ВСЁ' },
     { key: 'concrete' as Collection, label: 'МАГИЯ БЕТОНА' },
@@ -18,7 +20,7 @@ export default function CollectionsNav({ activeCollection, onCollectionChange, f
   ];
 
   return (
-    <div className="bg-white py-6 border-t sticky top-0 z-50 shadow-sm">
+    <div className={`bg-white py-6 border-t ${isSticky ? 'sticky top-0 z-50 shadow-sm' : 'relative'}`}>
       <div className="container mx-auto px-6">
         <nav className="collections-nav">
           {collections.map((collection) => (

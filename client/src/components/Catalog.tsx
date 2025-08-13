@@ -4,6 +4,7 @@ import { Collection } from '@/types';
 import ProductCard from './ProductCard';
 import { ChevronDown } from 'lucide-react';
 import { useFavoritesContext } from '@/contexts/FavoritesContext';
+import { useStickyNav } from '@/hooks/useStickyNav';
 
 interface CatalogProps {
   activeCollection: Collection;
@@ -11,6 +12,7 @@ interface CatalogProps {
 
 export default function Catalog({ activeCollection }: CatalogProps) {
   const { favorites, toggleFavorite, isFavorite } = useFavoritesContext();
+  const isNavSticky = useStickyNav();
   
   const [filters, setFilters] = useState({
     collection: '',
@@ -190,7 +192,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
         <div className="flex gap-8">
           {/* Left Sidebar Filters */}
           <div className="w-80 flex-shrink-0">
-            <div className="bg-white p-6 rounded-lg shadow-sm sticky top-32">
+            <div className={`bg-white p-6 rounded-lg shadow-sm ${isNavSticky ? 'sticky top-32' : 'sticky top-6'}`}>
               <h3 className="text-lg font-bold text-primary mb-4">Фильтры</h3>
               
               {/* Show different filters based on active collection */}

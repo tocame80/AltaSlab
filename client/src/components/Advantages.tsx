@@ -35,7 +35,7 @@ export default function Advantages() {
   ];
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section id="advantages" className="py-20 bg-gray-50">
       <div className="container mx-auto px-6">
         <h2 className="text-4xl font-bold text-primary text-center mb-16">ПРЕИМУЩЕСТВА</h2>
         
