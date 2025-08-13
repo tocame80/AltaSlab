@@ -27,7 +27,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   });
   
   const [visibleRows, setVisibleRows] = useState(5);
-  const ITEMS_PER_ROW = 4; // 4 items per row
+  const ITEMS_PER_ROW = 2; // 2 items per row
   const ROWS_TO_LOAD = 5; // Load 5 more rows at a time
   
   // Update filters when activeCollection changes
@@ -453,7 +453,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
             </div>
 
             {/* Product Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
               {visibleProducts.map((product) => (
                 <ProductCard 
                   key={product.id} 
