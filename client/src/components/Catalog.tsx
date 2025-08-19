@@ -27,6 +27,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   });
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('default');
+  const [showSearch, setShowSearch] = useState(false);
   
   const [visibleRows, setVisibleRows] = useState(5);
   const ITEMS_PER_ROW = 2; // 2 items per row
@@ -36,6 +37,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   useEffect(() => {
     const handleSearch = (event: any) => {
       setSearchQuery(event.detail);
+      setShowSearch(true);
       // Scroll to catalog section
       const catalogElement = document.getElementById('catalog');
       if (catalogElement) {
@@ -43,10 +45,23 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       }
     };
 
+    const handleShowSearch = () => {
+      setShowSearch(true);
+      // Auto-focus on search input after showing it
+      setTimeout(() => {
+        const searchInput = document.querySelector('#catalog-search-input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }, 100);
+    };
+
     window.addEventListener('search-products', handleSearch);
+    window.addEventListener('show-catalog-search', handleShowSearch);
     
     return () => {
       window.removeEventListener('search-products', handleSearch);
+      window.removeEventListener('show-catalog-search', handleShowSearch);
     };
   }, []);
 
@@ -245,13 +260,14 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   return (
     <section id="catalog" className="py-16 bg-gray-50">
       <div className="container mx-auto px-6 mt-[24px] mb-[24px]">
-        {/* Fixed Search Bar - Only show when there's an active search */}
-        {searchQuery && (
+        {/* Fixed Search Bar - Show when requested or has active search */}
+        {(showSearch || searchQuery) && (
           <div className={`bg-white p-4 rounded-lg shadow-sm mb-8 ${isNavSticky ? 'sticky top-32 z-40' : 'sticky top-6 z-40'}`}>
             <div className="flex items-center gap-4">
               <div className="flex-1">
                 <div className="relative">
                   <input
+                    id="catalog-search-input"
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -262,7 +278,10 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 </div>
               </div>
               <button
-                onClick={() => setSearchQuery('')}
+                onClick={() => {
+                  setSearchQuery('');
+                  setShowSearch(false);
+                }}
                 className="px-4 py-3 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors font-medium"
               >
                 Очистить поиск

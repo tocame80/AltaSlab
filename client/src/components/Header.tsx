@@ -1,13 +1,10 @@
-import { Mail, Search, Menu, X } from "lucide-react";
+import { Mail, Search, Menu } from "lucide-react";
 import { useState } from "react";
 import { useScrollDirection } from "@/hooks/useScrollDirection";
 import { Link, useLocation } from "wouter";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeSearchQuery, setActiveSearchQuery] = useState("");
   const [location] = useLocation();
   const isHeaderVisible = useScrollDirection();
 
@@ -37,34 +34,19 @@ export default function Header() {
     }
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      // Set active search query to keep search panel visible
-      setActiveSearchQuery(searchQuery.trim());
-      
-      // Dispatch custom event with search query
-      window.dispatchEvent(
-        new CustomEvent("search-products", {
-          detail: searchQuery.trim(),
-        }),
-      );
-      // Navigate to home if not already there
-      if (window.location.pathname !== "/") {
-        window.location.href = "/";
+  const handleSearchClick = () => {
+    // Navigate to home page and scroll to catalog
+    if (window.location.pathname !== "/") {
+      window.location.href = "/#catalog";
+    } else {
+      const element = document.getElementById('catalog');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
       }
-      // Keep search panel open when there's an active search
-      // setIsSearchOpen(false);
-      // setSearchQuery("");
     }
-  };
-
-  const clearSearch = () => {
-    setSearchQuery("");
-    setActiveSearchQuery("");
-    setIsSearchOpen(false);
-    // Dispatch event to clear search results
-    window.dispatchEvent(new CustomEvent("clear-search"));
+    
+    // Dispatch event to show search in catalog
+    window.dispatchEvent(new CustomEvent("show-catalog-search"));
   };
 
   return (
@@ -101,12 +83,11 @@ export default function Header() {
               СЕРТИФИКАТЫ
             </Link>
             <Link href="/video" className="nav-link">
-              ВИДЕОИНСТРУКЦИИ
+              ВИДЕО
             </Link>
             <Link href="/faq" className="nav-link">
               ВОПРОСЫ
             </Link>
-            
           </nav>
 
           {/* Contact Info */}
@@ -118,7 +99,7 @@ export default function Header() {
               <Mail className="w-5 h-5" />
             </Link>
             <button
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              onClick={handleSearchClick}
               className="text-muted hover:text-[#E95D22] transition-colors"
               aria-label="Поиск"
             >
@@ -137,66 +118,6 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Search Panel */}
-        {(isSearchOpen || activeSearchQuery) && (
-          <div className="border-t border-gray-200 py-4 bg-white">
-            {/* Active search display */}
-            {activeSearchQuery && (
-              <div className="mb-4 flex items-center justify-between bg-orange-50 border border-orange-200 rounded-lg p-3">
-                <div className="flex items-center gap-2">
-                  <Search className="w-4 h-4 text-[#E95D22]" />
-                  <span className="text-sm text-gray-700">
-                    Поиск: <strong className="text-[#E95D22]">"{activeSearchQuery}"</strong>
-                  </span>
-                </div>
-                <button
-                  onClick={clearSearch}
-                  className="text-gray-500 hover:text-red-600 transition-colors"
-                  aria-label="Очистить поиск"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            )}
-            
-            {/* Search form */}
-            <form onSubmit={handleSearch} className="flex items-center gap-3">
-              <div className="flex-1 relative">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Поиск по товарам..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
-                  autoFocus={!activeSearchQuery}
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={!searchQuery.trim()}
-                className="px-4 py-2 bg-[#E95D22] text-white rounded-lg hover:bg-[#d14f19] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-              >
-                Найти
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (activeSearchQuery) {
-                    clearSearch();
-                  } else {
-                    setIsSearchOpen(false);
-                    setSearchQuery("");
-                  }
-                }}
-                className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
-                aria-label={activeSearchQuery ? "Закрыть поиск" : "Свернуть поиск"}
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </form>
-          </div>
-        )}
-
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="lg:hidden py-4 border-t border-gray-200">
@@ -211,7 +132,7 @@ export default function Header() {
                 СЕРТИФИКАТЫ
               </Link>
               <Link href="/video" className="nav-link">
-                ВИДЕОИНСТРУКЦИИ
+                ВИДЕО
               </Link>
               <Link href="/faq" className="nav-link">
                 ВОПРОСЫ
@@ -225,7 +146,7 @@ export default function Header() {
                   <Mail className="w-5 h-5" />
                 </Link>
                 <button
-                  onClick={() => setIsSearchOpen(!isSearchOpen)}
+                  onClick={handleSearchClick}
                   className="text-muted hover:text-[#E95D22] transition-colors"
                   aria-label="Поиск"
                 >
