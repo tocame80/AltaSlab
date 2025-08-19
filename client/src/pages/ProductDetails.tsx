@@ -311,31 +311,42 @@ export default function ProductDetails() {
             <div className="absolute top-4 right-4 flex gap-2">
               <button 
                 onClick={openFullscreen}
-                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all"
+                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#E95D22] transition-all"
                 title="Полноэкранный просмотр"
               >
                 <Maximize2 size={16} />
               </button>
               <button 
                 onClick={openImageViewer}
-                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all"
+                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#E95D22] transition-all"
                 title="Увеличить изображение"
               >
                 <ZoomIn size={16} />
               </button>
               <button 
                 onClick={shareImage}
-                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all"
+                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#E95D22] transition-all"
                 title="Поделиться"
               >
                 <Share2 size={16} />
               </button>
               <button 
                 onClick={downloadImage}
-                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all"
+                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#E95D22] transition-all"
                 title="Скачать оригинал"
               >
                 <Save size={16} />
+              </button>
+              <button
+                onClick={() => toggleFavorite(product.id)}
+                className={`w-10 h-10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all ${
+                  isFavorite 
+                    ? 'bg-red-50 text-red-500' 
+                    : 'bg-white/80 text-gray-600 hover:bg-white hover:text-red-500'
+                }`}
+                title="Добавить в избранное"
+              >
+                <Heart size={16} className={isFavorite ? 'fill-current' : ''} />
               </button>
             </div>
 
@@ -447,19 +458,9 @@ export default function ProductDetails() {
 
               {/* Action Buttons */}
               <div className="flex gap-3 mb-4">
-                <button className="flex-1 bg-[#E95D22] text-white py-3 px-6 rounded-lg font-semibold transition-all hover:bg-[#d54a1a] flex items-center justify-center gap-2">
+                <button className="w-full bg-[#E95D22] text-white py-3 px-6 rounded-lg font-semibold transition-all hover:bg-[#d54a1a] flex items-center justify-center gap-2">
                   <ShoppingCart size={20} />
                   Добавить в корзину
-                </button>
-                <button
-                  onClick={() => toggleFavorite(product.id)}
-                  className={`w-12 h-12 rounded-lg border-2 flex items-center justify-center transition-all ${
-                    isFavorite 
-                      ? 'border-red-500 text-red-500 bg-red-50' 
-                      : 'border-gray-300 text-gray-600 hover:border-red-500 hover:text-red-500'
-                  }`}
-                >
-                  <Heart size={20} className={isFavorite ? 'fill-current' : ''} />
                 </button>
               </div>
 
