@@ -147,7 +147,7 @@ async function removeImageFromMap(productId: string, fileName: string, folder: s
 
     // Extract index from fileName (e.g., "8934-2.jpg" -> index 2)
     const fileIndex = parseInt(fileName.split('-')[1].split('.')[0]);
-    const varName = `${productId}_${fileIndex}`;
+    const varName = `product${productId}_${fileIndex}`;
 
     // Remove import statement
     const importRegex = new RegExp(`import ${varName} from '\\.\/${folder}\/${fileName}';\n?`, 'g');
@@ -187,7 +187,7 @@ async function updateImageMap(productId: string, fileNames: string[], folder: st
 
     // Add import statements
     const imports = fileNames.map((fileName, index) => {
-      const varName = `${productId}_${index + 1}`;
+      const varName = `product${productId}_${index + 1}`;
       return `import ${varName} from './${folder}/${fileName}';`;
     }).join('\n');
 
@@ -200,7 +200,7 @@ async function updateImageMap(productId: string, fileNames: string[], folder: st
     }
 
     // Update specificImageMap
-    const varNames = fileNames.map((_, index) => `${productId}_${index + 1}`);
+    const varNames = fileNames.map((_, index) => `product${productId}_${index + 1}`);
     const arrayContent = `[${varNames.join(', ')}]`;
     
     // Check if product already exists in specificImageMap

@@ -261,8 +261,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-6xl h-[95vh] flex flex-col overflow-hidden">
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b border-gray-200 bg-gradient-to-r from-[#E95D22] to-[#D84315]">
           <h2 className="text-2xl font-bold text-white">Админ-панель загрузки изображений</h2>
@@ -274,7 +274,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-6 space-y-6">
           {/* Instructions */}
           <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
             <h3 className="font-semibold text-blue-800 mb-2">Инструкция по загрузке:</h3>
@@ -288,7 +289,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
           </div>
 
           {/* Product Selection */}
-          <div className="mb-6">
+          <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Выберите товар:
             </label>
@@ -307,7 +308,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
           </div>
 
           {/* File Upload */}
-          <div className="mb-6">
+          <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Загрузить изображения:
             </label>
@@ -343,11 +344,12 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
 
           {/* Existing Images */}
           {selectedProduct && existingImages.length > 0 && (
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-4">
-                Существующие изображения для товара {selectedProduct}:
+            <div>
+              <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                Существующие изображения ({existingImages.length})
               </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 max-h-60 overflow-y-auto">
                 {existingImages.map((img, index) => (
                   <div key={index} className="relative group">
                     <div className="aspect-square rounded-lg overflow-hidden border border-gray-200">
@@ -384,11 +386,12 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
 
           {/* New Images Preview */}
           {getProductsBySelection().length > 0 && (
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-4">
-                Новые изображения для загрузки:
+            <div>
+              <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
+                <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                К загрузке ({getProductsBySelection().length})
               </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 max-h-60 overflow-y-auto">
                 {getProductsBySelection().map((img, index) => (
                   <div key={index} className="relative group">
                     <div className="aspect-square rounded-lg overflow-hidden border border-gray-200">
@@ -418,33 +421,21 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
             </div>
           )}
 
-          {/* All uploaded images summary */}
-          {uploadedImages.length > 0 && (
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-4">Сводка загруженных изображений:</h3>
-              <div className="bg-gray-50 rounded-lg p-4">
-                {Object.entries(
-                  uploadedImages.reduce((acc, img) => {
-                    if (!acc[img.productId]) acc[img.productId] = 0;
-                    acc[img.productId]++;
-                    return acc;
-                  }, {} as Record<string, number>)
-                ).map(([productId, count]) => {
-                  const product = products.find(p => p.id === productId);
-                  return (
-                    <div key={productId} className="flex justify-between items-center py-2">
-                      <span className="font-medium">
-                        {productId} - {product?.design}
-                      </span>
-                      <span className="text-sm text-gray-600">
-                        {count} изображени{count === 1 ? 'е' : count < 5 ? 'я' : 'й'}
-                      </span>
-                    </div>
-                  );
-                })}
+          {/* Compact Summary */}
+          {(existingImages.length > 0 || uploadedImages.length > 0) && selectedProduct && (
+            <div className="bg-gray-50 rounded-lg p-4">
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-sm">
+                  Товар: {selectedProduct} - {products.find(p => p.id === selectedProduct)?.design}
+                </span>
+                <div className="flex gap-4 text-sm text-gray-600">
+                  <span>Существующих: {existingImages.length}</span>
+                  <span>К загрузке: {uploadedImages.length}</span>
+                </div>
               </div>
             </div>
           )}
+          </div>
         </div>
 
         {/* Footer */}
