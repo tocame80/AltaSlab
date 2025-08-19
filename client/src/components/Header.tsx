@@ -51,6 +51,9 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">
+            <a href="#catalog" className="nav-link">
+              КАТАЛОГ
+            </a>
             <Link href="/calculator" className="nav-link">
               КАЛЬКУЛЯТОР
             </Link>
@@ -65,9 +68,6 @@ export default function Header() {
             </Link>
             <a href="#company" className="nav-link">
               О НАС
-            </a>
-            <a href="#catalog" className="nav-link">
-              КАТАЛОГ
             </a>
           </nav>
 
@@ -139,6 +139,9 @@ export default function Header() {
         {isMobileMenuOpen && (
           <div className="lg:hidden py-4 border-t border-gray-200">
             <nav className="flex flex-col space-y-4">
+              <a href="#catalog" className="nav-link">
+                КАТАЛОГ
+              </a>
               <Link href="/calculator" className="nav-link">
                 КАЛЬКУЛЯТОР
               </Link>
@@ -153,9 +156,6 @@ export default function Header() {
               </Link>
               <a href="#company" className="nav-link">
                 О НАС
-              </a>
-              <a href="#catalog" className="nav-link">
-                КАТАЛОГ
               </a>
               <div className="flex items-center space-x-4 pt-4">
                 <Link
