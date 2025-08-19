@@ -14,14 +14,51 @@ interface ProductImage {
   preview: string;
 }
 
+interface ExistingImage {
+  productId: string;
+  fileName: string;
+  url: string;
+}
+
 export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [selectedProduct, setSelectedProduct] = useState<string>('');
   const [uploadedImages, setUploadedImages] = useState<ProductImage[]>([]);
+  const [existingImages, setExistingImages] = useState<ExistingImage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Filter products to show only panel products (not accessories)
   const panelProducts = products.filter(product => product.category !== 'accessories');
+
+  // Load existing images when product is selected
+  const loadExistingImages = async (productId: string) => {
+    if (!productId) {
+      setExistingImages([]);
+      return;
+    }
+
+    try {
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
+
+      const folderName = getFolderName(product.collection);
+      const response = await fetch(`/api/admin/product-images/${productId}?folder=${folderName}`);
+      
+      if (response.ok) {
+        const data = await response.json();
+        const existingImgs: ExistingImage[] = data.images.map((fileName: string) => ({
+          productId,
+          fileName,
+          url: `/src/assets/products/${folderName}/${fileName}`
+        }));
+        setExistingImages(existingImgs);
+      }
+    } catch (error) {
+      console.error('Error loading existing images:', error);
+      setExistingImages([]);
+    }
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -43,16 +80,23 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     };
   }, [isOpen, onClose]);
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
+  // Load existing images when product selection changes
+  useEffect(() => {
+    loadExistingImages(selectedProduct);
+  }, [selectedProduct]);
+
+  const processFiles = (files: File[]) => {
     if (!selectedProduct) {
       alert('Сначала выберите товар');
       return;
     }
 
+    // Get current count including both existing and uploaded images
+    const currentCount = existingImages.length + uploadedImages.filter(img => img.productId === selectedProduct).length;
+
     files.forEach((file, index) => {
       if (file.type.startsWith('image/')) {
-        const fileName = `${selectedProduct}-${uploadedImages.filter(img => img.productId === selectedProduct).length + index + 1}.${file.name.split('.').pop()}`;
+        const fileName = `${selectedProduct}-${currentCount + index + 1}.${file.name.split('.').pop()}`;
         const preview = URL.createObjectURL(file);
         
         setUploadedImages(prev => [...prev, {
@@ -63,6 +107,11 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         }]);
       }
     });
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    processFiles(files);
 
     // Reset file input
     if (fileInputRef.current) {
@@ -70,13 +119,70 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     }
   };
 
-  const removeImage = (index: number) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    
+    const files = Array.from(e.dataTransfer.files);
+    processFiles(files);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const removeUploadedImage = (index: number) => {
     setUploadedImages(prev => {
       const newImages = [...prev];
       URL.revokeObjectURL(newImages[index].preview);
       newImages.splice(index, 1);
       return newImages;
     });
+  };
+
+  const removeExistingImage = async (image: ExistingImage) => {
+    if (!confirm(`Удалить изображение ${image.fileName}? Это действие необратимо.`)) {
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const product = products.find(p => p.id === image.productId);
+      if (!product) return;
+
+      const folderName = getFolderName(product.collection);
+      
+      const response = await fetch('/api/admin/delete-image', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId: image.productId,
+          fileName: image.fileName,
+          folder: folderName
+        })
+      });
+
+      if (response.ok) {
+        // Remove from state
+        setExistingImages(prev => prev.filter(img => img !== image));
+        alert('Изображение удалено!');
+      } else {
+        alert('Ошибка при удалении изображения');
+      }
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      alert('Ошибка при удалении изображения');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const saveImages = async () => {
@@ -235,11 +341,52 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
             />
           </div>
 
-          {/* Preview Images */}
+          {/* Existing Images */}
+          {selectedProduct && existingImages.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-4">
+                Существующие изображения для товара {selectedProduct}:
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {existingImages.map((img, index) => (
+                  <div key={index} className="relative group">
+                    <div className="aspect-square rounded-lg overflow-hidden border border-gray-200">
+                      <img
+                        src={img.url}
+                        alt={img.fileName}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          // Fallback if image fails to load
+                          (e.target as HTMLImageElement).src = '/api/placeholder/150x150';
+                        }}
+                      />
+                    </div>
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                      <button
+                        onClick={() => removeExistingImage(img)}
+                        className="text-white hover:text-red-400 transition-colors"
+                        disabled={isLoading}
+                      >
+                        <Trash2 size={20} />
+                      </button>
+                    </div>
+                    <div className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded">
+                      Сохранен
+                    </div>
+                    <p className="text-xs text-gray-600 mt-1 truncate" title={img.fileName}>
+                      {img.fileName}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* New Images Preview */}
           {getProductsBySelection().length > 0 && (
             <div className="mb-6">
               <h3 className="text-lg font-semibold mb-4">
-                Предпросмотр для товара {selectedProduct}:
+                Новые изображения для загрузки:
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {getProductsBySelection().map((img, index) => (
@@ -253,11 +400,14 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     </div>
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
                       <button
-                        onClick={() => removeImage(uploadedImages.findIndex(image => image === img))}
+                        onClick={() => removeUploadedImage(uploadedImages.findIndex(image => image === img))}
                         className="text-white hover:text-red-400 transition-colors"
                       >
                         <Trash2 size={20} />
                       </button>
+                    </div>
+                    <div className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
+                      Новый
                     </div>
                     <p className="text-xs text-gray-600 mt-1 truncate" title={img.fileName}>
                       {img.fileName}
@@ -300,7 +450,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         {/* Footer */}
         <div className="border-t border-gray-200 p-6 bg-gray-50 flex justify-between items-center">
           <div className="text-sm text-gray-600">
-            Загружено изображений: {uploadedImages.length}
+            Существующих: {existingImages.length} | Новых для загрузки: {uploadedImages.length}
           </div>
           <div className="flex gap-3">
             <button

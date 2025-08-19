@@ -21,6 +21,76 @@ const upload = multer({
   }
 });
 
+// Get existing images for a product
+router.get('/product-images/:productId', async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const { folder } = req.query;
+    
+    if (!productId || !folder) {
+      return res.status(400).json({ error: 'Missing productId or folder parameter' });
+    }
+
+    const folderPath = path.join(process.cwd(), 'client', 'src', 'assets', 'products', folder as string);
+    
+    try {
+      const files = await fs.readdir(folderPath);
+      const productImages = files.filter(file => 
+        file.startsWith(`${productId}-`) && 
+        /\.(jpg|jpeg|png|gif|webp)$/i.test(file)
+      );
+      
+      res.json({ 
+        success: true, 
+        images: productImages,
+        productId 
+      });
+    } catch {
+      // Folder doesn't exist - return empty array
+      res.json({ 
+        success: true, 
+        images: [],
+        productId 
+      });
+    }
+
+  } catch (error) {
+    console.error('Error getting product images:', error);
+    res.status(500).json({ error: 'Failed to get product images' });
+  }
+});
+
+// Delete an image
+router.delete('/delete-image', async (req, res) => {
+  try {
+    const { productId, fileName, folder } = req.body;
+    
+    if (!productId || !fileName || !folder) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const filePath = path.join(process.cwd(), 'client', 'src', 'assets', 'products', folder, fileName);
+    
+    try {
+      await fs.unlink(filePath);
+      
+      // Update imageMap.ts to remove the deleted image
+      await removeImageFromMap(productId, fileName, folder);
+      
+      res.json({ 
+        success: true, 
+        message: `Deleted ${fileName}` 
+      });
+    } catch {
+      res.status(404).json({ error: 'File not found' });
+    }
+
+  } catch (error) {
+    console.error('Error deleting image:', error);
+    res.status(500).json({ error: 'Failed to delete image' });
+  }
+});
+
 // Upload images for a product
 router.post('/upload-images', upload.any(), async (req, res) => {
   try {
@@ -67,6 +137,45 @@ router.post('/upload-images', upload.any(), async (req, res) => {
     res.status(500).json({ error: 'Failed to upload images' });
   }
 });
+
+// Function to remove image from imageMap.ts
+async function removeImageFromMap(productId: string, fileName: string, folder: string) {
+  const imageMapPath = path.join(process.cwd(), 'client', 'src', 'assets', 'products', 'imageMap.ts');
+  
+  try {
+    let content = await fs.readFile(imageMapPath, 'utf-8');
+
+    // Extract index from fileName (e.g., "8934-2.jpg" -> index 2)
+    const fileIndex = parseInt(fileName.split('-')[1].split('.')[0]);
+    const varName = `${productId}_${fileIndex}`;
+
+    // Remove import statement
+    const importRegex = new RegExp(`import ${varName} from '\\.\/${folder}\/${fileName}';\n?`, 'g');
+    content = content.replace(importRegex, '');
+
+    // Update specificImageMap - remove the image reference
+    const productMapRegex = new RegExp(`'${productId}':\\s*\\[([^\\]]+)\\]`);
+    const match = content.match(productMapRegex);
+    
+    if (match) {
+      const currentImages = match[1].split(',').map(s => s.trim()).filter(s => s !== varName);
+      
+      if (currentImages.length > 0) {
+        // Update with remaining images
+        const newArrayContent = `[${currentImages.join(', ')}]`;
+        content = content.replace(productMapRegex, `'${productId}': ${newArrayContent}`);
+      } else {
+        // Remove the entire product entry if no images left
+        const fullEntryRegex = new RegExp(`\\s*'${productId}':\\s*\\[([^\\]]+)\\],?.*?\n`, 'g');
+        content = content.replace(fullEntryRegex, '');
+      }
+    }
+
+    await fs.writeFile(imageMapPath, content, 'utf-8');
+  } catch (error) {
+    console.error('Error removing image from map:', error);
+  }
+}
 
 // Function to update imageMap.ts
 async function updateImageMap(productId: string, fileNames: string[], folder: string) {
