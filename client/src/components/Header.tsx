@@ -1,13 +1,40 @@
 import { Mail, Search, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useScrollDirection } from "@/hooks/useScrollDirection";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [location] = useLocation();
   const isHeaderVisible = useScrollDirection();
+
+  const handleCatalogClick = () => {
+    if (location === '/') {
+      // If on home page, scroll to catalog
+      const element = document.getElementById('catalog');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // If on any other page, navigate to home page
+      window.location.href = '/#catalog';
+    }
+  };
+
+  const handleCompanyClick = () => {
+    if (location === '/') {
+      // If on home page, scroll to company section
+      const element = document.getElementById('company');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // If on any other page, navigate to home page
+      window.location.href = '/#company';
+    }
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,9 +78,9 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">
-            <a href="#catalog" className="nav-link">
+            <button onClick={handleCatalogClick} className="nav-link">
               КАТАЛОГ
-            </a>
+            </button>
             <Link href="/calculator" className="nav-link">
               КАЛЬКУЛЯТОР
             </Link>
@@ -66,9 +93,9 @@ export default function Header() {
             <Link href="/faq" className="nav-link">
               ВОПРОСЫ
             </Link>
-            <a href="#company" className="nav-link">
+            <button onClick={handleCompanyClick} className="nav-link">
               О НАС
-            </a>
+            </button>
           </nav>
 
           {/* Contact Info */}
@@ -139,9 +166,9 @@ export default function Header() {
         {isMobileMenuOpen && (
           <div className="lg:hidden py-4 border-t border-gray-200">
             <nav className="flex flex-col space-y-4">
-              <a href="#catalog" className="nav-link">
+              <button onClick={handleCatalogClick} className="nav-link text-left">
                 КАТАЛОГ
-              </a>
+              </button>
               <Link href="/calculator" className="nav-link">
                 КАЛЬКУЛЯТОР
               </Link>
@@ -154,9 +181,9 @@ export default function Header() {
               <Link href="/faq" className="nav-link">
                 ВОПРОСЫ
               </Link>
-              <a href="#company" className="nav-link">
+              <button onClick={handleCompanyClick} className="nav-link text-left">
                 О НАС
-              </a>
+              </button>
               <div className="flex items-center space-x-4 pt-4">
                 <Link
                   href="/contact"
