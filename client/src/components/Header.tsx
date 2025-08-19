@@ -14,7 +14,7 @@ export default function Header() {
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
-          <div className="flex items-center space-x-3">
+          <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
             <div className="w-12 h-12 bg-accent rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">АС</span>
             </div>
@@ -22,7 +22,7 @@ export default function Header() {
               <h1 className="text-primary font-bold text-xl">АЛЬТА СЛЭБ</h1>
               <p className="text-muted text-xs">SPC ПАНЕЛИ</p>
             </div>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">
