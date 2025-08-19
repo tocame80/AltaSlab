@@ -1,6 +1,7 @@
 import { ArrowLeft, Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
 import { Link } from 'wouter';
 import { useState } from 'react';
+import Header from '@/components/Header';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -28,6 +29,7 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Header />
       <div className="container mx-auto px-6 py-8">
         {/* Back Button */}
         <div className="mb-8">

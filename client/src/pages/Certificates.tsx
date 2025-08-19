@@ -1,9 +1,11 @@
 import { ArrowLeft, Download } from 'lucide-react';
 import { Link } from 'wouter';
+import Header from '@/components/Header';
 
 export default function Certificates() {
   return (
     <div className="min-h-screen bg-gray-50">
+      <Header />
       <div className="container mx-auto px-6 py-8">
         {/* Back Button */}
         <div className="mb-8">

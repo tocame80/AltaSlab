@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'wouter';
+import Header from '@/components/Header';
 
 export default function Calculator() {
   const [length, setLength] = useState('');
@@ -42,6 +43,7 @@ export default function Calculator() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Header />
       <div className="container mx-auto px-6 py-8">
         {/* Back Button */}
         <div className="mb-8">
