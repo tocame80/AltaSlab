@@ -9,6 +9,7 @@ export default function Hero() {
   const { data: heroImages = [], isLoading, error } = useQuery<HeroImage[]>({
     queryKey: ['/api/hero-images'],
     retry: 2,
+    refetchOnMount: true,
   });
 
   // Default images in case no images are loaded from database
@@ -24,32 +25,20 @@ export default function Hero() {
     }
   ];
 
-  // Process images to ensure full URLs
-  const processedImages = heroImages.map(image => ({
+  // Use database images if available, otherwise use default
+  const images = heroImages && heroImages.length > 0 ? heroImages.map(image => ({
     ...image,
     imageUrl: image.imageUrl.startsWith('/') ? 
       `${window.location.origin}${image.imageUrl}` : 
       image.imageUrl
-  }));
-
-  const images = processedImages.length > 0 ? processedImages : defaultImages;
-
-  // Debug logging
-  console.log('Hero component state:', {
-    isLoading,
-    error: error?.message,
-    heroImagesCount: heroImages.length,
-    imagesCount: images.length,
-    currentSlide,
-    firstImageUrl: images[0]?.imageUrl
-  });
+  })) : defaultImages;
 
   // Auto-slide functionality
   useEffect(() => {
     if (images.length > 1) {
       const interval = setInterval(() => {
         setCurrentSlide((prev) => (prev + 1) % images.length);
-      }, 5000); // Change slide every 5 seconds
+      }, 5000);
 
       return () => clearInterval(interval);
     }
@@ -81,98 +70,85 @@ export default function Hero() {
     }
   };
 
-  if (isLoading) {
+  // Show loading state only when actually loading and no images available
+  if (isLoading && images.length === 0) {
     return (
       <section className="relative w-full">
         <div className="aspect-[4/3] bg-gray-200 animate-pulse">
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-gray-600 text-lg">Загрузка hero изображений...</div>
+            <div className="text-gray-600 text-lg">Загрузка изображений...</div>
           </div>
         </div>
       </section>
     );
   }
 
-  // If there's an error, use default images but log the error
-  if (error) {
-    console.error('Hero images API error:', error);
-    console.log('Fallback to default images');
-  }
-
   return (
     <section className="relative w-full">
-      {/* Hero Slider with 4:3 aspect ratio */}
       <div className="aspect-[4/3] relative overflow-hidden">
-        {/* Images */}
         {images.map((image, index) => (
           <div
-            key={image.id}
+            key={`hero-slide-${image.id || index}`}
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
               index === currentSlide ? 'opacity-100' : 'opacity-0'
             }`}
           >
             <img 
               src={image.imageUrl}
-              alt={image.title || 'Hero image'}
+              alt={image.title || `Hero image ${index + 1}`}
               className="w-full h-full object-cover object-center"
-              onLoad={() => console.log(`Hero image loaded: ${image.imageUrl}`)}
+              onLoad={() => console.log(`Hero image loaded: ${image.title}`)}
               onError={(e) => {
-                console.error(`Hero image failed to load: ${image.imageUrl}`, e);
-                // Fallback to background image approach
+                console.error(`Hero image load error: ${image.imageUrl}`);
                 const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-                const parent = target.parentElement;
-                if (parent) {
-                  parent.style.backgroundImage = `url('${defaultImages[0].imageUrl}')`;
-                  parent.style.backgroundSize = 'cover';
-                  parent.style.backgroundPosition = 'center';
+                if (target.src !== defaultImages[0].imageUrl) {
+                  target.src = defaultImages[0].imageUrl;
                 }
               }}
             />
-            <div className="w-full h-full absolute inset-0">
-              {/* Dark overlay for better text readability */}
-              <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-              
-              {/* Content */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="container mx-auto px-6">
-                  <div className="text-center text-white">
-                    <h1 
-                      className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-[#e85e2e]" 
-                      style={{ 
-                        letterSpacing: '2px',
-                        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7), 0 0 8px rgba(0, 0, 0, 0.5)'
-                      }}
+            
+            {/* Dark overlay for text readability */}
+            <div className="absolute inset-0 bg-black bg-opacity-40" />
+            
+            {/* Hero content */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="container mx-auto px-6">
+                <div className="text-center text-white">
+                  <h1 
+                    className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-[#e85e2e]" 
+                    style={{ 
+                      letterSpacing: '2px',
+                      textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7), 0 0 8px rgba(0, 0, 0, 0.5)'
+                    }}
+                  >
+                    АЛЬТА СЛЭБ
+                  </h1>
+                  <p 
+                    className="text-lg md:text-xl lg:text-2xl mb-8 font-light"
+                    style={{ textShadow: '1px 1px 3px rgba(0, 0, 0, 0.8)' }}
+                  >
+                    Панели стеновые и потолочные SPC
+                  </p>
+                  <p 
+                    className="text-base md:text-lg mb-12 text-gray-200 max-w-3xl mx-auto"
+                    style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.7)' }}
+                  >
+                    Территория уюта. Новый продукт — новые возможности!
+                  </p>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button 
+                      className="btn-primary px-8 py-3 rounded-lg font-medium text-sm md:text-base"
+                      onClick={handleCatalogClick}
                     >
-                      АЛЬТА СЛЭБ
-                    </h1>
-                    <p 
-                      className="text-lg md:text-xl lg:text-2xl mb-8 font-light"
-                      style={{ textShadow: '1px 1px 3px rgba(0, 0, 0, 0.8)' }}
+                      Смотреть каталог
+                    </button>
+                    <button 
+                      className="btn-outline px-8 py-3 rounded-lg font-medium text-sm md:text-base"
+                      onClick={handleCalculatorClick}
                     >
-                      Панели стеновые и потолочные SPC
-                    </p>
-                    <p 
-                      className="text-base md:text-lg mb-12 text-gray-200 max-w-3xl mx-auto"
-                      style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.7)' }}
-                    >
-                      Территория уюта. Новый продукт — новые возможности!
-                    </p>
-                    
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                      <button 
-                        className="btn-primary px-8 py-3 rounded-lg font-medium text-sm md:text-base"
-                        onClick={handleCatalogClick}
-                      >
-                        Смотреть каталог
-                      </button>
-                      <button 
-                        className="btn-outline px-8 py-3 rounded-lg font-medium text-sm md:text-base"
-                        onClick={handleCalculatorClick}
-                      >
-                        Рассчитать материалы
-                      </button>
-                    </div>
+                      Рассчитать материалы
+                    </button>
                   </div>
                 </div>
               </div>
@@ -180,7 +156,7 @@ export default function Hero() {
           </div>
         ))}
 
-        {/* Navigation Arrows (only show if more than 1 image) */}
+        {/* Navigation arrows - only show if more than 1 image */}
         {images.length > 1 && (
           <>
             <button
@@ -200,13 +176,13 @@ export default function Hero() {
           </>
         )}
 
-        {/* Slide Indicators (only show if more than 1 image) */}
+        {/* Slide indicators - only show if more than 1 image */}
         {images.length > 1 && (
           <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
             <div className="flex space-x-2">
               {images.map((_, index) => (
                 <button
-                  key={index}
+                  key={`indicator-${index}`}
                   onClick={() => goToSlide(index)}
                   className={`w-3 h-3 rounded-full transition-all duration-200 ${
                     index === currentSlide
