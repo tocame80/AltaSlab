@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Certificate, type InsertCertificate, type VideoInstruction, type InsertVideoInstruction, users, certificates, videoInstructions } from "@shared/schema";
+import { type User, type InsertUser, type Certificate, type InsertCertificate, type VideoInstruction, type InsertVideoInstruction, type HeroImage, type InsertHeroImage, users, certificates, videoInstructions, heroImages } from "@shared/schema";
 import { db } from "./db";
 import { eq, asc } from "drizzle-orm";
 
@@ -21,6 +21,13 @@ export interface IStorage {
   createVideoInstruction(videoInstruction: InsertVideoInstruction): Promise<VideoInstruction>;
   updateVideoInstruction(id: string, videoInstruction: Partial<InsertVideoInstruction>): Promise<VideoInstruction>;
   deleteVideoInstruction(id: string): Promise<void>;
+  
+  // Hero image methods
+  getHeroImages(): Promise<HeroImage[]>;
+  getHeroImage(id: string): Promise<HeroImage | undefined>;
+  createHeroImage(heroImage: InsertHeroImage): Promise<HeroImage>;
+  updateHeroImage(id: string, heroImage: Partial<InsertHeroImage>): Promise<HeroImage>;
+  deleteHeroImage(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -103,6 +110,37 @@ export class DatabaseStorage implements IStorage {
 
   async deleteVideoInstruction(id: string): Promise<void> {
     await db.delete(videoInstructions).where(eq(videoInstructions.id, id));
+  }
+
+  // Hero image methods
+  async getHeroImages(): Promise<HeroImage[]> {
+    return await db.select().from(heroImages).where(eq(heroImages.isActive, 1)).orderBy(asc(heroImages.sortOrder));
+  }
+
+  async getHeroImage(id: string): Promise<HeroImage | undefined> {
+    const [heroImage] = await db.select().from(heroImages).where(eq(heroImages.id, id));
+    return heroImage || undefined;
+  }
+
+  async createHeroImage(insertHeroImage: InsertHeroImage): Promise<HeroImage> {
+    const [heroImage] = await db
+      .insert(heroImages)
+      .values(insertHeroImage)
+      .returning();
+    return heroImage;
+  }
+
+  async updateHeroImage(id: string, updates: Partial<InsertHeroImage>): Promise<HeroImage> {
+    const [heroImage] = await db
+      .update(heroImages)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(heroImages.id, id))
+      .returning();
+    return heroImage;
+  }
+
+  async deleteHeroImage(id: string): Promise<void> {
+    await db.delete(heroImages).where(eq(heroImages.id, id));
   }
 }
 

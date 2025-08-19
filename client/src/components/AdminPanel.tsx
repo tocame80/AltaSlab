@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit, Play, Database, Download } from 'lucide-react';
 import { products } from '../data/products';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Certificate, insertCertificateSchema, VideoInstruction, insertVideoInstructionSchema } from '@shared/schema';
+import { Certificate, insertCertificateSchema, VideoInstruction, insertVideoInstructionSchema, HeroImage, insertHeroImageSchema } from '@shared/schema';
 import { apiRequest } from '@/lib/queryClient';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,7 +27,7 @@ interface ExistingImage {
   url: string;
 }
 
-type AdminTab = 'images' | 'certificates' | 'videos' | 'catalog';
+type AdminTab = 'images' | 'certificates' | 'videos' | 'catalog' | 'hero';
 
 const certificateFormSchema = insertCertificateSchema.extend({
   // Form validation schema with required fields
@@ -48,8 +48,14 @@ const videoFormSchema = insertVideoInstructionSchema.extend({
   videoUrl: z.string().min(1, 'URL видео обязателен'),
 });
 
+const heroImageFormSchema = insertHeroImageSchema.extend({
+  title: z.string().min(1, 'Заголовок обязателен'),
+  imageUrl: z.string().min(1, 'URL изображения обязателен'),
+});
+
 type CertificateFormData = z.infer<typeof certificateFormSchema>;
 type VideoFormData = z.infer<typeof videoFormSchema>;
+type HeroImageFormData = z.infer<typeof heroImageFormSchema>;
 
 export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [activeTab, setActiveTab] = useState<AdminTab>('images');
@@ -62,6 +68,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [showCertificateForm, setShowCertificateForm] = useState(false);
   const [editingVideo, setEditingVideo] = useState<VideoInstruction | null>(null);
   const [showVideoForm, setShowVideoForm] = useState(false);
+  const [editingHeroImage, setEditingHeroImage] = useState<HeroImage | null>(null);
+  const [showHeroForm, setShowHeroForm] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
@@ -267,6 +275,116 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const handleDeleteVideo = (id: string) => {
     if (confirm('Вы уверены, что хотите удалить эту видеоинструкцию?')) {
       deleteVideoMutation.mutate(id);
+    }
+  };
+
+  // Hero image form
+  const heroImageForm = useForm<HeroImageFormData>({
+    resolver: zodResolver(heroImageFormSchema),
+    defaultValues: {
+      title: '',
+      imageUrl: '',
+      sortOrder: 0,
+      isActive: 1,
+    },
+  });
+
+  // Queries and mutations for hero images
+  const { data: heroImages = [], isLoading: heroImagesLoading } = useQuery<HeroImage[]>({
+    queryKey: ['/api/hero-images'],
+  });
+
+  const createHeroImageMutation = useMutation({
+    mutationFn: async (data: HeroImageFormData) => {
+      return apiRequest('POST', '/api/hero-images', data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/hero-images'] });
+      setShowHeroForm(false);
+      heroImageForm.reset();
+      toast({
+        title: 'Успешно',
+        description: 'Изображение героя добавлено',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось добавить изображение',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const updateHeroImageMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<HeroImageFormData> }) => {
+      return apiRequest('PUT', `/api/hero-images/${id}`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/hero-images'] });
+      setEditingHeroImage(null);
+      setShowHeroForm(false);
+      heroImageForm.reset();
+      toast({
+        title: 'Успешно',
+        description: 'Изображение героя обновлено',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось обновить изображение',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const deleteHeroImageMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return apiRequest('DELETE', `/api/hero-images/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/hero-images'] });
+      toast({
+        title: 'Успешно',
+        description: 'Изображение героя удалено',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось удалить изображение',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  // Hero image form handlers
+  const startEditingHeroImage = (heroImage: HeroImage) => {
+    setEditingHeroImage(heroImage);
+    setShowHeroForm(true);
+    heroImageForm.reset({
+      title: heroImage.title || '',
+      imageUrl: heroImage.imageUrl,
+      sortOrder: heroImage.sortOrder ?? 0,
+      isActive: heroImage.isActive ?? 1,
+    });
+  };
+
+  const handleSubmitHeroImage = (data: HeroImageFormData) => {
+    if (editingHeroImage) {
+      updateHeroImageMutation.mutate({
+        id: editingHeroImage.id,
+        data,
+      });
+    } else {
+      createHeroImageMutation.mutate(data);
+    }
+  };
+
+  const handleDeleteHeroImage = (id: string) => {
+    if (confirm('Вы уверены, что хотите удалить это изображение?')) {
+      deleteHeroImageMutation.mutate(id);
     }
   };
 
@@ -586,6 +704,17 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
             >
               <Play size={16} />
               Видео
+            </button>
+            <button
+              onClick={() => setActiveTab('hero')}
+              className={`px-6 py-3 text-sm font-medium transition-colors flex items-center gap-2 ${
+                activeTab === 'hero'
+                  ? 'border-b-2 border-[#E95D22] text-[#E95D22] bg-white'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Eye size={16} />
+              Герой
             </button>
             <button
               onClick={() => setActiveTab('catalog')}
@@ -1404,6 +1533,222 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* Hero Images Tab */}
+          {activeTab === 'hero' && (
+            <div className="p-6 space-y-6">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-semibold text-gray-900">Управление изображениями героя</h3>
+                <button
+                  onClick={() => {
+                    setEditingHeroImage(null);
+                    setShowHeroForm(true);
+                    heroImageForm.reset();
+                  }}
+                  className="bg-[#E95D22] text-white px-4 py-2 rounded-lg hover:bg-[#D84315] transition-colors flex items-center gap-2"
+                >
+                  <Plus size={16} />
+                  Добавить изображение
+                </button>
+              </div>
+
+              {/* Hero Images List */}
+              <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                {heroImagesLoading ? (
+                  <div className="p-8 text-center text-gray-500">Загрузка изображений...</div>
+                ) : heroImages.length === 0 ? (
+                  <div className="p-8 text-center text-gray-500">
+                    <Eye className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                    <p>Нет изображений героя</p>
+                    <p className="text-sm mt-2">Добавьте первое изображение для слайдера</p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                          <th className="text-left p-4 text-sm font-medium text-gray-900">Превью</th>
+                          <th className="text-left p-4 text-sm font-medium text-gray-900">Заголовок</th>
+                          <th className="text-left p-4 text-sm font-medium text-gray-900">Порядок</th>
+                          <th className="text-left p-4 text-sm font-medium text-gray-900">Статус</th>
+                          <th className="text-left p-4 text-sm font-medium text-gray-900">Дата</th>
+                          <th className="text-right p-4 text-sm font-medium text-gray-900">Действия</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {heroImages.map((heroImage, index) => (
+                          <tr key={heroImage.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                            <td className="p-4">
+                              <div className="w-20 h-15 bg-gray-100 rounded overflow-hidden">
+                                <img
+                                  src={heroImage.imageUrl}
+                                  alt={heroImage.title || 'Hero image'}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                    e.currentTarget.nextElementSibling.style.display = 'flex';
+                                  }}
+                                />
+                                <div className="w-full h-full bg-gray-200 items-center justify-center text-xs text-gray-500" style={{display: 'none'}}>
+                                  Нет фото
+                                </div>
+                              </div>
+                            </td>
+                            <td className="p-4">
+                              <div className="font-medium text-gray-900">{heroImage.title || 'Без заголовка'}</div>
+                              <div className="text-sm text-gray-500 truncate max-w-xs">{heroImage.imageUrl}</div>
+                            </td>
+                            <td className="p-4">
+                              <span className="text-sm text-gray-900">{heroImage.sortOrder}</span>
+                            </td>
+                            <td className="p-4">
+                              <span
+                                className={`px-2 py-1 text-xs font-medium rounded-full ${
+                                  heroImage.isActive === 1
+                                    ? 'bg-green-100 text-green-800'
+                                    : 'bg-red-100 text-red-800'
+                                }`}
+                              >
+                                {heroImage.isActive === 1 ? 'Активно' : 'Неактивно'}
+                              </span>
+                            </td>
+                            <td className="p-4 text-sm text-gray-500">
+                              {heroImage.createdAt ? new Date(heroImage.createdAt).toLocaleDateString('ru-RU') : 'N/A'}
+                            </td>
+                            <td className="p-4">
+                              <div className="flex justify-end gap-2">
+                                <button
+                                  onClick={() => startEditingHeroImage(heroImage)}
+                                  className="text-blue-600 hover:text-blue-700 p-1"
+                                >
+                                  <Edit size={16} />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteHeroImage(heroImage.id)}
+                                  className="text-red-600 hover:text-red-700 p-1"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+
+              {/* Hero Image Form Modal */}
+              {showHeroForm && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+                  <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4">
+                    <div className="p-6 border-b border-gray-200">
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {editingHeroImage ? 'Редактировать изображение' : 'Добавить изображение героя'}
+                      </h3>
+                    </div>
+
+                    <form onSubmit={heroImageForm.handleSubmit(handleSubmitHeroImage)} className="p-6 space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Заголовок *
+                        </label>
+                        <input
+                          {...heroImageForm.register('title')}
+                          type="text"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                          placeholder="Название изображения"
+                        />
+                        {heroImageForm.formState.errors.title && (
+                          <p className="text-red-600 text-sm mt-1">
+                            {heroImageForm.formState.errors.title.message}
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          URL изображения *
+                        </label>
+                        <input
+                          {...heroImageForm.register('imageUrl')}
+                          type="url"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                          placeholder="https://example.com/image.jpg"
+                        />
+                        {heroImageForm.formState.errors.imageUrl && (
+                          <p className="text-red-600 text-sm mt-1">
+                            {heroImageForm.formState.errors.imageUrl.message}
+                          </p>
+                        )}
+                        <p className="text-xs text-gray-500 mt-1">
+                          Рекомендуемый размер: 1920×1440 пикселей (соотношение 4:3)
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Порядок сортировки
+                          </label>
+                          <input
+                            {...heroImageForm.register('sortOrder', { valueAsNumber: true })}
+                            type="number"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                            placeholder="0"
+                            min="0"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Статус
+                          </label>
+                          <select
+                            {...heroImageForm.register('isActive', { valueAsNumber: true })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                          >
+                            <option value={1}>Активно</option>
+                            <option value={0}>Неактивно</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-end gap-3 pt-6 border-t border-gray-200">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowHeroForm(false);
+                            setEditingHeroImage(null);
+                            heroImageForm.reset();
+                          }}
+                          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                          Отмена
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={
+                            createHeroImageMutation.isPending || 
+                            updateHeroImageMutation.isPending
+                          }
+                          className="px-4 py-2 bg-[#E95D22] text-white rounded-lg hover:bg-[#D84315] transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <Save size={16} />
+                          {createHeroImageMutation.isPending || updateHeroImageMutation.isPending
+                            ? 'Сохранение...'
+                            : editingHeroImage
+                            ? 'Обновить'
+                            : 'Создать'}
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
