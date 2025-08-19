@@ -1666,8 +1666,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
 
                           for (const file of files) {
                             try {
-                              // Get upload URL
-                              const uploadResponse = await fetch('/api/objects/upload', {
+                              // Get hero-specific upload URL 
+                              const uploadResponse = await fetch('/api/hero-images/upload', {
                                 method: 'POST',
                                 headers: {
                                   'Content-Type': 'application/json',
@@ -1685,8 +1685,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                               });
 
                               if (uploadFileResponse.ok) {
-                                // Set ACL policy
-                                const aclResponse = await fetch('/api/hero-image-upload', {
+                                // Set ACL policy for hero images
+                                const aclResponse = await fetch('/api/hero-images/set-acl', {
                                   method: 'PUT',
                                   headers: {
                                     'Content-Type': 'application/json',
@@ -1697,10 +1697,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                 if (aclResponse.ok) {
                                   const aclData = await aclResponse.json();
                                   
-                                  // Create hero image with default values
+                                  // Create hero image with organized path in hero folder
                                   const heroImageData = {
                                     title: `Hero-${currentIndex + 1}`,
-                                    imageUrl: aclData.objectPath,
+                                    imageUrl: aclData.objectPath || uploadData.uploadURL,
                                     sortOrder: currentIndex,
                                     isActive: 1,
                                   };

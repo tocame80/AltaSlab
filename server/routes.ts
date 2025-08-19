@@ -114,6 +114,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Hero images upload route - organized in hero folder
+  app.post("/api/hero-images/upload", async (req, res) => {
+    const objectStorageService = new ObjectStorageService();
+    try {
+      const uploadURL = await objectStorageService.getHeroImageUploadURL();
+      res.json({ uploadURL });
+    } catch (error) {
+      console.error('Error getting hero image upload URL:', error);
+      res.status(500).json({ error: 'Failed to get hero image upload URL' });
+    }
+  });
+
   // Serve uploaded objects
   app.get("/objects/:objectPath(*)", async (req, res) => {
     const objectStorageService = new ObjectStorageService();
@@ -131,27 +143,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Set object ACL after upload
-  app.put("/api/hero-image-upload", async (req, res) => {
+  // Set object ACL after upload for hero images
+  app.put("/api/hero-images/set-acl", async (req, res) => {
     if (!req.body.imageURL) {
       return res.status(400).json({ error: "imageURL is required" });
     }
 
     try {
       const objectStorageService = new ObjectStorageService();
+      
+      // Normalize the path to ensure it goes to hero folder
+      const normalizedPath = objectStorageService.normalizeObjectEntityPath(req.body.imageURL);
+      // Replace 'uploads' with 'hero' for organized storage
+      const heroPath = normalizedPath.replace('/uploads/', '/hero/');
+      
       const objectPath = await objectStorageService.trySetObjectEntityAclPolicy(
         req.body.imageURL,
         {
-          owner: "admin", // For now, using admin as owner
-          visibility: "public", // Hero images should be public
+          owner: "admin",
+          visibility: "public",
         },
       );
 
       res.status(200).json({
-        objectPath: objectPath,
+        objectPath: heroPath,
+        originalPath: objectPath,
+        success: true,
       });
     } catch (error) {
-      console.error("Error setting hero image:", error);
+      console.error("Error setting hero image ACL:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   });
