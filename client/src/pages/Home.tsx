@@ -12,7 +12,7 @@ import Certificates from '@/components/Certificates';
 import FAQ from '@/components/FAQ';
 import VideoInstructions from '@/components/VideoInstructions';
 import AboutCompany from '@/components/AboutCompany';
-
+import Contacts from '@/components/Contacts';
 import Footer from '@/components/Footer';
 import { useState, useEffect } from 'react';
 import { Collection } from '@/types';
@@ -64,6 +64,7 @@ export default function Home() {
       <FAQ />
       <VideoInstructions />
       <AboutCompany />
+      <Contacts />
       <Footer />
       
       {/* Back to Top Button */}
