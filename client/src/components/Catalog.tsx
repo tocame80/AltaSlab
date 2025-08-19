@@ -167,10 +167,13 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     // Sort products
     if (sortBy === 'price-asc') {
       filtered.sort((a, b) => a.price - b.price);
+      console.log('Сортировка по цене (возрастание):', filtered.slice(0, 3).map(p => ({ name: p.design, price: p.price })));
     } else if (sortBy === 'price-desc') {
       filtered.sort((a, b) => b.price - a.price);
+      console.log('Сортировка по цене (убывание):', filtered.slice(0, 3).map(p => ({ name: p.design, price: p.price })));
     } else if (sortBy === 'name') {
       filtered.sort((a, b) => a.design.localeCompare(b.design));
+      console.log('Сортировка по названию:', filtered.slice(0, 3).map(p => ({ name: p.design, price: p.price })));
     }
 
     return filtered;
