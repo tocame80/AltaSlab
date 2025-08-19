@@ -91,10 +91,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
 
   const createCertificateMutation = useMutation({
     mutationFn: async (data: CertificateFormData) => {
-      return apiRequest('/api/certificates', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      return apiRequest('POST', '/api/certificates', data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/certificates'] });
@@ -116,10 +113,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
 
   const updateCertificateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<CertificateFormData> }) => {
-      return apiRequest(`/api/certificates/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-      });
+      return apiRequest('PUT', `/api/certificates/${id}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/certificates'] });
@@ -142,9 +136,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
 
   const deleteCertificateMutation = useMutation({
     mutationFn: async (id: string) => {
-      return apiRequest(`/api/certificates/${id}`, {
-        method: 'DELETE',
-      });
+      return apiRequest('DELETE', `/api/certificates/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/certificates'] });
@@ -171,7 +163,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       duration: '',
       category: '',
       videoUrl: '',
-      imageUrl: '',
+      thumbnailUrl: '',
       sortOrder: 0,
     },
   });
@@ -183,10 +175,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
 
   const createVideoMutation = useMutation({
     mutationFn: async (data: VideoFormData) => {
-      return apiRequest('/api/video-instructions', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      return apiRequest('POST', '/api/video-instructions', data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/video-instructions'] });
@@ -208,10 +197,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
 
   const updateVideoMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<VideoFormData> }) => {
-      return apiRequest(`/api/video-instructions/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-      });
+      return apiRequest('PUT', `/api/video-instructions/${id}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/video-instructions'] });
@@ -234,9 +220,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
 
   const deleteVideoMutation = useMutation({
     mutationFn: async (id: string) => {
-      return apiRequest(`/api/video-instructions/${id}`, {
-        method: 'DELETE',
-      });
+      return apiRequest('DELETE', `/api/video-instructions/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/video-instructions'] });
@@ -263,9 +247,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       description: video.description,
       duration: video.duration,
       category: video.category,
-      videoUrl: video.videoUrl,
-      imageUrl: video.imageUrl || '',
-      sortOrder: video.sortOrder,
+      videoUrl: video.videoUrl || '',
+      thumbnailUrl: video.thumbnailUrl || '',
+      sortOrder: video.sortOrder ?? 0,
     });
   };
 
@@ -1107,7 +1091,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           URL изображения
                         </label>
                         <input
-                          {...videoForm.register('imageUrl')}
+                          {...videoForm.register('thumbnailUrl')}
                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
                           placeholder="https://..."
                         />
