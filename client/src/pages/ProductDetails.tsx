@@ -219,20 +219,7 @@ export default function ProductDetails() {
         </div>
       )}
 
-      {/* Breadcrumb */}
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <a href="/" className="hover:text-[#E95D22]">Главная</a>
-            <span>/</span>
-            <a href="/#catalog" className="hover:text-[#E95D22]">Каталог</a>
-            <span>/</span>
-            <span className="text-gray-900">{getCollectionDisplayName()}</span>
-            <span>/</span>
-            <span className="text-gray-900">{getProductDisplayName()}</span>
-          </div>
-        </div>
-      </div>
+
 
       <div className="container mx-auto px-6 py-8">
         {/* Back Button */}
