@@ -1,6 +1,6 @@
 import { useState, useContext, useMemo, useEffect } from 'react';
 import { useRoute } from 'wouter';
-import { ArrowLeft, Heart, ShoppingCart, Calculator, Download, Share2, Eye, Maximize2, CheckCircle, Clock, Truck, Star, Mail, Search, X, ZoomIn, Save } from 'lucide-react';
+import { ArrowLeft, Heart, ShoppingCart, Calculator, Download, Share2, Eye, Maximize2, CheckCircle, Clock, Truck, Mail, Search, X, ZoomIn, Save } from 'lucide-react';
 import { products } from '@/data/products';
 import { FavoritesContext } from '@/contexts/FavoritesContext';
 import { Collection } from '@/types';
@@ -505,8 +505,7 @@ export default function ProductDetails() {
               {[
                 { id: 'description', label: 'Описание' },
                 { id: 'specifications', label: 'Характеристики' },
-                { id: 'installation', label: 'Монтаж' },
-                { id: 'reviews', label: 'Отзывы (47)' }
+                { id: 'installation', label: 'Монтаж' }
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -654,44 +653,7 @@ export default function ProductDetails() {
               </div>
             )}
 
-            {activeTab === 'reviews' && (
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-lg font-semibold text-gray-900">Отзывы покупателей</h4>
-                  <button className="bg-[#E95D22] text-white px-4 py-2 rounded-lg hover:bg-[#d54a1a] transition-colors">
-                    Написать отзыв
-                  </button>
-                </div>
-                
-                <div className="grid gap-6">
-                  {[1, 2, 3].map((review) => (
-                    <div key={review} className="bg-white rounded-lg p-6 shadow-sm">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
-                          <div>
-                            <div className="font-semibold text-gray-900">Покупатель {review}</div>
-                            <div className="text-sm text-gray-500">15 дней назад</div>
-                          </div>
-                        </div>
-                        <div className="flex items-center">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star
-                              key={star}
-                              size={14}
-                              className={`${star <= 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                      <p className="text-gray-700">
-                        Отличное качество панелей! Легко монтируются, выглядят очень стильно. Рекомендую!
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+
           </div>
         </div>
       </div>
