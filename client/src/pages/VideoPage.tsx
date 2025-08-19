@@ -52,10 +52,10 @@ export default function VideoPage() {
 
   const videoCategories = [
     { id: 'all', name: 'Все видео' },
-    { id: 'installation', name: 'Монтаж' },
-    { id: 'preparation', name: 'Подготовка' },
-    { id: 'care', name: 'Уход' },
-    { id: 'review', name: 'Обзоры' }
+    { id: 'подготовка', name: 'Подготовка' },
+    { id: 'монтаж', name: 'Монтаж' },
+    { id: 'уход', name: 'Уход' },
+    { id: 'обзоры', name: 'Обзоры' }
   ];
 
   const filteredVideos = selectedCategory === 'all' 

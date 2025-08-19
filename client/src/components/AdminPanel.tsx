@@ -1031,10 +1031,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
                         >
                           <option value="">Выберите категорию</option>
-                          <option value="установка">Установка</option>
                           <option value="подготовка">Подготовка</option>
-                          <option value="инструменты">Инструменты</option>
-                          <option value="советы">Советы</option>
+                          <option value="монтаж">Монтаж</option>
+                          <option value="уход">Уход</option>
+                          <option value="обзоры">Обзоры</option>
                         </select>
                         {videoForm.formState.errors.category && (
                           <p className="text-red-600 text-sm mt-1">{videoForm.formState.errors.category.message}</p>
