@@ -8,8 +8,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
-import { ObjectUploader } from './ObjectUploader';
-import type { UploadResult } from '@uppy/core';
 
 interface AdminPanelProps {
   isOpen: boolean;
@@ -1709,65 +1707,69 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             </div>
                           )}
                           
-                          {/* File uploader */}
-                          <ObjectUploader
-                            maxNumberOfFiles={1}
-                            maxFileSize={10485760} // 10MB
-                            onGetUploadParameters={async () => {
-                              const response = await fetch('/api/objects/upload', {
-                                method: 'POST',
-                                headers: {
-                                  'Content-Type': 'application/json',
-                                },
-                              });
-                              const data = await response.json();
-                              return {
-                                method: 'PUT' as const,
-                                url: data.uploadURL,
-                              };
-                            }}
-                            onComplete={async (result: UploadResult<Record<string, unknown>, Record<string, unknown>>) => {
-                              if (result.successful && result.successful.length > 0) {
-                                const uploadedFile = result.successful[0];
-                                const uploadURL = uploadedFile.uploadURL;
-                                
-                                // Set ACL policy
+                          {/* Simple file uploader */}
+                          <label className="w-full bg-[#E95D22] hover:bg-[#D84315] text-white px-4 py-2 rounded-lg cursor-pointer transition-colors flex items-center gap-2 justify-center">
+                            <Upload size={16} />
+                            <span>Загрузить изображение</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+
                                 try {
-                                  const response = await fetch('/api/hero-image-upload', {
-                                    method: 'PUT',
+                                  // Get upload URL
+                                  const uploadResponse = await fetch('/api/objects/upload', {
+                                    method: 'POST',
                                     headers: {
                                       'Content-Type': 'application/json',
                                     },
-                                    body: JSON.stringify({ imageURL: uploadURL }),
                                   });
-                                  
-                                  if (response.ok) {
-                                    const data = await response.json();
-                                    heroImageForm.setValue('imageUrl', data.objectPath);
-                                    toast({
-                                      title: 'Успешно',
-                                      description: 'Изображение загружено',
+                                  const uploadData = await uploadResponse.json();
+
+                                  // Upload file directly
+                                  const uploadFileResponse = await fetch(uploadData.uploadURL, {
+                                    method: 'PUT',
+                                    body: file,
+                                    headers: {
+                                      'Content-Type': file.type,
+                                    },
+                                  });
+
+                                  if (uploadFileResponse.ok) {
+                                    // Set ACL policy
+                                    const aclResponse = await fetch('/api/hero-image-upload', {
+                                      method: 'PUT',
+                                      headers: {
+                                        'Content-Type': 'application/json',
+                                      },
+                                      body: JSON.stringify({ imageURL: uploadData.uploadURL }),
                                     });
-                                  } else {
-                                    throw new Error('Failed to set ACL');
+
+                                    if (aclResponse.ok) {
+                                      const aclData = await aclResponse.json();
+                                      heroImageForm.setValue('imageUrl', aclData.objectPath);
+                                      toast({
+                                        title: 'Успешно',
+                                        description: 'Изображение загружено',
+                                      });
+                                    }
                                   }
                                 } catch (error) {
-                                  console.error('Error setting ACL:', error);
+                                  console.error('Upload error:', error);
                                   toast({
                                     title: 'Ошибка',
-                                    description: 'Не удалось настроить изображение',
+                                    description: 'Не удалось загрузить изображение',
                                     variant: 'destructive',
                                   });
                                 }
-                              }
-                            }}
-                            buttonClassName="w-full"
-                          >
-                            <div className="flex items-center gap-2 justify-center">
-                              <Upload size={16} />
-                              <span>Загрузить изображение</span>
-                            </div>
-                          </ObjectUploader>
+                                // Reset input
+                                e.target.value = '';
+                              }}
+                            />
+                          </label>
                           
                           {/* Manual URL input */}
                           <div className="relative">
