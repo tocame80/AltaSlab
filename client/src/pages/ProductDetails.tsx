@@ -360,58 +360,42 @@ export default function ProductDetails() {
             </div>
           </div>
 
-          {/* Thumbnail Gallery */}
-          {gallery.length > 1 && (
-            <div className="flex gap-3 justify-center overflow-x-auto pb-2">
-              {gallery.map((image, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentImageIndex(index)}
-                  className={`flex-shrink-0 w-24 h-12 rounded-lg overflow-hidden border-2 transition-all ${
-                    index === currentImageIndex ? 'border-[#E95D22]' : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <img
-                    src={image}
-                    alt={`${getProductDisplayName()} - изображение ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
+          {/* Thumbnail Gallery with Product Info */}
+          <div className="relative min-h-[60px]">
+            {gallery.length > 1 && (
+              <div className="flex gap-3 justify-center overflow-x-auto pb-2">
+                {gallery.map((image, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentImageIndex(index)}
+                    className={`flex-shrink-0 w-24 h-12 rounded-lg overflow-hidden border-2 transition-all ${
+                      index === currentImageIndex ? 'border-[#E95D22]' : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <img
+                      src={image}
+                      alt={`${getProductDisplayName()} - изображение ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+            
+            {/* Product Info Overlay */}
+            <div className={`absolute ${gallery.length > 1 ? 'bottom-2 left-2' : 'bottom-0 left-0'} bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-sm`}>
+              <div className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                {getCollectionDisplayName()}
+              </div>
+              <div className="text-lg font-bold text-gray-900">
+                {getProductDisplayName()}
+              </div>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Product Information */}
         <div className="space-y-8">
-            {/* Header */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                  {getCollectionDisplayName()}
-                </span>
-                <span className="text-sm text-gray-400 font-mono">
-                  Артикул: {product.barcode}
-                </span>
-              </div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                {getProductDisplayName()}
-              </h1>
-              
-              {/* Rating */}
-              <div className="flex items-center gap-2 mb-4">
-                <div className="flex items-center">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star
-                      key={star}
-                      size={16}
-                      className={`${star <= 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                    />
-                  ))}
-                </div>
-                <span className="text-sm text-gray-600">(47 отзывов)</span>
-              </div>
-            </div>
 
             {/* Pricing */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
