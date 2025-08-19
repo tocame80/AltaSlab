@@ -41,10 +41,11 @@ const getCollectionFolder = (collection: string): string => {
 // Import specific product images
 import zakkat8934_1 from './concrete/8934-1.jpg';
 import zakkat8934_2 from './concrete/8934-2.jpg';
+import zakkat8934_3 from './concrete/8934-3.png';
 
 // Product-specific image mapping (add as images become available)
 const specificImageMap: Record<string, string[]> = {
-  '8934': [zakkat8934_1, zakkat8934_2, ...defaultImages], // Закат 300x600
+  '8934': [zakkat8934_1, zakkat8934_2, zakkat8934_3, ...defaultImages], // Закат 300x600
   // '8938': ['8938-1.jpg', '8938-2.jpg'], // Закат 600x1200  
   // '8930': ['8930-1.jpg', '8930-2.jpg', '8930-3.jpg'], // Метеорит 300x600
   // etc.
