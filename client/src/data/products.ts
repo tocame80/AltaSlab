@@ -1,6 +1,7 @@
 // Generated from Excel file
 import { Product } from '../types';
 import altaSlabLogo from '../assets/alta-slab-logo.jpg';
+import { getProductGallery, getCollectionGallery } from '../assets/products/imageMap';
 
 export const products: Product[] = [
   {
@@ -20,11 +21,7 @@ export const products: Product[] = [
     color: 'Закат',
     barcode: '4650218304115',
     packageBarcode: '4650218304122',
-    gallery: [
-      altaSlabLogo,
-      'https://images.unsplash.com/photo-1615971677499-5467cbab01e4?w=600&h=400&fit=crop',
-      'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop'
-    ],
+    gallery: getProductGallery('8934'),
     specifications: {
       thickness: '2,4мм',
       weight: '8,5 кг/м²',
@@ -56,10 +53,7 @@ export const products: Product[] = [
     color: 'Закат',
     barcode: '4650218304092',
     packageBarcode: '4650218304108',
-    gallery: [
-      altaSlabLogo,
-      'https://images.unsplash.com/photo-1615971677499-5467cbab01e4?w=600&h=400&fit=crop'
-    ],
+    gallery: getProductGallery('8938'),
     availability: {
       inStock: false,
       deliveryTime: '7-10 дней',
@@ -83,11 +77,7 @@ export const products: Product[] = [
     color: 'Метеорит',
     barcode: '4650218304177',
     packageBarcode: '4650218304184',
-    gallery: [
-      altaSlabLogo,
-      'https://images.unsplash.com/photo-1615880484746-a3990926ab05?w=600&h=400&fit=crop',
-      'https://images.unsplash.com/photo-1585128792020-803d29415281?w=600&h=400&fit=crop'
-    ]
+    gallery: getProductGallery('8930')
   },
   {
     id: '8931',
@@ -106,11 +96,7 @@ export const products: Product[] = [
     color: 'Метеорит',
     barcode: '4650218304238',
     packageBarcode: '4650218304245',
-    gallery: [
-      altaSlabLogo,
-      'https://images.unsplash.com/photo-1615880484746-a3990926ab05?w=600&h=400&fit=crop',
-      'https://images.unsplash.com/photo-1585128792020-803d29415281?w=600&h=400&fit=crop'
-    ]
+    gallery: getProductGallery('8931')
   },
   {
     id: '8936',
