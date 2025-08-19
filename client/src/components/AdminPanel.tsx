@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit, Play } from 'lucide-react';
+import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit, Play, Database, Download } from 'lucide-react';
 import { products } from '../data/products';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Certificate, insertCertificateSchema, VideoInstruction, insertVideoInstructionSchema } from '@shared/schema';
@@ -27,7 +27,7 @@ interface ExistingImage {
   url: string;
 }
 
-type AdminTab = 'images' | 'certificates' | 'videos';
+type AdminTab = 'images' | 'certificates' | 'videos' | 'catalog';
 
 const certificateFormSchema = insertCertificateSchema.extend({
   // Form validation schema with required fields
@@ -602,6 +602,17 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
             >
               <Play size={16} />
               Видео
+            </button>
+            <button
+              onClick={() => setActiveTab('catalog')}
+              className={`px-6 py-3 text-sm font-medium transition-colors flex items-center gap-2 ${
+                activeTab === 'catalog'
+                  ? 'border-b-2 border-[#E95D22] text-[#E95D22] bg-white'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Database size={16} />
+              Каталог
             </button>
           </div>
         </div>
@@ -1190,6 +1201,165 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     ))}
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+
+          {/* Catalog Tab */}
+          {activeTab === 'catalog' && (
+            <div className="p-6">
+              <div className="max-w-4xl mx-auto">
+                <h3 className="text-xl font-semibold text-gray-900 mb-6">Управление каталогом</h3>
+                
+                <div className="grid md:grid-cols-2 gap-8">
+                  {/* Export Section */}
+                  <div className="bg-gray-50 rounded-lg p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Download className="w-6 h-6 text-[#E95D22]" />
+                      <h4 className="text-lg font-semibold text-gray-900">Выгрузка каталога</h4>
+                    </div>
+                    
+                    <p className="text-gray-600 mb-6">
+                      Экспортируйте каталог товаров в различных форматах для обмена данными или резервного копирования.
+                    </p>
+                    
+                    <div className="space-y-4">
+                      <button className="w-full bg-[#E95D22] text-white px-4 py-3 rounded-lg hover:bg-[#d54a1a] transition-colors flex items-center justify-center gap-2">
+                        <Download size={16} />
+                        Скачать Excel (.xlsx)
+                      </button>
+                      
+                      <button className="w-full bg-gray-600 text-white px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors flex items-center justify-center gap-2">
+                        <Download size={16} />
+                        Скачать CSV
+                      </button>
+                      
+                      <button className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                        <Download size={16} />
+                        Скачать JSON
+                      </button>
+                    </div>
+                    
+                    <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                      <h5 className="font-medium text-blue-900 mb-2">Что включается в выгрузку:</h5>
+                      <ul className="text-sm text-blue-800 space-y-1">
+                        <li>• Полная информация о товарах</li>
+                        <li>• Цены и характеристики</li>
+                        <li>• Ссылки на изображения</li>
+                        <li>• Категории и коллекции</li>
+                        <li>• Статус наличия</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* Import Section */}
+                  <div className="bg-gray-50 rounded-lg p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Upload className="w-6 h-6 text-[#E95D22]" />
+                      <h4 className="text-lg font-semibold text-gray-900">Загрузка каталога</h4>
+                    </div>
+                    
+                    <p className="text-gray-600 mb-6">
+                      Импортируйте данные каталога из файла для массового обновления товаров.
+                    </p>
+                    
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-[#E95D22] transition-colors">
+                      <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-600 mb-2">Перетащите файл сюда или</p>
+                      <button className="text-[#E95D22] hover:text-[#d54a1a] font-medium">
+                        выберите файл
+                      </button>
+                      <p className="text-xs text-gray-500 mt-2">
+                        Поддерживаются форматы: .xlsx, .csv, .json
+                      </p>
+                    </div>
+                    
+                    <div className="mt-6 p-4 bg-yellow-50 rounded-lg">
+                      <h5 className="font-medium text-yellow-900 mb-2">Важные замечания:</h5>
+                      <ul className="text-sm text-yellow-800 space-y-1">
+                        <li>• Создайте резервную копию перед загрузкой</li>
+                        <li>• Файл должен соответствовать шаблону</li>
+                        <li>• Существующие товары будут обновлены</li>
+                        <li>• Новые товары будут добавлены</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="mt-4 flex gap-3">
+                      <button className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm">
+                        Скачать шаблон
+                      </button>
+                      <button className="flex-1 bg-[#E95D22] text-white px-4 py-2 rounded-lg hover:bg-[#d54a1a] transition-colors text-sm" disabled>
+                        Загрузить файл
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Statistics Section */}
+                <div className="mt-8 bg-white border border-gray-200 rounded-lg p-6">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Статистика каталога</h4>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-[#E95D22] mb-1">
+                        {products.filter(p => p.category !== 'accessories').length}
+                      </div>
+                      <div className="text-sm text-gray-600">Панели</div>
+                    </div>
+                    
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-[#E95D22] mb-1">
+                        {products.filter(p => p.category === 'accessories').length}
+                      </div>
+                      <div className="text-sm text-gray-600">Аксессуары</div>
+                    </div>
+                    
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-[#E95D22] mb-1">
+                        {new Set(products.map(p => p.collection)).size}
+                      </div>
+                      <div className="text-sm text-gray-600">Коллекции</div>
+                    </div>
+                    
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-[#E95D22] mb-1">
+                        {products.filter(p => p.isPremium).length}
+                      </div>
+                      <div className="text-sm text-gray-600">Премиум</div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Recent Activity */}
+                <div className="mt-8 bg-white border border-gray-200 rounded-lg p-6">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Последние операции</h4>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                      <div className="flex items-center gap-3">
+                        <Download className="w-4 h-4 text-green-600" />
+                        <span className="text-sm text-gray-900">Выгрузка каталога Excel</span>
+                      </div>
+                      <span className="text-xs text-gray-500">2 часа назад</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                      <div className="flex items-center gap-3">
+                        <Upload className="w-4 h-4 text-blue-600" />
+                        <span className="text-sm text-gray-900">Загрузка обновлений цен</span>
+                      </div>
+                      <span className="text-xs text-gray-500">1 день назад</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between py-2">
+                      <div className="flex items-center gap-3">
+                        <Download className="w-4 h-4 text-green-600" />
+                        <span className="text-sm text-gray-900">Экспорт для поставщика</span>
+                      </div>
+                      <span className="text-xs text-gray-500">3 дня назад</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
