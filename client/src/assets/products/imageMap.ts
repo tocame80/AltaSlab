@@ -3,6 +3,7 @@
 
 // Import concrete collection images
 import altaSlabSample from './concrete/alta-slab-sample.jpg';
+import textureClose from './concrete/texture-close.png';
 
 // Import other collections (to be added)
 // import fabricSample from './fabric/sample.jpg';
@@ -20,11 +21,11 @@ const defaultImages = [
 // Product image galleries mapping
 export const productImageMap: Record<string, string[]> = {
   // Concrete collection (Магия Бетона)
-  '8934': [altaSlabSample, ...defaultImages], // Закат
-  '8938': [altaSlabSample, ...defaultImages], // Закат большой
-  '8930': [altaSlabSample, ...defaultImages], // Метеорит
-  '8931': [altaSlabSample, ...defaultImages], // Метеорит большой
-  '8936': [altaSlabSample, ...defaultImages], // Комета
+  '8934': [altaSlabSample, textureClose, ...defaultImages], // Закат
+  '8938': [altaSlabSample, textureClose, ...defaultImages], // Закат большой
+  '8930': [altaSlabSample, textureClose, ...defaultImages], // Метеорит
+  '8931': [altaSlabSample, textureClose, ...defaultImages], // Метеорит большой
+  '8936': [altaSlabSample, textureClose, ...defaultImages], // Комета
   
   // Add more mappings as images become available
   // '8937': [fabricSample, ...defaultImages], // Fabric collection
