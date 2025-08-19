@@ -46,13 +46,15 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     };
 
     const handleShowSearch = () => {
-      // Just focus on search input since it's always visible now
+      // Focus on search input and ensure catalog is visible
       setTimeout(() => {
         const searchInput = document.querySelector('#catalog-search-input') as HTMLInputElement;
         if (searchInput) {
           searchInput.focus();
+          // Optional: scroll the search input into view if needed
+          searchInput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
-      }, 100);
+      }, 400); // Increased timeout to ensure scrolling is complete
     };
 
     window.addEventListener('search-products', handleSearch);

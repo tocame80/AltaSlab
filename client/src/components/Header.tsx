@@ -35,18 +35,22 @@ export default function Header() {
   };
 
   const handleSearchClick = () => {
-    // Navigate to home page and scroll to catalog
     if (window.location.pathname !== "/") {
+      // If not on home page, navigate to home page with catalog hash
       window.location.href = "/#catalog";
     } else {
+      // If on home page, scroll to catalog section
       const element = document.getElementById('catalog');
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+        // Scroll to top of catalog section
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // Dispatch event to focus search input after scrolling
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent("show-catalog-search"));
+        }, 300);
       }
     }
-    
-    // Dispatch event to show search in catalog
-    window.dispatchEvent(new CustomEvent("show-catalog-search"));
   };
 
   return (
