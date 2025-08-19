@@ -505,7 +505,11 @@ export default function ProductDetails() {
               {[
                 { id: 'description', label: 'Описание' },
                 { id: 'specifications', label: 'Характеристики' },
-                { id: 'installation', label: 'Монтаж' }
+                { id: 'installation', label: 'Монтаж' },
+                { id: 'certificates', label: 'Сертификаты' },
+                { id: 'faq', label: 'FAQ' },
+                { id: 'video', label: 'Видеоинструкция' },
+                { id: 'feedback', label: 'Обратная связь' }
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -653,6 +657,392 @@ export default function ProductDetails() {
               </div>
             )}
 
+            {activeTab === 'certificates' && (
+              <div className="space-y-8">
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Документы качества</h4>
+                    <div className="space-y-3">
+                      <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-medium text-gray-900">Сертификат соответствия ГОСТ</div>
+                            <div className="text-sm text-gray-600">Действителен до: 15.06.2025</div>
+                          </div>
+                          <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors">
+                            <Download size={20} />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-medium text-gray-900">Декларация соответствия ТР ТС</div>
+                            <div className="text-sm text-gray-600">Действительна до: 22.08.2025</div>
+                          </div>
+                          <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors">
+                            <Download size={20} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Международные сертификаты</h4>
+                    <div className="space-y-3">
+                      <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-medium text-gray-900">ISO 14001 (Экологический менеджмент)</div>
+                            <div className="text-sm text-gray-600">Международный стандарт</div>
+                          </div>
+                          <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors">
+                            <Download size={20} />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-medium text-gray-900">CE Marking</div>
+                            <div className="text-sm text-gray-600">Европейское соответствие</div>
+                          </div>
+                          <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors">
+                            <Download size={20} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Пожарная безопасность</h4>
+                    <div className="space-y-3">
+                      <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-medium text-gray-900">Сертификат пожарной безопасности</div>
+                            <div className="text-sm text-gray-600">Класс КМ2 по НПБ 244-97</div>
+                          </div>
+                          <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors">
+                            <Download size={20} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Гарантия</h4>
+                    <div className="space-y-3">
+                      <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-medium text-gray-900">Гарантийный талон</div>
+                            <div className="text-sm text-gray-600">Гарантия 15 лет от производителя</div>
+                          </div>
+                          <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors">
+                            <Download size={20} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'faq' && (
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  <h4 className="text-lg font-semibold text-gray-900">Технические вопросы</h4>
+                  <div className="space-y-3">
+                    <details className="bg-white border border-gray-200 rounded-lg">
+                      <summary className="p-4 cursor-pointer font-medium text-gray-900 hover:bg-gray-50">
+                        Можно ли укладывать панели на неровную поверхность?
+                      </summary>
+                      <div className="p-4 pt-0 text-gray-700">
+                        Поверхность должна быть ровной с перепадами не более 2мм на 1м. При необходимости выровняйте основание шпаклевкой или грунтовкой.
+                      </div>
+                    </details>
+                    <details className="bg-white border border-gray-200 rounded-lg">
+                      <summary className="p-4 cursor-pointer font-medium text-gray-900 hover:bg-gray-50">
+                        Какой клей лучше использовать для монтажа?
+                      </summary>
+                      <div className="p-4 pt-0 text-gray-700">
+                        Рекомендуем использовать специальный клей для SPC панелей из нашего каталога. Он обеспечивает надежное сцепление и долговечность крепления.
+                      </div>
+                    </details>
+                    <details className="bg-white border border-gray-200 rounded-lg">
+                      <summary className="p-4 cursor-pointer font-medium text-gray-900 hover:bg-gray-50">
+                        Можно ли использовать панели во влажных помещениях?
+                      </summary>
+                      <div className="p-4 pt-0 text-gray-700">
+                        Да, SPC панели обладают высокой влагостойкостью и подходят для ванных комнат, кухонь и других влажных помещений.
+                      </div>
+                    </details>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="text-lg font-semibold text-gray-900">Уход и эксплуатация</h4>
+                  <div className="space-y-3">
+                    <details className="bg-white border border-gray-200 rounded-lg">
+                      <summary className="p-4 cursor-pointer font-medium text-gray-900 hover:bg-gray-50">
+                        Как правильно ухаживать за панелями?
+                      </summary>
+                      <div className="p-4 pt-0 text-gray-700">
+                        Для ухода достаточно влажной уборки обычными моющими средствами. Избегайте абразивных средств и растворителей.
+                      </div>
+                    </details>
+                    <details className="bg-white border border-gray-200 rounded-lg">
+                      <summary className="p-4 cursor-pointer font-medium text-gray-900 hover:bg-gray-50">
+                        Можно ли устанавливать панели в детской комнате?
+                      </summary>
+                      <div className="p-4 pt-0 text-gray-700">
+                        Да, панели абсолютно безопасны для детей. Они не выделяют вредных веществ и имеют экологические сертификаты.
+                      </div>
+                    </details>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="text-lg font-semibold text-gray-900">Доставка и оплата</h4>
+                  <div className="space-y-3">
+                    <details className="bg-white border border-gray-200 rounded-lg">
+                      <summary className="p-4 cursor-pointer font-medium text-gray-900 hover:bg-gray-50">
+                        Какие способы доставки доступны?
+                      </summary>
+                      <div className="p-4 pt-0 text-gray-700">
+                        Доступна доставка курьером по Москве и области, а также транспортными компаниями по всей России. Подробности уточняйте у менеджера.
+                      </div>
+                    </details>
+                    <details className="bg-white border border-gray-200 rounded-lg">
+                      <summary className="p-4 cursor-pointer font-medium text-gray-900 hover:bg-gray-50">
+                        Можно ли вернуть товар если он не подошел?
+                      </summary>
+                      <div className="p-4 pt-0 text-gray-700">
+                        Да, возврат возможен в течение 14 дней при сохранении товарного вида и упаковки. Стоимость обратной доставки оплачивает покупатель.
+                      </div>
+                    </details>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'video' && (
+              <div className="space-y-8">
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Инструкции по монтажу</h4>
+                    <div className="space-y-4">
+                      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                        <div className="aspect-video bg-gray-100 flex items-center justify-center">
+                          <div className="text-center">
+                            <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
+                              <Search size={24} className="text-white" />
+                            </div>
+                            <div className="text-sm text-gray-600">Видео недоступно</div>
+                          </div>
+                        </div>
+                        <div className="p-4">
+                          <div className="font-medium text-gray-900">Подготовка поверхности и разметка</div>
+                          <div className="text-sm text-gray-600 mt-1">Продолжительность: 8:30</div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                        <div className="aspect-video bg-gray-100 flex items-center justify-center">
+                          <div className="text-center">
+                            <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
+                              <Search size={24} className="text-white" />
+                            </div>
+                            <div className="text-sm text-gray-600">Видео недоступно</div>
+                          </div>
+                        </div>
+                        <div className="p-4">
+                          <div className="font-medium text-gray-900">Техника нанесения клея и укладки</div>
+                          <div className="text-sm text-gray-600 mt-1">Продолжительность: 12:15</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Обзоры коллекций</h4>
+                    <div className="space-y-4">
+                      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                        <div className="aspect-video bg-gray-100 flex items-center justify-center">
+                          <div className="text-center">
+                            <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
+                              <Search size={24} className="text-white" />
+                            </div>
+                            <div className="text-sm text-gray-600">Видео недоступно</div>
+                          </div>
+                        </div>
+                        <div className="p-4">
+                          <div className="font-medium text-gray-900">Коллекция "Магия Бетона" - детальный обзор</div>
+                          <div className="text-sm text-gray-600 mt-1">Продолжительность: 6:45</div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                        <div className="aspect-video bg-gray-100 flex items-center justify-center">
+                          <div className="text-center">
+                            <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
+                              <Search size={24} className="text-white" />
+                            </div>
+                            <div className="text-sm text-gray-600">Видео недоступно</div>
+                          </div>
+                        </div>
+                        <div className="p-4">
+                          <div className="font-medium text-gray-900">Сравнение всех коллекций АЛЬТА СЛЭБ</div>
+                          <div className="text-sm text-gray-600 mt-1">Продолжительность: 15:20</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Примеры применения</h4>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                      <div className="aspect-video bg-gray-100 flex items-center justify-center">
+                        <div className="text-center">
+                          <div className="w-12 h-12 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
+                            <Search size={16} className="text-white" />
+                          </div>
+                          <div className="text-xs text-gray-600">Видео недоступно</div>
+                        </div>
+                      </div>
+                      <div className="p-3">
+                        <div className="font-medium text-gray-900 text-sm">Современная гостиная</div>
+                        <div className="text-xs text-gray-600 mt-1">4:30</div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                      <div className="aspect-video bg-gray-100 flex items-center justify-center">
+                        <div className="text-center">
+                          <div className="w-12 h-12 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
+                            <Search size={16} className="text-white" />
+                          </div>
+                          <div className="text-xs text-gray-600">Видео недоступно</div>
+                        </div>
+                      </div>
+                      <div className="p-3">
+                        <div className="font-medium text-gray-900 text-sm">Офисные интерьеры</div>
+                        <div className="text-xs text-gray-600 mt-1">7:15</div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                      <div className="aspect-video bg-gray-100 flex items-center justify-center">
+                        <div className="text-center">
+                          <div className="w-12 h-12 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
+                            <Search size={16} className="text-white" />
+                          </div>
+                          <div className="text-xs text-gray-600">Видео недоступно</div>
+                        </div>
+                      </div>
+                      <div className="p-3">
+                        <div className="font-medium text-gray-900 text-sm">Ванная и кухня</div>
+                        <div className="text-xs text-gray-600 mt-1">5:50</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'feedback' && (
+              <div className="space-y-8">
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Связь с менеджером</h4>
+                    <form className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Ваше имя</label>
+                        <input 
+                          type="text" 
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent" 
+                          placeholder="Введите ваше имя"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Телефон</label>
+                        <input 
+                          type="tel" 
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent" 
+                          placeholder="+7 (___) ___-__-__"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Сообщение</label>
+                        <textarea 
+                          rows={4} 
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent" 
+                          placeholder="Опишите ваш вопрос или пожелание"
+                        ></textarea>
+                      </div>
+                      <button className="w-full bg-[#E95D22] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#d54a1a] transition-colors">
+                        Отправить сообщение
+                      </button>
+                    </form>
+                  </div>
+                  
+                  <div className="space-y-6">
+                    <div>
+                      <h4 className="text-lg font-semibold text-gray-900 mb-4">Техническая поддержка</h4>
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                          <Mail size={20} className="text-[#E95D22]" />
+                          <div>
+                            <div className="font-medium text-gray-900">Email</div>
+                            <div className="text-gray-600">support@altaslab.ru</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Search size={20} className="text-[#E95D22]" />
+                          <div>
+                            <div className="font-medium text-gray-900">Горячая линия</div>
+                            <div className="text-gray-600">8 (800) 555-35-35</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-lg font-semibold text-gray-900 mb-4">Заказ образцов</h4>
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <p className="text-gray-700 mb-3">
+                          Закажите бесплатные образцы материала для оценки качества и цвета
+                        </p>
+                        <button className="bg-[#E95D22] text-white py-2 px-4 rounded-lg font-medium hover:bg-[#d54a1a] transition-colors">
+                          Заказать образцы
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-lg font-semibold text-gray-900 mb-4">Консультация дизайнера</h4>
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <p className="text-gray-700 mb-3">
+                          Получите профессиональную консультацию по выбору материалов для вашего проекта
+                        </p>
+                        <button className="bg-[#E95D22] text-white py-2 px-4 rounded-lg font-medium hover:bg-[#d54a1a] transition-colors">
+                          Записаться на консультацию
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
           </div>
         </div>
