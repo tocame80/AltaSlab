@@ -147,16 +147,40 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
             )}
           </div>
 
-          {/* Favorite Button */}
-          <button
-            onClick={handleFavoriteClick}
-            className={`absolute bottom-3 left-3 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center transition-all hover:bg-white hover:scale-110 ${
-              isFavorite ? 'text-red-500' : 'text-gray-600 hover:text-red-500'
-            }`}
-            aria-label="Добавить в избранное"
-          >
-            <Heart size={18} className={isFavorite ? 'fill-current' : ''} />
-          </button>
+          {/* Product Info Overlay - Bottom Left */}
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white/90 via-white/70 to-transparent p-4">
+            <div>
+              {/* Favorite Button */}
+              <div className="mb-2">
+                <button
+                  onClick={handleFavoriteClick}
+                  className={`w-8 h-8 rounded-full bg-gray-100/80 backdrop-blur-sm flex items-center justify-center transition-all hover:bg-gray-200/80 ${
+                    isFavorite ? 'text-red-500' : 'text-gray-700 hover:text-red-500'
+                  }`}
+                  aria-label="Добавить в избранное"
+                >
+                  <Heart size={16} className={isFavorite ? 'fill-current' : ''} />
+                </button>
+              </div>
+              
+              {/* Collection */}
+              <div className="text-gray-600 text-xs font-medium mb-1">
+                {getCollectionDisplayName()}
+              </div>
+              
+              {/* Color */}
+              <div className="text-gray-900 text-sm font-semibold mb-1">
+                {product.color}
+              </div>
+              
+              {/* Price per m² */}
+              {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
+                <div className="text-gray-900 text-lg font-bold">
+                  {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽/м²
+                </div>
+              )}
+            </div>
+          </div>
 
           {/* Gallery Dots */}
           {gallery.length > 1 && (
