@@ -147,11 +147,17 @@ export default function Certificates() {
         )}
 
         <div className="text-center">
-          <Link href="/certificates">
-            <button className="bg-[#E95D22] text-white px-8 py-3 rounded-lg hover:bg-[#d54a1a] transition-colors">
-              Посмотреть все сертификаты
-            </button>
-          </Link>
+          <button 
+            onClick={() => {
+              const element = document.getElementById('certificates');
+              if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+            className="bg-[#E95D22] text-white px-8 py-3 rounded-lg hover:bg-[#d54a1a] transition-colors"
+          >
+            Наверх раздела
+          </button>
         </div>
       </div>
     </section>
