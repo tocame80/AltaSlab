@@ -226,13 +226,16 @@ export default function Contact() {
                 </div>
               </div>
 
-              {/* Emergency Contact */}
-              <div className="bg-[#E95D22] rounded-xl p-8 text-white">
-                <h3 className="text-xl font-bold mb-4">Срочные вопросы?</h3>
-                <p className="mb-4">Если у вас срочный вопрос по уже размещенному заказу или технической поддержке:</p>
-                <div className="text-lg font-semibold">+7 (495) 123-45-67</div>
-                <div className="text-sm opacity-90">Круглосуточная техподдержка</div>
-              </div>
+            </div>
+          </div>
+
+          {/* Emergency Contact - Full Width */}
+          <div className="mt-12">
+            <div className="bg-[#E95D22] rounded-xl p-8 text-white text-center">
+              <h3 className="text-2xl font-bold mb-4">Срочные вопросы?</h3>
+              <p className="mb-6 text-lg">Если у вас срочный вопрос по уже размещенному заказу или технической поддержке:</p>
+              <div className="text-2xl font-bold mb-2">+7 (495) 123-45-67</div>
+              <div className="text-base opacity-90">Круглосуточная техподдержка</div>
             </div>
           </div>
         </div>
