@@ -51,24 +51,24 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">
-            <Link href="/" className="nav-link">
-              КАТАЛОГ
-            </Link>
             <Link href="/calculator" className="nav-link">
               КАЛЬКУЛЯТОР
             </Link>
             <Link href="/certificates" className="nav-link">
               СЕРТИФИКАТЫ
             </Link>
-            <Link href="/faq" className="nav-link">
-              FAQ
-            </Link>
             <Link href="/video" className="nav-link">
               ВИДЕОИНСТРУКЦИИ
+            </Link>
+            <Link href="/faq" className="nav-link">
+              ВОПРОСЫ
             </Link>
             <a href="#company" className="nav-link">
               О НАС
             </a>
+            <Link href="/" className="nav-link">
+              КАТАЛОГ
+            </Link>
           </nav>
 
           {/* Contact Info */}
@@ -139,24 +139,24 @@ export default function Header() {
         {isMobileMenuOpen && (
           <div className="lg:hidden py-4 border-t border-gray-200">
             <nav className="flex flex-col space-y-4">
-              <Link href="/" className="nav-link">
-                КАТАЛОГ
-              </Link>
               <Link href="/calculator" className="nav-link">
                 КАЛЬКУЛЯТОР
               </Link>
               <Link href="/certificates" className="nav-link">
                 СЕРТИФИКАТЫ
               </Link>
-              <Link href="/faq" className="nav-link">
-                FAQ
-              </Link>
               <Link href="/video" className="nav-link">
                 ВИДЕОИНСТРУКЦИИ
               </Link>
+              <Link href="/faq" className="nav-link">
+                ВОПРОСЫ
+              </Link>
               <a href="#company" className="nav-link">
-                О КОМПАНИИ
+                О НАС
               </a>
+              <Link href="/" className="nav-link">
+                КАТАЛОГ
+              </Link>
               <div className="flex items-center space-x-4 pt-4">
                 <Link
                   href="/contact"
