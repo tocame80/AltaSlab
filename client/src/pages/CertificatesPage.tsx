@@ -1,70 +1,13 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Download, Award, Shield, Verified, Calendar, MapPin } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { Certificate } from '@shared/schema';
 
 export default function CertificatesPage() {
-  const certificates = [
-    {
-      title: 'Сертификат соответствия ГОСТ Р 56926-2016',
-      description: 'Подтверждение соответствия продукции требованиям ГОСТ Р для композитных материалов',
-      issueDate: '15.03.2024',
-      validUntil: '15.03.2027',
-      issuer: 'ФБУ "Ростест-Москва"',
-      size: '2.1 МБ',
-      number: 'РОСС RU.АИ44.Н03421',
-      image: '/certificates/gost-cert.jpg'
-    },
-    {
-      title: 'Сертификат пожарной безопасности',
-      description: 'Класс пожарной опасности КМ1 (слабогорючие, трудновоспламеняемые материалы)',
-      issueDate: '22.01.2024',
-      validUntil: '22.01.2029',
-      issuer: 'ФГУ ВНИИПО МЧС России',
-      size: '1.8 МБ',
-      number: 'СПБ.RU.ОП003.Н.03156',
-      image: '/certificates/fire-cert.jpg'
-    },
-    {
-      title: 'Экологический сертификат соответствия',
-      description: 'Безопасность для здоровья человека, отсутствие вредных выделений',
-      issueDate: '10.02.2024',
-      validUntil: '10.02.2027',
-      issuer: 'ЭкоСтандарт',
-      size: '1.5 МБ',
-      number: 'ECO.RU.7844.Н04521',
-      image: '/certificates/eco-cert.jpg'
-    },
-    {
-      title: 'ISO 9001:2015 Система менеджмента качества',
-      description: 'Международная сертификация системы управления качеством производства',
-      issueDate: '05.04.2024',
-      validUntil: '05.04.2027',
-      issuer: 'TÜV NORD CERT GmbH',
-      size: '2.3 МБ',
-      number: 'ISO-9001-2024-45637',
-      image: '/certificates/iso-cert.jpg'
-    },
-    {
-      title: 'Санитарно-эпидемиологическое заключение',
-      description: 'Разрешение на применение в жилых и общественных зданиях',
-      issueDate: '28.03.2024',
-      validUntil: 'Бессрочно',
-      issuer: 'Роспотребнадзор',
-      size: '1.9 МБ',
-      number: '77.01.16.244.П.003891.03.24',
-      image: '/certificates/sanitary-cert.jpg'
-    },
-    {
-      title: 'Декларация о соответствии ТР ТС',
-      description: 'Соответствие техническим регламентам Таможенного союза',
-      issueDate: '12.02.2024',
-      validUntil: '12.02.2029',
-      issuer: 'ООО "АЛЬТА СЛЭБ"',
-      size: '1.2 МБ',
-      number: 'ТС Н RU Д-RU.АА44.В.15384',
-      image: '/certificates/tr-ts-cert.jpg'
-    }
-  ];
+  const { data: certificates = [], isLoading } = useQuery<Certificate[]>({
+    queryKey: ['/api/certificates'],
+  });
 
   const qualityStandards = [
     {
@@ -124,47 +67,62 @@ export default function CertificatesPage() {
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
               Официальные сертификаты
             </h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {certificates.map((cert, index) => (
-                <div key={index} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
-                  <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-xl flex items-center justify-center">
-                    <Award className="w-20 h-20 text-gray-400" />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="font-bold text-gray-900 mb-3 text-lg leading-tight">{cert.title}</h3>
-                    <p className="text-sm text-gray-600 mb-4 leading-relaxed">{cert.description}</p>
-                    
-                    <div className="space-y-3 mb-6">
-                      <div className="flex items-center text-sm text-gray-500">
-                        <Calendar className="w-4 h-4 mr-2" />
-                        <span>Выдан: {cert.issueDate}</span>
-                      </div>
-                      <div className="flex items-center text-sm text-gray-500">
-                        <Calendar className="w-4 h-4 mr-2" />
-                        <span>Действителен до: {cert.validUntil}</span>
-                      </div>
-                      <div className="flex items-center text-sm text-gray-500">
-                        <MapPin className="w-4 h-4 mr-2" />
-                        <span>{cert.issuer}</span>
-                      </div>
+            {isLoading ? (
+              <div className="text-center">Загрузка сертификатов...</div>
+            ) : (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {certificates.map((cert) => (
+                  <div key={cert.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
+                    <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-xl flex items-center justify-center">
+                      {cert.imageUrl ? (
+                        <img src={cert.imageUrl} alt={cert.title} className="w-full h-full object-cover rounded-t-xl" />
+                      ) : (
+                        <Award className="w-20 h-20 text-gray-400" />
+                      )}
                     </div>
+                    <div className="p-6">
+                      <h3 className="font-bold text-gray-900 mb-3 text-lg leading-tight">{cert.title}</h3>
+                      <p className="text-sm text-gray-600 mb-4 leading-relaxed">{cert.description}</p>
+                      
+                      <div className="space-y-3 mb-6">
+                        <div className="flex items-center text-sm text-gray-500">
+                          <Calendar className="w-4 h-4 mr-2" />
+                          <span>Выдан: {cert.issueDate}</span>
+                        </div>
+                        <div className="flex items-center text-sm text-gray-500">
+                          <Calendar className="w-4 h-4 mr-2" />
+                          <span>Действителен до: {cert.validUntil}</span>
+                        </div>
+                        <div className="flex items-center text-sm text-gray-500">
+                          <MapPin className="w-4 h-4 mr-2" />
+                          <span>{cert.issuer}</span>
+                        </div>
+                      </div>
 
-                    <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                      <div className="text-xs text-gray-500 mb-1">Номер сертификата:</div>
-                      <div className="text-sm font-mono text-gray-900">{cert.number}</div>
-                    </div>
+                      <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                        <div className="text-xs text-gray-500 mb-1">Номер сертификата:</div>
+                        <div className="text-sm font-mono text-gray-900">{cert.number}</div>
+                      </div>
 
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-500">{cert.size}</span>
-                      <button className="bg-[#E95D22] text-white px-4 py-2 rounded-lg hover:bg-[#d54a1a] transition-colors flex items-center gap-2">
-                        <Download size={16} />
-                        Скачать
-                      </button>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-500">{cert.size}</span>
+                        {cert.fileUrl ? (
+                          <a href={cert.fileUrl} download className="bg-[#E95D22] text-white px-4 py-2 rounded-lg hover:bg-[#d54a1a] transition-colors flex items-center gap-2">
+                            <Download size={16} />
+                            Скачать
+                          </a>
+                        ) : (
+                          <button disabled className="bg-gray-300 text-gray-500 px-4 py-2 rounded-lg cursor-not-allowed flex items-center gap-2">
+                            <Download size={16} />
+                            Скачать
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Additional Information */}
