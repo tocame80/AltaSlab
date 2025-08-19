@@ -9,6 +9,7 @@ import Calculator from "@/pages/Calculator";
 import Certificates from "@/pages/Certificates";
 import FAQ from "@/pages/FAQ";
 import VideoInstructions from "@/pages/VideoInstructions";
+import Contact from "@/pages/Contact";
 import NotFound from "@/pages/not-found";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 
@@ -21,6 +22,7 @@ function Router() {
       <Route path="/certificates" component={Certificates} />
       <Route path="/faq" component={FAQ} />
       <Route path="/video" component={VideoInstructions} />
+      <Route path="/contact" component={Contact} />
       <Route component={NotFound} />
     </Switch>
   );

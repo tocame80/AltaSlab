@@ -36,7 +36,9 @@ export default function Header() {
 
           {/* Contact Info */}
           <div className="hidden md:flex items-center space-x-4">
-            <Mail className="text-muted w-5 h-5" />
+            <Link href="/contact" className="text-muted hover:text-[#E95D22] transition-colors">
+              <Mail className="w-5 h-5" />
+            </Link>
             <Search className="text-muted w-5 h-5" />
             <span className="text-accent font-semibold">8 800 555-77-73</span>
           </div>
@@ -62,7 +64,9 @@ export default function Header() {
               <Link href="/video" className="nav-link">ВИДЕОИНСТРУКЦИИ</Link>
               <a href="#company" className="nav-link">О КОМПАНИИ</a>
               <div className="flex items-center space-x-4 pt-4">
-                <Mail className="text-muted w-5 h-5" />
+                <Link href="/contact" className="text-muted hover:text-[#E95D22] transition-colors">
+                  <Mail className="w-5 h-5" />
+                </Link>
                 <span className="text-accent font-semibold">8 800 555-77-73</span>
               </div>
             </nav>

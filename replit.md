@@ -1,6 +1,6 @@
 # Overview
 
-This is a React-based SPA (Single Page Application) for "АЛЬТА СЛЭБ" - a Russian building materials company specializing in SPC (Stone Plastic Composite) wall and ceiling panels. The application serves as a product catalog and company showcase, featuring product collections, material calculators, installation guides, and contact forms. The site is built with a modern tech stack including React, TypeScript, Tailwind CSS, and shadcn/ui components.
+This is a React-based SPA (Single Page Application) for "АЛЬТА СЛЭБ" - a Russian building materials company specializing in SPC (Stone Plastic Composite) wall and ceiling panels. The application serves as a product catalog and company showcase, featuring product collections, material calculators, installation guides, and contact forms. The site features a modular architecture where key functionality is accessible both as standalone pages and as tabs within product details. The site is built with a modern tech stack including React, TypeScript, Tailwind CSS, and shadcn/ui components.
 
 # User Preferences
 
@@ -38,9 +38,13 @@ Preferred communication style: Simple, everyday language.
 
 ## User Interface Features
 - **Product Showcase**: Grid-based catalog with favorites functionality
-- **Material Calculator**: Interactive tool for estimating required materials
-- **Contact Forms**: Lead capture with form validation
-- **Responsive Navigation**: Mobile-friendly header with collapsible menu
+- **Material Calculator**: Interactive tool for estimating required materials (standalone page + product tab)
+- **Contact Forms**: Comprehensive contact page with form validation (accessible via mail icon in header)
+- **Certificates Section**: Document downloads and quality certifications (standalone page + product tab)
+- **FAQ System**: Expandable questions and answers (standalone page + product tab)
+- **Video Instructions**: Tutorial and demonstration videos (standalone page + product tab)
+- **Modular Architecture**: Key features accessible both as standalone pages from header navigation and as tabs within product details
+- **Responsive Navigation**: Mobile-friendly header with collapsible menu and direct access to all modules
 - **Scroll Management**: Back-to-top functionality and smooth scrolling
 
 # External Dependencies
