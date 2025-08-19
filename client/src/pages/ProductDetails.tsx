@@ -1,8 +1,9 @@
 import { useState, useContext } from 'react';
 import { useRoute } from 'wouter';
-import { ArrowLeft, Heart, ShoppingCart, Calculator, Download, Share2, Eye, Maximize2, CheckCircle, Clock, Truck, Star } from 'lucide-react';
+import { ArrowLeft, Heart, ShoppingCart, Calculator, Download, Share2, Eye, Maximize2, CheckCircle, Clock, Truck, Star, Mail, Search } from 'lucide-react';
 import { products } from '@/data/products';
 import { FavoritesContext } from '@/contexts/FavoritesContext';
+import { Collection } from '@/types';
 
 export default function ProductDetails() {
   const [, params] = useRoute('/product/:id');
@@ -60,8 +61,77 @@ export default function ProductDetails() {
     return product.design;
   };
 
+  const collections = [
+    { key: 'all' as Collection, label: 'ВСЁ', color: 'bg-gray-400' },
+    { key: 'concrete' as Collection, label: 'МАГИЯ БЕТОНА', color: 'bg-gray-600' },
+    { key: 'fabric' as Collection, label: 'ТКАНЕВАЯ РОСКОШЬ', color: 'bg-purple-500' },
+    { key: 'matte' as Collection, label: 'МАТОВАЯ ЭСТЕТИКА', color: 'bg-green-500' },
+    { key: 'marble' as Collection, label: 'МРАМОРНАЯ ФЕЕРИЯ', color: 'bg-blue-500' },
+    { key: 'accessories' as Collection, label: 'КОМПЛЕКТУЮЩИЕ', color: 'bg-orange-500' },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm sticky top-0 z-50">
+        <div className="container mx-auto px-6">
+          <div className="flex items-center justify-between py-4">
+            {/* Logo */}
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-[#E95D22] rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">АС</span>
+              </div>
+              <div>
+                <h1 className="text-gray-900 font-bold text-xl">АЛЬТА СЛЭБ</h1>
+                <p className="text-gray-500 text-xs">SPC ПАНЕЛИ</p>
+              </div>
+            </div>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden lg:flex items-center space-x-8">
+              <a href="/#catalog" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">КАТАЛОГ</a>
+              <a href="/#portfolio" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">ПОРТФОЛИО</a>
+              <a href="/#services" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">УСЛУГИ</a>
+              <a href="/#material" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">О МАТЕРИАЛЕ</a>
+              <a href="/#company" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">О КОМПАНИИ</a>
+              <a href="/#delivery" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">ДОСТАВКА</a>
+            </nav>
+
+            {/* Contact Info */}
+            <div className="hidden md:flex items-center space-x-4">
+              <Mail className="text-gray-500 w-5 h-5" />
+              <Search className="text-gray-500 w-5 h-5" />
+              <span className="text-[#E95D22] font-semibold">8 800 555-77-73</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Collections Navigation with Colors */}
+      <div className="bg-white py-6 border-t">
+        <div className="container mx-auto px-6">
+          <nav className="flex flex-wrap items-center justify-center gap-6 lg:gap-12">
+            {collections.map((collection) => (
+              <a
+                key={collection.key}
+                href={`/#catalog`}
+                className="flex items-center gap-2 text-gray-700 hover:text-[#E95D22] font-medium transition-colors"
+              >
+                <div className={`w-3 h-3 rounded-full ${collection.color}`}></div>
+                {collection.label}
+              </a>
+            ))}
+            <a
+              href="/#catalog"
+              className="flex items-center gap-2 text-gray-700 hover:text-[#E95D22] font-medium transition-colors"
+            >
+              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+              ИЗБРАННОЕ
+            </a>
+          </nav>
+        </div>
+      </div>
+
       {/* Breadcrumb */}
       <div className="bg-white border-b">
         <div className="container mx-auto px-6 py-4">
