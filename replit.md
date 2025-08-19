@@ -6,15 +6,6 @@ This is a React-based SPA (Single Page Application) for "АЛЬТА СЛЭБ" - 
 
 Preferred communication style: Simple, everyday language.
 
-# Recent Changes (January 2025)
-
-## Hero Image Organization (January 19, 2025)
-- Implemented organized file storage structure with dedicated `/hero/` folder for hero images
-- Created specialized API endpoints: `/api/hero-images/upload` and `/api/hero-images/set-acl`
-- Updated admin panel to use organized storage system
-- All hero images now automatically stored in `/objects/hero/` path for better file management
-- Hero component successfully displays 5 images with proper error handling and fallbacks
-
 # System Architecture
 
 ## Frontend Architecture
@@ -29,7 +20,6 @@ Preferred communication style: Simple, everyday language.
 - **Server**: Express.js with TypeScript running on Node.js
 - **API Structure**: RESTful API with `/api` prefix routing
 - **Storage Interface**: Abstracted storage layer with in-memory implementation for users
-- **Object Storage**: Organized cloud storage with dedicated folders (`/hero/` for hero images, `/uploads/` for general files)
 - **Session Management**: Express sessions with PostgreSQL session store
 - **Development Mode**: Vite middleware integration for hot module replacement
 
@@ -48,13 +38,11 @@ Preferred communication style: Simple, everyday language.
 
 ## User Interface Features
 - **Product Showcase**: Grid-based catalog with favorites functionality
-- **Hero Image Slider**: Automated slideshow with 5-second intervals, manual navigation controls, and organized cloud storage
 - **Material Calculator**: Interactive tool for estimating required materials (standalone page + product tab)
 - **Contact Forms**: Comprehensive contact page with form validation (accessible via mail icon in header)
 - **Certificates Section**: Document downloads and quality certifications (standalone page + product tab)
 - **FAQ System**: Expandable questions and answers (standalone page + product tab)
 - **Video Instructions**: Tutorial and demonstration videos (standalone page + product tab)
-- **Admin Panel**: Full content management system for hero images, certificates, videos, and catalog data
 - **Modular Architecture**: Key features accessible both as standalone pages from header navigation and as tabs within product details
 - **Responsive Navigation**: Mobile-friendly header with collapsible menu and direct access to all modules
 - **Scroll Management**: Back-to-top functionality and smooth scrolling

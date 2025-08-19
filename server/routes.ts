@@ -152,9 +152,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const objectStorageService = new ObjectStorageService();
       
-      // For hero images, always organize in hero folder
+      // Normalize the path to ensure it goes to hero folder
       const normalizedPath = objectStorageService.normalizeObjectEntityPath(req.body.imageURL);
-      // Convert uploads path to hero path for new hero images
+      // Replace 'uploads' with 'hero' for organized storage
       const heroPath = normalizedPath.replace('/uploads/', '/hero/');
       
       const objectPath = await objectStorageService.trySetObjectEntityAclPolicy(

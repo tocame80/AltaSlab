@@ -1549,7 +1549,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                   <li>• Оптимальный размер файла: до 2 МБ</li>
                   <li>• Поддерживаются форматы: JPG, PNG, WebP</li>
                   <li>• Изображения отображаются в порядке возрастания номера сортировки</li>
-                  <li>• Новые изображения автоматически сохраняются в папку /hero/</li>
                 </ul>
               </div>
 
@@ -1698,10 +1697,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                 if (aclResponse.ok) {
                                   const aclData = await aclResponse.json();
                                   
-                                  // Create hero image with path in hero folder
+                                  // Create hero image with organized path in hero folder
                                   const heroImageData = {
                                     title: `Hero-${currentIndex + 1}`,
-                                    imageUrl: aclData.objectPath,
+                                    imageUrl: aclData.objectPath || uploadData.uploadURL,
                                     sortOrder: currentIndex,
                                     isActive: 1,
                                   };
