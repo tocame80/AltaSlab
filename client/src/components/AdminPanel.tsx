@@ -290,9 +290,26 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   });
 
   // Queries and mutations for hero images
-  const { data: heroImages = [], isLoading: heroImagesLoading } = useQuery<HeroImage[]>({
-    queryKey: ['/api/hero-images'],
+  // Fetch local hero images from admin API
+  const { data: localHeroResponse, isLoading: heroImagesLoading, error: heroImagesError } = useQuery({
+    queryKey: ['/api/admin/hero-images'],
+    retry: 2,
+    refetchOnMount: true,
   });
+
+  // Convert local hero files to display format
+  const heroImages = React.useMemo(() => {
+    if (!localHeroResponse?.success || !localHeroResponse?.images) return [];
+    
+    return localHeroResponse.images.map((fileName: string, index: number) => ({
+      id: `local-hero-${index}`,
+      title: `Hero изображение ${index + 1}`,
+      imageUrl: `/src/assets/hero/${fileName}`,
+      fileName: fileName,
+      sortOrder: index,
+      isActive: 1,
+    }));
+  }, [localHeroResponse]);
 
   const createHeroImageMutation = useMutation({
     mutationFn: async (data: HeroImageFormData) => {
@@ -340,17 +357,30 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   });
 
   const deleteHeroImageMutation = useMutation({
-    mutationFn: async (id: string) => {
-      return apiRequest('DELETE', `/api/hero-images/${id}`);
+    mutationFn: async (fileName: string) => {
+      const response = await fetch('/api/admin/delete-hero-image', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ fileName }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to delete: ${response.status}`);
+      }
+      
+      return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/hero-images'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/hero-images'] });
       toast({
         title: 'Успешно',
-        description: 'Изображение героя удалено',
+        description: 'Hero изображение удалено',
       });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Delete hero image error:', error);
       toast({
         title: 'Ошибка',
         description: 'Не удалось удалить изображение',
@@ -382,9 +412,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     }
   };
 
-  const handleDeleteHeroImage = (id: string) => {
-    if (confirm('Вы уверены, что хотите удалить это изображение?')) {
-      deleteHeroImageMutation.mutate(id);
+  const handleDeleteHeroImage = (fileName: string) => {
+    if (confirm('Вы уверены, что хотите удалить это hero изображение?')) {
+      deleteHeroImageMutation.mutate(fileName);
     }
   };
 
@@ -1593,7 +1623,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                               <Edit size={16} />
                             </button>
                             <button
-                              onClick={() => handleDeleteHeroImage(heroImage.id)}
+                              onClick={() => handleDeleteHeroImage(heroImage.fileName)}
                               className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition-colors"
                               title="Удалить"
                             >
@@ -1657,7 +1687,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         // Show loading state
                         toast({
                           title: 'Загрузка...',
-                          description: `Загружаем ${files.length} изображений в облако`,
+                          description: `Загружаем ${files.length} изображений локально`,
                         });
 
                         try {
