@@ -1,6 +1,7 @@
 import { Mail, Search, Menu } from 'lucide-react';
 import { useState } from 'react';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
+import { Link } from 'wouter';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -25,12 +26,12 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">
-            <a href="#catalog" className="nav-link">КАТАЛОГ</a>
-            <a href="#portfolio" className="nav-link">ПОРТФОЛИО</a>
-            <a href="#services" className="nav-link">УСЛУГИ</a>
-            <a href="#material" className="nav-link">О МАТЕРИАЛЕ</a>
+            <Link href="/" className="nav-link">КАТАЛОГ</Link>
+            <Link href="/calculator" className="nav-link">КАЛЬКУЛЯТОР</Link>
+            <Link href="/certificates" className="nav-link">СЕРТИФИКАТЫ</Link>
+            <Link href="/faq" className="nav-link">FAQ</Link>
+            <Link href="/video" className="nav-link">ВИДЕОИНСТРУКЦИИ</Link>
             <a href="#company" className="nav-link">О КОМПАНИИ</a>
-            <a href="#delivery" className="nav-link">ДОСТАВКА</a>
           </nav>
 
           {/* Contact Info */}
@@ -54,12 +55,12 @@ export default function Header() {
         {isMobileMenuOpen && (
           <div className="lg:hidden py-4 border-t border-gray-200">
             <nav className="flex flex-col space-y-4">
-              <a href="#catalog" className="nav-link">КАТАЛОГ</a>
-              <a href="#portfolio" className="nav-link">ПОРТФОЛИО</a>
-              <a href="#services" className="nav-link">УСЛУГИ</a>
-              <a href="#material" className="nav-link">О МАТЕРИАЛЕ</a>
+              <Link href="/" className="nav-link">КАТАЛОГ</Link>
+              <Link href="/calculator" className="nav-link">КАЛЬКУЛЯТОР</Link>
+              <Link href="/certificates" className="nav-link">СЕРТИФИКАТЫ</Link>
+              <Link href="/faq" className="nav-link">FAQ</Link>
+              <Link href="/video" className="nav-link">ВИДЕОИНСТРУКЦИИ</Link>
               <a href="#company" className="nav-link">О КОМПАНИИ</a>
-              <a href="#delivery" className="nav-link">ДОСТАВКА</a>
               <div className="flex items-center space-x-4 pt-4">
                 <Mail className="text-muted w-5 h-5" />
                 <span className="text-accent font-semibold">8 800 555-77-73</span>

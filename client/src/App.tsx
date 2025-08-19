@@ -5,6 +5,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/Home";
 import ProductDetails from "@/pages/ProductDetails";
+import Calculator from "@/pages/Calculator";
+import Certificates from "@/pages/Certificates";
+import FAQ from "@/pages/FAQ";
+import VideoInstructions from "@/pages/VideoInstructions";
 import NotFound from "@/pages/not-found";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 
@@ -13,6 +17,10 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/product/:id" component={ProductDetails} />
+      <Route path="/calculator" component={Calculator} />
+      <Route path="/certificates" component={Certificates} />
+      <Route path="/faq" component={FAQ} />
+      <Route path="/video" component={VideoInstructions} />
       <Route component={NotFound} />
     </Switch>
   );
