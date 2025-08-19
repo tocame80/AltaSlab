@@ -437,8 +437,7 @@ export default function ProductDetails() {
           {/* Additional Photos Gallery */}
           <div className="mt-8">
             <h3 className="text-xl font-semibold text-gray-900 mb-6 text-center">Дополнительные фотографии</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {/* Interior application photos */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="group cursor-pointer">
                 <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 hover:shadow-lg transition-all">
                   <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
@@ -451,8 +450,7 @@ export default function ProductDetails() {
                   </div>
                 </div>
                 <div className="mt-2 text-center">
-                  <div className="text-sm font-medium text-gray-900">Применение в гостиной</div>
-                  <div className="text-xs text-gray-500">Современный интерьер</div>
+                  <div className="text-sm font-medium text-gray-900">Применение в интерьере</div>
                 </div>
               </div>
 
@@ -463,13 +461,12 @@ export default function ProductDetails() {
                       <div className="w-12 h-12 mx-auto mb-2 bg-blue-500 rounded-lg flex items-center justify-center">
                         <span className="text-white font-bold">2</span>
                       </div>
-                      <div className="text-sm">Ванная комната</div>
+                      <div className="text-sm">Детальный вид</div>
                     </div>
                   </div>
                 </div>
                 <div className="mt-2 text-center">
-                  <div className="text-sm font-medium text-gray-900">Влагостойкое покрытие</div>
-                  <div className="text-xs text-gray-500">Идеально для ванной</div>
+                  <div className="text-sm font-medium text-gray-900">Текстура крупным планом</div>
                 </div>
               </div>
 
@@ -480,13 +477,12 @@ export default function ProductDetails() {
                       <div className="w-12 h-12 mx-auto mb-2 bg-green-500 rounded-lg flex items-center justify-center">
                         <span className="text-white font-bold">3</span>
                       </div>
-                      <div className="text-sm">Кухня</div>
+                      <div className="text-sm">Монтаж</div>
                     </div>
                   </div>
                 </div>
                 <div className="mt-2 text-center">
-                  <div className="text-sm font-medium text-gray-900">Фартук и стены</div>
-                  <div className="text-xs text-gray-500">Легкий уход</div>
+                  <div className="text-sm font-medium text-gray-900">Процесс установки</div>
                 </div>
               </div>
 
@@ -497,81 +493,12 @@ export default function ProductDetails() {
                       <div className="w-12 h-12 mx-auto mb-2 bg-purple-500 rounded-lg flex items-center justify-center">
                         <span className="text-white font-bold">4</span>
                       </div>
-                      <div className="text-sm">Детальный вид</div>
+                      <div className="text-sm">Упаковка</div>
                     </div>
                   </div>
                 </div>
                 <div className="mt-2 text-center">
-                  <div className="text-sm font-medium text-gray-900">Текстура крупным планом</div>
-                  <div className="text-xs text-gray-500">Детали поверхности</div>
-                </div>
-              </div>
-
-              <div className="group cursor-pointer">
-                <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 hover:shadow-lg transition-all">
-                  <div className="w-full h-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center">
-                    <div className="text-center text-orange-600">
-                      <div className="w-12 h-12 mx-auto mb-2 bg-orange-500 rounded-lg flex items-center justify-center">
-                        <span className="text-white font-bold">5</span>
-                      </div>
-                      <div className="text-sm">Монтаж</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-2 text-center">
-                  <div className="text-sm font-medium text-gray-900">Процесс установки</div>
-                  <div className="text-xs text-gray-500">Пошаговый монтаж</div>
-                </div>
-              </div>
-
-              <div className="group cursor-pointer">
-                <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 hover:shadow-lg transition-all">
-                  <div className="w-full h-full bg-gradient-to-br from-teal-100 to-teal-200 flex items-center justify-center">
-                    <div className="text-center text-teal-600">
-                      <div className="w-12 h-12 mx-auto mb-2 bg-teal-500 rounded-lg flex items-center justify-center">
-                        <span className="text-white font-bold">6</span>
-                      </div>
-                      <div className="text-sm">Сочетания</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-2 text-center">
-                  <div className="text-sm font-medium text-gray-900">С другими материалами</div>
-                  <div className="text-xs text-gray-500">Дизайнерские решения</div>
-                </div>
-              </div>
-
-              <div className="group cursor-pointer">
-                <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 hover:shadow-lg transition-all">
-                  <div className="w-full h-full bg-gradient-to-br from-pink-100 to-pink-200 flex items-center justify-center">
-                    <div className="text-center text-pink-600">
-                      <div className="w-12 h-12 mx-auto mb-2 bg-pink-500 rounded-lg flex items-center justify-center">
-                        <span className="text-white font-bold">7</span>
-                      </div>
-                      <div className="text-sm">Освещение</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-2 text-center">
-                  <div className="text-sm font-medium text-gray-900">При разном освещении</div>
-                  <div className="text-xs text-gray-500">Игра света и тени</div>
-                </div>
-              </div>
-
-              <div className="group cursor-pointer">
-                <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 hover:shadow-lg transition-all">
-                  <div className="w-full h-full bg-gradient-to-br from-indigo-100 to-indigo-200 flex items-center justify-center">
-                    <div className="text-center text-indigo-600">
-                      <div className="w-12 h-12 mx-auto mb-2 bg-indigo-500 rounded-lg flex items-center justify-center">
-                        <span className="text-white font-bold">8</span>
-                      </div>
-                      <div className="text-sm">Размеры</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-2 text-center">
-                  <div className="text-sm font-medium text-gray-900">Сравнение размеров</div>
-                  <div className="text-xs text-gray-500">Масштаб в интерьере</div>
+                  <div className="text-sm font-medium text-gray-900">Вид упаковки</div>
                 </div>
               </div>
             </div>
@@ -579,7 +506,7 @@ export default function ProductDetails() {
             {/* View all photos button */}
             <div className="text-center mt-6">
               <button className="bg-gray-100 hover:bg-[#E95D22] hover:text-white text-gray-700 px-6 py-3 rounded-lg font-medium transition-colors">
-                Посмотреть все фотографии (24)
+                Посмотреть все фотографии
               </button>
             </div>
           </div>
