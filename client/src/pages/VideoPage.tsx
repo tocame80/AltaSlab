@@ -5,10 +5,47 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { VideoInstruction } from '@shared/schema';
 
+// Функция для получения embed URL из различных видеоплатформ
+function getEmbedUrl(url: string): string | null {
+  if (!url) return null;
+  
+  // YouTube
+  const youtubeMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/);
+  if (youtubeMatch) {
+    return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+  }
+  
+  // RuTube
+  const rutubeMatch = url.match(/rutube\.ru\/video\/([^\/\?]+)/);
+  if (rutubeMatch) {
+    return `https://rutube.ru/play/embed/${rutubeMatch[1]}`;
+  }
+  
+  // VK Video
+  const vkMatch = url.match(/vk\.com\/video([^&\n?#]+)/);
+  if (vkMatch) {
+    return `https://vk.com/video_ext.php?oid=${vkMatch[1]}`;
+  }
+  
+  // Если это прямая ссылка на видео файл
+  if (url.match(/\.(mp4|webm|ogg)$/i)) {
+    return url;
+  }
+  
+  return null;
+}
+
+// Проверяет, является ли URL прямой ссылкой на файл
+function isDirectVideoUrl(url: string): boolean {
+  return url.match(/\.(mp4|webm|ogg)$/i) !== null;
+}
+
 export default function VideoPage() {
   const [selectedVideo, setSelectedVideo] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isPlaying, setIsPlaying] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalVideo, setModalVideo] = useState<VideoInstruction | null>(null);
 
   const { data: videoInstructions = [], isLoading } = useQuery<VideoInstruction[]>({
     queryKey: ['/api/video-instructions'],
@@ -53,17 +90,45 @@ export default function VideoPage() {
               <div className="relative max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-2xl">
                 <div className="aspect-video bg-gray-900 relative">
                   {featuredVideo.videoUrl && isPlaying ? (
-                    <video
-                      controls
-                      autoPlay
-                      className="w-full h-full object-cover"
-                      poster={featuredVideo.thumbnailUrl || undefined}
-                    >
-                      <source src={featuredVideo.videoUrl} type="video/mp4" />
-                      <source src={featuredVideo.videoUrl} type="video/webm" />
-                      <source src={featuredVideo.videoUrl} type="video/ogg" />
-                      Ваш браузер не поддерживает видео HTML5.
-                    </video>
+                    (() => {
+                      const embedUrl = getEmbedUrl(featuredVideo.videoUrl);
+                      const isDirectVideo = isDirectVideoUrl(featuredVideo.videoUrl);
+                      
+                      if (embedUrl && !isDirectVideo) {
+                        return (
+                          <iframe
+                            src={embedUrl}
+                            className="w-full h-full"
+                            frameBorder="0"
+                            allowFullScreen
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          />
+                        );
+                      } else if (embedUrl && isDirectVideo) {
+                        return (
+                          <video
+                            controls
+                            autoPlay
+                            className="w-full h-full object-cover"
+                            poster={featuredVideo.thumbnailUrl || undefined}
+                          >
+                            <source src={embedUrl} type="video/mp4" />
+                            <source src={embedUrl} type="video/webm" />
+                            <source src={embedUrl} type="video/ogg" />
+                            Ваш браузер не поддерживает видео HTML5.
+                          </video>
+                        );
+                      } else {
+                        return (
+                          <div className="w-full h-full flex items-center justify-center text-white">
+                            <div className="text-center">
+                              <p className="text-lg mb-2">Неподдерживаемый формат видео</p>
+                              <p className="text-sm text-gray-300">URL: {featuredVideo.videoUrl}</p>
+                            </div>
+                          </div>
+                        );
+                      }
+                    })()
                   ) : (
                     <div className="w-full h-full flex items-center justify-center relative">
                       {featuredVideo.thumbnailUrl && (
@@ -159,7 +224,10 @@ export default function VideoPage() {
                 <div className="relative aspect-video bg-gray-200 flex items-center justify-center group cursor-pointer">
                   <button 
                     className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center hover:bg-[#d54a1a] transition-all group-hover:scale-110"
-                    onClick={() => setSelectedVideo(index)}
+                    onClick={() => {
+                      setModalVideo(video);
+                      setShowModal(true);
+                    }}
                   >
                     <Play className="w-6 h-6 text-white ml-1" />
                   </button>
@@ -223,6 +291,95 @@ export default function VideoPage() {
           </div>
         </div>
       </main>
+
+      {/* Video Modal */}
+      {showModal && modalVideo && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center p-6 border-b border-gray-200">
+              <h3 className="text-xl font-bold text-gray-900">{modalVideo.title}</h3>
+              <button
+                onClick={() => {
+                  setShowModal(false);
+                  setModalVideo(null);
+                }}
+                className="text-gray-500 hover:text-gray-700 text-xl font-bold w-8 h-8 flex items-center justify-center"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Video Player */}
+            <div className="p-6">
+              <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden mb-4">
+                {(() => {
+                  const embedUrl = getEmbedUrl(modalVideo.videoUrl || '');
+                  const isDirectVideo = isDirectVideoUrl(modalVideo.videoUrl || '');
+                  
+                  if (embedUrl && !isDirectVideo) {
+                    return (
+                      <iframe
+                        src={embedUrl}
+                        className="w-full h-full"
+                        frameBorder="0"
+                        allowFullScreen
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      />
+                    );
+                  } else if (embedUrl && isDirectVideo) {
+                    return (
+                      <video
+                        controls
+                        autoPlay
+                        className="w-full h-full object-cover"
+                        poster={modalVideo.thumbnailUrl || undefined}
+                      >
+                        <source src={embedUrl} type="video/mp4" />
+                        <source src={embedUrl} type="video/webm" />
+                        <source src={embedUrl} type="video/ogg" />
+                        Ваш браузер не поддерживает видео HTML5.
+                      </video>
+                    );
+                  } else {
+                    return (
+                      <div className="w-full h-full flex items-center justify-center text-white">
+                        <div className="text-center">
+                          <p className="text-lg mb-2">Неподдерживаемый формат видео</p>
+                          <p className="text-sm text-gray-300">URL: {modalVideo.videoUrl}</p>
+                          <a 
+                            href={modalVideo.videoUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-blue-300 hover:text-blue-400 underline mt-2 inline-block"
+                          >
+                            Открыть в новой вкладке
+                          </a>
+                        </div>
+                      </div>
+                    );
+                  }
+                })()}
+              </div>
+              
+              {/* Video Info */}
+              <div className="space-y-4">
+                <p className="text-gray-700">{modalVideo.description}</p>
+                <div className="flex items-center gap-6 text-sm text-gray-500">
+                  <div className="flex items-center gap-1">
+                    <Clock size={14} />
+                    {modalVideo.duration}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <ThumbsUp size={14} />
+                    {modalVideo.category}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>
