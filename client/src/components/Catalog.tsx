@@ -268,8 +268,8 @@ export default function Catalog({ activeCollection }: CatalogProps) {
             
             {/* Search Bar - Show when requested or has active search */}
             {(showSearch || searchQuery) && (
-              <div className="flex-1 max-w-md">
-                <div className="relative">
+              <div className="flex items-center gap-2 flex-1 max-w-lg">
+                <div className="relative flex-1">
                   <input
                     id="catalog-search-input"
                     type="text"
@@ -280,20 +280,16 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                   />
                   <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 </div>
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setShowSearch(false);
+                  }}
+                  className="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors font-medium text-sm whitespace-nowrap"
+                >
+                  Очистить
+                </button>
               </div>
-            )}
-            
-            {/* Clear Search Button */}
-            {(showSearch || searchQuery) && (
-              <button
-                onClick={() => {
-                  setSearchQuery('');
-                  setShowSearch(false);
-                }}
-                className="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors font-medium text-sm"
-              >
-                Очистить
-              </button>
             )}
           </div>
           <p className="text-secondary text-lg">
