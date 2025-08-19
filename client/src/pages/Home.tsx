@@ -8,6 +8,9 @@ import Applications from '@/components/Applications';
 import Installation from '@/components/Installation';
 import Accessories from '@/components/Accessories';
 import Calculator from '@/components/Calculator';
+import Certificates from '@/components/Certificates';
+import FAQ from '@/components/FAQ';
+import VideoInstructions from '@/components/VideoInstructions';
 import AboutCompany from '@/components/AboutCompany';
 import Contacts from '@/components/Contacts';
 import Footer from '@/components/Footer';
@@ -57,6 +60,9 @@ export default function Home() {
       <Installation />
       <Accessories />
       <Calculator />
+      <Certificates />
+      <FAQ />
+      <VideoInstructions />
       <AboutCompany />
       <Contacts />
       <Footer />

@@ -50,6 +50,7 @@ export default function Header() {
             <Link href="/faq" className="nav-link">FAQ</Link>
             <Link href="/video" className="nav-link">ВИДЕОИНСТРУКЦИИ</Link>
             <a href="#company" className="nav-link">О КОМПАНИИ</a>
+            <a href="#contacts" className="nav-link">КОНТАКТЫ</a>
           </nav>
 
           {/* Contact Info */}
