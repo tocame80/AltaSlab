@@ -8,6 +8,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
+import { ObjectUploader } from './ObjectUploader';
+import type { UploadResult } from '@uppy/core';
 
 interface AdminPanelProps {
   isOpen: boolean;
@@ -1253,7 +1255,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             <div className="mt-3">
                               <div className="relative inline-block">
                                 <img
-                                  src={videoForm.watch('thumbnailUrl')}
+                                  src={videoForm.watch('thumbnailUrl') || ''}
                                   alt="Превью"
                                   className="w-32 h-20 object-cover rounded-lg border border-gray-300"
                                   onError={(e) => {
@@ -1588,7 +1590,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                   className="w-full h-full object-cover"
                                   onError={(e) => {
                                     e.currentTarget.style.display = 'none';
-                                    e.currentTarget.nextElementSibling.style.display = 'flex';
+                                    const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
+                                    if (nextElement) {
+                                      nextElement.style.display = 'flex';
+                                    }
                                   }}
                                 />
                                 <div className="w-full h-full bg-gray-200 items-center justify-center text-xs text-gray-500" style={{display: 'none'}}>
@@ -1671,22 +1676,119 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          URL изображения *
+                          Изображение *
                         </label>
-                        <input
-                          {...heroImageForm.register('imageUrl')}
-                          type="url"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
-                          placeholder="https://example.com/image.jpg"
-                        />
-                        {heroImageForm.formState.errors.imageUrl && (
-                          <p className="text-red-600 text-sm mt-1">
-                            {heroImageForm.formState.errors.imageUrl.message}
+                        
+                        <div className="flex flex-col gap-3">
+                          {/* Current image preview */}
+                          {heroImageForm.watch('imageUrl') && (
+                            <div className="border border-gray-200 rounded-lg p-3 bg-gray-50">
+                              <p className="text-sm text-gray-600 mb-2">Текущее изображение:</p>
+                              <div className="flex items-center gap-3">
+                                <div className="w-20 h-15 bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                                  <img
+                                    src={heroImageForm.watch('imageUrl')}
+                                    alt="Preview"
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      e.currentTarget.style.display = 'none';
+                                      const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
+                                      if (nextElement) {
+                                        nextElement.style.display = 'flex';
+                                      }
+                                    }}
+                                  />
+                                  <div className="w-full h-full bg-gray-200 flex items-center justify-center text-xs text-gray-500" style={{display: 'none'}}>
+                                    Нет фото
+                                  </div>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm text-gray-900 truncate">{heroImageForm.watch('imageUrl')}</p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* File uploader */}
+                          <ObjectUploader
+                            maxNumberOfFiles={1}
+                            maxFileSize={10485760} // 10MB
+                            onGetUploadParameters={async () => {
+                              const response = await fetch('/api/objects/upload', {
+                                method: 'POST',
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                },
+                              });
+                              const data = await response.json();
+                              return {
+                                method: 'PUT' as const,
+                                url: data.uploadURL,
+                              };
+                            }}
+                            onComplete={async (result: UploadResult<Record<string, unknown>, Record<string, unknown>>) => {
+                              if (result.successful && result.successful.length > 0) {
+                                const uploadedFile = result.successful[0];
+                                const uploadURL = uploadedFile.uploadURL;
+                                
+                                // Set ACL policy
+                                try {
+                                  const response = await fetch('/api/hero-image-upload', {
+                                    method: 'PUT',
+                                    headers: {
+                                      'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({ imageURL: uploadURL }),
+                                  });
+                                  
+                                  if (response.ok) {
+                                    const data = await response.json();
+                                    heroImageForm.setValue('imageUrl', data.objectPath);
+                                    toast({
+                                      title: 'Успешно',
+                                      description: 'Изображение загружено',
+                                    });
+                                  } else {
+                                    throw new Error('Failed to set ACL');
+                                  }
+                                } catch (error) {
+                                  console.error('Error setting ACL:', error);
+                                  toast({
+                                    title: 'Ошибка',
+                                    description: 'Не удалось настроить изображение',
+                                    variant: 'destructive',
+                                  });
+                                }
+                              }
+                            }}
+                            buttonClassName="w-full"
+                          >
+                            <div className="flex items-center gap-2 justify-center">
+                              <Upload size={16} />
+                              <span>Загрузить изображение</span>
+                            </div>
+                          </ObjectUploader>
+                          
+                          {/* Manual URL input */}
+                          <div className="relative">
+                            <input
+                              {...heroImageForm.register('imageUrl')}
+                              type="url"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                              placeholder="Или введите URL изображения"
+                            />
+                          </div>
+                          
+                          {heroImageForm.formState.errors.imageUrl && (
+                            <p className="text-red-600 text-sm">
+                              {heroImageForm.formState.errors.imageUrl.message}
+                            </p>
+                          )}
+                          
+                          <p className="text-xs text-gray-500">
+                            Рекомендуемый размер: 1920×1440 пикселей (соотношение 4:3)
                           </p>
-                        )}
-                        <p className="text-xs text-gray-500 mt-1">
-                          Рекомендуемый размер: 1920×1440 пикселей (соотношение 4:3)
-                        </p>
+                        </div>
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
