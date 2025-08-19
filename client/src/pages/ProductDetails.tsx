@@ -408,7 +408,8 @@ export default function ProductDetails() {
 
             {/* Pricing */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
-              <div className="flex items-center justify-between mb-4">
+              <div className="space-y-4">
+                {/* Price per package - top line */}
                 <div>
                   <div className="text-3xl font-bold text-gray-900">
                     {product.price.toLocaleString('ru-RU')} ₽
@@ -417,8 +418,10 @@ export default function ProductDetails() {
                     {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'за шт.' : 'за упак.'}
                   </div>
                 </div>
+                
+                {/* Price per m² - bottom line */}
                 {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
-                  <div className="text-right">
+                  <div>
                     <div className="text-xl font-semibold text-gray-700">
                       {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽
                     </div>
