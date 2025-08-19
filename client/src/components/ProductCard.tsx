@@ -1,5 +1,5 @@
 import { Product } from '@/types';
-import { Heart, Download, Eye, Calculator, ShoppingCart, Truck, CheckCircle, Clock, Maximize2 } from 'lucide-react';
+import { Heart, Download, Calculator, ShoppingCart, Truck, CheckCircle, Clock } from 'lucide-react';
 import { useState } from 'react';
 
 interface ProductCardProps {
@@ -89,7 +89,7 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
           {/* Image Overlay Controls */}
           <div className={`absolute inset-0 bg-black/20 transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
             {/* Quick Action Buttons */}
-            <div className="absolute top-3 right-3 flex gap-2">
+            <div className="absolute top-3 right-3">
               <button
                 onClick={handleFavoriteClick}
                 className={`w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white ${
@@ -98,20 +98,6 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
                 aria-label="Добавить в избранное"
               >
                 <Heart size={14} className={isFavorite ? 'fill-current' : ''} />
-              </button>
-              <button
-                onClick={(e) => { e.stopPropagation(); }}
-                className="w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white text-gray-600 hover:text-blue-500"
-                aria-label="Увеличить изображение"
-              >
-                <Maximize2 size={14} />
-              </button>
-              <button
-                onClick={(e) => { e.stopPropagation(); }}
-                className="w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white text-gray-600 hover:text-green-500"
-                aria-label="AR просмотр"
-              >
-                <Eye size={14} />
               </button>
             </div>
           </div>
