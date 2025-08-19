@@ -632,8 +632,15 @@ export default function ProductDetails() {
             )}
 
             {activeTab === 'installation' && (
-              <div className="prose max-w-none">
-                <h4 className="text-lg font-semibold text-gray-900 mb-4">Инструкция по монтажу</h4>
+              <div className="space-y-8">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-lg font-semibold text-gray-900">Инструкция по монтажу</h4>
+                  <button className="bg-[#E95D22] text-white px-4 py-2 rounded-lg hover:bg-[#d54a1a] transition-colors flex items-center gap-2">
+                    <Download size={16} />
+                    Скачать PDF инструкцию
+                  </button>
+                </div>
+                
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
                     <h5 className="font-semibold text-gray-900 mb-3">Подготовка поверхности:</h5>
@@ -652,6 +659,74 @@ export default function ProductDetails() {
                       <li>Прижмите и разгладьте</li>
                       <li>Удалите излишки клея</li>
                     </ol>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 rounded-lg p-6">
+                  <h5 className="font-semibold text-gray-900 mb-4">Дополнительные материалы для скачивания:</h5>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-medium text-gray-900">Подробная инструкция по монтажу</div>
+                          <div className="text-sm text-gray-600">PDF, 2.4 МБ</div>
+                        </div>
+                        <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors">
+                          <Download size={20} />
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-medium text-gray-900">Схемы раскладки панелей</div>
+                          <div className="text-sm text-gray-600">PDF, 1.8 МБ</div>
+                        </div>
+                        <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors">
+                          <Download size={20} />
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-medium text-gray-900">Рекомендации по уходу</div>
+                          <div className="text-sm text-gray-600">PDF, 850 КБ</div>
+                        </div>
+                        <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors">
+                          <Download size={20} />
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-medium text-gray-900">Гарантийные условия</div>
+                          <div className="text-sm text-gray-600">PDF, 650 КБ</div>
+                        </div>
+                        <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors">
+                          <Download size={20} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-white text-sm font-bold">!</span>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-blue-900 mb-1">Важно:</div>
+                      <div className="text-blue-800 text-sm">
+                        Перед началом монтажа обязательно ознакомьтесь с полной инструкцией. 
+                        При несоблюдении технологии монтажа гарантия производителя может быть аннулирована.
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
