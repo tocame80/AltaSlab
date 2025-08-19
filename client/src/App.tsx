@@ -1,6 +1,7 @@
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/Home";
@@ -12,6 +13,7 @@ import VideoPage from "@/pages/VideoPage";
 import Contact from "@/pages/Contact";
 import NotFound from "@/pages/not-found";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
+import AdminPanel from "@/components/AdminPanel";
 
 function Router() {
   return (
@@ -29,12 +31,31 @@ function Router() {
 }
 
 function App() {
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Shift + A opens admin panel
+      if (e.shiftKey && e.key === 'A') {
+        e.preventDefault();
+        setIsAdminOpen(true);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <FavoritesProvider>
           <Toaster />
           <Router />
+          <AdminPanel 
+            isOpen={isAdminOpen} 
+            onClose={() => setIsAdminOpen(false)} 
+          />
         </FavoritesProvider>
       </TooltipProvider>
     </QueryClientProvider>
