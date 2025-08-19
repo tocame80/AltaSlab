@@ -91,15 +91,24 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
             {/* Quick Action Buttons */}
             <div className="absolute top-3 right-3 flex gap-2">
               <button
+                onClick={handleFavoriteClick}
+                className={`w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white ${
+                  isFavorite ? 'text-red-500 hover:text-red-600' : 'text-gray-600 hover:text-red-500'
+                }`}
+                aria-label="Добавить в избранное"
+              >
+                <Heart size={14} className={isFavorite ? 'fill-current' : ''} />
+              </button>
+              <button
                 onClick={(e) => { e.stopPropagation(); }}
-                className="w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white"
+                className="w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white text-gray-600 hover:text-blue-500"
                 aria-label="Увеличить изображение"
               >
                 <Maximize2 size={14} />
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); }}
-                className="w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white"
+                className="w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white text-gray-600 hover:text-green-500"
                 aria-label="AR просмотр"
               >
                 <Eye size={14} />
@@ -130,19 +139,6 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
           {/* Product Info Overlay - Bottom Left */}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white/90 via-white/70 to-transparent p-4">
             <div>
-              {/* Favorite Button */}
-              <div className="mb-2">
-                <button
-                  onClick={handleFavoriteClick}
-                  className={`w-8 h-8 rounded-full bg-gray-100/80 backdrop-blur-sm flex items-center justify-center transition-all hover:bg-gray-200/80 ${
-                    isFavorite ? 'text-red-500' : 'text-gray-700 hover:text-red-500'
-                  }`}
-                  aria-label="Добавить в избранное"
-                >
-                  <Heart size={16} className={isFavorite ? 'fill-current' : ''} />
-                </button>
-              </div>
-              
               {/* Collection */}
               <div className="text-gray-600 text-xs font-medium mb-1">
                 {getCollectionDisplayName()}
