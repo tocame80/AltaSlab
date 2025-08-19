@@ -218,23 +218,24 @@ export default function VideoPage() {
           {filteredVideos.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {filteredVideos.map((video, index) => (
-              <div key={video.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
-                <div className="relative aspect-video bg-gray-200 flex items-center justify-center group cursor-pointer">
-                  <button 
-                    className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center hover:bg-[#d54a1a] transition-all group-hover:scale-110"
-                    onClick={() => {
-                      // Найти индекс видео в полном списке
-                      const fullIndex = videoInstructions.findIndex((v: VideoInstruction) => v.id === video.id);
-                      if (fullIndex !== -1) {
-                        setSelectedVideo(fullIndex);
-                        setIsPlaying(true);
-                        // Прокрутка к видеоплееру
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }
-                    }}
-                  >
+              <div 
+                key={video.id} 
+                className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden cursor-pointer"
+                onClick={() => {
+                  // Найти индекс видео в полном списке
+                  const fullIndex = videoInstructions.findIndex((v: VideoInstruction) => v.id === video.id);
+                  if (fullIndex !== -1) {
+                    setSelectedVideo(fullIndex);
+                    setIsPlaying(true);
+                    // Прокрутка к видеоплееру
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
+                }}
+              >
+                <div className="relative aspect-video bg-gray-200 flex items-center justify-center group">
+                  <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center hover:bg-[#d54a1a] transition-all group-hover:scale-110">
                     <Play className="w-6 h-6 text-white ml-1" />
-                  </button>
+                  </div>
                   
                   {/* Duration badge */}
                   <div className="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
@@ -268,21 +269,7 @@ export default function VideoPage() {
                     <span>{video.duration}</span>
                   </div>
 
-                  <button 
-                    onClick={() => {
-                      // Найти индекс видео в полном списке
-                      const fullIndex = videoInstructions.findIndex((v: VideoInstruction) => v.id === video.id);
-                      if (fullIndex !== -1) {
-                        setSelectedVideo(fullIndex);
-                        setIsPlaying(true);
-                        // Прокрутка к видеоплееру
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }
-                    }}
-                    className="w-full bg-gray-100 hover:bg-[#E95D22] hover:text-white text-gray-700 py-2 rounded-lg transition-colors font-medium"
-                  >
-                    Смотреть видео
-                  </button>
+
                 </div>
               </div>
               ))}
