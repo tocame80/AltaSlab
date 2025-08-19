@@ -358,40 +358,38 @@ export default function ProductDetails() {
                 </span>
               )}
             </div>
-          </div>
 
-          {/* Thumbnail Gallery with Product Info */}
-          <div className="relative min-h-[60px]">
-            {gallery.length > 1 && (
-              <div className="flex gap-3 justify-center overflow-x-auto pb-2">
-                {gallery.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentImageIndex(index)}
-                    className={`flex-shrink-0 w-24 h-12 rounded-lg overflow-hidden border-2 transition-all ${
-                      index === currentImageIndex ? 'border-[#E95D22]' : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <img
-                      src={image}
-                      alt={`${getProductDisplayName()} - изображение ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
-            
-            {/* Product Info Overlay */}
-            <div className={`absolute ${gallery.length > 1 ? 'bottom-2 left-2' : 'bottom-0 left-0'} bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-sm`}>
-              <div className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">
+            {/* Product Info Overlay - Bottom Left */}
+            <div className="absolute bottom-4 left-4">
+              <div className="text-xs font-medium text-white/90 uppercase tracking-wider mb-1 drop-shadow-lg">
                 {getCollectionDisplayName()}
               </div>
-              <div className="text-lg font-bold text-gray-900">
+              <div className="text-lg font-bold text-white drop-shadow-lg">
                 {getProductDisplayName()}
               </div>
             </div>
           </div>
+
+          {/* Thumbnail Gallery */}
+          {gallery.length > 1 && (
+            <div className="flex gap-3 justify-center overflow-x-auto pb-2">
+              {gallery.map((image, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentImageIndex(index)}
+                  className={`flex-shrink-0 w-24 h-12 rounded-lg overflow-hidden border-2 transition-all ${
+                    index === currentImageIndex ? 'border-[#E95D22]' : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <img
+                    src={image}
+                    alt={`${getProductDisplayName()} - изображение ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Product Information */}
