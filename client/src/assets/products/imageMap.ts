@@ -36,7 +36,18 @@ export const getProductGallery = (productId: string, collection: string = ''): s
     return specificImageMap[productId];
   }
   
+  // If no specific product images available, use single placeholder
+  return [placeholderImage];
+};
+
+// Function to get main image for catalog display
+export const getProductMainImage = (productId: string, collection: string = ''): string => {
+  // Check if we have specific images mapped for this product
+  if (specificImageMap[productId] && specificImageMap[productId].length > 0) {
+    return specificImageMap[productId][0]; // Return first image
+  }
+  
   // If no specific product images available, use placeholder
-  return [placeholderImage, placeholderImage, placeholderImage];
+  return placeholderImage;
 };
 
