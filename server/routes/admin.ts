@@ -223,4 +223,110 @@ async function updateImageMap(productId: string, fileNames: string[], folder: st
   }
 }
 
+// Hero images management
+router.get('/hero-images', async (req, res) => {
+  try {
+    const heroPath = path.join(process.cwd(), 'client', 'src', 'assets', 'hero');
+    
+    try {
+      const files = await fs.readdir(heroPath);
+      const heroImages = files.filter(file => 
+        /\.(jpg|jpeg|png|gif|webp)$/i.test(file)
+      );
+      
+      res.json({ 
+        success: true, 
+        images: heroImages
+      });
+    } catch {
+      // Folder doesn't exist - return empty array
+      res.json({ 
+        success: true, 
+        images: []
+      });
+    }
+
+  } catch (error) {
+    console.error('Error getting hero images:', error);
+    res.status(500).json({ error: 'Failed to get hero images' });
+  }
+});
+
+// Upload hero images
+router.post('/upload-hero-images', upload.any(), async (req, res) => {
+  try {
+    const files = req.files as Express.Multer.File[];
+
+    if (!files || files.length === 0) {
+      return res.status(400).json({ error: 'No files provided' });
+    }
+
+    // Create hero folder path
+    const heroPath = path.join(process.cwd(), 'client', 'src', 'assets', 'hero');
+    
+    // Ensure folder exists
+    try {
+      await fs.access(heroPath);
+    } catch {
+      await fs.mkdir(heroPath, { recursive: true });
+    }
+
+    // Get existing files count to continue numbering
+    const existingFiles = await fs.readdir(heroPath).catch(() => []);
+    const existingCount = existingFiles.filter(file => 
+      /^hero-\d+\./i.test(file)
+    ).length;
+
+    // Save each file
+    const savedFiles = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const extension = path.extname(file.originalname);
+      const fileName = `hero-${existingCount + i + 1}${extension}`;
+      const filePath = path.join(heroPath, fileName);
+
+      await fs.writeFile(filePath, file.buffer);
+      savedFiles.push(fileName);
+    }
+
+    res.json({ 
+      success: true, 
+      message: `Uploaded ${savedFiles.length} hero images`,
+      files: savedFiles 
+    });
+
+  } catch (error) {
+    console.error('Error uploading hero images:', error);
+    res.status(500).json({ error: 'Failed to upload hero images' });
+  }
+});
+
+// Delete hero image
+router.delete('/delete-hero-image', async (req, res) => {
+  try {
+    const { fileName } = req.body;
+    
+    if (!fileName) {
+      return res.status(400).json({ error: 'Missing fileName' });
+    }
+
+    const filePath = path.join(process.cwd(), 'client', 'src', 'assets', 'hero', fileName);
+    
+    try {
+      await fs.unlink(filePath);
+      
+      res.json({ 
+        success: true, 
+        message: `Deleted ${fileName}` 
+      });
+    } catch {
+      res.status(404).json({ error: 'File not found' });
+    }
+
+  } catch (error) {
+    console.error('Error deleting hero image:', error);
+    res.status(500).json({ error: 'Failed to delete hero image' });
+  }
+});
+
 export default router;

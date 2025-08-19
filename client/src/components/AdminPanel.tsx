@@ -1661,81 +1661,35 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         });
 
                         try {
-                          let successCount = 0;
-                          let currentIndex = heroImages.length;
-
+                          // Upload files to local hero folder
+                          const formData = new FormData();
                           for (const file of files) {
-                            try {
-                              // Get hero-specific upload URL 
-                              const uploadResponse = await fetch('/api/hero-images/upload', {
-                                method: 'POST',
-                                headers: {
-                                  'Content-Type': 'application/json',
-                                },
-                              });
-                              const uploadData = await uploadResponse.json();
-
-                              // Upload file directly
-                              const uploadFileResponse = await fetch(uploadData.uploadURL, {
-                                method: 'PUT',
-                                body: file,
-                                headers: {
-                                  'Content-Type': file.type,
-                                },
-                              });
-
-                              if (uploadFileResponse.ok) {
-                                // Set ACL policy for hero images
-                                const aclResponse = await fetch('/api/hero-images/set-acl', {
-                                  method: 'PUT',
-                                  headers: {
-                                    'Content-Type': 'application/json',
-                                  },
-                                  body: JSON.stringify({ imageURL: uploadData.uploadURL }),
-                                });
-
-                                if (aclResponse.ok) {
-                                  const aclData = await aclResponse.json();
-                                  
-                                  // Create hero image with organized path in hero folder
-                                  const heroImageData = {
-                                    title: `Hero-${currentIndex + 1}`,
-                                    imageUrl: aclData.objectPath || uploadData.uploadURL,
-                                    sortOrder: currentIndex,
-                                    isActive: 1,
-                                  };
-
-                                  // Save to database
-                                  await apiRequest('POST', '/api/hero-images', heroImageData);
-                                  successCount++;
-                                  currentIndex++;
-                                }
-                              }
-                            } catch (error) {
-                              console.error('Error uploading file:', file.name, error);
-                            }
+                            formData.append('files', file);
                           }
 
-                          // Refresh data and show result
-                          queryClient.invalidateQueries({ queryKey: ['/api/hero-images'] });
-                          
-                          if (successCount === files.length) {
-                            toast({
-                              title: 'Успешно',
-                              description: `Загружено ${successCount} изображений`,
-                            });
-                          } else if (successCount > 0) {
-                            toast({
-                              title: 'Частично успешно',
-                              description: `Загружено ${successCount} из ${files.length} изображений`,
-                              variant: 'destructive',
-                            });
+                          const uploadResponse = await fetch('/api/admin/upload-hero-images', {
+                            method: 'POST',
+                            body: formData,
+                          });
+
+                          if (uploadResponse.ok) {
+                            const uploadData = await uploadResponse.json();
+                            
+                            if (uploadData.success && uploadData.files) {
+                              const successCount = uploadData.files.length;
+                              
+                              toast({
+                                title: 'Успешно',
+                                description: `Загружено ${successCount} hero изображений`,
+                              });
+
+                              // Refresh page to show new images
+                              window.location.reload();
+                            } else {
+                              throw new Error('Upload failed');
+                            }
                           } else {
-                            toast({
-                              title: 'Ошибка',
-                              description: 'Не удалось загрузить изображения',
-                              variant: 'destructive',
-                            });
+                            throw new Error(`Server error: ${uploadResponse.status}`);
                           }
                         } catch (error) {
                           console.error('Upload error:', error);

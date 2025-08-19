@@ -1,37 +1,12 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-import { HeroImage } from '@shared/schema';
+import { heroImages } from '@/assets/hero/heroImages';
 
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const { data: heroImages = [], isLoading, error } = useQuery<HeroImage[]>({
-    queryKey: ['/api/hero-images'],
-    retry: 2,
-    refetchOnMount: true,
-  });
-
-  // Default images in case no images are loaded from database
-  const defaultImages = [
-    {
-      id: 'default-1',
-      title: 'Панели АЛЬТА СЛЭБ',
-      imageUrl: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1440',
-      isActive: 1,
-      sortOrder: 0,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }
-  ];
-
-  // Use database images if available, otherwise use default
-  const images = heroImages && heroImages.length > 0 ? heroImages.map(image => ({
-    ...image,
-    imageUrl: image.imageUrl.startsWith('/') ? 
-      `${window.location.origin}${image.imageUrl}` : 
-      image.imageUrl
-  })) : defaultImages;
+  // Use static hero images directly
+  const images = heroImages;
 
   // Auto-slide functionality
   useEffect(() => {
@@ -44,10 +19,6 @@ export default function Hero() {
     }
   }, [images.length]);
 
-  const goToSlide = (index: number) => {
-    setCurrentSlide(index);
-  };
-
   const goToPreviousSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + images.length) % images.length);
   };
@@ -56,32 +27,12 @@ export default function Hero() {
     setCurrentSlide((prev) => (prev + 1) % images.length);
   };
 
-  const handleCatalogClick = () => {
-    const catalogElement = document.getElementById('catalog');
-    if (catalogElement) {
-      catalogElement.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const handleCalculatorClick = () => {
+  const scrollToCalculator = () => {
     const calculatorElement = document.getElementById('calculator');
     if (calculatorElement) {
       calculatorElement.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
-  // Show loading state only when actually loading and no images available
-  if (isLoading && images.length === 0) {
-    return (
-      <section className="relative w-full">
-        <div className="aspect-[4/3] bg-gray-200 animate-pulse">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-gray-600 text-lg">Загрузка изображений...</div>
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section className="relative w-full">
@@ -100,10 +51,6 @@ export default function Hero() {
               onLoad={() => console.log(`Hero image loaded: ${image.title}`)}
               onError={(e) => {
                 console.error(`Hero image load error: ${image.imageUrl}`);
-                const target = e.target as HTMLImageElement;
-                if (target.src !== defaultImages[0].imageUrl) {
-                  target.src = defaultImages[0].imageUrl;
-                }
               }}
             />
             
@@ -133,21 +80,20 @@ export default function Hero() {
                     className="text-base md:text-lg mb-12 text-gray-200 max-w-3xl mx-auto"
                     style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.7)' }}
                   >
-                    Территория уюта. Новый продукт — новые возможности!
+                    Инновационное решение для современного строительства. Долговечность, экологичность и превосходный дизайн в каждой панели.
                   </p>
-                  
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                     <button 
-                      className="btn-primary px-8 py-3 rounded-lg font-medium text-sm md:text-base"
-                      onClick={handleCatalogClick}
+                      onClick={scrollToCalculator}
+                      className="bg-[#e85e2e] hover:bg-[#e85e2e]/90 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                     >
-                      Смотреть каталог
+                      Рассчитать материал
                     </button>
                     <button 
-                      className="btn-outline px-8 py-3 rounded-lg font-medium text-sm md:text-base"
-                      onClick={handleCalculatorClick}
+                      onClick={() => document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })}
+                      className="border-2 border-white text-white hover:bg-white hover:text-[#e85e2e] px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                     >
-                      Рассчитать материалы
+                      Каталог продукции
                     </button>
                   </div>
                 </div>
@@ -156,43 +102,39 @@ export default function Hero() {
           </div>
         ))}
 
-        {/* Navigation arrows - only show if more than 1 image */}
+        {/* Navigation arrows */}
         {images.length > 1 && (
           <>
             <button
               onClick={goToPreviousSlide}
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-full transition-all duration-200 backdrop-blur-sm"
-              aria-label="Предыдущее изображение"
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/75 text-white p-3 rounded-full transition-colors z-20"
+              aria-label="Previous slide"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
             <button
               onClick={goToNextSlide}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-full transition-all duration-200 backdrop-blur-sm"
-              aria-label="Следующее изображение"
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/75 text-white p-3 rounded-full transition-colors z-20"
+              aria-label="Next slide"
             >
               <ChevronRight className="w-6 h-6" />
             </button>
           </>
         )}
 
-        {/* Slide indicators - only show if more than 1 image */}
+        {/* Indicators */}
         {images.length > 1 && (
-          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
-            <div className="flex space-x-2">
-              {images.map((_, index) => (
-                <button
-                  key={`indicator-${index}`}
-                  onClick={() => goToSlide(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-200 ${
-                    index === currentSlide
-                      ? 'bg-white'
-                      : 'bg-white bg-opacity-50 hover:bg-opacity-75'
-                  }`}
-                  aria-label={`Перейти к слайду ${index + 1}`}
-                />
-              ))}
-            </div>
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
+            {images.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                className={`w-3 h-3 rounded-full transition-colors ${
+                  index === currentSlide ? 'bg-white' : 'bg-white/50'
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
           </div>
         )}
       </div>
