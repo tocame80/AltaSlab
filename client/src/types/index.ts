@@ -15,6 +15,25 @@ export interface Product {
   color: string;
   barcode?: string;
   packageBarcode?: string;
+  gallery?: string[];
+  specifications?: {
+    thickness?: string;
+    weight?: string;
+    fireResistance?: string;
+    waterResistance?: string;
+    wearClass?: string;
+    installation?: string;
+  };
+  availability?: {
+    inStock: boolean;
+    deliveryTime: string;
+    quantity?: number;
+  };
+  downloads?: {
+    cad?: string;
+    technical?: string;
+    installation?: string;
+  };
 }
 
 export interface Accessory {

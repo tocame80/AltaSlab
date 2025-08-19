@@ -19,7 +19,25 @@ export const products: Product[] = [
     surface: 'упак',
     color: 'Закат',
     barcode: '4650218304115',
-    packageBarcode: '4650218304122'
+    packageBarcode: '4650218304122',
+    gallery: [
+      altaSlabLogo,
+      'https://images.unsplash.com/photo-1615971677499-5467cbab01e4?w=600&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop'
+    ],
+    specifications: {
+      thickness: '2,4мм',
+      weight: '8,5 кг/м²',
+      fireResistance: 'КМ2',
+      waterResistance: 'Влагостойкий',
+      wearClass: '32 класс',
+      installation: 'Клеевой монтаж'
+    },
+    availability: {
+      inStock: true,
+      deliveryTime: '1-3 дня',
+      quantity: 245
+    }
   },
   {
     id: '8938',
@@ -31,13 +49,22 @@ export const products: Product[] = [
     piecesPerPackage: 7,
     areaPerPackage: 5.04,
     price: 5528.88,
-    isPremium: false,
+    isPremium: true,
     image: altaSlabLogo,
     category: 'concrete',
     surface: 'упак',
     color: 'Закат',
     barcode: '4650218304092',
-    packageBarcode: '4650218304108'
+    packageBarcode: '4650218304108',
+    gallery: [
+      altaSlabLogo,
+      'https://images.unsplash.com/photo-1615971677499-5467cbab01e4?w=600&h=400&fit=crop'
+    ],
+    availability: {
+      inStock: false,
+      deliveryTime: '7-10 дней',
+      quantity: 0
+    }
   },
   {
     id: '8930',
