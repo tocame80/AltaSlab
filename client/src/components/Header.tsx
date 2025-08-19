@@ -7,6 +7,7 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeSearchQuery, setActiveSearchQuery] = useState("");
   const [location] = useLocation();
   const isHeaderVisible = useScrollDirection();
 
@@ -39,6 +40,9 @@ export default function Header() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
+      // Set active search query to keep search panel visible
+      setActiveSearchQuery(searchQuery.trim());
+      
       // Dispatch custom event with search query
       window.dispatchEvent(
         new CustomEvent("search-products", {
@@ -49,9 +53,18 @@ export default function Header() {
       if (window.location.pathname !== "/") {
         window.location.href = "/";
       }
-      setIsSearchOpen(false);
-      setSearchQuery("");
+      // Keep search panel open when there's an active search
+      // setIsSearchOpen(false);
+      // setSearchQuery("");
     }
+  };
+
+  const clearSearch = () => {
+    setSearchQuery("");
+    setActiveSearchQuery("");
+    setIsSearchOpen(false);
+    // Dispatch event to clear search results
+    window.dispatchEvent(new CustomEvent("clear-search"));
   };
 
   return (
@@ -125,8 +138,28 @@ export default function Header() {
         </div>
 
         {/* Search Panel */}
-        {isSearchOpen && (
-          <div className="border-t border-gray-200 py-4">
+        {(isSearchOpen || activeSearchQuery) && (
+          <div className="border-t border-gray-200 py-4 bg-white">
+            {/* Active search display */}
+            {activeSearchQuery && (
+              <div className="mb-4 flex items-center justify-between bg-orange-50 border border-orange-200 rounded-lg p-3">
+                <div className="flex items-center gap-2">
+                  <Search className="w-4 h-4 text-[#E95D22]" />
+                  <span className="text-sm text-gray-700">
+                    Поиск: <strong className="text-[#E95D22]">"{activeSearchQuery}"</strong>
+                  </span>
+                </div>
+                <button
+                  onClick={clearSearch}
+                  className="text-gray-500 hover:text-red-600 transition-colors"
+                  aria-label="Очистить поиск"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+            
+            {/* Search form */}
             <form onSubmit={handleSearch} className="flex items-center gap-3">
               <div className="flex-1 relative">
                 <input
@@ -135,7 +168,7 @@ export default function Header() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Поиск по товарам..."
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
-                  autoFocus
+                  autoFocus={!activeSearchQuery}
                 />
               </div>
               <button
@@ -148,11 +181,15 @@ export default function Header() {
               <button
                 type="button"
                 onClick={() => {
-                  setIsSearchOpen(false);
-                  setSearchQuery("");
+                  if (activeSearchQuery) {
+                    clearSearch();
+                  } else {
+                    setIsSearchOpen(false);
+                    setSearchQuery("");
+                  }
                 }}
                 className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
-                aria-label="Закрыть поиск"
+                aria-label={activeSearchQuery ? "Закрыть поиск" : "Свернуть поиск"}
               >
                 <X className="w-5 h-5" />
               </button>
