@@ -135,7 +135,7 @@ export default function VideoInstructions() {
               <div className="aspect-video relative bg-black">
                 {isPlaying ? (
                   (() => {
-                    const embedUrl = getEmbedUrl(currentFeaturedVideo.videoUrl);
+                    const embedUrl = currentFeaturedVideo.videoUrl ? getEmbedUrl(currentFeaturedVideo.videoUrl) : null;
                     
                     if (!embedUrl) {
                       return (
@@ -148,12 +148,12 @@ export default function VideoInstructions() {
                       );
                     }
                     
-                    const isDirectVideo = embedUrl.match(/\.(mp4|webm|ogg)$/i);
+                    const isDirectVideo = embedUrl?.match(/\.(mp4|webm|ogg)$/i);
                     
                     if (!isDirectVideo) {
                       return (
                         <iframe
-                          src={embedUrl}
+                          src={embedUrl || ''}
                           className="w-full h-full"
                           frameBorder="0"
                           allowFullScreen
@@ -168,9 +168,9 @@ export default function VideoInstructions() {
                           className="w-full h-full object-cover"
                           poster={currentFeaturedVideo.thumbnailUrl || undefined}
                         >
-                          <source src={embedUrl} type="video/mp4" />
-                          <source src={embedUrl} type="video/webm" />
-                          <source src={embedUrl} type="video/ogg" />
+                          <source src={embedUrl || ''} type="video/mp4" />
+                          <source src={embedUrl || ''} type="video/webm" />
+                          <source src={embedUrl || ''} type="video/ogg" />
                           Ваш браузер не поддерживает видео HTML5.
                         </video>
                       );
