@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
 
 interface FavoritesContextType {
   favorites: Set<string>;
@@ -9,8 +9,30 @@ interface FavoritesContextType {
 
 export const FavoritesContext = createContext<FavoritesContextType | undefined>(undefined);
 
+// Load favorites from localStorage
+const loadFavorites = (): Set<string> => {
+  try {
+    const saved = localStorage.getItem('alta-slab-favorites');
+    if (saved) {
+      return new Set(JSON.parse(saved));
+    }
+  } catch (error) {
+    console.error('Error loading favorites:', error);
+  }
+  return new Set();
+};
+
+// Save favorites to localStorage
+const saveFavorites = (favorites: Set<string>) => {
+  try {
+    localStorage.setItem('alta-slab-favorites', JSON.stringify(Array.from(favorites)));
+  } catch (error) {
+    console.error('Error saving favorites:', error);
+  }
+};
+
 export function FavoritesProvider({ children }: { children: ReactNode }) {
-  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [favorites, setFavorites] = useState<Set<string>>(loadFavorites());
 
   const toggleFavorite = useCallback((productId: string) => {
     setFavorites(prev => {
@@ -20,6 +42,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
       } else {
         newFavorites.add(productId);
       }
+      saveFavorites(newFavorites);
       return newFavorites;
     });
   }, []);

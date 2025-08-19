@@ -165,18 +165,12 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     }
 
     // Sort products
-    console.log('Current sortBy:', sortBy);
     if (sortBy === 'price-asc') {
       filtered.sort((a, b) => a.price - b.price);
-      console.log('Sorted price-asc, first 3:', filtered.slice(0, 3).map(p => `${p.design}: ${p.price}₽`));
     } else if (sortBy === 'price-desc') {
       filtered.sort((a, b) => b.price - a.price);
-      console.log('Sorted price-desc, first 3:', filtered.slice(0, 3).map(p => `${p.design}: ${p.price}₽`));
     } else if (sortBy === 'name') {
       filtered.sort((a, b) => a.design.localeCompare(b.design));
-      console.log('Sorted name, first 3:', filtered.slice(0, 3).map(p => `${p.design}: ${p.price}₽`));
-    } else {
-      console.log('No sorting applied, first 3:', filtered.slice(0, 3).map(p => `${p.design}: ${p.price}₽`));
     }
 
     return filtered;
