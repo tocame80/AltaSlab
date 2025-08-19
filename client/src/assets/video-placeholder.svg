@@ -1,0 +1,13 @@
+<svg width="320" height="180" viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="320" height="180" fill="#F3F4F6"/>
+  <g opacity="0.8">
+    <circle cx="160" cy="90" r="30" fill="#E95D22"/>
+    <polygon points="150,75 150,105 175,90" fill="white"/>
+  </g>
+  <text x="160" y="130" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#6B7280">
+    Видеоинструкция
+  </text>
+  <text x="160" y="150" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#9CA3AF">
+    АЛЬТА СЛЭБ
+  </text>
+</svg>

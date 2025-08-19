@@ -4,6 +4,7 @@ import { Play, Clock, Eye, ThumbsUp, Share2 } from 'lucide-react';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { VideoInstruction } from '@shared/schema';
+import videoPlaceholder from '@/assets/video-placeholder.svg';
 
 // Функция для получения embed URL из различных видеоплатформ
 function getEmbedUrl(url: string): string | null {
@@ -129,13 +130,11 @@ export default function VideoPage() {
                     })()
                   ) : (
                     <div className="w-full h-full flex items-center justify-center relative">
-                      {featuredVideo.thumbnailUrl && (
-                        <img 
-                          src={featuredVideo.thumbnailUrl} 
-                          alt={featuredVideo.title}
-                          className="absolute inset-0 w-full h-full object-cover"
-                        />
-                      )}
+                      <img 
+                        src={featuredVideo.thumbnailUrl || videoPlaceholder} 
+                        alt={featuredVideo.title}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
                       <button 
                         onClick={() => setIsPlaying(true)}
                         className="w-24 h-24 bg-[#E95D22] rounded-full flex items-center justify-center hover:bg-[#d54a1a] transition-all group hover:scale-110 relative z-10"
@@ -232,8 +231,16 @@ export default function VideoPage() {
                   }
                 }}
               >
-                <div className="relative aspect-video bg-gray-200 flex items-center justify-center group">
-                  <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center hover:bg-[#d54a1a] transition-all group-hover:scale-110">
+                <div className="relative aspect-video bg-gray-200 flex items-center justify-center group overflow-hidden">
+                  {/* Background Image */}
+                  <img 
+                    src={video.thumbnailUrl || videoPlaceholder} 
+                    alt={video.title}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                  
+                  {/* Play Button */}
+                  <div className="relative z-10 w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center hover:bg-[#d54a1a] transition-all group-hover:scale-110">
                     <Play className="w-6 h-6 text-white ml-1" />
                   </div>
                   
