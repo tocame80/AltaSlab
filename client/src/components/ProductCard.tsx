@@ -140,18 +140,18 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
           <div className="absolute bottom-0 left-0 p-3 transition-all duration-300">
             <div>
               {/* Line 1: Collection */}
-              <div className="text-gray-600 text-xs font-medium mb-1 drop-shadow-lg">
+              <div className="text-gray-600 group-hover:text-[#E95D22] text-xs font-medium mb-1 drop-shadow-lg transition-colors duration-300">
                 {getCollectionDisplayName()}
               </div>
               
               {/* Line 2: Color */}
-              <div className="text-gray-900 text-sm font-semibold mb-1 drop-shadow-lg">
+              <div className="text-gray-900 group-hover:text-[#E95D22] text-sm font-semibold mb-1 drop-shadow-lg transition-colors duration-300">
                 {product.color}
               </div>
               
               {/* Line 3: Price per m² */}
               {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
-                <div className="text-gray-900 text-sm font-bold drop-shadow-lg">
+                <div className="text-gray-900 group-hover:text-[#E95D22] text-sm font-bold drop-shadow-lg transition-colors duration-300">
                   {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽/м²
                 </div>
               )}
@@ -162,12 +162,12 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
           <div className="absolute bottom-0 right-0 p-3 transition-all duration-300">
             <div className="text-right">
               {/* Line 1: Size */}
-              <div className="text-gray-600 text-xs font-medium mb-1 drop-shadow-lg">
+              <div className="text-gray-600 group-hover:text-[#E95D22] text-xs font-medium mb-1 drop-shadow-lg transition-colors duration-300">
                 {product.format}
               </div>
               
               {/* Line 2: Area/Quantity per package */}
-              <div className="text-gray-900 text-sm font-semibold mb-1 drop-shadow-lg">
+              <div className="text-gray-900 group-hover:text-[#E95D22] text-sm font-semibold mb-1 drop-shadow-lg transition-colors duration-300">
                 {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' 
                   ? `${product.areaPerPackage} м²` 
                   : `${product.piecesPerPackage} шт`
@@ -175,7 +175,7 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
               </div>
               
               {/* Line 3: Price per package */}
-              <div className="text-gray-900 text-sm font-bold drop-shadow-lg">
+              <div className="text-gray-900 group-hover:text-[#E95D22] text-sm font-bold drop-shadow-lg transition-colors duration-300">
                 {product.price.toLocaleString('ru-RU')} ₽ {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'за шт.' : 'за упак.'}
               </div>
             </div>
