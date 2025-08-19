@@ -196,7 +196,7 @@ export default function ProductDetails() {
         <div className="container mx-auto px-6">
           <div className="flex items-center justify-between py-4">
             {/* Logo */}
-            <div className="flex items-center space-x-3">
+            <a href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
               <div className="w-12 h-12 bg-[#E95D22] rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">АС</span>
               </div>
@@ -204,21 +204,23 @@ export default function ProductDetails() {
                 <h1 className="text-gray-900 font-bold text-xl">АЛЬТА СЛЭБ</h1>
                 <p className="text-gray-500 text-xs">SPC ПАНЕЛИ</p>
               </div>
-            </div>
+            </a>
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-8">
-              <a href="/#catalog" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">КАТАЛОГ</a>
-              <a href="/#portfolio" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">ПОРТФОЛИО</a>
-              <a href="/#services" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">УСЛУГИ</a>
-              <a href="/#material" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">О МАТЕРИАЛЕ</a>
-              <a href="/#company" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">О КОМПАНИИ</a>
-              <a href="/#delivery" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">ДОСТАВКА</a>
+              <a href="/catalog" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">КАТАЛОГ</a>
+              <a href="/calculator" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">КАЛЬКУЛЯТОР</a>
+              <a href="/certificates" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">СЕРТИФИКАТЫ</a>
+              <a href="/video" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">ВИДЕО</a>
+              <a href="/faq" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">ВОПРОСЫ</a>
+              <a href="/about" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">О НАС</a>
             </nav>
 
             {/* Contact Info */}
             <div className="hidden md:flex items-center space-x-4">
-              <Mail className="text-gray-500 w-5 h-5" />
+              <a href="/contact" className="text-gray-500 hover:text-[#E95D22] transition-colors">
+                <Mail className="w-5 h-5" />
+              </a>
               <Search className="text-gray-500 w-5 h-5" />
               <span className="text-[#E95D22] font-semibold">8 800 555-77-73</span>
             </div>
