@@ -99,13 +99,25 @@ export default function Hero() {
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="container mx-auto px-6">
                   <div className="text-center text-white">
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6" style={{ letterSpacing: '2px' }}>
+                    <h1 
+                      className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6" 
+                      style={{ 
+                        letterSpacing: '2px',
+                        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7), 0 0 8px rgba(0, 0, 0, 0.5)'
+                      }}
+                    >
                       АЛЬТА СЛЭБ
                     </h1>
-                    <p className="text-lg md:text-xl lg:text-2xl mb-8 font-light">
+                    <p 
+                      className="text-lg md:text-xl lg:text-2xl mb-8 font-light"
+                      style={{ textShadow: '1px 1px 3px rgba(0, 0, 0, 0.8)' }}
+                    >
                       Панели стеновые и потолочные SPC
                     </p>
-                    <p className="text-base md:text-lg mb-12 text-gray-200 max-w-3xl mx-auto">
+                    <p 
+                      className="text-base md:text-lg mb-12 text-gray-200 max-w-3xl mx-auto"
+                      style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.7)' }}
+                    >
                       Территория уюта. Новый продукт — новые возможности!
                     </p>
                     
