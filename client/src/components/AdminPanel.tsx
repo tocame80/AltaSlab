@@ -299,15 +299,17 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
 
   // Convert local hero files to display format
   const heroImages = React.useMemo(() => {
-    if (!localHeroResponse?.success || !localHeroResponse?.images) return [];
+    if (!localHeroResponse || typeof localHeroResponse !== 'object' || !('success' in localHeroResponse) || !localHeroResponse.success || !('images' in localHeroResponse) || !localHeroResponse.images) return [];
     
-    return localHeroResponse.images.map((fileName: string, index: number) => ({
+    return (localHeroResponse.images as string[]).map((fileName: string, index: number) => ({
       id: `local-hero-${index}`,
       title: `Hero изображение ${index + 1}`,
       imageUrl: `/src/assets/hero/${fileName}`,
       fileName: fileName,
       sortOrder: index,
       isActive: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }));
   }, [localHeroResponse]);
 

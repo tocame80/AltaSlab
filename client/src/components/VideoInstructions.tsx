@@ -29,7 +29,7 @@ export default function VideoInstructions() {
   // Set first video as featured if none selected
   const currentFeaturedVideo = featuredVideo || filteredVideos[0];
 
-  const getEmbedUrl = (videoUrl: string) => {
+  const getEmbedUrl = (videoUrl: string): string | null => {
     try {
       if (videoUrl.includes('youtube.com/watch')) {
         const videoId = videoUrl.split('v=')[1]?.split('&')[0];
@@ -136,12 +136,12 @@ export default function VideoInstructions() {
                 {isPlaying ? (
                   (() => {
                     const embedUrl = getEmbedUrl(currentFeaturedVideo.videoUrl);
-                    const isDirectVideo = embedUrl && embedUrl.match(/\.(mp4|webm|ogg)$/i);
+                    const isDirectVideo = embedUrl ? embedUrl.match(/\.(mp4|webm|ogg)$/i) : false;
                     
                     if (embedUrl && !isDirectVideo) {
                       return (
                         <iframe
-                          src={embedUrl}
+                          src={embedUrl as string}
                           className="w-full h-full"
                           frameBorder="0"
                           allowFullScreen
@@ -156,9 +156,9 @@ export default function VideoInstructions() {
                           className="w-full h-full object-cover"
                           poster={currentFeaturedVideo.thumbnailUrl || undefined}
                         >
-                          <source src={embedUrl} type="video/mp4" />
-                          <source src={embedUrl} type="video/webm" />
-                          <source src={embedUrl} type="video/ogg" />
+                          <source src={embedUrl as string} type="video/mp4" />
+                          <source src={embedUrl as string} type="video/webm" />
+                          <source src={embedUrl as string} type="video/ogg" />
                           Ваш браузер не поддерживает видео HTML5.
                         </video>
                       );
