@@ -22,7 +22,7 @@ const getCollectionFolder = (collection: string): string => {
 
 // Product-specific image mapping (manually add products that have real photos)
 const specificImageMap: Record<string, string[]> = {
-  '8934': [zakkat8934_3, placeholderImage, placeholderImage], // Закат 300x600 - has one real photo
+  '8934': [zakkat8934_3], // Закат 300x600 - has one real photo
   // Add more products here as their photos become available:
   // '8938': [import('./concrete/8938-1.jpg'), import('./concrete/8938-2.jpg')], // Закат 600x1200  
   // '8930': [import('./concrete/8930-1.jpg'), import('./concrete/8930-2.jpg')], // Метеорит 300x600
