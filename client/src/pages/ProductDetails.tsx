@@ -495,63 +495,7 @@ export default function ProductDetails() {
               )}
             </div>
 
-            {/* Technical Specifications */}
-            <div className="bg-white rounded-xl p-4 shadow-sm">
-              <h3 className="text-lg font-bold text-gray-900 mb-3">Технические характеристики</h3>
-              <div className="grid grid-cols-2 gap-x-6 gap-y-1">
-                <div className="flex justify-between py-1">
-                  <span className="text-gray-600 text-sm">Формат</span>
-                  <span className="font-medium text-gray-900 text-sm">{product.format}</span>
-                </div>
-                <div className="flex justify-between py-1">
-                  <span className="text-gray-600 text-sm">Упаковка</span>
-                  <span className="font-medium text-gray-900 text-sm">
-                    {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 
-                      `${product.piecesPerPackage} шт` :
-                      `${product.areaPerPackage}м² (${product.piecesPerPackage}шт)`
-                    }
-                  </span>
-                </div>
-                {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
-                  <>
-                    <div className="flex justify-between py-1">
-                      <span className="text-gray-600 text-sm">Площадь панели</span>
-                      <span className="font-medium text-gray-900 text-sm">{product.areaPerPiece} м²</span>
-                    </div>
-                    <div className="flex justify-between py-1">
-                      <span className="text-gray-600 text-sm">Площадь упаковки</span>
-                      <span className="font-medium text-gray-900 text-sm">{product.areaPerPackage} м²</span>
-                    </div>
-                  </>
-                )}
-                <div className="flex justify-between py-1">
-                  <span className="text-gray-600 text-sm">Цвет</span>
-                  <span className="font-medium text-gray-900 text-sm">{product.color}</span>
-                </div>
-                {product.specifications && (
-                  <>
-                    {product.specifications.thickness && (
-                      <div className="flex justify-between py-1">
-                        <span className="text-gray-600 text-sm">Толщина</span>
-                        <span className="font-medium text-gray-900 text-sm">{product.specifications.thickness}</span>
-                      </div>
-                    )}
-                    {product.specifications.weight && (
-                      <div className="flex justify-between py-1">
-                        <span className="text-gray-600 text-sm">Вес</span>
-                        <span className="font-medium text-gray-900 text-sm">{product.specifications.weight}</span>
-                      </div>
-                    )}
-                    {product.specifications.wearClass && (
-                      <div className="flex justify-between py-1">
-                        <span className="text-gray-600 text-sm">Класс износостойкости</span>
-                        <span className="font-medium text-gray-900 text-sm">{product.specifications.wearClass}</span>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
+
         </div>
 
         {/* Tabs Section */}
@@ -601,8 +545,45 @@ export default function ProductDetails() {
 
             {activeTab === 'specifications' && (
               <div className="grid md:grid-cols-2 gap-8">
+                {/* Product Specifications */}
                 <div>
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Основные характеристики</h4>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Характеристики продукта</h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between py-2 border-b border-gray-100">
+                      <span className="text-gray-600">Формат</span>
+                      <span className="font-medium text-gray-900">{product.format}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-gray-100">
+                      <span className="text-gray-600">Упаковка</span>
+                      <span className="font-medium text-gray-900">
+                        {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 
+                          `${product.piecesPerPackage} шт` :
+                          `${product.areaPerPackage}м² (${product.piecesPerPackage}шт)`
+                        }
+                      </span>
+                    </div>
+                    {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
+                      <>
+                        <div className="flex justify-between py-2 border-b border-gray-100">
+                          <span className="text-gray-600">Площадь панели</span>
+                          <span className="font-medium text-gray-900">{product.areaPerPiece} м²</span>
+                        </div>
+                        <div className="flex justify-between py-2 border-b border-gray-100">
+                          <span className="text-gray-600">Площадь упаковки</span>
+                          <span className="font-medium text-gray-900">{product.areaPerPackage} м²</span>
+                        </div>
+                      </>
+                    )}
+                    <div className="flex justify-between py-2 border-b border-gray-100">
+                      <span className="text-gray-600">Цвет</span>
+                      <span className="font-medium text-gray-900">{product.color}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* General Specifications */}
+                <div>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Общие характеристики</h4>
                   <div className="space-y-3">
                     <div className="flex justify-between py-2 border-b border-gray-100">
                       <span className="text-gray-600">Материал</span>
@@ -620,29 +601,30 @@ export default function ProductDetails() {
                       <span className="text-gray-600">Страна производства</span>
                       <span className="font-medium text-gray-900">Россия</span>
                     </div>
+                    {product.specifications && (
+                      <>
+                        {product.specifications.thickness && (
+                          <div className="flex justify-between py-2 border-b border-gray-100">
+                            <span className="text-gray-600">Толщина</span>
+                            <span className="font-medium text-gray-900">{product.specifications.thickness}</span>
+                          </div>
+                        )}
+                        {product.specifications.weight && (
+                          <div className="flex justify-between py-2 border-b border-gray-100">
+                            <span className="text-gray-600">Вес</span>
+                            <span className="font-medium text-gray-900">{product.specifications.weight}</span>
+                          </div>
+                        )}
+                        {product.specifications.wearClass && (
+                          <div className="flex justify-between py-2 border-b border-gray-100">
+                            <span className="text-gray-600">Класс износостойкости</span>
+                            <span className="font-medium text-gray-900">{product.specifications.wearClass}</span>
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
                 </div>
-                
-                {product.specifications && (
-                  <div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Технические параметры</h4>
-                    <div className="space-y-3">
-                      {Object.entries(product.specifications).map(([key, value]) => (
-                        <div key={key} className="flex justify-between py-2 border-b border-gray-100">
-                          <span className="text-gray-600 capitalize">
-                            {key === 'thickness' && 'Толщина'}
-                            {key === 'weight' && 'Вес'}
-                            {key === 'fireResistance' && 'Пожарная безопасность'}
-                            {key === 'waterResistance' && 'Влагостойкость'}
-                            {key === 'wearClass' && 'Класс износостойкости'}
-                            {key === 'installation' && 'Монтаж'}
-                          </span>
-                          <span className="font-medium text-gray-900">{value}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             )}
 
