@@ -263,13 +263,10 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
 
         <div className="mb-8">
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <h2 className="text-4xl font-bold text-primary">{getCollectionTitle()}</h2>
-          </div>
-          
-          {/* Search Bar - Show when requested or has active search */}
-          {(showSearch || searchQuery) && (
-            <div className="flex items-center justify-center gap-3 mb-4">
+          {/* Title and Search Bar in one row when search is active */}
+          {(showSearch || searchQuery) ? (
+            <div className="flex items-center justify-center gap-6 mb-4">
+              <h2 className="text-4xl font-bold text-primary">{getCollectionTitle()}</h2>
               <div className="max-w-md">
                 <div className="relative">
                   <input
@@ -292,6 +289,10 @@ export default function Catalog({ activeCollection }: CatalogProps) {
               >
                 Очистить
               </button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <h2 className="text-4xl font-bold text-primary">{getCollectionTitle()}</h2>
             </div>
           )}
           
