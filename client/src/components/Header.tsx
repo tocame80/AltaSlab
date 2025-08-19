@@ -66,9 +66,9 @@ export default function Header() {
             <a href="#company" className="nav-link">
               О НАС
             </a>
-            <Link href="/" className="nav-link">
+            <a href="#catalog" className="nav-link">
               КАТАЛОГ
-            </Link>
+            </a>
           </nav>
 
           {/* Contact Info */}
@@ -154,9 +154,9 @@ export default function Header() {
               <a href="#company" className="nav-link">
                 О НАС
               </a>
-              <Link href="/" className="nav-link">
+              <a href="#catalog" className="nav-link">
                 КАТАЛОГ
-              </Link>
+              </a>
               <div className="flex items-center space-x-4 pt-4">
                 <Link
                   href="/contact"
