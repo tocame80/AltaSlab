@@ -93,9 +93,7 @@ export default function Header() {
             <Link href="/faq" className="nav-link">
               ВОПРОСЫ
             </Link>
-            <button onClick={handleCompanyClick} className="nav-link">
-              О НАС
-            </button>
+            
           </nav>
 
           {/* Contact Info */}
@@ -181,9 +179,7 @@ export default function Header() {
               <Link href="/faq" className="nav-link">
                 ВОПРОСЫ
               </Link>
-              <button onClick={handleCompanyClick} className="nav-link text-left">
-                О НАС
-              </button>
+              
               <div className="flex items-center space-x-4 pt-4">
                 <Link
                   href="/contact"
