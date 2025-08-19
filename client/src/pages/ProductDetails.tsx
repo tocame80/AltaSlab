@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useMemo, useEffect } from 'react';
 import { useRoute } from 'wouter';
 import { ArrowLeft, Heart, ShoppingCart, Calculator, Download, Share2, Eye, Maximize2, CheckCircle, Clock, Truck, Star, Mail, Search } from 'lucide-react';
 import { products } from '@/data/products';
@@ -15,6 +15,7 @@ export default function ProductDetails() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState('description');
   const [quantity, setQuantity] = useState(1);
+  const [selectedCollection, setSelectedCollection] = useState<Collection>('all');
 
   const product = products.find(p => p.id === params?.id);
 
@@ -70,6 +71,60 @@ export default function ProductDetails() {
     { key: 'accessories' as Collection, label: 'КОМПЛЕКТУЮЩИЕ', color: 'bg-orange-500' },
   ];
 
+  // Get unique colors/designs for the selected collection
+  const getColorsForCollection = (collectionKey: Collection) => {
+    if (collectionKey === 'all') {
+      return [];
+    }
+    
+    const collectionMapping = {
+      'concrete': 'МАГИЯ БЕТОНА',
+      'fabric': 'ТКАНЕВАЯ РОСКОШЬ', 
+      'matte': 'МАТОВАЯ ЭСТЕТИКА',
+      'marble': 'МРАМОРНАЯ ФЕЕРИЯ',
+      'accessories': 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ'
+    };
+
+    const collectionName = collectionMapping[collectionKey as keyof typeof collectionMapping];
+    if (!collectionName) return [];
+
+    const filteredProducts = products.filter(p => p.collection === collectionName);
+    const uniqueColors = new Map();
+
+    filteredProducts.forEach(product => {
+      const key = product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' 
+        ? (product.name.toLowerCase().includes('профиль') ? product.color : 'Клей')
+        : product.design;
+      
+      if (!uniqueColors.has(key)) {
+        uniqueColors.set(key, {
+          name: key,
+          productId: product.id,
+          color: product.color
+        });
+      }
+    });
+
+    return Array.from(uniqueColors.values());
+  };
+
+  const currentCollectionColors = useMemo(() => 
+    getColorsForCollection(selectedCollection), 
+    [selectedCollection]
+  );
+
+  // Set initial collection based on current product
+  useEffect(() => {
+    if (product) {
+      const productCollection = product.collection;
+      if (productCollection === 'МАГИЯ БЕТОНА') setSelectedCollection('concrete');
+      else if (productCollection === 'ТКАНЕВАЯ РОСКОШЬ') setSelectedCollection('fabric');
+      else if (productCollection === 'МАТОВАЯ ЭСТЕТИКА') setSelectedCollection('matte');
+      else if (productCollection === 'МРАМОРНАЯ ФЕЕРИЯ') setSelectedCollection('marble');
+      else if (productCollection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ') setSelectedCollection('accessories');
+    }
+  }, [product]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -112,23 +167,57 @@ export default function ProductDetails() {
         <div className="container mx-auto px-6">
           <nav className="flex flex-wrap items-center gap-8">
             {collections.map((collection) => (
-              <a
+              <button
                 key={collection.key}
-                href={`/#catalog`}
-                className="text-gray-500 hover:text-gray-700 text-sm font-medium transition-colors uppercase tracking-wide"
+                onClick={() => setSelectedCollection(collection.key)}
+                className={`text-sm font-medium transition-colors uppercase tracking-wide ${
+                  selectedCollection === collection.key 
+                    ? 'text-gray-900' 
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
               >
                 {collection.label}
-              </a>
+              </button>
             ))}
-            <a
-              href="/#catalog"
-              className="text-gray-500 hover:text-gray-700 text-sm font-medium transition-colors uppercase tracking-wide"
+            <button
+              onClick={() => setSelectedCollection('favorites' as Collection)}
+              className={`text-sm font-medium transition-colors uppercase tracking-wide ${
+                selectedCollection === 'favorites' 
+                  ? 'text-gray-900' 
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
             >
               ИЗБРАННОЕ
-            </a>
+            </button>
           </nav>
         </div>
       </div>
+
+      {/* Colors/Designs Navigation */}
+      {currentCollectionColors.length > 0 && (
+        <div className="bg-gray-50 py-3 border-t border-gray-200">
+          <div className="container mx-auto px-6">
+            <nav className="flex flex-wrap items-center gap-6">
+              {currentCollectionColors.map((colorItem) => (
+                <button
+                  key={colorItem.productId}
+                  onClick={() => window.location.href = `/product/${colorItem.productId}`}
+                  className={`text-gray-500 hover:text-gray-700 text-sm transition-colors ${
+                    product && (
+                      (product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && 
+                       ((product.name.toLowerCase().includes('профиль') && colorItem.name === product.color) ||
+                        (!product.name.toLowerCase().includes('профиль') && colorItem.name === 'Клей'))) ||
+                      (product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && colorItem.name === product.design)
+                    ) ? 'font-semibold text-gray-900' : ''
+                  }`}
+                >
+                  {colorItem.name}
+                </button>
+              ))}
+            </nav>
+          </div>
+        </div>
+      )}
 
       {/* Breadcrumb */}
       <div className="bg-white border-b">
