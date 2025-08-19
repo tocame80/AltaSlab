@@ -485,6 +485,57 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                   </div>
                 </div>
               )}
+
+              {/* Sorting Section */}
+              <div className="mt-8 pt-6 border-t border-gray-200">
+                <h4 className="font-semibold text-primary mb-3">Сортировка</h4>
+                <div className="space-y-2">
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="sort"
+                      value="default"
+                      checked={sortBy === 'default'}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="mr-2"
+                    />
+                    <span className="text-secondary text-sm">По умолчанию</span>
+                  </label>
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="sort"
+                      value="price-asc"
+                      checked={sortBy === 'price-asc'}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="mr-2"
+                    />
+                    <span className="text-secondary text-sm">По цене (возрастание)</span>
+                  </label>
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="sort"
+                      value="price-desc"
+                      checked={sortBy === 'price-desc'}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="mr-2"
+                    />
+                    <span className="text-secondary text-sm">По цене (убывание)</span>
+                  </label>
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="sort"
+                      value="name"
+                      checked={sortBy === 'name'}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="mr-2"
+                    />
+                    <span className="text-secondary text-sm">По названию</span>
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -493,19 +544,6 @@ export default function Catalog({ activeCollection }: CatalogProps) {
             {/* Results Info */}
             <div className="flex justify-between items-center mb-6">
               <span className="text-muted">Показано {visibleProducts.length} из {filteredProducts.length} товаров</span>
-              <div className="flex items-center gap-2">
-                <span className="text-muted">Сортировать</span>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="text-accent border-none bg-transparent cursor-pointer"
-                >
-                  <option value="default">По умолчанию</option>
-                  <option value="price-asc">По цене (возр.)</option>
-                  <option value="price-desc">По цене (убыв.)</option>
-                  <option value="name">По названию</option>
-                </select>
-              </div>
             </div>
 
             {/* Product Grid */}
