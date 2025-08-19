@@ -1,7 +1,7 @@
 // Generated from Excel file
 import { Product } from '../types';
 import altaSlabLogo from '../assets/alta-slab-logo.jpg';
-import { getProductGallery, getCollectionGallery } from '../assets/products/imageMap';
+import { getProductGallery } from '../assets/products/imageMap';
 
 export const products: Product[] = [
   {
@@ -21,7 +21,7 @@ export const products: Product[] = [
     color: 'Закат',
     barcode: '4650218304115',
     packageBarcode: '4650218304122',
-    gallery: getProductGallery('8934'),
+    gallery: getProductGallery('8934', 'МАГИЯ БЕТОНА'),
     specifications: {
       thickness: '2,4мм',
       weight: '8,5 кг/м²',
@@ -53,7 +53,7 @@ export const products: Product[] = [
     color: 'Закат',
     barcode: '4650218304092',
     packageBarcode: '4650218304108',
-    gallery: getProductGallery('8938'),
+    gallery: getProductGallery('8938', 'МАГИЯ БЕТОНА'),
     availability: {
       inStock: false,
       deliveryTime: '7-10 дней',
@@ -77,7 +77,7 @@ export const products: Product[] = [
     color: 'Метеорит',
     barcode: '4650218304177',
     packageBarcode: '4650218304184',
-    gallery: getProductGallery('8930')
+    gallery: getProductGallery('8930', 'МАГИЯ БЕТОНА')
   },
   {
     id: '8931',
@@ -96,7 +96,7 @@ export const products: Product[] = [
     color: 'Метеорит',
     barcode: '4650218304238',
     packageBarcode: '4650218304245',
-    gallery: getProductGallery('8931')
+    gallery: getProductGallery('8931', 'МАГИЯ БЕТОНА')
   },
   {
     id: '8936',
