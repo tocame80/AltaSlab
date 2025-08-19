@@ -9,6 +9,8 @@ import placeholderImage from './placeholder.jpg';
 import zakkat8934_1 from './concrete/8934-1.png';
 import zakkat8934_3 from './concrete/8934-3.png';
 
+import 8938_1 from './concrete/8938-1.jpg';
+
 // Map collection names to folder paths
 const getCollectionFolder = (collection: string): string => {
   const folderMap: Record<string, string> = {
@@ -25,7 +27,7 @@ const getCollectionFolder = (collection: string): string => {
 const specificImageMap: Record<string, string[]> = {
   '8934': [zakkat8934_1, zakkat8934_3], // Закат 300x600 - has two real photos
   // Add more products here as their photos become available:
-  // '8938': [import('./concrete/8938-1.jpg'), import('./concrete/8938-2.jpg')], // Закат 600x1200  
+  // '8938': [8938_1], // Закат 600x1200  
   // '8930': [import('./concrete/8930-1.jpg'), import('./concrete/8930-2.jpg')], // Метеорит 300x600
 };
 
