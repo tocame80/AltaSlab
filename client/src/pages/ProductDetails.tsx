@@ -1,6 +1,6 @@
 import { useState, useContext, useMemo, useEffect } from 'react';
 import { useRoute } from 'wouter';
-import { ArrowLeft, Heart, ShoppingCart, Calculator, Download, Share2, Eye, Maximize2, CheckCircle, Clock, Truck, Star, Mail, Search } from 'lucide-react';
+import { ArrowLeft, Heart, ShoppingCart, Calculator, Download, Share2, Eye, Maximize2, CheckCircle, Clock, Truck, Star, Mail, Search, X, ZoomIn, Save } from 'lucide-react';
 import { products } from '@/data/products';
 import { FavoritesContext } from '@/contexts/FavoritesContext';
 import { Collection } from '@/types';
@@ -16,6 +16,8 @@ export default function ProductDetails() {
   const [activeTab, setActiveTab] = useState('description');
   const [quantity, setQuantity] = useState(1);
   const [selectedCollection, setSelectedCollection] = useState<Collection>('all');
+  const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
+  const [isImageViewerOpen, setIsImageViewerOpen] = useState(false);
 
   const product = products.find(p => p.id === params?.id);
 
@@ -61,6 +63,68 @@ export default function ProductDetails() {
     }
     return product.design;
   };
+
+  // Image gallery functions
+  const openFullscreen = () => {
+    setIsFullscreenOpen(true);
+  };
+
+  const openImageViewer = () => {
+    setIsImageViewerOpen(true);
+  };
+
+  const shareImage = async () => {
+    const imageUrl = gallery[currentImageIndex];
+    const productName = getProductDisplayName();
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${productName} - АЛЬТА СЛЭБ`,
+          text: `Посмотрите на ${productName} из коллекции ${getCollectionDisplayName()}`,
+          url: window.location.href
+        });
+      } catch (error) {
+        console.log('Sharing failed:', error);
+        fallbackShare();
+      }
+    } else {
+      fallbackShare();
+    }
+  };
+
+  const fallbackShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    // Could add toast notification here
+    alert('Ссылка скопирована в буфер обмена!');
+  };
+
+  const downloadImage = () => {
+    const imageUrl = gallery[currentImageIndex];
+    const productName = getProductDisplayName();
+    
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = `${productName}-${currentImageIndex + 1}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Handle escape key for modals
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        if (isFullscreenOpen) setIsFullscreenOpen(false);
+        if (isImageViewerOpen) setIsImageViewerOpen(false);
+      }
+    };
+
+    if (isFullscreenOpen || isImageViewerOpen) {
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
+    }
+  }, [isFullscreenOpen, isImageViewerOpen]);
 
   const collections = [
     { key: 'all' as Collection, label: 'ВСЁ', color: 'bg-gray-400' },
@@ -245,14 +309,33 @@ export default function ProductDetails() {
             
             {/* Image Controls */}
             <div className="absolute top-4 right-4 flex gap-2">
-              <button className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all">
+              <button 
+                onClick={openFullscreen}
+                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all"
+                title="Полноэкранный просмотр"
+              >
                 <Maximize2 size={16} />
               </button>
-              <button className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all">
-                <Eye size={16} />
+              <button 
+                onClick={openImageViewer}
+                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all"
+                title="Увеличить изображение"
+              >
+                <ZoomIn size={16} />
               </button>
-              <button className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all">
+              <button 
+                onClick={shareImage}
+                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all"
+                title="Поделиться"
+              >
                 <Share2 size={16} />
+              </button>
+              <button 
+                onClick={downloadImage}
+                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all"
+                title="Скачать оригинал"
+              >
+                <Save size={16} />
               </button>
             </div>
 
@@ -647,6 +730,89 @@ export default function ProductDetails() {
           </div>
         </div>
       </div>
+
+      {/* Fullscreen Modal */}
+      {isFullscreenOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center">
+          <div className="relative w-full h-full flex items-center justify-center p-4">
+            <button
+              onClick={() => setIsFullscreenOpen(false)}
+              className="absolute top-4 right-4 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all text-white z-10"
+            >
+              <X size={24} />
+            </button>
+            
+            <img
+              src={gallery[currentImageIndex]}
+              alt={getProductDisplayName()}
+              className="max-w-full max-h-full object-contain"
+            />
+            
+            {/* Navigation arrows */}
+            {gallery.length > 1 && (
+              <>
+                <button
+                  onClick={() => setCurrentImageIndex(currentImageIndex > 0 ? currentImageIndex - 1 : gallery.length - 1)}
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all text-white"
+                >
+                  <ArrowLeft size={24} />
+                </button>
+                <button
+                  onClick={() => setCurrentImageIndex(currentImageIndex < gallery.length - 1 ? currentImageIndex + 1 : 0)}
+                  className="absolute right-16 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all text-white"
+                >
+                  <ArrowLeft size={24} className="rotate-180" />
+                </button>
+              </>
+            )}
+            
+            {/* Image counter */}
+            {gallery.length > 1 && (
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full">
+                {currentImageIndex + 1} из {gallery.length}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Image Viewer Modal */}
+      {isImageViewerOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center">
+          <div className="relative max-w-4xl max-h-[90vh] m-4">
+            <button
+              onClick={() => setIsImageViewerOpen(false)}
+              className="absolute -top-12 right-0 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all text-white"
+            >
+              <X size={20} />
+            </button>
+            
+            <img
+              src={gallery[currentImageIndex]}
+              alt={getProductDisplayName()}
+              className="w-full h-full object-contain rounded-lg"
+            />
+            
+            {/* Image actions */}
+            <div className="absolute bottom-4 right-4 flex gap-2">
+              <button 
+                onClick={shareImage}
+                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all"
+                title="Поделиться"
+              >
+                <Share2 size={16} />
+              </button>
+              <button 
+                onClick={downloadImage}
+                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all"
+                title="Скачать оригинал"
+              >
+                <Save size={16} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
