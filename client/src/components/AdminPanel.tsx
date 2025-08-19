@@ -1642,72 +1642,106 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                   <label className="block">
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-[#E95D22] hover:bg-orange-50 transition-all cursor-pointer">
                       <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm font-medium text-gray-700 mb-1">Выберите изображение для загрузки</p>
-                      <p className="text-xs text-gray-500">или перетащите файл сюда</p>
+                      <p className="text-sm font-medium text-gray-700 mb-1">Выберите изображения для загрузки</p>
+                      <p className="text-xs text-gray-500">можно выбрать несколько файлов сразу</p>
                     </div>
                     <input
                       type="file"
                       accept="image/*"
+                      multiple
                       className="hidden"
                       onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (!file) return;
+                        const files = Array.from(e.target.files || []);
+                        if (files.length === 0) return;
 
                         // Show loading state
-                        const loadingToast = toast({
+                        toast({
                           title: 'Загрузка...',
-                          description: 'Загружаем изображение в облако',
+                          description: `Загружаем ${files.length} изображений в облако`,
                         });
 
                         try {
-                          // Get upload URL
-                          const uploadResponse = await fetch('/api/objects/upload', {
-                            method: 'POST',
-                            headers: {
-                              'Content-Type': 'application/json',
-                            },
-                          });
-                          const uploadData = await uploadResponse.json();
+                          let successCount = 0;
+                          let currentIndex = heroImages.length;
 
-                          // Upload file directly
-                          const uploadFileResponse = await fetch(uploadData.uploadURL, {
-                            method: 'PUT',
-                            body: file,
-                            headers: {
-                              'Content-Type': file.type,
-                            },
-                          });
+                          for (const file of files) {
+                            try {
+                              // Get upload URL
+                              const uploadResponse = await fetch('/api/objects/upload', {
+                                method: 'POST',
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                },
+                              });
+                              const uploadData = await uploadResponse.json();
 
-                          if (uploadFileResponse.ok) {
-                            // Set ACL policy
-                            const aclResponse = await fetch('/api/hero-image-upload', {
-                              method: 'PUT',
-                              headers: {
-                                'Content-Type': 'application/json',
-                              },
-                              body: JSON.stringify({ imageURL: uploadData.uploadURL }),
-                            });
+                              // Upload file directly
+                              const uploadFileResponse = await fetch(uploadData.uploadURL, {
+                                method: 'PUT',
+                                body: file,
+                                headers: {
+                                  'Content-Type': file.type,
+                                },
+                              });
 
-                            if (aclResponse.ok) {
-                              const aclData = await aclResponse.json();
-                              
-                              // Create hero image with default values
-                              const heroImageData = {
-                                title: `Hero-${heroImages.length + 1}`,
-                                imageUrl: aclData.objectPath,
-                                sortOrder: heroImages.length,
-                                isActive: 1,
-                              };
+                              if (uploadFileResponse.ok) {
+                                // Set ACL policy
+                                const aclResponse = await fetch('/api/hero-image-upload', {
+                                  method: 'PUT',
+                                  headers: {
+                                    'Content-Type': 'application/json',
+                                  },
+                                  body: JSON.stringify({ imageURL: uploadData.uploadURL }),
+                                });
 
-                              // Save to database
-                              createHeroImageMutation.mutate(heroImageData);
+                                if (aclResponse.ok) {
+                                  const aclData = await aclResponse.json();
+                                  
+                                  // Create hero image with default values
+                                  const heroImageData = {
+                                    title: `Hero-${currentIndex + 1}`,
+                                    imageUrl: aclData.objectPath,
+                                    sortOrder: currentIndex,
+                                    isActive: 1,
+                                  };
+
+                                  // Save to database
+                                  await apiRequest('POST', '/api/hero-images', heroImageData);
+                                  successCount++;
+                                  currentIndex++;
+                                }
+                              }
+                            } catch (error) {
+                              console.error('Error uploading file:', file.name, error);
                             }
+                          }
+
+                          // Refresh data and show result
+                          queryClient.invalidateQueries({ queryKey: ['/api/hero-images'] });
+                          
+                          if (successCount === files.length) {
+                            toast({
+                              title: 'Успешно',
+                              description: `Загружено ${successCount} изображений`,
+                            });
+                          } else if (successCount > 0) {
+                            toast({
+                              title: 'Частично успешно',
+                              description: `Загружено ${successCount} из ${files.length} изображений`,
+                              variant: 'destructive',
+                            });
+                          } else {
+                            toast({
+                              title: 'Ошибка',
+                              description: 'Не удалось загрузить изображения',
+                              variant: 'destructive',
+                            });
                           }
                         } catch (error) {
                           console.error('Upload error:', error);
                           toast({
                             title: 'Ошибка',
-                            description: 'Не удалось загрузить изображение',
+                            description: 'Не удалось загрузить изображения',
                             variant: 'destructive',
                           });
                         }
