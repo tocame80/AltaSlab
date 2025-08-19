@@ -430,23 +430,7 @@ export default function ProductDetails() {
 
             </div>
 
-            {/* Delivery Info */}
-            <div className="bg-white rounded-xl p-6 shadow-sm">
-              <div className="flex items-center gap-3 mb-4">
-                <Truck size={20} className="text-gray-500" />
-                <div>
-                  <div className="font-semibold text-gray-900">Доставка: {availability.deliveryTime}</div>
-                  <div className="text-sm text-gray-600">
-                    {availability.inStock ? 'Товар в наличии' : 'Изготовление под заказ'}
-                  </div>
-                </div>
-              </div>
-              {availability.inStock && availability.quantity && (
-                <div className="text-sm text-gray-600">
-                  Остаток на складе: {availability.quantity}+ шт
-                </div>
-              )}
-            </div>
+
 
 
         </div>
