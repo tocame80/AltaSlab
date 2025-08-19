@@ -263,12 +263,14 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
 
         <div className="mb-8">
-          <div className="flex items-center justify-between gap-4 mb-4">
+          <div className="flex items-center justify-center gap-4 mb-4">
             <h2 className="text-4xl font-bold text-primary">{getCollectionTitle()}</h2>
-            
-            {/* Search Bar - Show when requested or has active search */}
-            {(showSearch || searchQuery) && (
-              <div className="flex-1 max-w-md">
+          </div>
+          
+          {/* Search Bar - Show when requested or has active search */}
+          {(showSearch || searchQuery) && (
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="max-w-md">
                 <div className="relative">
                   <input
                     id="catalog-search-input"
@@ -281,22 +283,19 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                   <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 </div>
               </div>
-            )}
-            
-            {/* Clear Search Button */}
-            {(showSearch || searchQuery) && (
               <button
                 onClick={() => {
                   setSearchQuery('');
                   setShowSearch(false);
                 }}
-                className="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors font-medium text-sm"
+                className="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors font-medium text-sm whitespace-nowrap"
               >
                 Очистить
               </button>
-            )}
-          </div>
-          <p className="text-secondary text-lg">
+            </div>
+          )}
+          
+          <p className="text-secondary text-lg text-center">
             {searchQuery 
               ? `Результаты поиска по запросу "${searchQuery}" - найдено ${filteredProducts.length} товаров`
               : "В данном разделе вы можете подобрать необходимые вам цвета, изменив параметры поиска."
