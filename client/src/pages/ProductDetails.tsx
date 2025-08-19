@@ -307,31 +307,31 @@ export default function ProductDetails() {
               />
               
               {/* Product Info Overlay - Bottom Left */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white/90 via-white/70 to-transparent p-6">
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white/90 via-white/70 to-transparent p-4 transition-all duration-300 hover:from-white/95 hover:via-white/80">
                 <div>
                   {/* Collection */}
-                  <div className="text-gray-600 text-sm font-medium mb-1">
+                  <div className="text-gray-600 text-xs font-medium mb-1">
                     {getCollectionDisplayName()}
                   </div>
                   
                   {/* Color */}
-                  <div className="text-gray-900 text-lg font-semibold mb-2">
+                  <div className="text-gray-900 text-base font-semibold mb-2">
                     {product.color}
                   </div>
                   
                   {/* Price - One Line */}
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
                     <div>
-                      <span className="text-gray-900 text-2xl font-bold">
+                      <span className="text-gray-900 text-xl font-bold">
                         {product.price.toLocaleString('ru-RU')} ₽
                       </span>
-                      <span className="text-gray-600 text-sm ml-1">
+                      <span className="text-gray-600 text-xs ml-1">
                         {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'за шт.' : 'за упак.'}
                       </span>
                     </div>
                     {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
                       <div>
-                        <span className="text-gray-900 text-xl font-bold">
+                        <span className="text-gray-900 text-lg font-bold">
                           {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽/м²
                         </span>
                       </div>
