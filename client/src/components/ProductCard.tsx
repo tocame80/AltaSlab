@@ -86,9 +86,10 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
             loading="lazy"
           />
           
-          {/* Favorite button - visible only when selected */}
-          {isFavorite && (
-            <div className="absolute top-3 right-3">
+          {/* Favorite button */}
+          <div className="absolute top-3 right-3">
+            {isFavorite ? (
+              // Always visible when favorited
               <button
                 onClick={handleFavoriteClick}
                 className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white shadow-md text-red-500 hover:text-red-600"
@@ -96,8 +97,19 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
               >
                 <Heart size={14} className="fill-current" />
               </button>
-            </div>
-          )}
+            ) : (
+              // Visible only on hover when not favorited
+              <button
+                onClick={handleFavoriteClick}
+                className={`w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white shadow-md text-gray-600 hover:text-red-500 ${
+                  isHovered ? 'opacity-100' : 'opacity-0'
+                }`}
+                aria-label="Добавить в избранное"
+              >
+                <Heart size={14} />
+              </button>
+            )}
+          </div>
 
           {/* Image Overlay - only for darkening effect on hover */}
           <div className={`absolute inset-0 bg-black/20 transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'} pointer-events-none`}>
