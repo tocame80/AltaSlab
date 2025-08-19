@@ -231,77 +231,76 @@ export default function ProductDetails() {
           Вернуться в каталог
         </button>
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Image Gallery */}
-          <div className="space-y-4">
-            {/* Main Image */}
-            <div className="relative bg-white rounded-xl overflow-hidden shadow-sm">
-              <div className="aspect-square">
-                <img
-                  src={gallery[currentImageIndex]}
-                  alt={getProductDisplayName()}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              
-              {/* Image Controls */}
-              <div className="absolute top-4 right-4 flex gap-2">
-                <button className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all">
-                  <Maximize2 size={16} />
-                </button>
-                <button className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all">
-                  <Eye size={16} />
-                </button>
-                <button className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all">
-                  <Share2 size={16} />
-                </button>
-              </div>
-
-              {/* Status Badges */}
-              <div className="absolute top-4 left-4 flex flex-col gap-2">
-                {product.isPremium && (
-                  <span className="px-3 py-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-sm font-semibold rounded-full">
-                    ПРЕМИУМ
-                  </span>
-                )}
-                {availability.inStock ? (
-                  <span className="px-3 py-1 bg-green-500 text-white text-sm font-semibold rounded-full flex items-center gap-1">
-                    <CheckCircle size={12} />
-                    В НАЛИЧИИ
-                  </span>
-                ) : (
-                  <span className="px-3 py-1 bg-orange-500 text-white text-sm font-semibold rounded-full flex items-center gap-1">
-                    <Clock size={12} />
-                    ПОД ЗАКАЗ
-                  </span>
-                )}
-              </div>
+        {/* Full Width Image Gallery */}
+        <div className="mb-12">
+          {/* Main Image */}
+          <div className="relative bg-white rounded-xl overflow-hidden shadow-sm mb-6">
+            <div className="aspect-[2/1]">
+              <img
+                src={gallery[currentImageIndex]}
+                alt={getProductDisplayName()}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            
+            {/* Image Controls */}
+            <div className="absolute top-4 right-4 flex gap-2">
+              <button className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all">
+                <Maximize2 size={16} />
+              </button>
+              <button className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all">
+                <Eye size={16} />
+              </button>
+              <button className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all">
+                <Share2 size={16} />
+              </button>
             </div>
 
-            {/* Thumbnail Gallery */}
-            {gallery.length > 1 && (
-              <div className="flex gap-2">
-                {gallery.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentImageIndex(index)}
-                    className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
-                      index === currentImageIndex ? 'border-[#E95D22]' : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <img
-                      src={image}
-                      alt={`${getProductDisplayName()} - изображение ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
+            {/* Status Badges */}
+            <div className="absolute top-4 left-4 flex flex-col gap-2">
+              {product.isPremium && (
+                <span className="px-3 py-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-sm font-semibold rounded-full">
+                  ПРЕМИУМ
+                </span>
+              )}
+              {availability.inStock ? (
+                <span className="px-3 py-1 bg-green-500 text-white text-sm font-semibold rounded-full flex items-center gap-1">
+                  <CheckCircle size={12} />
+                  В НАЛИЧИИ
+                </span>
+              ) : (
+                <span className="px-3 py-1 bg-orange-500 text-white text-sm font-semibold rounded-full flex items-center gap-1">
+                  <Clock size={12} />
+                  ПОД ЗАКАЗ
+                </span>
+              )}
+            </div>
           </div>
 
-          {/* Product Information */}
-          <div className="space-y-6">
+          {/* Thumbnail Gallery */}
+          {gallery.length > 1 && (
+            <div className="flex gap-3 justify-center overflow-x-auto pb-2">
+              {gallery.map((image, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentImageIndex(index)}
+                  className={`flex-shrink-0 w-24 h-12 rounded-lg overflow-hidden border-2 transition-all ${
+                    index === currentImageIndex ? 'border-[#E95D22]' : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <img
+                    src={image}
+                    alt={`${getProductDisplayName()} - изображение ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Product Information */}
+        <div className="space-y-8">
             {/* Header */}
             <div>
               <div className="flex items-center justify-between mb-2">
@@ -487,7 +486,6 @@ export default function ProductDetails() {
                 )}
               </div>
             </div>
-          </div>
         </div>
 
         {/* Tabs Section */}
