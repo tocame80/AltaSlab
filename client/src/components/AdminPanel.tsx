@@ -1088,13 +1088,61 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          URL изображения
+                          Изображение превью
                         </label>
-                        <input
-                          {...videoForm.register('thumbnailUrl')}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
-                          placeholder="https://..."
-                        />
+                        <div className="space-y-3">
+                          <input
+                            {...videoForm.register('thumbnailUrl')}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                            placeholder="https://... или загрузите файл"
+                          />
+                          <div className="flex items-center gap-3">
+                            <span className="text-sm text-gray-600">или</span>
+                            <label className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg cursor-pointer transition-colors flex items-center gap-2">
+                              <Upload size={16} />
+                              Выбрать файл
+                              <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = (event) => {
+                                      const dataUrl = event.target?.result as string;
+                                      videoForm.setValue('thumbnailUrl', dataUrl);
+                                    };
+                                    reader.readAsDataURL(file);
+                                  }
+                                }}
+                              />
+                            </label>
+                          </div>
+                          {/* Предварительный просмотр изображения */}
+                          {videoForm.watch('thumbnailUrl') && (
+                            <div className="mt-3">
+                              <div className="relative inline-block">
+                                <img
+                                  src={videoForm.watch('thumbnailUrl')}
+                                  alt="Превью"
+                                  className="w-32 h-20 object-cover rounded-lg border border-gray-300"
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).style.display = 'none';
+                                  }}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => videoForm.setValue('thumbnailUrl', '')}
+                                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
+                                  title="Удалить изображение"
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
 
@@ -1153,8 +1201,19 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
                       >
                         <div className="flex items-start gap-4">
-                          <div className="w-24 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
-                            <Play className="w-6 h-6 text-gray-400" />
+                          <div className="w-24 h-16 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+                            {video.thumbnailUrl ? (
+                              <img
+                                src={video.thumbnailUrl}
+                                alt={video.title}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).style.display = 'none';
+                                  (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                                }}
+                              />
+                            ) : null}
+                            <Play className={`w-6 h-6 text-gray-400 ${video.thumbnailUrl ? 'absolute' : ''}`} />
                           </div>
                           <div className="flex-1">
                             <h5 className="font-semibold text-gray-900 mb-2">{video.title}</h5>
