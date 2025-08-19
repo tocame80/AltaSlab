@@ -8,6 +8,7 @@ import type { VideoInstruction } from '@shared/schema';
 export default function VideoPage() {
   const [selectedVideo, setSelectedVideo] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const { data: videoInstructions = [], isLoading } = useQuery<VideoInstruction[]>({
     queryKey: ['/api/video-instructions'],
@@ -50,14 +51,41 @@ export default function VideoPage() {
             <div className="mb-16">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Рекомендуемое видео</h2>
               <div className="relative max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-2xl">
-                <div className="aspect-video bg-gray-900 flex items-center justify-center relative">
-                  <button className="w-24 h-24 bg-[#E95D22] rounded-full flex items-center justify-center hover:bg-[#d54a1a] transition-all group hover:scale-110">
-                    <Play className="w-10 h-10 text-white ml-1" />
-                  </button>
+                <div className="aspect-video bg-gray-900 relative">
+                  {featuredVideo.videoUrl && isPlaying ? (
+                    <video
+                      controls
+                      autoPlay
+                      className="w-full h-full object-cover"
+                      poster={featuredVideo.thumbnailUrl || undefined}
+                    >
+                      <source src={featuredVideo.videoUrl} type="video/mp4" />
+                      <source src={featuredVideo.videoUrl} type="video/webm" />
+                      <source src={featuredVideo.videoUrl} type="video/ogg" />
+                      Ваш браузер не поддерживает видео HTML5.
+                    </video>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center relative">
+                      {featuredVideo.thumbnailUrl && (
+                        <img 
+                          src={featuredVideo.thumbnailUrl} 
+                          alt={featuredVideo.title}
+                          className="absolute inset-0 w-full h-full object-cover"
+                        />
+                      )}
+                      <button 
+                        onClick={() => setIsPlaying(true)}
+                        className="w-24 h-24 bg-[#E95D22] rounded-full flex items-center justify-center hover:bg-[#d54a1a] transition-all group hover:scale-110 relative z-10"
+                      >
+                        <Play className="w-10 h-10 text-white ml-1" />
+                      </button>
+                    </div>
+                  )}
                   
                   {/* Video overlay info */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-8">
-                    <div className="flex items-end justify-between">
+                  {!isPlaying && (
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-8">
+                      <div className="flex items-end justify-between">
                       <div>
                         <h3 className="text-2xl font-bold text-white mb-2">
                           {featuredVideo.title}
@@ -84,7 +112,8 @@ export default function VideoPage() {
                         <Share2 className="w-5 h-5 text-white" />
                       </button>
                     </div>
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
