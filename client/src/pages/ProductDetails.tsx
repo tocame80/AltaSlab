@@ -489,83 +489,184 @@ export default function ProductDetails() {
             )}
 
             {activeTab === 'specifications' && (
-              <div className="grid md:grid-cols-2 gap-8">
-                {/* Product Specifications */}
-                <div>
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Характеристики продукта</h4>
-                  <div className="space-y-3">
-                    <div className="flex justify-between py-2 border-b border-gray-100">
-                      <span className="text-gray-600">Размер</span>
-                      <span className="font-medium text-gray-900">{product.format}</span>
+              <div className="space-y-8">
+                {/* Quick Specs Cards */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 text-center">
+                    <div className="text-2xl font-bold text-blue-700">{product.format.split('×')[0]}</div>
+                    <div className="text-sm text-blue-600 font-medium">Ширина, мм</div>
+                  </div>
+                  <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 text-center">
+                    <div className="text-2xl font-bold text-green-700">{product.format.split('×')[1]}</div>
+                    <div className="text-sm text-green-600 font-medium">Длина, мм</div>
+                  </div>
+                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 text-center">
+                    <div className="text-2xl font-bold text-purple-700">
+                      {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 
+                        product.piecesPerPackage :
+                        product.areaPerPackage
+                      }
                     </div>
-                    <div className="flex justify-between py-2 border-b border-gray-100">
-                      <span className="text-gray-600">Упаковка</span>
-                      <span className="font-medium text-gray-900">
-                        {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 
-                          `${product.piecesPerPackage} шт` :
-                          `${product.areaPerPackage}м² (${product.piecesPerPackage}шт)`
-                        }
-                      </span>
+                    <div className="text-sm text-purple-600 font-medium">
+                      {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'шт в упаковке' : 'м² в упаковке'}
                     </div>
-                    {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
-                      <>
-                        <div className="flex justify-between py-2 border-b border-gray-100">
-                          <span className="text-gray-600">Площадь панели</span>
-                          <span className="font-medium text-gray-900">{product.areaPerPiece} м²</span>
-                        </div>
-                        <div className="flex justify-between py-2 border-b border-gray-100">
-                          <span className="text-gray-600">Площадь упаковки</span>
-                          <span className="font-medium text-gray-900">{product.areaPerPackage} м²</span>
-                        </div>
-                      </>
-                    )}
-                    <div className="flex justify-between py-2 border-b border-gray-100">
-                      <span className="text-gray-600">Цвет</span>
-                      <span className="font-medium text-gray-900">{product.color}</span>
+                  </div>
+                  <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 text-center">
+                    <div className="text-2xl font-bold text-orange-700">
+                      {Math.round(product.price / product.areaPerPackage)}
+                    </div>
+                    <div className="text-sm text-orange-600 font-medium">₽ за м²</div>
+                  </div>
+                </div>
+
+                {/* Detailed Specifications */}
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div className="bg-white border border-gray-200 rounded-xl p-6">
+                    <h4 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+                      <div className="w-2 h-2 bg-[#E95D22] rounded-full"></div>
+                      Параметры продукта
+                    </h4>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                        <span className="text-gray-600 flex items-center gap-2">
+                          <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                          Размер панели
+                        </span>
+                        <span className="font-semibold text-gray-900">{product.format}</span>
+                      </div>
+                      <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                        <span className="text-gray-600 flex items-center gap-2">
+                          <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                          Цвет/дизайн
+                        </span>
+                        <span className="font-semibold text-gray-900">{product.color}</span>
+                      </div>
+                      {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
+                        <>
+                          <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                            <span className="text-gray-600 flex items-center gap-2">
+                              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                              Площадь панели
+                            </span>
+                            <span className="font-semibold text-gray-900">{product.areaPerPiece} м²</span>
+                          </div>
+                          <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                            <span className="text-gray-600 flex items-center gap-2">
+                              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                              Панелей в упаковке
+                            </span>
+                            <span className="font-semibold text-gray-900">{product.piecesPerPackage} шт</span>
+                          </div>
+                        </>
+                      )}
+                      <div className="flex items-center justify-between py-3">
+                        <span className="text-gray-600 flex items-center gap-2">
+                          <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                          Коллекция
+                        </span>
+                        <span className="font-semibold text-gray-900">{product.collection}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white border border-gray-200 rounded-xl p-6">
+                    <h4 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+                      <div className="w-2 h-2 bg-[#E95D22] rounded-full"></div>
+                      Технические характеристики
+                    </h4>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                        <span className="text-gray-600 flex items-center gap-2">
+                          <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                          Материал
+                        </span>
+                        <span className="font-semibold text-gray-900">SPC композит</span>
+                      </div>
+                      <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                        <span className="text-gray-600 flex items-center gap-2">
+                          <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                          Тип монтажа
+                        </span>
+                        <span className="font-semibold text-gray-900">Клеевой</span>
+                      </div>
+                      <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                        <span className="text-gray-600 flex items-center gap-2">
+                          <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                          Применение
+                        </span>
+                        <span className="font-semibold text-gray-900">Стены, потолки</span>
+                      </div>
+                      {product.specifications && (
+                        <>
+                          {product.specifications.thickness && (
+                            <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                              <span className="text-gray-600 flex items-center gap-2">
+                                <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                                Толщина
+                              </span>
+                              <span className="font-semibold text-gray-900">{product.specifications.thickness}</span>
+                            </div>
+                          )}
+                          {product.specifications.wearClass && (
+                            <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                              <span className="text-gray-600 flex items-center gap-2">
+                                <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                                Класс износостойкости
+                              </span>
+                              <span className="font-semibold text-gray-900">{product.specifications.wearClass}</span>
+                            </div>
+                          )}
+                          {product.specifications.weight && (
+                            <div className="flex items-center justify-between py-3">
+                              <span className="text-gray-600 flex items-center gap-2">
+                                <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                                Вес
+                              </span>
+                              <span className="font-semibold text-gray-900">{product.specifications.weight}</span>
+                            </div>
+                          )}
+                        </>
+                      )}
+                      <div className="flex items-center justify-between py-3">
+                        <span className="text-gray-600 flex items-center gap-2">
+                          <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                          Производство
+                        </span>
+                        <span className="font-semibold text-gray-900">Россия</span>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* General Specifications */}
-                <div>
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Общие характеристики</h4>
-                  <div className="space-y-3">
-                    <div className="flex justify-between py-2 border-b border-gray-100">
-                      <span className="text-gray-600">Материал</span>
-                      <span className="font-medium text-gray-900">SPC (Stone Plastic Composite)</span>
+                {/* Price Information */}
+                <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-6">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <div className="w-2 h-2 bg-[#E95D22] rounded-full"></div>
+                    Ценовая информация
+                  </h4>
+                  <div className="grid md:grid-cols-3 gap-6">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-[#E95D22]">
+                        {product.price.toLocaleString('ru-RU')} ₽
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'за штуку' : 'за упаковку'}
+                      </div>
                     </div>
-                    <div className="flex justify-between py-2 border-b border-gray-100">
-                      <span className="text-gray-600">Назначение</span>
-                      <span className="font-medium text-gray-900">Стены, потолки</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b border-gray-100">
-                      <span className="text-gray-600">Тип монтажа</span>
-                      <span className="font-medium text-gray-900">Клеевой</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b border-gray-100">
-                      <span className="text-gray-600">Страна производства</span>
-                      <span className="font-medium text-gray-900">Россия</span>
-                    </div>
-                    {product.specifications && (
+                    {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
                       <>
-                        {product.specifications.thickness && (
-                          <div className="flex justify-between py-2 border-b border-gray-100">
-                            <span className="text-gray-600">Толщина</span>
-                            <span className="font-medium text-gray-900">{product.specifications.thickness}</span>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-blue-600">
+                            {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽
                           </div>
-                        )}
-                        {product.specifications.weight && (
-                          <div className="flex justify-between py-2 border-b border-gray-100">
-                            <span className="text-gray-600">Вес</span>
-                            <span className="font-medium text-gray-900">{product.specifications.weight}</span>
+                          <div className="text-sm text-gray-600">за м²</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-green-600">
+                            {Math.round(product.price / product.piecesPerPackage).toLocaleString('ru-RU')} ₽
                           </div>
-                        )}
-                        {product.specifications.wearClass && (
-                          <div className="flex justify-between py-2 border-b border-gray-100">
-                            <span className="text-gray-600">Класс износостойкости</span>
-                            <span className="font-medium text-gray-900">{product.specifications.wearClass}</span>
-                          </div>
-                        )}
+                          <div className="text-sm text-gray-600">за панель</div>
+                        </div>
                       </>
                     )}
                   </div>
