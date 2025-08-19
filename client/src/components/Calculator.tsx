@@ -1,100 +1,103 @@
 import { useState } from 'react';
-import { CalculationResult } from '@/types';
-import { ChevronDown } from 'lucide-react';
+import { Link } from 'wouter';
 
 export default function Calculator() {
-  const [roomArea, setRoomArea] = useState<number>(0);
-  const [panelFormat, setPanelFormat] = useState<number>(0.18);
-  const [wastePercentage, setWastePercentage] = useState<number>(5);
-  const [result, setResult] = useState<CalculationResult | null>(null);
+  const [length, setLength] = useState('');
+  const [width, setWidth] = useState('');
+  const [margin, setMargin] = useState('5');
+  const [result, setResult] = useState<{
+    area: number;
+    areaWithMargin: number;
+    packages: number;
+    cost: number;
+  } | null>(null);
 
-  const calculateMaterials = () => {
-    if (!roomArea || roomArea <= 0) {
-      alert('Пожалуйста, введите корректную площадь помещения');
+  const calculateMaterial = () => {
+    const lengthNum = parseFloat(length);
+    const widthNum = parseFloat(width);
+    const marginNum = parseFloat(margin);
+
+    if (!lengthNum || !widthNum || lengthNum <= 0 || widthNum <= 0) {
       return;
     }
 
-    const areaWithWaste = roomArea * (1 + wastePercentage / 100);
-    const panelsNeeded = Math.ceil(areaWithWaste / panelFormat);
+    const area = lengthNum * widthNum;
+    const areaWithMargin = area * (1 + marginNum / 100);
+    
+    // Примерные значения для расчета (можно настроить)
+    const areaPerPackage = 1.44; // м² в упаковке
+    const pricePerPackage = 4739; // цена за упаковку
 
-    let panelsPerPackage, areaPerPackage;
-    if (panelFormat === 0.18) {
-      panelsPerPackage = 24;
-      areaPerPackage = 4.32;
-    } else {
-      panelsPerPackage = 7;
-      areaPerPackage = 5.04;
-    }
-
-    const packagesNeeded = Math.ceil(panelsNeeded / panelsPerPackage);
-    const adhesiveTubes = Math.ceil(areaWithWaste / 10);
+    const packages = Math.ceil(areaWithMargin / areaPerPackage);
+    const cost = packages * pricePerPackage;
 
     setResult({
-      areaWithWaste,
-      panelsNeeded,
-      packagesNeeded,
-      totalArea: packagesNeeded * areaPerPackage,
-      adhesiveTubes
+      area: Math.round(area * 100) / 100,
+      areaWithMargin: Math.round(areaWithMargin * 100) / 100,
+      packages,
+      cost
     });
   };
 
   return (
-    <section id="calculator" className="py-20 bg-gray-50">
+    <section id="calculator" className="py-16 bg-gray-50">
       <div className="container mx-auto px-6">
-        <h2 className="text-4xl font-bold text-primary text-center mb-16">КАЛЬКУЛЯТОР МАТЕРИАЛОВ</h2>
-        
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Калькулятор материала
+          </h2>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            Рассчитайте необходимое количество панелей и стоимость для вашего проекта
+          </p>
+        </div>
+
+        {/* Calculator */}
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white p-8 rounded-lg shadow-sm">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="bg-white rounded-xl p-8 shadow-sm">
+            <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <h3 className="text-xl font-bold text-primary mb-6">Параметры помещения</h3>
-                
+                <h3 className="text-xl font-semibold text-gray-900 mb-6">Параметры помещения</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-secondary mb-2">Площадь помещения (м²)</label>
-                    <input
-                      type="number"
-                      value={roomArea}
-                      onChange={(e) => setRoomArea(parseFloat(e.target.value))}
-                      className="w-full border border-muted rounded-lg px-4 py-2"
-                      placeholder="Введите площадь"
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Длина помещения (м)</label>
+                    <input 
+                      type="number" 
+                      value={length}
+                      onChange={(e) => setLength(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent" 
+                      placeholder="Введите длину"
+                      step="0.1"
+                      min="0"
                     />
                   </div>
-                  
                   <div>
-                    <label className="block text-secondary mb-2">Формат панелей</label>
-                    <div className="relative">
-                      <select
-                        value={panelFormat}
-                        onChange={(e) => setPanelFormat(parseFloat(e.target.value))}
-                        className="w-full border border-muted rounded-lg px-4 py-2 appearance-none pr-8"
-                      >
-                        <option value={0.18}>300×600×2.4мм (0.18м²/шт)</option>
-                        <option value={0.72}>600×1200×2.4мм (0.72м²/шт)</option>
-                      </select>
-                      <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" />
-                    </div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Ширина помещения (м)</label>
+                    <input 
+                      type="number" 
+                      value={width}
+                      onChange={(e) => setWidth(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent" 
+                      placeholder="Введите ширину"
+                      step="0.1"
+                      min="0"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Запас материала (%)</label>
+                    <select 
+                      value={margin}
+                      onChange={(e) => setMargin(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
+                    >
+                      <option value="5">5% - стандартный запас</option>
+                      <option value="10">10% - с учетом подрезки</option>
+                      <option value="15">15% - сложная геометрия</option>
+                    </select>
                   </div>
                   
-                  <div>
-                    <label className="block text-secondary mb-2">Запас на подрезку (%)</label>
-                    <div className="relative">
-                      <select
-                        value={wastePercentage}
-                        onChange={(e) => setWastePercentage(parseInt(e.target.value))}
-                        className="w-full border border-muted rounded-lg px-4 py-2 appearance-none pr-8"
-                      >
-                        <option value={5}>5%</option>
-                        <option value={7}>7%</option>
-                        <option value={10}>10%</option>
-                      </select>
-                      <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" />
-                    </div>
-                  </div>
-                  
-                  <button
-                    onClick={calculateMaterials}
-                    className="w-full btn-primary py-3 rounded-lg font-medium"
+                  <button 
+                    onClick={calculateMaterial}
+                    className="w-full bg-[#E95D22] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#d54a1a] transition-colors"
                   >
                     Рассчитать
                   </button>
@@ -102,30 +105,62 @@ export default function Calculator() {
               </div>
               
               <div>
-                <h3 className="text-xl font-bold text-primary mb-6">Результат расчета</h3>
-                
-                <div className="space-y-4 text-secondary">
-                  {result ? (
-                    <div className="space-y-3">
-                      <p><strong>Площадь с запасом:</strong> {result.areaWithWaste.toFixed(2)} м²</p>
-                      <p><strong>Необходимо панелей:</strong> {result.panelsNeeded} шт</p>
-                      <p><strong>Необходимо упаковок:</strong> {result.packagesNeeded} уп</p>
-                      <p><strong>Всего материала:</strong> {result.totalArea.toFixed(2)} м²</p>
-                      <p><strong>Клей АЛЬТА СТИК:</strong> {result.adhesiveTubes} туб</p>
-                      <div className="mt-4 pt-4 border-t border-gray-200">
-                        <p className="text-accent font-semibold">Рекомендуется также приобрести:</p>
-                        <ul className="list-disc list-inside text-sm mt-2">
-                          <li>Торцевой профиль</li>
-                          <li>Соединительный профиль</li>
-                          <li>Угловой профиль (при необходимости)</li>
-                        </ul>
-                      </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-6">Результат расчета</h3>
+                <div className="bg-gray-50 rounded-lg p-6 space-y-4">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Площадь помещения:</span>
+                    <span className="font-medium text-gray-900">
+                      {result ? `${result.area} м²` : '-- м²'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">С учетом запаса:</span>
+                    <span className="font-medium text-gray-900">
+                      {result ? `${result.areaWithMargin} м²` : '-- м²'}
+                    </span>
+                  </div>
+                  <div className="border-t border-gray-200 pt-4">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Количество упаковок:</span>
+                      <span className="font-semibold text-gray-900">
+                        {result ? `${result.packages} шт` : '-- шт'}
+                      </span>
                     </div>
-                  ) : (
-                    <p>Введите параметры для расчета</p>
-                  )}
+                    <div className="flex justify-between mt-2">
+                      <span className="text-gray-600">Общая стоимость:</span>
+                      <span className="font-bold text-[#E95D22] text-lg">
+                        {result ? `${result.cost.toLocaleString('ru-RU')} ₽` : '-- ₽'}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
+            </div>
+            
+            <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+              <div className="flex items-start gap-3">
+                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-white text-sm font-bold">i</span>
+                </div>
+                <div>
+                  <div className="font-semibold text-blue-900 mb-2">Рекомендации:</div>
+                  <div className="text-blue-800 text-sm space-y-1">
+                    <div>• Для помещений сложной формы рекомендуем увеличить запас до 15%</div>
+                    <div>• При диагональной укладке добавьте дополнительно 10% к общему количеству</div>
+                    <div>• Окончательный расчет уточняйте с менеджером</div>
+                    <div>• Расчет выполнен для стандартной упаковки 1.44 м²</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Link to full calculator */}
+            <div className="text-center mt-8">
+              <Link href="/calculator">
+                <button className="bg-[#E95D22] text-white px-8 py-3 rounded-lg hover:bg-[#d54a1a] transition-colors">
+                  Открыть полный калькулятор
+                </button>
+              </Link>
             </div>
           </div>
         </div>
