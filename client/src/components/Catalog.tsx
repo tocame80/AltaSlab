@@ -245,36 +245,34 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   return (
     <section id="catalog" className="py-16 bg-gray-50">
       <div className="container mx-auto px-6 mt-[24px] mb-[24px]">
-        {/* Fixed Search Bar */}
-        <div className={`bg-white p-4 rounded-lg shadow-sm mb-8 ${isNavSticky ? 'sticky top-32 z-40' : 'sticky top-6 z-40'}`}>
-          <div className="flex items-center gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Поиск по товарам в каталоге..."
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
-                />
-                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+        {/* Fixed Search Bar - Only show when there's an active search */}
+        {searchQuery && (
+          <div className={`bg-white p-4 rounded-lg shadow-sm mb-8 ${isNavSticky ? 'sticky top-32 z-40' : 'sticky top-6 z-40'}`}>
+            <div className="flex items-center gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Поиск по товарам в каталоге..."
+                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
+                  />
+                  <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                </div>
               </div>
-            </div>
-            {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
                 className="px-4 py-3 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors font-medium"
               >
                 Очистить поиск
               </button>
-            )}
-          </div>
-          {searchQuery && (
+            </div>
             <div className="mt-3 text-sm text-gray-600">
               Поиск: <strong className="text-[#E95D22]">"{searchQuery}"</strong> - найдено {filteredProducts.length} товаров
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-4">
