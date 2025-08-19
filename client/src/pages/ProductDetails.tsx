@@ -301,74 +301,44 @@ export default function ProductDetails() {
                 className="w-full h-full object-cover"
               />
               
-              {/* Product Info Overlay - Bottom Left */}
-              <div className="absolute bottom-0 left-0 bg-gradient-to-r from-white/90 via-white/70 to-transparent p-4 transition-all duration-300 hover:from-white/95 hover:via-white/80 rounded-tr-lg">
-                <div>
-                  {/* Collection */}
-                  <div className="text-gray-600 text-xs font-medium mb-1">
-                    {getCollectionDisplayName()}
-                  </div>
-                  
-                  {/* Color */}
-                  <div className="text-gray-900 text-base font-semibold mb-2">
-                    {product.color}
-                  </div>
-                  
-                  {/* Price - One Line */}
-                  <div className="flex items-center gap-3">
-                    <div>
-                      <span className="text-gray-900 text-xl font-bold">
-                        {product.price.toLocaleString('ru-RU')} ₽
+              {/* Product Info Overlay - Bottom Left - One Line */}
+              <div className="absolute bottom-0 left-0 bg-gradient-to-r from-white/90 via-white/70 to-transparent p-3 transition-all duration-300 hover:from-white/95 hover:via-white/80 rounded-tr-lg">
+                <div className="flex items-center gap-3 text-sm">
+                  <span className="text-gray-600 font-medium">{getCollectionDisplayName()}</span>
+                  <span className="text-gray-400">•</span>
+                  <span className="text-gray-900 font-semibold">{product.color}</span>
+                  {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
+                    <>
+                      <span className="text-gray-400">•</span>
+                      <span className="text-gray-900 font-bold">
+                        {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽/м²
                       </span>
-                      <span className="text-gray-600 text-xs ml-1">
-                        {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'за шт.' : 'за упак.'}
-                      </span>
-                    </div>
-                    {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
-                      <div>
-                        <span className="text-gray-900 text-lg font-bold">
-                          {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽/м²
-                        </span>
-                      </div>
-                    )}
-                  </div>
+                    </>
+                  )}
                 </div>
               </div>
 
-              {/* Additional Info Overlay - Bottom Right */}
-              <div className="absolute bottom-0 right-0 bg-gradient-to-l from-white/90 via-white/70 to-transparent p-4 transition-all duration-300 hover:from-white/95 hover:via-white/80 rounded-tl-lg">
-                <div className="text-right">
-                  {/* Size */}
-                  <div className="text-gray-600 text-xs font-medium mb-1">
-                    Размер
-                  </div>
-                  
-                  {/* Format */}
-                  <div className="text-gray-900 text-base font-semibold mb-2">
-                    {product.format}
-                  </div>
-                  
-                  {/* Package Info */}
-                  {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
-                    <div>
-                      <div className="text-gray-600 text-xs mb-1">
-                        м² в упаковке
-                      </div>
-                      <div className="text-gray-900 text-lg font-bold">
-                        {product.areaPerPackage} м²
-                      </div>
-                    </div>
-                  )}
-                  
-                  {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
-                    <div>
-                      <div className="text-gray-600 text-xs mb-1">
-                        штук в упаковке
-                      </div>
-                      <div className="text-gray-900 text-lg font-bold">
-                        {product.piecesPerPackage} шт
-                      </div>
-                    </div>
+              {/* Additional Info Overlay - Bottom Right - One Line */}
+              <div className="absolute bottom-0 right-0 bg-gradient-to-l from-white/90 via-white/70 to-transparent p-3 transition-all duration-300 hover:from-white/95 hover:via-white/80 rounded-tl-lg">
+                <div className="flex items-center gap-3 text-sm text-right">
+                  <span className="text-gray-600 font-medium">{product.format}</span>
+                  <span className="text-gray-400">•</span>
+                  {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? (
+                    <>
+                      <span className="text-gray-900 font-semibold">{product.areaPerPackage} м²</span>
+                      <span className="text-gray-400">•</span>
+                      <span className="text-gray-900 font-bold">
+                        {product.price.toLocaleString('ru-RU')} ₽ за упак.
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-gray-900 font-semibold">{product.piecesPerPackage} шт</span>
+                      <span className="text-gray-400">•</span>
+                      <span className="text-gray-900 font-bold">
+                        {product.price.toLocaleString('ru-RU')} ₽ за шт.
+                      </span>
+                    </>
                   )}
                 </div>
               </div>
