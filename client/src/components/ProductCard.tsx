@@ -136,25 +136,48 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
             )}
           </div>
 
-          {/* Product Info Overlay - Bottom Left */}
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white/90 via-white/70 to-transparent p-4">
+          {/* Product Info Overlay - Bottom Left - Three Lines */}
+          <div className="absolute bottom-0 left-0 p-3 transition-all duration-300">
             <div>
-              {/* Collection */}
-              <div className="text-gray-600 text-xs font-medium mb-1">
+              {/* Line 1: Collection */}
+              <div className="text-gray-600 text-xs font-medium mb-1 drop-shadow-lg">
                 {getCollectionDisplayName()}
               </div>
               
-              {/* Color */}
-              <div className="text-gray-900 text-sm font-semibold mb-1">
+              {/* Line 2: Color */}
+              <div className="text-gray-900 text-sm font-semibold mb-1 drop-shadow-lg">
                 {product.color}
               </div>
               
-              {/* Price per m² */}
+              {/* Line 3: Price per m² */}
               {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
-                <div className="text-gray-900 text-lg font-bold">
+                <div className="text-gray-900 text-sm font-bold drop-shadow-lg">
                   {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽/м²
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* Additional Info Overlay - Bottom Right - Three Lines */}
+          <div className="absolute bottom-0 right-0 p-3 transition-all duration-300">
+            <div className="text-right">
+              {/* Line 1: Size */}
+              <div className="text-gray-600 text-xs font-medium mb-1 drop-shadow-lg">
+                {product.format}
+              </div>
+              
+              {/* Line 2: Area/Quantity per package */}
+              <div className="text-gray-900 text-sm font-semibold mb-1 drop-shadow-lg">
+                {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' 
+                  ? `${product.areaPerPackage} м²` 
+                  : `${product.piecesPerPackage} шт`
+                }
+              </div>
+              
+              {/* Line 3: Price per package */}
+              <div className="text-gray-900 text-sm font-bold drop-shadow-lg">
+                {product.price.toLocaleString('ru-RU')} ₽ {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'за шт.' : 'за упак.'}
+              </div>
             </div>
           </div>
 
