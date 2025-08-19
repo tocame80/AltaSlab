@@ -6,84 +6,20 @@
 import altaSlabSample from './concrete/alta-slab-sample.jpg';
 import textureClose from './concrete/texture-close.png';
 
-// Collection-specific placeholder images
-const getCollectionPlaceholders = (collection: string): string[] => {
-  switch (collection) {
-    case 'МАГИЯ БЕТОНА':
-      return [
-        'https://images.unsplash.com/photo-1615971677499-5467cbab01e4?w=600&h=400&fit=crop', // Concrete texture
-        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop', // Modern interior
-        'https://images.unsplash.com/photo-1615880484746-a3990926ab05?w=600&h=400&fit=crop'  // Wall texture
-      ];
-    case 'ТКАНЕВАЯ РОСКОШЬ':
-      return [
-        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop', // Fabric texture
-        'https://images.unsplash.com/photo-1615880484746-a3990926ab05?w=600&h=400&fit=crop', // Luxury interior
-        'https://images.unsplash.com/photo-1615971677499-5467cbab01e4?w=600&h=400&fit=crop'  // Textile close-up
-      ];
-    case 'МАТОВАЯ ЭСТЕТИКА':
-      return [
-        'https://images.unsplash.com/photo-1615880484746-a3990926ab05?w=600&h=400&fit=crop', // Matte surface
-        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop', // Modern design
-        'https://images.unsplash.com/photo-1615971677499-5467cbab01e4?w=600&h=400&fit=crop'  // Clean lines
-      ];
-    case 'МРАМОРНАЯ ФЕЕРИЯ':
-      return [
-        'https://images.unsplash.com/photo-1615971677499-5467cbab01e4?w=600&h=400&fit=crop', // Marble pattern
-        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop', // Elegant interior
-        'https://images.unsplash.com/photo-1615880484746-a3990926ab05?w=600&h=400&fit=crop'  // Luxury finish
-      ];
-    case 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ':
-      return [
-        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop', // Tools/accessories
-        'https://images.unsplash.com/photo-1615880484746-a3990926ab05?w=600&h=400&fit=crop', // Installation
-        'https://images.unsplash.com/photo-1615971677499-5467cbab01e4?w=600&h=400&fit=crop'  // Products
-      ];
-    default:
-      return [
-        'https://images.unsplash.com/photo-1615971677499-5467cbab01e4?w=600&h=400&fit=crop',
-        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop',
-        'https://images.unsplash.com/photo-1615880484746-a3990926ab05?w=600&h=400&fit=crop'
-      ];
-  }
-};
+// Import placeholder image (used when no specific product images available)
+import placeholderImage from './placeholder.jpg';
 
-// Helper function to generate product image paths
-const generateImagePaths = (productId: string, collection: string): string[] => {
-  const collectionFolder = getCollectionFolder(collection);
-  const imagePaths: string[] = [];
-  
-  // Generate paths for numbered images: productId-1.jpg, productId-2.jpg, etc.
-  for (let i = 1; i <= 4; i++) {
-    imagePaths.push(`${collectionFolder}/${productId}-${i}.jpg`);
-  }
-  
-  return imagePaths;
-};
-
-// Map collection names to folder paths  
-const getCollectionFolder = (collection: string): string => {
-  const folderMap: Record<string, string> = {
-    'МАГИЯ БЕТОНА': '/src/assets/products/concrete',
-    'ТКАНЕВАЯ РОСКОШЬ': '/src/assets/products/fabric',
-    'МАТОВАЯ ЭСТЕТИКА': '/src/assets/products/matte', 
-    'МРАМОРНАЯ ФЕЕРИЯ': '/src/assets/products/marble',
-    'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ': '/src/assets/products/accessories'
-  };
-  return folderMap[collection] || '/src/assets/products/concrete';
-};
-
-// Import specific product images
+// Import specific product images  
 import zakkat8934_1 from './concrete/8934-1.jpg';
-import zakkat8934_2 from './concrete/8934-2.jpg';
+import zakkat8934_2 from './concrete/8934-2.jpg';  
 import zakkat8934_3 from './concrete/8934-3.png';
 
 // Product-specific image mapping (add as images become available)
 const specificImageMap: Record<string, string[]> = {
-  '8934': [zakkat8934_1, zakkat8934_2, zakkat8934_3, ...defaultImages], // Закат 300x600
-  // '8938': ['8938-1.jpg', '8938-2.jpg'], // Закат 600x1200  
-  // '8930': ['8930-1.jpg', '8930-2.jpg', '8930-3.jpg'], // Метеорит 300x600
-  // etc.
+  '8934': [zakkat8934_1, zakkat8934_2, zakkat8934_3], // Закат 300x600
+  // Add more products as their images become available:
+  // '8938': [import('./concrete/8938-1.jpg'), import('./concrete/8938-2.jpg')], // Закат 600x1200  
+  // '8930': [import('./matte/8930-1.jpg'), import('./matte/8930-2.jpg')], // Метеорит 300x600
 };
 
 // Helper function to get product gallery
@@ -93,23 +29,7 @@ export const getProductGallery = (productId: string, collection: string = ''): s
     return specificImageMap[productId];
   }
   
-  // If no specific images, use collection-appropriate placeholders
-  const collectionPlaceholders = getCollectionPlaceholders(collection);
-  
-  // For products without real photos, combine local sample with collection placeholders
-  return [altaSlabSample, textureClose, ...collectionPlaceholders];
+  // If no specific images available, use placeholder
+  return [placeholderImage, placeholderImage, placeholderImage];
 };
 
-// Collection-based fallback images
-export const collectionImageMap: Record<string, string[]> = {
-  'МАГИЯ БЕТОНА': [altaSlabSample, ...defaultImages],
-  'ТКАНЕВАЯ РОСКОШЬ': defaultImages,
-  'МАТОВАЯ ЭСТЕТИКА': defaultImages,
-  'МРАМОРНАЯ ФЕЕРИЯ': defaultImages,
-  'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ': defaultImages,
-};
-
-// Helper function to get collection-based gallery
-export const getCollectionGallery = (collection: string): string[] => {
-  return collectionImageMap[collection] || defaultImages;
-};
