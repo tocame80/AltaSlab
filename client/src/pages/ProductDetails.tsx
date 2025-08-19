@@ -319,20 +319,24 @@ export default function ProductDetails() {
                     {product.color}
                   </div>
                   
-                  {/* Package Price - First Line */}
-                  <div className="text-gray-900 text-2xl font-bold">
-                    {product.price.toLocaleString('ru-RU')} ₽
-                  </div>
-                  <div className="text-gray-600 text-sm mb-1">
-                    {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'за шт.' : 'за упак.'}
-                  </div>
-                  
-                  {/* Price per m² - Second Line */}
-                  {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
-                    <div className="text-gray-900 text-xl font-bold">
-                      {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽/м²
+                  {/* Price - One Line */}
+                  <div className="flex items-center gap-4">
+                    <div>
+                      <span className="text-gray-900 text-2xl font-bold">
+                        {product.price.toLocaleString('ru-RU')} ₽
+                      </span>
+                      <span className="text-gray-600 text-sm ml-1">
+                        {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'за шт.' : 'за упак.'}
+                      </span>
                     </div>
-                  )}
+                    {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
+                      <div>
+                        <span className="text-gray-900 text-xl font-bold">
+                          {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽/м²
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -400,15 +404,7 @@ export default function ProductDetails() {
               )}
             </div>
 
-            {/* Product Info Overlay - Bottom Left */}
-            <div className="absolute bottom-4 left-4">
-              <div className="text-xs font-medium text-white/90 uppercase tracking-wider mb-1 drop-shadow-lg">
-                {getCollectionDisplayName()}
-              </div>
-              <div className="text-lg font-bold text-white drop-shadow-lg">
-                {getProductDisplayName()}
-              </div>
-            </div>
+
           </div>
 
           {/* Thumbnail Gallery */}
