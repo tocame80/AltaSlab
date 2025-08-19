@@ -225,7 +225,6 @@ export default function ProductDetails() {
           </div>
         </div>
       </header>
-
       {/* Collections Navigation with Colors */}
       <div className="bg-gray-50 py-4 border-t border-gray-200">
         <div className="container mx-auto px-6">
@@ -256,7 +255,6 @@ export default function ProductDetails() {
           </nav>
         </div>
       </div>
-
       {/* Colors/Designs Navigation */}
       {currentCollectionColors.length > 0 && (
         <div className="bg-gray-50 py-3 border-t border-gray-200">
@@ -282,9 +280,6 @@ export default function ProductDetails() {
           </div>
         </div>
       )}
-
-
-
       <div className="container mx-auto px-6 py-8">
         {/* Back Button */}
         <button
@@ -489,7 +484,7 @@ export default function ProductDetails() {
                   <h4 className="text-lg font-semibold text-gray-900 mb-4">Характеристики продукта</h4>
                   <div className="space-y-3">
                     <div className="flex justify-between py-2 border-b border-gray-100">
-                      <span className="text-gray-600">Формат</span>
+                      <span className="text-gray-600">Размер</span>
                       <span className="font-medium text-gray-900">{product.format}</span>
                     </div>
                     <div className="flex justify-between py-2 border-b border-gray-100">
@@ -1146,7 +1141,6 @@ export default function ProductDetails() {
           </div>
         </div>
       </div>
-
       {/* Fullscreen Modal */}
       {isFullscreenOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center">
@@ -1191,7 +1185,6 @@ export default function ProductDetails() {
           </div>
         </div>
       )}
-
       {/* Image Viewer Modal */}
       {isImageViewerOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center">
