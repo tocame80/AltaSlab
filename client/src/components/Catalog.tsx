@@ -25,11 +25,30 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     discount: false,
     inStock: false,
   });
+  const [searchQuery, setSearchQuery] = useState('');
   
   const [visibleRows, setVisibleRows] = useState(5);
   const ITEMS_PER_ROW = 2; // 2 items per row
   const ROWS_TO_LOAD = 5; // Load 5 more rows at a time
   
+  // Listen for search events from header
+  useEffect(() => {
+    const handleSearch = (event: any) => {
+      setSearchQuery(event.detail);
+      // Scroll to catalog section
+      const catalogElement = document.getElementById('catalog');
+      if (catalogElement) {
+        catalogElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    window.addEventListener('search-products', handleSearch);
+    
+    return () => {
+      window.removeEventListener('search-products', handleSearch);
+    };
+  }, []);
+
   // Update filters when activeCollection changes
   useEffect(() => {
     if (activeCollection === 'favorites') {
@@ -131,6 +150,20 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       // In a real app, this would filter by stock status
     }
 
+    // Apply search filter
+    if (searchQuery) {
+      filtered = filtered.filter(product => {
+        const searchLower = searchQuery.toLowerCase();
+        return (
+          product.name.toLowerCase().includes(searchLower) ||
+          product.color.toLowerCase().includes(searchLower) ||
+          product.design.toLowerCase().includes(searchLower) ||
+          product.collection.toLowerCase().includes(searchLower) ||
+          product.format.toLowerCase().includes(searchLower)
+        );
+      });
+    }
+
     // Sort products
     if (sortBy === 'price-asc') {
       filtered.sort((a, b) => a.price - b.price);
@@ -141,7 +174,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     }
 
     return filtered;
-  }, [activeCollection, filters, additionalFilters, sortBy]);
+  }, [activeCollection, filters, additionalFilters, sortBy, searchQuery]);
 
   // Get visible products based on pagination
   const visibleProducts = useMemo(() => {
@@ -190,6 +223,9 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   }, [selectedCollectionProducts]);
 
   const getCollectionTitle = () => {
+    if (searchQuery) {
+      return `ПОИСК: "${searchQuery}"`;
+    }
     switch (activeCollection) {
       case 'concrete': return 'МАГИЯ БЕТОНА';
       case 'fabric': return 'ТКАНЕВАЯ РОСКОШЬ';
@@ -210,9 +246,22 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     <section id="catalog" className="py-16 bg-gray-50">
       <div className="container mx-auto px-6">
         <div className="mb-8">
-          <h2 className="text-4xl font-bold text-primary mb-4">{getCollectionTitle()}</h2>
+          <div className="flex items-center gap-4 mb-4">
+            <h2 className="text-4xl font-bold text-primary">{getCollectionTitle()}</h2>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors"
+              >
+                Очистить поиск
+              </button>
+            )}
+          </div>
           <p className="text-secondary text-lg">
-            В данном разделе вы можете подобрать необходимые вам цвета, изменив параметры поиска.
+            {searchQuery 
+              ? `Результаты поиска по запросу "${searchQuery}"`
+              : "В данном разделе вы можете подобрать необходимые вам цвета, изменив параметры поиска."
+            }
           </p>
         </div>
 
