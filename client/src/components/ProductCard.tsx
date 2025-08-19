@@ -78,9 +78,9 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
       {/* Header Section */}
       <div className="relative overflow-hidden">
         {/* Image Gallery */}
-        <div className="relative w-full" style={{ aspectRatio: '16/10' }}>
+        <div className="relative w-full aspect-[2/1]">
           <img 
-            src={currentImage} 
+            src={product.image} 
             alt={`${product.design} - ${product.collection}`}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
@@ -88,26 +88,6 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
           
           {/* Image Overlay Controls */}
           <div className={`absolute inset-0 bg-black/20 transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
-            {/* Gallery Navigation */}
-            {gallery.length > 1 && (
-              <>
-                <button
-                  onClick={(e) => handleImageNavigation(e, 'prev')}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white"
-                  aria-label="Предыдущее изображение"
-                >
-                  ◀
-                </button>
-                <button
-                  onClick={(e) => handleImageNavigation(e, 'next')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white"
-                  aria-label="Следующее изображение"
-                >
-                  ▶
-                </button>
-              </>
-            )}
-
             {/* Quick Action Buttons */}
             <div className="absolute top-3 right-3 flex gap-2">
               <button
@@ -182,20 +162,7 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
             </div>
           </div>
 
-          {/* Gallery Dots */}
-          {gallery.length > 1 && (
-            <div className="absolute bottom-3 right-3 flex gap-1">
-              {gallery.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(index); }}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    index === currentImageIndex ? 'bg-white' : 'bg-white/50'
-                  }`}
-                />
-              ))}
-            </div>
-          )}
+
         </div>
       </div>
 
