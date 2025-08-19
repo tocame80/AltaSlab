@@ -82,7 +82,12 @@ export const products: Product[] = [
     surface: 'упак',
     color: 'Метеорит',
     barcode: '4650218304177',
-    packageBarcode: '4650218304184'
+    packageBarcode: '4650218304184',
+    gallery: [
+      altaSlabLogo,
+      'https://images.unsplash.com/photo-1615880484746-a3990926ab05?w=600&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1585128792020-803d29415281?w=600&h=400&fit=crop'
+    ]
   },
   {
     id: '8931',
@@ -100,7 +105,12 @@ export const products: Product[] = [
     surface: 'упак',
     color: 'Метеорит',
     barcode: '4650218304238',
-    packageBarcode: '4650218304245'
+    packageBarcode: '4650218304245',
+    gallery: [
+      altaSlabLogo,
+      'https://images.unsplash.com/photo-1615880484746-a3990926ab05?w=600&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1585128792020-803d29415281?w=600&h=400&fit=crop'
+    ]
   },
   {
     id: '8936',
