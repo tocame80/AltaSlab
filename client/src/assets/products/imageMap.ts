@@ -6,12 +6,47 @@
 import altaSlabSample from './concrete/alta-slab-sample.jpg';
 import textureClose from './concrete/texture-close.png';
 
-// Default fallback images
-const defaultImages = [
-  'https://images.unsplash.com/photo-1615971677499-5467cbab01e4?w=600&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1615880484746-a3990926ab05?w=600&h=400&fit=crop'
-];
+// Collection-specific placeholder images
+const getCollectionPlaceholders = (collection: string): string[] => {
+  switch (collection) {
+    case 'МАГИЯ БЕТОНА':
+      return [
+        'https://images.unsplash.com/photo-1615971677499-5467cbab01e4?w=600&h=400&fit=crop', // Concrete texture
+        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop', // Modern interior
+        'https://images.unsplash.com/photo-1615880484746-a3990926ab05?w=600&h=400&fit=crop'  // Wall texture
+      ];
+    case 'ТКАНЕВАЯ РОСКОШЬ':
+      return [
+        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop', // Fabric texture
+        'https://images.unsplash.com/photo-1615880484746-a3990926ab05?w=600&h=400&fit=crop', // Luxury interior
+        'https://images.unsplash.com/photo-1615971677499-5467cbab01e4?w=600&h=400&fit=crop'  // Textile close-up
+      ];
+    case 'МАТОВАЯ ЭСТЕТИКА':
+      return [
+        'https://images.unsplash.com/photo-1615880484746-a3990926ab05?w=600&h=400&fit=crop', // Matte surface
+        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop', // Modern design
+        'https://images.unsplash.com/photo-1615971677499-5467cbab01e4?w=600&h=400&fit=crop'  // Clean lines
+      ];
+    case 'МРАМОРНАЯ ФЕЕРИЯ':
+      return [
+        'https://images.unsplash.com/photo-1615971677499-5467cbab01e4?w=600&h=400&fit=crop', // Marble pattern
+        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop', // Elegant interior
+        'https://images.unsplash.com/photo-1615880484746-a3990926ab05?w=600&h=400&fit=crop'  // Luxury finish
+      ];
+    case 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ':
+      return [
+        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop', // Tools/accessories
+        'https://images.unsplash.com/photo-1615880484746-a3990926ab05?w=600&h=400&fit=crop', // Installation
+        'https://images.unsplash.com/photo-1615971677499-5467cbab01e4?w=600&h=400&fit=crop'  // Products
+      ];
+    default:
+      return [
+        'https://images.unsplash.com/photo-1615971677499-5467cbab01e4?w=600&h=400&fit=crop',
+        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop',
+        'https://images.unsplash.com/photo-1615880484746-a3990926ab05?w=600&h=400&fit=crop'
+      ];
+  }
+};
 
 // Helper function to generate product image paths
 const generateImagePaths = (productId: string, collection: string): string[] => {
@@ -58,8 +93,11 @@ export const getProductGallery = (productId: string, collection: string = ''): s
     return specificImageMap[productId];
   }
   
-  // For now, use sample images until real photos are uploaded
-  return [altaSlabSample, textureClose, ...defaultImages];
+  // If no specific images, use collection-appropriate placeholders
+  const collectionPlaceholders = getCollectionPlaceholders(collection);
+  
+  // For products without real photos, combine local sample with collection placeholders
+  return [altaSlabSample, textureClose, ...collectionPlaceholders];
 };
 
 // Collection-based fallback images
