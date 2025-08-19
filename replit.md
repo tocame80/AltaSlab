@@ -33,10 +33,13 @@ Preferred communication style: Simple, everyday language.
 ## Data Management
 - **Product Catalog**: Static data structure for SPC panel collections (concrete, fabric, matte, marble)
 - **Accessories**: Static data for installation accessories and tools
+- **Hero Images**: Local asset storage in `client/src/assets/hero/` with TypeScript mapping
+- **Image Assets**: Local file system storage with Vite asset processing for products and hero images
 - **Filtering/Sorting**: Client-side product filtering by collection, color, surface, size
 - **Calculator Logic**: Material calculation based on room area and panel specifications
 
 ## User Interface Features
+- **Hero Section**: Automatic image slider with local asset management and smooth transitions
 - **Product Showcase**: Grid-based catalog with favorites functionality
 - **Material Calculator**: Interactive tool for estimating required materials (standalone page + product tab)
 - **Contact Forms**: Comprehensive contact page with form validation (accessible via mail icon in header)
@@ -84,3 +87,38 @@ Preferred communication style: Simple, everyday language.
 - **date-fns**: Date manipulation and formatting
 - **nanoid**: Unique ID generation
 - **embla-carousel-react**: Carousel/slider functionality
+
+# Hero Images Management
+
+## Local Asset Storage System
+The application uses a local file system for hero images instead of cloud storage for better performance and simpler management.
+
+### File Structure
+```
+client/src/assets/hero/
+├── README.md              # Documentation
+├── ИНСТРУКЦИЯ.md         # Russian instructions
+├── imageMap.ts           # TypeScript mapping file
+├── placeholder-hero.jpg  # Default fallback image
+├── hero-1.jpg           # Example hero image
+└── hero-2.jpg           # Additional hero images...
+```
+
+### Adding New Hero Images
+1. **Add Image File**: Place image in `client/src/assets/hero/` directory
+2. **Update imageMap.ts**: 
+   - Add import statement: `import hero2 from './hero-2.jpg';`
+   - Add to heroImages array with metadata (id, title, sortOrder, isActive)
+3. **Auto-Reload**: Changes are automatically reflected in the hero slider
+
+### Image Specifications
+- **Format**: JPG, PNG, or WebP
+- **Aspect Ratio**: 4:3 (1920x1440px recommended)
+- **Size**: Under 500KB for optimal loading
+- **Quality**: 80-90% JPEG compression recommended
+
+### Management Features
+- **Activation/Deactivation**: Set `isActive: false` to hide images
+- **Sorting**: Use `sortOrder` property to control display order
+- **Automatic Slider**: 5-second auto-advance when multiple images exist
+- **Navigation Controls**: Arrow buttons and dot indicators for manual control

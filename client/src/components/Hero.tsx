@@ -1,37 +1,12 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-import { HeroImage } from '@shared/schema';
+import { getActiveHeroImages, HeroImageData } from '@/assets/hero/imageMap';
 
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const { data: heroImages = [], isLoading, error } = useQuery<HeroImage[]>({
-    queryKey: ['/api/hero-images'],
-    retry: 2,
-    refetchOnMount: true,
-  });
-
-  // Default images in case no images are loaded from database
-  const defaultImages = [
-    {
-      id: 'default-1',
-      title: 'Панели АЛЬТА СЛЭБ',
-      imageUrl: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1440',
-      isActive: 1,
-      sortOrder: 0,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }
-  ];
-
-  // Use database images if available, otherwise use default
-  const images = heroImages && heroImages.length > 0 ? heroImages.map(image => ({
-    ...image,
-    imageUrl: image.imageUrl.startsWith('/') ? 
-      `${window.location.origin}${image.imageUrl}` : 
-      image.imageUrl
-  })) : defaultImages;
+  // Get hero images from local assets
+  const images = getActiveHeroImages();
 
   // Auto-slide functionality
   useEffect(() => {
@@ -70,13 +45,13 @@ export default function Hero() {
     }
   };
 
-  // Show loading state only when actually loading and no images available
-  if (isLoading && images.length === 0) {
+  // Show message if no images available
+  if (images.length === 0) {
     return (
       <section className="relative w-full">
-        <div className="aspect-[4/3] bg-gray-200 animate-pulse">
+        <div className="aspect-[4/3] bg-gray-200">
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-gray-600 text-lg">Загрузка изображений...</div>
+            <div className="text-gray-600 text-lg">Нет доступных изображений</div>
           </div>
         </div>
       </section>
@@ -100,10 +75,6 @@ export default function Hero() {
               onLoad={() => console.log(`Hero image loaded: ${image.title}`)}
               onError={(e) => {
                 console.error(`Hero image load error: ${image.imageUrl}`);
-                const target = e.target as HTMLImageElement;
-                if (target.src !== defaultImages[0].imageUrl) {
-                  target.src = defaultImages[0].imageUrl;
-                }
               }}
             />
             

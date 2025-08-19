@@ -176,7 +176,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Hero images routes
+  // Hero images routes - DEPRECATED: Now using local assets
+  // These routes are kept for backward compatibility but not actively used
+  /*
   app.get('/api/hero-images', async (req, res) => {
     try {
       const heroImages = await storage.getHeroImages();
@@ -220,6 +222,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Failed to delete hero image' });
     }
   });
+  */
 
   const httpServer = createServer(app);
 
