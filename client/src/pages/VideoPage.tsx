@@ -12,7 +12,7 @@ function getEmbedUrl(url: string): string | null {
   // YouTube
   const youtubeMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/);
   if (youtubeMatch) {
-    return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+    return `https://www.youtube.com/embed/${youtubeMatch[1]}?rel=0&showinfo=0&modestbranding=1`;
   }
   
   // RuTube
@@ -61,7 +61,7 @@ export default function VideoPage() {
     ? videoInstructions 
     : videoInstructions.filter(video => video.category === selectedCategory);
 
-  const featuredVideo = filteredVideos[0];
+  const featuredVideo = videoInstructions[selectedVideo] || filteredVideos[0];
 
   return (
     <div className="min-h-screen bg-white">
@@ -224,7 +224,7 @@ export default function VideoPage() {
                     className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center hover:bg-[#d54a1a] transition-all group-hover:scale-110"
                     onClick={() => {
                       // Найти индекс видео в полном списке
-                      const fullIndex = videos.findIndex(v => v.id === video.id);
+                      const fullIndex = videoInstructions.findIndex((v: VideoInstruction) => v.id === video.id);
                       if (fullIndex !== -1) {
                         setSelectedVideo(fullIndex);
                         setIsPlaying(true);
@@ -271,7 +271,7 @@ export default function VideoPage() {
                   <button 
                     onClick={() => {
                       // Найти индекс видео в полном списке
-                      const fullIndex = videos.findIndex(v => v.id === video.id);
+                      const fullIndex = videoInstructions.findIndex((v: VideoInstruction) => v.id === video.id);
                       if (fullIndex !== -1) {
                         setSelectedVideo(fullIndex);
                         setIsPlaying(true);
