@@ -6,8 +6,9 @@ import { HeroImage } from '@shared/schema';
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const { data: heroImages = [], isLoading } = useQuery<HeroImage[]>({
+  const { data: heroImages = [], isLoading, error } = useQuery<HeroImage[]>({
     queryKey: ['/api/hero-images'],
+    retry: 2,
   });
 
   // Default images in case no images are loaded from database
@@ -23,7 +24,25 @@ export default function Hero() {
     }
   ];
 
-  const images = heroImages.length > 0 ? heroImages : defaultImages;
+  // Process images to ensure full URLs
+  const processedImages = heroImages.map(image => ({
+    ...image,
+    imageUrl: image.imageUrl.startsWith('/') ? 
+      `${window.location.origin}${image.imageUrl}` : 
+      image.imageUrl
+  }));
+
+  const images = processedImages.length > 0 ? processedImages : defaultImages;
+
+  // Debug logging
+  console.log('Hero component state:', {
+    isLoading,
+    error: error?.message,
+    heroImagesCount: heroImages.length,
+    imagesCount: images.length,
+    currentSlide,
+    firstImageUrl: images[0]?.imageUrl
+  });
 
   // Auto-slide functionality
   useEffect(() => {
@@ -67,11 +86,17 @@ export default function Hero() {
       <section className="relative w-full">
         <div className="aspect-[4/3] bg-gray-200 animate-pulse">
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-gray-400">Загрузка...</div>
+            <div className="text-gray-600 text-lg">Загрузка hero изображений...</div>
           </div>
         </div>
       </section>
     );
+  }
+
+  // If there's an error, use default images but log the error
+  if (error) {
+    console.error('Hero images API error:', error);
+    console.log('Fallback to default images');
   }
 
   return (
@@ -86,12 +111,25 @@ export default function Hero() {
               index === currentSlide ? 'opacity-100' : 'opacity-0'
             }`}
           >
-            <div
-              className="w-full h-full bg-cover bg-center relative"
-              style={{
-                backgroundImage: `url('${image.imageUrl}')`,
+            <img 
+              src={image.imageUrl}
+              alt={image.title || 'Hero image'}
+              className="w-full h-full object-cover object-center"
+              onLoad={() => console.log(`Hero image loaded: ${image.imageUrl}`)}
+              onError={(e) => {
+                console.error(`Hero image failed to load: ${image.imageUrl}`, e);
+                // Fallback to background image approach
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                const parent = target.parentElement;
+                if (parent) {
+                  parent.style.backgroundImage = `url('${defaultImages[0].imageUrl}')`;
+                  parent.style.backgroundSize = 'cover';
+                  parent.style.backgroundPosition = 'center';
+                }
               }}
-            >
+            />
+            <div className="w-full h-full absolute inset-0">
               {/* Dark overlay for better text readability */}
               <div className="absolute inset-0 bg-black bg-opacity-40"></div>
               
