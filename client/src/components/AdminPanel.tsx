@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit } from 'lucide-react';
+import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit, Play } from 'lucide-react';
 import { products } from '../data/products';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Certificate, insertCertificateSchema } from '@shared/schema';
+import { Certificate, insertCertificateSchema, VideoInstruction, insertVideoInstructionSchema } from '@shared/schema';
 import { apiRequest } from '@/lib/queryClient';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,7 +27,7 @@ interface ExistingImage {
   url: string;
 }
 
-type AdminTab = 'images' | 'certificates';
+type AdminTab = 'images' | 'certificates' | 'videos';
 
 const certificateFormSchema = insertCertificateSchema.extend({
   // Form validation schema with required fields
@@ -40,7 +40,16 @@ const certificateFormSchema = insertCertificateSchema.extend({
   size: z.string().min(1, 'Размер файла обязателен'),
 });
 
+const videoFormSchema = insertVideoInstructionSchema.extend({
+  title: z.string().min(1, 'Название обязательно'),
+  description: z.string().min(1, 'Описание обязательно'),
+  duration: z.string().min(1, 'Длительность обязательна'),
+  category: z.string().min(1, 'Категория обязательна'),
+  videoUrl: z.string().min(1, 'URL видео обязателен'),
+});
+
 type CertificateFormData = z.infer<typeof certificateFormSchema>;
+type VideoFormData = z.infer<typeof videoFormSchema>;
 
 export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [activeTab, setActiveTab] = useState<AdminTab>('images');
@@ -51,6 +60,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [editingCertificate, setEditingCertificate] = useState<Certificate | null>(null);
   const [showCertificateForm, setShowCertificateForm] = useState(false);
+  const [editingVideo, setEditingVideo] = useState<VideoInstruction | null>(null);
+  const [showVideoForm, setShowVideoForm] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
@@ -150,6 +161,130 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       });
     },
   });
+
+  // Video form
+  const videoForm = useForm<VideoFormData>({
+    resolver: zodResolver(videoFormSchema),
+    defaultValues: {
+      title: '',
+      description: '',
+      duration: '',
+      category: '',
+      videoUrl: '',
+      imageUrl: '',
+      sortOrder: 0,
+    },
+  });
+
+  // Queries and mutations for videos
+  const { data: videos = [], isLoading: videosLoading } = useQuery<VideoInstruction[]>({
+    queryKey: ['/api/video-instructions'],
+  });
+
+  const createVideoMutation = useMutation({
+    mutationFn: async (data: VideoFormData) => {
+      return apiRequest('/api/video-instructions', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/video-instructions'] });
+      setShowVideoForm(false);
+      videoForm.reset();
+      toast({
+        title: 'Успешно',
+        description: 'Видеоинструкция создана',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось создать видеоинструкцию',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const updateVideoMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<VideoFormData> }) => {
+      return apiRequest(`/api/video-instructions/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/video-instructions'] });
+      setEditingVideo(null);
+      setShowVideoForm(false);
+      videoForm.reset();
+      toast({
+        title: 'Успешно',
+        description: 'Видеоинструкция обновлена',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось обновить видеоинструкцию',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const deleteVideoMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return apiRequest(`/api/video-instructions/${id}`, {
+        method: 'DELETE',
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/video-instructions'] });
+      toast({
+        title: 'Успешно',
+        description: 'Видеоинструкция удалена',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось удалить видеоинструкцию',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  // Video form handlers
+  const startEditingVideo = (video: VideoInstruction) => {
+    setEditingVideo(video);
+    setShowVideoForm(true);
+    videoForm.reset({
+      title: video.title,
+      description: video.description,
+      duration: video.duration,
+      category: video.category,
+      videoUrl: video.videoUrl,
+      imageUrl: video.imageUrl || '',
+      sortOrder: video.sortOrder,
+    });
+  };
+
+  const handleSubmitVideo = (data: VideoFormData) => {
+    if (editingVideo) {
+      updateVideoMutation.mutate({
+        id: editingVideo.id,
+        data,
+      });
+    } else {
+      createVideoMutation.mutate(data);
+    }
+  };
+
+  const handleDeleteVideo = (id: string) => {
+    if (confirm('Вы уверены, что хотите удалить эту видеоинструкцию?')) {
+      deleteVideoMutation.mutate(id);
+    }
+  };
 
   // Certificate form handlers
   const startEditingCertificate = (certificate: Certificate) => {
@@ -456,6 +591,17 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
             >
               <FileText size={16} />
               Сертификаты
+            </button>
+            <button
+              onClick={() => setActiveTab('videos')}
+              className={`px-6 py-3 text-sm font-medium transition-colors flex items-center gap-2 ${
+                activeTab === 'videos'
+                  ? 'border-b-2 border-[#E95D22] text-[#E95D22] bg-white'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Play size={16} />
+              Видео
             </button>
           </div>
         </div>
@@ -825,6 +971,214 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             </button>
                             <button
                               onClick={() => handleDeleteCertificate(cert.id)}
+                              className="text-red-600 hover:text-red-700 p-2"
+                              title="Удалить"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Videos Tab */}
+          {activeTab === 'videos' && (
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-semibold text-gray-900">Управление видеоинструкциями</h3>
+                <button
+                  onClick={() => {
+                    setEditingVideo(null);
+                    setShowVideoForm(true);
+                    videoForm.reset();
+                  }}
+                  className="bg-[#E95D22] text-white px-4 py-2 rounded-lg hover:bg-[#d54a1a] transition-colors flex items-center gap-2"
+                >
+                  <Plus size={16} />
+                  Добавить видео
+                </button>
+              </div>
+
+              {/* Video Form */}
+              {showVideoForm && (
+                <div className="bg-gray-50 rounded-lg p-6 mb-6">
+                  <h4 className="text-lg font-semibold mb-4">
+                    {editingVideo ? 'Редактировать видеоинструкцию' : 'Добавить новую видеоинструкцию'}
+                  </h4>
+                  
+                  <form onSubmit={videoForm.handleSubmit(handleSubmitVideo)} className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Название *
+                        </label>
+                        <input
+                          {...videoForm.register('title')}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                          placeholder="Введите название видео"
+                        />
+                        {videoForm.formState.errors.title && (
+                          <p className="text-red-600 text-sm mt-1">{videoForm.formState.errors.title.message}</p>
+                        )}
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Категория *
+                        </label>
+                        <select
+                          {...videoForm.register('category')}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                        >
+                          <option value="">Выберите категорию</option>
+                          <option value="установка">Установка</option>
+                          <option value="подготовка">Подготовка</option>
+                          <option value="инструменты">Инструменты</option>
+                          <option value="советы">Советы</option>
+                        </select>
+                        {videoForm.formState.errors.category && (
+                          <p className="text-red-600 text-sm mt-1">{videoForm.formState.errors.category.message}</p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Описание *
+                      </label>
+                      <textarea
+                        {...videoForm.register('description')}
+                        rows={3}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                        placeholder="Введите описание видео"
+                      />
+                      {videoForm.formState.errors.description && (
+                        <p className="text-red-600 text-sm mt-1">{videoForm.formState.errors.description.message}</p>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Длительность *
+                        </label>
+                        <input
+                          {...videoForm.register('duration')}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                          placeholder="5:30"
+                        />
+                        {videoForm.formState.errors.duration && (
+                          <p className="text-red-600 text-sm mt-1">{videoForm.formState.errors.duration.message}</p>
+                        )}
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          URL видео *
+                        </label>
+                        <input
+                          {...videoForm.register('videoUrl')}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                          placeholder="https://youtube.com/watch?v=..."
+                        />
+                        {videoForm.formState.errors.videoUrl && (
+                          <p className="text-red-600 text-sm mt-1">{videoForm.formState.errors.videoUrl.message}</p>
+                        )}
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          URL изображения
+                        </label>
+                        <input
+                          {...videoForm.register('imageUrl')}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                          placeholder="https://..."
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Порядок сортировки
+                      </label>
+                      <input
+                        {...videoForm.register('sortOrder', { valueAsNumber: true })}
+                        type="number"
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                        placeholder="0"
+                      />
+                    </div>
+
+                    <div className="flex gap-3 pt-4">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowVideoForm(false);
+                          setEditingVideo(null);
+                          videoForm.reset();
+                        }}
+                        className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                      >
+                        Отмена
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={createVideoMutation.isPending || updateVideoMutation.isPending}
+                        className="px-6 py-2 bg-[#E95D22] text-white rounded-lg hover:bg-[#d54a1a] transition-colors disabled:opacity-50"
+                      >
+                        {editingVideo ? 'Обновить' : 'Создать'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
+              {/* Videos List */}
+              <div>
+                {videosLoading ? (
+                  <div className="text-center py-8">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#E95D22]"></div>
+                    <p className="mt-2 text-gray-600">Загружаем видеоинструкции...</p>
+                  </div>
+                ) : videos.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">
+                    <p>Видеоинструкции не найдены</p>
+                  </div>
+                ) : (
+                  <div className="grid gap-4">
+                    {videos.map((video) => (
+                      <div
+                        key={video.id}
+                        className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                      >
+                        <div className="flex items-start gap-4">
+                          <div className="w-24 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <Play className="w-6 h-6 text-gray-400" />
+                          </div>
+                          <div className="flex-1">
+                            <h5 className="font-semibold text-gray-900 mb-2">{video.title}</h5>
+                            <p className="text-sm text-gray-600 mb-2">{video.description}</p>
+                            <div className="flex gap-4 text-sm text-gray-500">
+                              <span>Категория: {video.category}</span>
+                              <span>Длительность: {video.duration}</span>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => startEditingVideo(video)}
+                              className="text-blue-600 hover:text-blue-700 p-2"
+                              title="Редактировать"
+                            >
+                              <Edit size={16} />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteVideo(video.id)}
                               className="text-red-600 hover:text-red-700 p-2"
                               title="Удалить"
                             >

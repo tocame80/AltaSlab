@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Certificate, type InsertCertificate, users, certificates } from "@shared/schema";
+import { type User, type InsertUser, type Certificate, type InsertCertificate, type VideoInstruction, type InsertVideoInstruction, users, certificates, videoInstructions } from "@shared/schema";
 import { db } from "./db";
 import { eq, asc } from "drizzle-orm";
 
@@ -14,6 +14,13 @@ export interface IStorage {
   createCertificate(certificate: InsertCertificate): Promise<Certificate>;
   updateCertificate(id: string, certificate: Partial<InsertCertificate>): Promise<Certificate>;
   deleteCertificate(id: string): Promise<void>;
+  
+  // Video instruction methods
+  getVideoInstructions(): Promise<VideoInstruction[]>;
+  getVideoInstruction(id: string): Promise<VideoInstruction | undefined>;
+  createVideoInstruction(videoInstruction: InsertVideoInstruction): Promise<VideoInstruction>;
+  updateVideoInstruction(id: string, videoInstruction: Partial<InsertVideoInstruction>): Promise<VideoInstruction>;
+  deleteVideoInstruction(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -65,6 +72,37 @@ export class DatabaseStorage implements IStorage {
 
   async deleteCertificate(id: string): Promise<void> {
     await db.delete(certificates).where(eq(certificates.id, id));
+  }
+
+  // Video instruction methods
+  async getVideoInstructions(): Promise<VideoInstruction[]> {
+    return await db.select().from(videoInstructions).orderBy(asc(videoInstructions.sortOrder));
+  }
+
+  async getVideoInstruction(id: string): Promise<VideoInstruction | undefined> {
+    const [videoInstruction] = await db.select().from(videoInstructions).where(eq(videoInstructions.id, id));
+    return videoInstruction || undefined;
+  }
+
+  async createVideoInstruction(insertVideoInstruction: InsertVideoInstruction): Promise<VideoInstruction> {
+    const [videoInstruction] = await db
+      .insert(videoInstructions)
+      .values(insertVideoInstruction)
+      .returning();
+    return videoInstruction;
+  }
+
+  async updateVideoInstruction(id: string, updates: Partial<InsertVideoInstruction>): Promise<VideoInstruction> {
+    const [videoInstruction] = await db
+      .update(videoInstructions)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(videoInstructions.id, id))
+      .returning();
+    return videoInstruction;
+  }
+
+  async deleteVideoInstruction(id: string): Promise<void> {
+    await db.delete(videoInstructions).where(eq(videoInstructions.id, id));
   }
 }
 

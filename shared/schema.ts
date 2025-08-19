@@ -25,6 +25,19 @@ export const certificates = pgTable("certificates", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const videoInstructions = pgTable("video_instructions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  duration: text("duration").notNull(),
+  category: text("category").notNull(),
+  videoUrl: text("video_url"),
+  thumbnailUrl: text("thumbnail_url"),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -36,7 +49,15 @@ export const insertCertificateSchema = createInsertSchema(certificates).omit({
   updatedAt: true,
 });
 
+export const insertVideoInstructionSchema = createInsertSchema(videoInstructions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Certificate = typeof certificates.$inferSelect;
 export type InsertCertificate = z.infer<typeof insertCertificateSchema>;
+export type VideoInstruction = typeof videoInstructions.$inferSelect;
+export type InsertVideoInstruction = z.infer<typeof insertVideoInstructionSchema>;

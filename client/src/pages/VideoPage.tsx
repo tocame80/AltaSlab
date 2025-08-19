@@ -2,9 +2,16 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Play, Clock, Eye, ThumbsUp, Share2 } from 'lucide-react';
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import type { VideoInstruction } from '@shared/schema';
 
 export default function VideoPage() {
   const [selectedVideo, setSelectedVideo] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
+  const { data: videoInstructions = [], isLoading } = useQuery<VideoInstruction[]>({
+    queryKey: ['/api/video-instructions'],
+  });
 
   const videoCategories = [
     { id: 'all', name: 'Все видео' },
@@ -14,105 +21,11 @@ export default function VideoPage() {
     { id: 'review', name: 'Обзоры' }
   ];
 
-  const videos = [
-    {
-      id: 1,
-      category: 'installation',
-      title: 'Полный курс монтажа SPC панелей АЛЬТА СЛЭБ',
-      description: 'Комплексное руководство по установке SPC панелей от подготовки поверхности до финишной отделки. Подходит для начинающих и профессионалов.',
-      duration: '24:15',
-      views: '45.2K',
-      likes: '1.2K',
-      uploadDate: '2024-01-15',
-      thumbnail: '/videos/full-course-thumb.jpg',
-      featured: true
-    },
-    {
-      id: 2,
-      category: 'preparation',
-      title: 'Подготовка поверхности перед монтажом',
-      description: 'Как правильно подготовить стену или потолок для установки SPC панелей. Инструменты, материалы и пошаговый процесс.',
-      duration: '5:42',
-      views: '12.5K',
-      likes: '324',
-      uploadDate: '2024-01-10',
-      thumbnail: '/videos/preparation-thumb.jpg'
-    },
-    {
-      id: 3,
-      category: 'installation',
-      title: 'Монтаж SPC панелей на стену',
-      description: 'Пошаговая инструкция по установке панелей на вертикальные поверхности с демонстрацией различных техник.',
-      duration: '8:15',
-      views: '23.1K',
-      likes: '567',
-      uploadDate: '2024-01-12',
-      thumbnail: '/videos/wall-installation-thumb.jpg'
-    },
-    {
-      id: 4,
-      category: 'installation',
-      title: 'Установка панелей на потолок',
-      description: 'Особенности монтажа SPC панелей на потолочные конструкции. Крепление, выравнивание и финишная отделка.',
-      duration: '6:33',
-      views: '8.7K',
-      likes: '198',
-      uploadDate: '2024-01-14',
-      thumbnail: '/videos/ceiling-installation-thumb.jpg'
-    },
-    {
-      id: 5,
-      category: 'installation',
-      title: 'Монтаж в углах и сложных местах',
-      description: 'Работа с внутренними и внешними углами, обход труб и других препятствий.',
-      duration: '7:28',
-      views: '15.3K',
-      likes: '412',
-      uploadDate: '2024-01-16',
-      thumbnail: '/videos/corners-thumb.jpg'
-    },
-    {
-      id: 6,
-      category: 'care',
-      title: 'Уход и эксплуатация SPC панелей',
-      description: 'Рекомендации по уходу за панелями, средства для очистки и продления срока службы.',
-      duration: '4:28',
-      views: '9.8K',
-      likes: '287',
-      uploadDate: '2024-01-18',
-      thumbnail: '/videos/care-thumb.jpg'
-    },
-    {
-      id: 7,
-      category: 'review',
-      title: 'Обзор коллекции "Магия Бетона"',
-      description: 'Детальный обзор дизайнов и характеристик коллекции с демонстрацией в интерьере.',
-      duration: '6:15',
-      views: '18.6K',
-      likes: '523',
-      uploadDate: '2024-01-20',
-      thumbnail: '/videos/concrete-review-thumb.jpg'
-    },
-    {
-      id: 8,
-      category: 'review',
-      title: 'Сравнение с другими материалами',
-      description: 'Сравнительный анализ SPC панелей с керамической плиткой, обоями и другими отделочными материалами.',
-      duration: '9:42',
-      views: '31.4K',
-      likes: '892',
-      uploadDate: '2024-01-22',
-      thumbnail: '/videos/comparison-thumb.jpg'
-    }
-  ];
+  const filteredVideos = selectedCategory === 'all' 
+    ? videoInstructions 
+    : videoInstructions.filter(video => video.category === selectedCategory);
 
-  const [activeCategory, setActiveCategory] = useState('all');
-
-  const filteredVideos = videos.filter(video => 
-    activeCategory === 'all' || video.category === activeCategory
-  );
-
-  const featuredVideo = videos.find(video => video.featured) || videos[0];
+  const featuredVideo = filteredVideos[0];
 
   return (
     <div className="min-h-screen bg-white">
@@ -158,11 +71,11 @@ export default function VideoPage() {
                         </div>
                         <div className="flex items-center gap-1">
                           <Eye size={14} />
-                          {featuredVideo.views} просмотров
+                          Просмотры
                         </div>
                         <div className="flex items-center gap-1">
                           <ThumbsUp size={14} />
-                          {featuredVideo.likes}
+                          Рекомендуем
                         </div>
                       </div>
                     </div>
@@ -181,9 +94,9 @@ export default function VideoPage() {
               {videoCategories.map((category) => (
                 <button
                   key={category.id}
-                  onClick={() => setActiveCategory(category.id)}
+                  onClick={() => setSelectedCategory(category.id)}
                   className={`px-6 py-3 rounded-full text-sm font-medium transition-colors ${
-                    activeCategory === category.id
+                    selectedCategory === category.id
                       ? 'bg-[#E95D22] text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
@@ -228,14 +141,14 @@ export default function VideoPage() {
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-1">
                         <Eye size={12} />
-                        {video.views}
+                        Видео
                       </div>
                       <div className="flex items-center gap-1">
                         <ThumbsUp size={12} />
-                        {video.likes}
+                        {video.category}
                       </div>
                     </div>
-                    <span>{video.uploadDate}</span>
+                    <span>{video.duration}</span>
                   </div>
 
                   <button className="w-full bg-gray-100 hover:bg-[#E95D22] hover:text-white text-gray-700 py-2 rounded-lg transition-colors font-medium">
