@@ -46,47 +46,62 @@ export default function VideoPage() {
           </div>
 
           {/* Featured Video */}
-          <div className="mb-16">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Рекомендуемое видео</h2>
-            <div className="relative max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-2xl">
-              <div className="aspect-video bg-gray-900 flex items-center justify-center relative">
-                <button className="w-24 h-24 bg-[#E95D22] rounded-full flex items-center justify-center hover:bg-[#d54a1a] transition-all group hover:scale-110">
-                  <Play className="w-10 h-10 text-white ml-1" />
-                </button>
-                
-                {/* Video overlay info */}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-8">
-                  <div className="flex items-end justify-between">
-                    <div>
-                      <h3 className="text-2xl font-bold text-white mb-2">
-                        {featuredVideo.title}
-                      </h3>
-                      <p className="text-gray-200 mb-4 max-w-2xl">
-                        {featuredVideo.description}
-                      </p>
-                      <div className="flex items-center gap-6 text-sm text-gray-300">
-                        <div className="flex items-center gap-1">
-                          <Clock size={14} />
-                          {featuredVideo.duration}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Eye size={14} />
-                          Просмотры
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <ThumbsUp size={14} />
-                          Рекомендуем
+          {featuredVideo ? (
+            <div className="mb-16">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Рекомендуемое видео</h2>
+              <div className="relative max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-2xl">
+                <div className="aspect-video bg-gray-900 flex items-center justify-center relative">
+                  <button className="w-24 h-24 bg-[#E95D22] rounded-full flex items-center justify-center hover:bg-[#d54a1a] transition-all group hover:scale-110">
+                    <Play className="w-10 h-10 text-white ml-1" />
+                  </button>
+                  
+                  {/* Video overlay info */}
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-8">
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <h3 className="text-2xl font-bold text-white mb-2">
+                          {featuredVideo.title}
+                        </h3>
+                        <p className="text-gray-200 mb-4 max-w-2xl">
+                          {featuredVideo.description}
+                        </p>
+                        <div className="flex items-center gap-6 text-sm text-gray-300">
+                          <div className="flex items-center gap-1">
+                            <Clock size={14} />
+                            {featuredVideo.duration}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Eye size={14} />
+                            Просмотры
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <ThumbsUp size={14} />
+                            Рекомендуем
+                          </div>
                         </div>
                       </div>
+                      <button className="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg p-3 transition-colors">
+                        <Share2 className="w-5 h-5 text-white" />
+                      </button>
                     </div>
-                    <button className="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg p-3 transition-colors">
-                      <Share2 className="w-5 h-5 text-white" />
-                    </button>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="mb-16">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Рекомендуемое видео</h2>
+              <div className="relative max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-2xl">
+                <div className="aspect-video bg-gray-100 flex items-center justify-center">
+                  <div className="text-center">
+                    <Play className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500 text-lg">Видеоинструкции пока не добавлены</p>
+                    <p className="text-gray-400 text-sm mt-2">Используйте админ панель для добавления видео</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Categories Filter */}
           <div className="mb-12">
@@ -108,8 +123,9 @@ export default function VideoPage() {
           </div>
 
           {/* Video Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {filteredVideos.map((video, index) => (
+          {filteredVideos.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {filteredVideos.map((video, index) => (
               <div key={video.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
                 <div className="relative aspect-video bg-gray-200 flex items-center justify-center group cursor-pointer">
                   <button 
@@ -156,8 +172,15 @@ export default function VideoPage() {
                   </button>
                 </div>
               </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <Play className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">Видео не найдено</h3>
+              <p className="text-gray-500">В выбранной категории пока нет видеоинструкций</p>
+            </div>
+          )}
 
           {/* Subscribe Section */}
           <div className="mt-16 bg-gradient-to-r from-[#E95D22] to-[#d54a1a] rounded-2xl p-8 text-white text-center">
