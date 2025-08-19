@@ -1693,7 +1693,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                               
                               // Create hero image with default values
                               const heroImageData = {
-                                title: file.name.replace(/\.[^/.]+$/, ''), // Remove file extension
+                                title: `Hero-${heroImages.length + 1}`,
                                 imageUrl: aclData.objectPath,
                                 sortOrder: heroImages.length,
                                 isActive: 1,
