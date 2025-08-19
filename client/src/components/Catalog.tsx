@@ -244,7 +244,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
   return (
     <section id="catalog" className="py-16 bg-gray-50">
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-6 mt-[24px] mb-[24px]">
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-4">
             <h2 className="text-4xl font-bold text-primary">{getCollectionTitle()}</h2>
