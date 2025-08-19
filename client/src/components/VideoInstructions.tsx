@@ -136,33 +136,8 @@ export default function VideoInstructions() {
                 {isPlaying ? (
                   (() => {
                     const embedUrl = getEmbedUrl(currentFeaturedVideo.videoUrl);
-                    const isDirectVideo = embedUrl ? embedUrl.match(/\.(mp4|webm|ogg)$/i) : false;
                     
-                    if (embedUrl && !isDirectVideo) {
-                      return (
-                        <iframe
-                          src={embedUrl as string}
-                          className="w-full h-full"
-                          frameBorder="0"
-                          allowFullScreen
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        />
-                      );
-                    } else if (embedUrl && isDirectVideo) {
-                      return (
-                        <video
-                          controls
-                          autoPlay
-                          className="w-full h-full object-cover"
-                          poster={currentFeaturedVideo.thumbnailUrl || undefined}
-                        >
-                          <source src={embedUrl as string} type="video/mp4" />
-                          <source src={embedUrl as string} type="video/webm" />
-                          <source src={embedUrl as string} type="video/ogg" />
-                          Ваш браузер не поддерживает видео HTML5.
-                        </video>
-                      );
-                    } else {
+                    if (!embedUrl) {
                       return (
                         <div className="w-full h-full flex items-center justify-center text-white">
                           <div className="text-center">
@@ -170,6 +145,34 @@ export default function VideoInstructions() {
                             <p className="text-sm text-gray-300">URL: {currentFeaturedVideo.videoUrl}</p>
                           </div>
                         </div>
+                      );
+                    }
+                    
+                    const isDirectVideo = embedUrl.match(/\.(mp4|webm|ogg)$/i);
+                    
+                    if (!isDirectVideo) {
+                      return (
+                        <iframe
+                          src={embedUrl}
+                          className="w-full h-full"
+                          frameBorder="0"
+                          allowFullScreen
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        />
+                      );
+                    } else {
+                      return (
+                        <video
+                          controls
+                          autoPlay
+                          className="w-full h-full object-cover"
+                          poster={currentFeaturedVideo.thumbnailUrl || undefined}
+                        >
+                          <source src={embedUrl} type="video/mp4" />
+                          <source src={embedUrl} type="video/webm" />
+                          <source src={embedUrl} type="video/ogg" />
+                          Ваш браузер не поддерживает видео HTML5.
+                        </video>
                       );
                     }
                   })()
