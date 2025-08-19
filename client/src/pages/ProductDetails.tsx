@@ -299,12 +299,42 @@ export default function ProductDetails() {
         <div className="mb-12">
           {/* Main Image */}
           <div className="relative bg-white rounded-xl overflow-hidden shadow-sm mb-6">
-            <div className="aspect-[2/1]">
+            <div className="aspect-[2/1] relative">
               <img
                 src={gallery[currentImageIndex]}
                 alt={getProductDisplayName()}
                 className="w-full h-full object-cover"
               />
+              
+              {/* Product Info Overlay - Bottom Left */}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white/90 via-white/70 to-transparent p-6">
+                <div>
+                  {/* Collection */}
+                  <div className="text-gray-600 text-sm font-medium mb-1">
+                    {getCollectionDisplayName()}
+                  </div>
+                  
+                  {/* Color */}
+                  <div className="text-gray-900 text-lg font-semibold mb-2">
+                    {product.color}
+                  </div>
+                  
+                  {/* Package Price - First Line */}
+                  <div className="text-gray-900 text-2xl font-bold">
+                    {product.price.toLocaleString('ru-RU')} ₽
+                  </div>
+                  <div className="text-gray-600 text-sm mb-1">
+                    {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'за шт.' : 'за упак.'}
+                  </div>
+                  
+                  {/* Price per m² - Second Line */}
+                  {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
+                    <div className="text-gray-900 text-xl font-bold">
+                      {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽/м²
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
             
             {/* Image Controls */}
@@ -405,37 +435,6 @@ export default function ProductDetails() {
 
         {/* Product Information */}
         <div className="space-y-8">
-
-            {/* Pricing */}
-            <div className="bg-white rounded-xl p-6 shadow-sm">
-              <div className="space-y-3">
-                {/* Price per package - first line */}
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold text-gray-900">
-                    {product.price.toLocaleString('ru-RU')} ₽
-                  </span>
-                  <span className="text-sm text-gray-500">
-                    {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'за шт.' : 'за упак.'}
-                  </span>
-                </div>
-                
-                {/* Price per m² - second line */}
-                {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-xl font-semibold text-gray-700">
-                      {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽
-                    </span>
-                    <span className="text-sm text-gray-500">за м²</span>
-                  </div>
-                )}
-              </div>
-
-
-            </div>
-
-
-
-
         </div>
 
         {/* Tabs Section */}
