@@ -1,38 +1,45 @@
-import { Mail, Search, Menu, X } from 'lucide-react';
-import { useState } from 'react';
-import { useScrollDirection } from '@/hooks/useScrollDirection';
-import { Link } from 'wouter';
+import { Mail, Search, Menu, X } from "lucide-react";
+import { useState } from "react";
+import { useScrollDirection } from "@/hooks/useScrollDirection";
+import { Link } from "wouter";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const isHeaderVisible = useScrollDirection();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       // Dispatch custom event with search query
-      window.dispatchEvent(new CustomEvent('search-products', { 
-        detail: searchQuery.trim() 
-      }));
+      window.dispatchEvent(
+        new CustomEvent("search-products", {
+          detail: searchQuery.trim(),
+        }),
+      );
       // Navigate to home if not already there
-      if (window.location.pathname !== '/') {
-        window.location.href = '/';
+      if (window.location.pathname !== "/") {
+        window.location.href = "/";
       }
       setIsSearchOpen(false);
-      setSearchQuery('');
+      setSearchQuery("");
     }
   };
 
   return (
-    <header className={`bg-white shadow-sm sticky top-0 z-50 transition-transform duration-300 ${
-      isHeaderVisible ? 'translate-y-0' : '-translate-y-full'
-    }`}>
+    <header
+      className={`bg-white shadow-sm sticky top-0 z-50 transition-transform duration-300 ${
+        isHeaderVisible ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between py-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+          <Link
+            href="/"
+            className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+          >
             <div className="w-12 h-12 bg-accent rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">АС</span>
             </div>
@@ -44,21 +51,35 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">
-            <Link href="/" className="nav-link">КАТАЛОГ</Link>
-            <Link href="/calculator" className="nav-link">КАЛЬКУЛЯТОР</Link>
-            <Link href="/certificates" className="nav-link">СЕРТИФИКАТЫ</Link>
-            <Link href="/faq" className="nav-link">FAQ</Link>
-            <Link href="/video" className="nav-link">ВИДЕОИНСТРУКЦИИ</Link>
-            <a href="#company" className="nav-link">О КОМПАНИИ</a>
-            
+            <Link href="/" className="nav-link">
+              КАТАЛОГ
+            </Link>
+            <Link href="/calculator" className="nav-link">
+              КАЛЬКУЛЯТОР
+            </Link>
+            <Link href="/certificates" className="nav-link">
+              СЕРТИФИКАТЫ
+            </Link>
+            <Link href="/faq" className="nav-link">
+              FAQ
+            </Link>
+            <Link href="/video" className="nav-link">
+              ВИДЕОИНСТРУКЦИИ
+            </Link>
+            <a href="#company" className="nav-link">
+              О НАС
+            </a>
           </nav>
 
           {/* Contact Info */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link href="/contact" className="text-muted hover:text-[#E95D22] transition-colors">
+            <Link
+              href="/contact"
+              className="text-muted hover:text-[#E95D22] transition-colors"
+            >
               <Mail className="w-5 h-5" />
             </Link>
-            <button 
+            <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
               className="text-muted hover:text-[#E95D22] transition-colors"
               aria-label="Поиск"
@@ -103,7 +124,7 @@ export default function Header() {
                 type="button"
                 onClick={() => {
                   setIsSearchOpen(false);
-                  setSearchQuery('');
+                  setSearchQuery("");
                 }}
                 className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
                 aria-label="Закрыть поиск"
@@ -118,24 +139,41 @@ export default function Header() {
         {isMobileMenuOpen && (
           <div className="lg:hidden py-4 border-t border-gray-200">
             <nav className="flex flex-col space-y-4">
-              <Link href="/" className="nav-link">КАТАЛОГ</Link>
-              <Link href="/calculator" className="nav-link">КАЛЬКУЛЯТОР</Link>
-              <Link href="/certificates" className="nav-link">СЕРТИФИКАТЫ</Link>
-              <Link href="/faq" className="nav-link">FAQ</Link>
-              <Link href="/video" className="nav-link">ВИДЕОИНСТРУКЦИИ</Link>
-              <a href="#company" className="nav-link">О КОМПАНИИ</a>
+              <Link href="/" className="nav-link">
+                КАТАЛОГ
+              </Link>
+              <Link href="/calculator" className="nav-link">
+                КАЛЬКУЛЯТОР
+              </Link>
+              <Link href="/certificates" className="nav-link">
+                СЕРТИФИКАТЫ
+              </Link>
+              <Link href="/faq" className="nav-link">
+                FAQ
+              </Link>
+              <Link href="/video" className="nav-link">
+                ВИДЕОИНСТРУКЦИИ
+              </Link>
+              <a href="#company" className="nav-link">
+                О КОМПАНИИ
+              </a>
               <div className="flex items-center space-x-4 pt-4">
-                <Link href="/contact" className="text-muted hover:text-[#E95D22] transition-colors">
+                <Link
+                  href="/contact"
+                  className="text-muted hover:text-[#E95D22] transition-colors"
+                >
                   <Mail className="w-5 h-5" />
                 </Link>
-                <button 
+                <button
                   onClick={() => setIsSearchOpen(!isSearchOpen)}
                   className="text-muted hover:text-[#E95D22] transition-colors"
                   aria-label="Поиск"
                 >
                   <Search className="w-5 h-5" />
                 </button>
-                <span className="text-accent font-semibold">8 800 555-77-73</span>
+                <span className="text-accent font-semibold">
+                  8 800 555-77-73
+                </span>
               </div>
             </nav>
           </div>
