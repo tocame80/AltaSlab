@@ -468,8 +468,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                   isFavorite={isFavorite(product.id)}
                   onToggleFavorite={() => toggleFavorite(product.id)}
                   onClick={() => {
-                    // For now, show an alert. Later can be replaced with navigation to product detail page
-                    alert(`Переход к деталям продукта: ${product.design}\nЦена: ${product.price} руб. за м²\nАртикул: ${product.barcode}`);
+                    window.location.href = `/product/${product.id}`;
                   }}
                 />
               ))}

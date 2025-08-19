@@ -7,7 +7,7 @@ interface FavoritesContextType {
   favoriteCount: number;
 }
 
-const FavoritesContext = createContext<FavoritesContextType | undefined>(undefined);
+export const FavoritesContext = createContext<FavoritesContextType | undefined>(undefined);
 
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
