@@ -46,8 +46,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     };
 
     const handleShowSearch = () => {
-      setShowSearch(true);
-      // Auto-focus on search input after showing it
+      // Just focus on search input since it's always visible now
       setTimeout(() => {
         const searchInput = document.querySelector('#catalog-search-input') as HTMLInputElement;
         if (searchInput) {
@@ -266,31 +265,29 @@ export default function Catalog({ activeCollection }: CatalogProps) {
           <div className="flex items-center justify-between gap-4 mb-4">
             <h2 className="text-4xl font-bold text-primary">{getCollectionTitle()}</h2>
             
-            {/* Search Bar - Show when requested or has active search */}
-            {(showSearch || searchQuery) && (
-              <div className="flex items-center gap-2 flex-1 max-w-lg">
-                <div className="relative flex-1">
-                  <input
-                    id="catalog-search-input"
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Поиск товаров..."
-                    className="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E95D22] focus:border-transparent text-sm"
-                  />
-                  <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                </div>
+            {/* Search Bar - Always visible */}
+            <div className="flex items-center gap-2 flex-1 max-w-lg">
+              <div className="relative flex-1">
+                <input
+                  id="catalog-search-input"
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Поиск товаров..."
+                  className="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E95D22] focus:border-transparent text-sm"
+                />
+                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              </div>
+              {/* Show Clear button only when there's text to clear */}
+              {searchQuery && (
                 <button
-                  onClick={() => {
-                    setSearchQuery('');
-                    setShowSearch(false);
-                  }}
+                  onClick={() => setSearchQuery('')}
                   className="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors font-medium text-sm whitespace-nowrap"
                 >
                   Очистить
                 </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
           <p className="text-secondary text-lg">
             {searchQuery 
