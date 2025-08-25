@@ -70,7 +70,7 @@ export default function Header() {
               <span className="text-white font-bold text-lg">АС</span>
             </div>
             <div>
-              <h1 className="text-primary font-bold text-xl">АЛЬТА СЛЭБ</h1>
+              <h1 className="font-bold text-xl text-[#2f378b]">АЛЬТА СЛЭБ</h1>
               <p className="text-muted text-xs">SPC ПАНЕЛИ</p>
             </div>
           </Link>
