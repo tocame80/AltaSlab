@@ -137,7 +137,7 @@ export default function VideoPage() {
                       />
                       <button 
                         onClick={() => setIsPlaying(true)}
-                        className="w-24 h-24 bg-[#E95D22] rounded-full flex items-center justify-center hover:bg-[#d54a1a] transition-all group hover:scale-110 relative z-10"
+                        className="w-24 h-24 bg-[#e90039] rounded-full flex items-center justify-center hover:bg-[#c8002f] transition-all group hover:scale-110 relative z-10"
                       >
                         <Play className="w-10 h-10 text-white ml-1" />
                       </button>
@@ -203,7 +203,7 @@ export default function VideoPage() {
                   onClick={() => setSelectedCategory(category.id)}
                   className={`px-6 py-3 rounded-full text-sm font-medium transition-colors ${
                     selectedCategory === category.id
-                      ? 'bg-[#E95D22] text-white'
+                      ? 'bg-[#e90039] text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
@@ -240,7 +240,7 @@ export default function VideoPage() {
                   />
                   
                   {/* Play Button */}
-                  <div className="relative z-10 w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center hover:bg-[#d54a1a] transition-all group-hover:scale-110">
+                  <div className="relative z-10 w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center hover:bg-[#c8002f] transition-all group-hover:scale-110">
                     <Play className="w-6 h-6 text-white ml-1" />
                   </div>
                   
@@ -290,12 +290,12 @@ export default function VideoPage() {
           )}
 
           {/* Subscribe Section */}
-          <div className="mt-16 bg-gradient-to-r from-[#E95D22] to-[#d54a1a] rounded-2xl p-8 text-white text-center">
+          <div className="mt-16 bg-gradient-to-r from-[#e90039] to-[#c8002f] rounded-2xl p-8 text-white text-center">
             <h2 className="text-2xl font-bold mb-4">Подпишитесь на наш канал</h2>
             <p className="text-lg opacity-90 mb-6">
               Получайте уведомления о новых видеоинструкциях и обучающих материалах
             </p>
-            <button className="bg-white text-[#E95D22] px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+            <button className="bg-white text-[#e90039] px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
               Подписаться на YouTube
             </button>
           </div>
