@@ -80,6 +80,12 @@ export default function Header() {
             <button onClick={handleCatalogClick} className="nav-link">
               КАТАЛОГ
             </button>
+            <Link href="/gallery" className="nav-link">
+              ГАЛЕРЕЯ
+            </Link>
+            <Link href="/where-to-buy" className="nav-link">
+              ГДЕ КУПИТЬ
+            </Link>
             <Link href="/calculator" className="nav-link">
               КАЛЬКУЛЯТОР
             </Link>
@@ -129,6 +135,12 @@ export default function Header() {
               <button onClick={handleCatalogClick} className="nav-link text-left">
                 КАТАЛОГ
               </button>
+              <Link href="/gallery" className="nav-link">
+                ГАЛЕРЕЯ
+              </Link>
+              <Link href="/where-to-buy" className="nav-link">
+                ГДЕ КУПИТЬ
+              </Link>
               <Link href="/calculator" className="nav-link">
                 КАЛЬКУЛЯТОР
               </Link>

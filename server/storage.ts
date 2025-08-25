@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Certificate, type InsertCertificate, type VideoInstruction, type InsertVideoInstruction, type HeroImage, type InsertHeroImage, users, certificates, videoInstructions, heroImages } from "@shared/schema";
+import { type User, type InsertUser, type Certificate, type InsertCertificate, type VideoInstruction, type InsertVideoInstruction, type HeroImage, type InsertHeroImage, type GalleryProject, type InsertGalleryProject, type DealerLocation, type InsertDealerLocation, users, certificates, videoInstructions, heroImages, galleryProjects, dealerLocations } from "@shared/schema";
 import { db } from "./db";
 import { eq, asc } from "drizzle-orm";
 
@@ -28,6 +28,20 @@ export interface IStorage {
   createHeroImage(heroImage: InsertHeroImage): Promise<HeroImage>;
   updateHeroImage(id: string, heroImage: Partial<InsertHeroImage>): Promise<HeroImage>;
   deleteHeroImage(id: string): Promise<void>;
+  
+  // Gallery project methods
+  getGalleryProjects(): Promise<GalleryProject[]>;
+  getGalleryProject(id: string): Promise<GalleryProject | undefined>;
+  createGalleryProject(galleryProject: InsertGalleryProject): Promise<GalleryProject>;
+  updateGalleryProject(id: string, galleryProject: Partial<InsertGalleryProject>): Promise<GalleryProject>;
+  deleteGalleryProject(id: string): Promise<void>;
+  
+  // Dealer location methods
+  getDealerLocations(): Promise<DealerLocation[]>;
+  getDealerLocation(id: string): Promise<DealerLocation | undefined>;
+  createDealerLocation(dealerLocation: InsertDealerLocation): Promise<DealerLocation>;
+  updateDealerLocation(id: string, dealerLocation: Partial<InsertDealerLocation>): Promise<DealerLocation>;
+  deleteDealerLocation(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -141,6 +155,68 @@ export class DatabaseStorage implements IStorage {
 
   async deleteHeroImage(id: string): Promise<void> {
     await db.delete(heroImages).where(eq(heroImages.id, id));
+  }
+
+  // Gallery project methods
+  async getGalleryProjects(): Promise<GalleryProject[]> {
+    return await db.select().from(galleryProjects).where(eq(galleryProjects.isActive, 1)).orderBy(asc(galleryProjects.sortOrder));
+  }
+
+  async getGalleryProject(id: string): Promise<GalleryProject | undefined> {
+    const [galleryProject] = await db.select().from(galleryProjects).where(eq(galleryProjects.id, id));
+    return galleryProject || undefined;
+  }
+
+  async createGalleryProject(insertGalleryProject: InsertGalleryProject): Promise<GalleryProject> {
+    const [galleryProject] = await db
+      .insert(galleryProjects)
+      .values(insertGalleryProject)
+      .returning();
+    return galleryProject;
+  }
+
+  async updateGalleryProject(id: string, updates: Partial<InsertGalleryProject>): Promise<GalleryProject> {
+    const [galleryProject] = await db
+      .update(galleryProjects)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(galleryProjects.id, id))
+      .returning();
+    return galleryProject;
+  }
+
+  async deleteGalleryProject(id: string): Promise<void> {
+    await db.delete(galleryProjects).where(eq(galleryProjects.id, id));
+  }
+
+  // Dealer location methods
+  async getDealerLocations(): Promise<DealerLocation[]> {
+    return await db.select().from(dealerLocations).where(eq(dealerLocations.isActive, 1)).orderBy(asc(dealerLocations.sortOrder));
+  }
+
+  async getDealerLocation(id: string): Promise<DealerLocation | undefined> {
+    const [dealerLocation] = await db.select().from(dealerLocations).where(eq(dealerLocations.id, id));
+    return dealerLocation || undefined;
+  }
+
+  async createDealerLocation(insertDealerLocation: InsertDealerLocation): Promise<DealerLocation> {
+    const [dealerLocation] = await db
+      .insert(dealerLocations)
+      .values(insertDealerLocation)
+      .returning();
+    return dealerLocation;
+  }
+
+  async updateDealerLocation(id: string, updates: Partial<InsertDealerLocation>): Promise<DealerLocation> {
+    const [dealerLocation] = await db
+      .update(dealerLocations)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(dealerLocations.id, id))
+      .returning();
+    return dealerLocation;
+  }
+
+  async deleteDealerLocation(id: string): Promise<void> {
+    await db.delete(dealerLocations).where(eq(dealerLocations.id, id));
   }
 }
 

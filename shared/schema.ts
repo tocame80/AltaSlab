@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, timestamp, integer } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, timestamp, integer, json } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -48,6 +48,42 @@ export const heroImages = pgTable("hero_images", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const galleryProjects = pgTable("gallery_projects", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  application: text("application").notNull(), // interior, exterior, commercial, residential
+  images: json("images").$type<string[]>().notNull().default([]),
+  materialsUsed: json("materials_used").$type<string[]>().notNull().default([]), // Product IDs from catalog
+  location: text("location"),
+  area: text("area"),
+  year: text("year"),
+  isActive: integer("is_active").default(1),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const dealerLocations = pgTable("dealer_locations", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  address: text("address").notNull(),
+  city: text("city").notNull(),
+  region: text("region").notNull(),
+  phone: text("phone"),
+  email: text("email"),
+  website: text("website"),
+  latitude: text("latitude").notNull(),
+  longitude: text("longitude").notNull(),
+  dealerType: text("dealer_type").notNull(), // retail, wholesale, authorized
+  services: json("services").$type<string[]>().notNull().default([]), // installation, delivery, consultation
+  workingHours: text("working_hours"),
+  isActive: integer("is_active").default(1),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -71,6 +107,18 @@ export const insertHeroImageSchema = createInsertSchema(heroImages).omit({
   updatedAt: true,
 });
 
+export const insertGalleryProjectSchema = createInsertSchema(galleryProjects).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertDealerLocationSchema = createInsertSchema(dealerLocations).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Certificate = typeof certificates.$inferSelect;
@@ -79,3 +127,7 @@ export type VideoInstruction = typeof videoInstructions.$inferSelect;
 export type InsertVideoInstruction = z.infer<typeof insertVideoInstructionSchema>;
 export type HeroImage = typeof heroImages.$inferSelect;
 export type InsertHeroImage = z.infer<typeof insertHeroImageSchema>;
+export type GalleryProject = typeof galleryProjects.$inferSelect;
+export type InsertGalleryProject = z.infer<typeof insertGalleryProjectSchema>;
+export type DealerLocation = typeof dealerLocations.$inferSelect;
+export type InsertDealerLocation = z.infer<typeof insertDealerLocationSchema>;

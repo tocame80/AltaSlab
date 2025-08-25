@@ -11,6 +11,8 @@ import CertificatesPage from "@/pages/CertificatesPage";
 import FAQPage from "@/pages/FAQPage";
 import VideoPage from "@/pages/VideoPage";
 import Contact from "@/pages/Contact";
+import Gallery from "@/pages/Gallery";
+import WhereToBuy from "@/pages/WhereToBuy";
 import NotFound from "@/pages/not-found";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import AdminPanel from "@/components/AdminPanel";
@@ -20,6 +22,8 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/product/:id" component={ProductDetails} />
+      <Route path="/gallery" component={Gallery} />
+      <Route path="/where-to-buy" component={WhereToBuy} />
       <Route path="/calculator" component={Calculator} />
       <Route path="/certificates" component={CertificatesPage} />
       <Route path="/faq" component={FAQPage} />

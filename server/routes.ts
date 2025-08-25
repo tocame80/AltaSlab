@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertCertificateSchema, insertVideoInstructionSchema, insertHeroImageSchema } from "@shared/schema";
+import { insertCertificateSchema, insertVideoInstructionSchema, insertHeroImageSchema, insertGalleryProjectSchema, insertDealerLocationSchema } from "@shared/schema";
 import adminRoutes from "./routes/admin";
 import {
   ObjectStorageService,
@@ -99,6 +99,96 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error deleting video instruction:', error);
       res.status(500).json({ message: 'Failed to delete video instruction' });
+    }
+  });
+
+  // Gallery project routes
+  app.get('/api/gallery-projects', async (req, res) => {
+    try {
+      const galleryProjects = await storage.getGalleryProjects();
+      res.json(galleryProjects);
+    } catch (error) {
+      console.error('Error fetching gallery projects:', error);
+      res.status(500).json({ message: 'Failed to fetch gallery projects' });
+    }
+  });
+
+  app.post('/api/gallery-projects', async (req, res) => {
+    try {
+      const projectData = insertGalleryProjectSchema.parse(req.body);
+      const galleryProject = await storage.createGalleryProject(projectData);
+      res.status(201).json(galleryProject);
+    } catch (error) {
+      console.error('Error creating gallery project:', error);
+      res.status(400).json({ message: 'Failed to create gallery project' });
+    }
+  });
+
+  app.put('/api/gallery-projects/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = insertGalleryProjectSchema.partial().parse(req.body);
+      const galleryProject = await storage.updateGalleryProject(id, updates);
+      res.json(galleryProject);
+    } catch (error) {
+      console.error('Error updating gallery project:', error);
+      res.status(400).json({ message: 'Failed to update gallery project' });
+    }
+  });
+
+  app.delete('/api/gallery-projects/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteGalleryProject(id);
+      res.status(204).send();
+    } catch (error) {
+      console.error('Error deleting gallery project:', error);
+      res.status(500).json({ message: 'Failed to delete gallery project' });
+    }
+  });
+
+  // Dealer location routes
+  app.get('/api/dealer-locations', async (req, res) => {
+    try {
+      const dealerLocations = await storage.getDealerLocations();
+      res.json(dealerLocations);
+    } catch (error) {
+      console.error('Error fetching dealer locations:', error);
+      res.status(500).json({ message: 'Failed to fetch dealer locations' });
+    }
+  });
+
+  app.post('/api/dealer-locations', async (req, res) => {
+    try {
+      const dealerData = insertDealerLocationSchema.parse(req.body);
+      const dealerLocation = await storage.createDealerLocation(dealerData);
+      res.status(201).json(dealerLocation);
+    } catch (error) {
+      console.error('Error creating dealer location:', error);
+      res.status(400).json({ message: 'Failed to create dealer location' });
+    }
+  });
+
+  app.put('/api/dealer-locations/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = insertDealerLocationSchema.partial().parse(req.body);
+      const dealerLocation = await storage.updateDealerLocation(id, updates);
+      res.json(dealerLocation);
+    } catch (error) {
+      console.error('Error updating dealer location:', error);
+      res.status(400).json({ message: 'Failed to update dealer location' });
+    }
+  });
+
+  app.delete('/api/dealer-locations/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteDealerLocation(id);
+      res.status(204).send();
+    } catch (error) {
+      console.error('Error deleting dealer location:', error);
+      res.status(500).json({ message: 'Failed to delete dealer location' });
     }
   });
 
