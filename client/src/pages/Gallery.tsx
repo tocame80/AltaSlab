@@ -7,7 +7,6 @@ import { useFavoritesContext } from '@/contexts/FavoritesContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import GalleryNav from '@/components/GalleryNav';
-import ProjectModal from '@/components/ProjectModal';
 
 interface GalleryProject {
   id: string;
@@ -26,8 +25,6 @@ export default function Gallery() {
   
   const [selectedApplication, setSelectedApplication] = useState<string>('');
   const [currentImageIndexes, setCurrentImageIndexes] = useState<{ [key: string]: number }>({});
-  const [selectedProject, setSelectedProject] = useState<GalleryProject | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch gallery projects
   const { data: galleryProjects = [], isLoading } = useQuery<GalleryProject[]>({
@@ -61,18 +58,6 @@ export default function Gallery() {
     return products.filter(product => materialIds.includes(product.id));
   };
 
-  // Handle project modal
-  const openProjectModal = (project: GalleryProject) => {
-    setSelectedProject(project);
-    setIsModalOpen(true);
-    document.body.style.overflow = 'hidden';
-  };
-
-  const closeProjectModal = () => {
-    setIsModalOpen(false);
-    setSelectedProject(null);
-    document.body.style.overflow = 'auto';
-  };
 
   if (isLoading) {
     return (
@@ -128,7 +113,7 @@ export default function Gallery() {
                   <div 
                     key={project.id} 
                     className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
-                    onClick={() => openProjectModal(project)}
+                    onClick={() => window.location.href = `/project/${project.id}`}
                     data-testid={`card-project-${project.id}`}
                   >
                     
@@ -268,14 +253,6 @@ export default function Gallery() {
       </div>
       <Footer />
 
-      {/* Project Modal */}
-      {selectedProject && (
-        <ProjectModal
-          project={selectedProject}
-          isOpen={isModalOpen}
-          onClose={closeProjectModal}
-        />
-      )}
     </div>
   );
 }
