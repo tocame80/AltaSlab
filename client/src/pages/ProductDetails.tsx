@@ -1,6 +1,6 @@
 import { useState, useContext, useMemo, useEffect } from 'react';
 import { useRoute } from 'wouter';
-import { ArrowLeft, Heart, ShoppingCart, Calculator, Download, Share2, Eye, Maximize2, CheckCircle, Clock, Truck, X, ZoomIn, Save, Search, Mail } from 'lucide-react';
+import { ArrowLeft, Heart, ShoppingCart, Calculator, Download, Share2, Eye, Maximize2, CheckCircle, Clock, Truck, X, ZoomIn, Save, Search, Mail, Play } from 'lucide-react';
 import { products } from '@/data/products';
 import { FavoritesContext } from '@/contexts/FavoritesContext';
 import { Collection } from '@/types';
@@ -999,7 +999,7 @@ export default function ProductDetails() {
                         <div className="aspect-video bg-gray-100 flex items-center justify-center">
                           <div className="text-center">
                             <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
-                              <Search size={24} className="text-white" />
+                              <Play size={24} className="text-white" />
                             </div>
                             <div className="text-sm text-gray-600">Видео недоступно</div>
                           </div>
@@ -1014,7 +1014,7 @@ export default function ProductDetails() {
                         <div className="aspect-video bg-gray-100 flex items-center justify-center">
                           <div className="text-center">
                             <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
-                              <Search size={24} className="text-white" />
+                              <Play size={24} className="text-white" />
                             </div>
                             <div className="text-sm text-gray-600">Видео недоступно</div>
                           </div>
@@ -1034,7 +1034,7 @@ export default function ProductDetails() {
                         <div className="aspect-video bg-gray-100 flex items-center justify-center">
                           <div className="text-center">
                             <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
-                              <Search size={24} className="text-white" />
+                              <Play size={24} className="text-white" />
                             </div>
                             <div className="text-sm text-gray-600">Видео недоступно</div>
                           </div>
@@ -1049,7 +1049,7 @@ export default function ProductDetails() {
                         <div className="aspect-video bg-gray-100 flex items-center justify-center">
                           <div className="text-center">
                             <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
-                              <Search size={24} className="text-white" />
+                              <Play size={24} className="text-white" />
                             </div>
                             <div className="text-sm text-gray-600">Видео недоступно</div>
                           </div>
@@ -1070,7 +1070,7 @@ export default function ProductDetails() {
                       <div className="aspect-video bg-gray-100 flex items-center justify-center">
                         <div className="text-center">
                           <div className="w-12 h-12 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
-                            <Search size={16} className="text-white" />
+                            <Play size={16} className="text-white" />
                           </div>
                           <div className="text-xs text-gray-600">Видео недоступно</div>
                         </div>
@@ -1085,7 +1085,7 @@ export default function ProductDetails() {
                       <div className="aspect-video bg-gray-100 flex items-center justify-center">
                         <div className="text-center">
                           <div className="w-12 h-12 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
-                            <Search size={16} className="text-white" />
+                            <Play size={16} className="text-white" />
                           </div>
                           <div className="text-xs text-gray-600">Видео недоступно</div>
                         </div>
@@ -1100,7 +1100,7 @@ export default function ProductDetails() {
                       <div className="aspect-video bg-gray-100 flex items-center justify-center">
                         <div className="text-center">
                           <div className="w-12 h-12 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
-                            <Search size={16} className="text-white" />
+                            <Play size={16} className="text-white" />
                           </div>
                           <div className="text-xs text-gray-600">Видео недоступно</div>
                         </div>
