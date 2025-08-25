@@ -226,7 +226,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
   // Reset pagination when filters change
   useEffect(() => {
-    setVisibleRows(5);
+    setVisibleRows(3); // 3 rows × 2 items = 6 items for desktop
   }, [activeCollection, filters, additionalFilters, sortBy]);
 
   const loadMoreItems = () => {
