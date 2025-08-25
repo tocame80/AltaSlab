@@ -32,7 +32,7 @@ export default function FAQ() {
     <section id="faq" className="py-12 lg:py-16 bg-white">
       <div className="container mx-auto px-4 lg:px-6">
         <div className="text-center mb-8 lg:mb-12">
-          <h2 className="text-2xl lg:text-3xl xl:text-4xl font-bold text-gray-900 mb-3 lg:mb-4">
+          <h2 className="text-2xl lg:text-3xl xl:text-4xl font-bold text-[#2f378b] mb-3 lg:mb-4">
             Часто задаваемые вопросы
           </h2>
           <p className="text-sm lg:text-lg text-gray-600 max-w-3xl mx-auto">
@@ -49,7 +49,7 @@ export default function FAQ() {
                   className="w-full text-left p-4 lg:p-6 bg-white hover:bg-gray-50 transition-colors flex items-center justify-between"
                   onClick={() => setOpenIndex(openIndex === index ? null : index)}
                 >
-                  <span className="font-semibold text-gray-900 pr-3 lg:pr-4 text-sm lg:text-base">{faq.question}</span>
+                  <span className="font-semibold text-[#2f378b] pr-3 lg:pr-4 text-sm lg:text-base">{faq.question}</span>
                   <ChevronDown 
                     className={`w-5 h-5 text-gray-500 transition-transform ${
                       openIndex === index ? 'transform rotate-180' : ''
@@ -67,7 +67,7 @@ export default function FAQ() {
 
           <div className="text-center mt-8">
             <Link href="/faq">
-              <button className="bg-[#E95D22] text-white px-8 py-3 rounded-lg hover:bg-[#d54a1a] transition-colors">
+              <button className="bg-[#e90039] text-white px-8 py-3 rounded-lg hover:bg-[#c8002f] transition-colors">
                 Посмотреть все вопросы
               </button>
             </Link>

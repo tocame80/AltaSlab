@@ -3,7 +3,7 @@ export default function AboutMaterial() {
     <section id="material" className="py-12 lg:py-20 bg-white">
       <div className="container mx-auto px-4 lg:px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl lg:text-4xl font-bold text-primary mb-6 lg:mb-8">О МАТЕРИАЛЕ</h2>
+          <h2 className="text-2xl lg:text-4xl font-bold text-[#2f378b] mb-6 lg:mb-8">О МАТЕРИАЛЕ</h2>
           <div className="prose prose-base lg:prose-lg mx-auto text-secondary leading-relaxed">
             <p className="mb-4 lg:mb-6 text-sm lg:text-base">
               SPC (Stone Plastic Composite) — прочный влагостойкий материал; панели для стен и потолков с бесшовным замковым соединением SeamlessLock. Экологично (0% формальдегидов), антибактериальное покрытие, UV защита, звукоизоляция.

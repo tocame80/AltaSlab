@@ -98,13 +98,13 @@ export default function Header() {
           <div className="hidden md:flex items-center space-x-3 lg:space-x-4">
             <Link
               href="/contact"
-              className="text-muted hover:text-[#E95D22] transition-colors"
+              className="text-muted hover:text-[#e90039] transition-colors"
             >
               <Mail className="w-4 h-4 lg:w-5 lg:h-5" />
             </Link>
             <button
               onClick={handleSearchClick}
-              className="text-muted hover:text-[#E95D22] transition-colors"
+              className="text-muted hover:text-[#e90039] transition-colors"
               aria-label="Поиск"
             >
               <Search className="w-4 h-4 lg:w-5 lg:h-5" />
@@ -145,13 +145,13 @@ export default function Header() {
               <div className="flex items-center space-x-4 pt-4">
                 <Link
                   href="/contact"
-                  className="text-muted hover:text-[#E95D22] transition-colors"
+                  className="text-muted hover:text-[#e90039] transition-colors"
                 >
                   <Mail className="w-5 h-5" />
                 </Link>
                 <button
                   onClick={handleSearchClick}
-                  className="text-muted hover:text-[#E95D22] transition-colors"
+                  className="text-muted hover:text-[#e90039] transition-colors"
                   aria-label="Поиск"
                 >
                   <Search className="w-5 h-5" />

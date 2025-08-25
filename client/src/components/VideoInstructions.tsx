@@ -96,7 +96,7 @@ export default function VideoInstructions() {
     <section id="video-instructions" className="py-12 lg:py-16 bg-gray-50">
       <div className="container mx-auto px-4 lg:px-6">
         <div className="text-center mb-8 lg:mb-12">
-          <h2 className="text-2xl lg:text-3xl xl:text-4xl font-bold text-gray-900 mb-3 lg:mb-4">
+          <h2 className="text-2xl lg:text-3xl xl:text-4xl font-bold text-[#2f378b] mb-3 lg:mb-4">
             Видеоинструкции
           </h2>
           <p className="text-sm lg:text-lg text-gray-600 max-w-3xl mx-auto">
@@ -118,7 +118,7 @@ export default function VideoInstructions() {
                 }}
                 className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
                   selectedCategory === category.id
-                    ? 'bg-[#E95D22] text-white'
+                    ? 'bg-[#e90039] text-white'
                     : 'bg-white text-gray-700 hover:bg-gray-50'
                 }`}
               >
@@ -185,7 +185,7 @@ export default function VideoInstructions() {
                     />
                     <button 
                       onClick={() => setIsPlaying(true)}
-                      className="w-20 h-20 bg-[#E95D22] rounded-full flex items-center justify-center hover:bg-[#d54a1a] transition-all group hover:scale-110 relative z-10"
+                      className="w-20 h-20 bg-[#e90039] rounded-full flex items-center justify-center hover:bg-[#c8002f] transition-all group hover:scale-110 relative z-10"
                     >
                       <Play className="w-8 h-8 text-white ml-1" />
                     </button>
@@ -252,7 +252,7 @@ export default function VideoInstructions() {
                   />
                   
                   {/* Play Button */}
-                  <div className="relative z-10 w-12 h-12 bg-[#E95D22] rounded-full flex items-center justify-center hover:bg-[#d54a1a] transition-all group-hover:scale-110">
+                  <div className="relative z-10 w-12 h-12 bg-[#e90039] rounded-full flex items-center justify-center hover:bg-[#c8002f] transition-all group-hover:scale-110">
                     <Play className="w-4 h-4 text-white ml-0.5" />
                   </div>
                   
@@ -263,7 +263,7 @@ export default function VideoInstructions() {
                 </div>
                 
                 <div className="p-3 lg:p-4">
-                  <h3 className="font-semibold text-gray-900 mb-1 lg:mb-2 line-clamp-2 text-sm lg:text-base">
+                  <h3 className="font-semibold text-[#2f378b] mb-1 lg:mb-2 line-clamp-2 text-sm lg:text-base">
                     {video.title}
                   </h3>
                   <p className="text-xs lg:text-sm text-gray-600 mb-2 lg:mb-3 line-clamp-2">
@@ -296,7 +296,7 @@ export default function VideoInstructions() {
 
         <div className="text-center">
           <Link href="/video">
-            <button className="bg-[#E95D22] text-white px-8 py-3 rounded-lg hover:bg-[#d54a1a] transition-colors">
+            <button className="bg-[#e90039] text-white px-8 py-3 rounded-lg hover:bg-[#c8002f] transition-colors">
               Посмотреть все видео
             </button>
           </Link>

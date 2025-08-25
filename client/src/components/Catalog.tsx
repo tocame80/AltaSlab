@@ -266,7 +266,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
         <div className="mb-6 lg:mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
-            <h2 className="text-2xl lg:text-4xl font-bold text-primary">{getCollectionTitle()}</h2>
+            <h2 className="text-2xl lg:text-4xl font-bold text-[#2f378b]">{getCollectionTitle()}</h2>
             
             {/* Search Bar - Always visible */}
             <div className="flex items-center gap-2 w-full lg:flex-1 lg:max-w-lg">
@@ -277,7 +277,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Поиск товаров..."
-                  className="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E95D22] focus:border-transparent text-sm"
+                  className="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e90039] focus:border-transparent text-sm"
                 />
                 <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               </div>
@@ -506,7 +506,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                               setTimeout(() => setShowMobileFilters(false), 300);
                             }
                           }}
-                          className="mr-2 accent-[#E95D22]"
+                          className="mr-2 accent-[#e90039]"
                         />
                         <span className="text-secondary text-sm group-hover:text-primary transition-colors">{size}</span>
                       </label>

@@ -43,7 +43,7 @@ export default function Calculator() {
     <section id="calculator" className="py-12 lg:py-16 bg-gray-50">
       <div className="container mx-auto px-4 lg:px-6">
         <div className="text-center mb-8 lg:mb-12">
-          <h2 className="text-2xl lg:text-3xl xl:text-4xl font-bold text-gray-900 mb-3 lg:mb-4">
+          <h2 className="text-2xl lg:text-3xl xl:text-4xl font-bold text-[#2f378b] mb-3 lg:mb-4">
             Калькулятор материала
           </h2>
           <p className="text-sm lg:text-lg text-gray-600 max-w-3xl mx-auto">
@@ -56,7 +56,7 @@ export default function Calculator() {
           <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm">
             <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
               <div>
-                <h3 className="text-lg lg:text-xl font-semibold text-gray-900 mb-4 lg:mb-6">Параметры помещения</h3>
+                <h3 className="text-lg lg:text-xl font-semibold text-[#2f378b] mb-4 lg:mb-6">Параметры помещения</h3>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Длина помещения (м)</label>
@@ -64,7 +64,7 @@ export default function Calculator() {
                       type="number" 
                       value={length}
                       onChange={(e) => setLength(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent" 
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent" 
                       placeholder="Введите длину"
                       step="0.1"
                       min="0"
@@ -76,7 +76,7 @@ export default function Calculator() {
                       type="number" 
                       value={width}
                       onChange={(e) => setWidth(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent" 
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent" 
                       placeholder="Введите ширину"
                       step="0.1"
                       min="0"
@@ -87,7 +87,7 @@ export default function Calculator() {
                     <select 
                       value={margin}
                       onChange={(e) => setMargin(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
                     >
                       <option value="5">5% - стандартный запас</option>
                       <option value="10">10% - с учетом подрезки</option>
@@ -97,7 +97,7 @@ export default function Calculator() {
                   
                   <button 
                     onClick={calculateMaterial}
-                    className="w-full bg-[#E95D22] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#d54a1a] transition-colors"
+                    className="w-full bg-[#e90039] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#c8002f] transition-colors"
                   >
                     Рассчитать
                   </button>
@@ -105,7 +105,7 @@ export default function Calculator() {
               </div>
               
               <div>
-                <h3 className="text-lg lg:text-xl font-semibold text-gray-900 mb-4 lg:mb-6">Результат расчета</h3>
+                <h3 className="text-lg lg:text-xl font-semibold text-[#2f378b] mb-4 lg:mb-6">Результат расчета</h3>
                 <div className="bg-gray-50 rounded-lg p-4 lg:p-6 space-y-3 lg:space-y-4">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Площадь помещения:</span>
@@ -128,7 +128,7 @@ export default function Calculator() {
                     </div>
                     <div className="flex justify-between mt-2">
                       <span className="text-gray-600">Общая стоимость:</span>
-                      <span className="font-bold text-[#E95D22] text-lg">
+                      <span className="font-bold text-[#e90039] text-lg">
                         {result ? `${result.cost.toLocaleString('ru-RU')} ₽` : '-- ₽'}
                       </span>
                     </div>
@@ -157,7 +157,7 @@ export default function Calculator() {
             {/* Link to full calculator */}
             <div className="text-center mt-8">
               <Link href="/calculator">
-                <button className="bg-[#E95D22] text-white px-8 py-3 rounded-lg hover:bg-[#d54a1a] transition-colors">
+                <button className="bg-[#e90039] text-white px-8 py-3 rounded-lg hover:bg-[#c8002f] transition-colors">
                   Открыть полный калькулятор
                 </button>
               </Link>
