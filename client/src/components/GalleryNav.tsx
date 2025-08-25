@@ -30,9 +30,9 @@ export default function GalleryNav({ activeApplication, onApplicationChange, pro
                 }`}
                 data-testid={`button-application-${application.key || 'all'}`}
               >
-                {/* Show full label on desktop, short on mobile */}
-                <span className="hidden lg:inline">{application.label}</span>
-                <span className="lg:hidden">{application.mobileLabel}</span>
+                {/* Show only one label based on screen size */}
+                <span className="hidden lg:block">{application.label}</span>
+                <span className="block lg:hidden">{application.mobileLabel}</span>
                 {application.key === '' && projectCount > 0 && (
                   <span className="ml-1 lg:ml-2 bg-[#e90039] text-white text-xs px-1.5 lg:px-2 py-0.5 lg:py-1 rounded-full">
                     {projectCount}
