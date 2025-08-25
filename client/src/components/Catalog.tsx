@@ -320,7 +320,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Sidebar Filters */}
           <div className={`w-full lg:w-80 lg:flex-shrink-0 ${showMobileFilters ? 'block' : 'hidden lg:block'}`}>
-            <div className={`bg-white p-4 lg:p-6 rounded-lg shadow-sm ${isNavSticky ? 'lg:sticky lg:top-32' : 'lg:sticky lg:top-6'} relative`}>
+            <div className="bg-white p-4 lg:p-6 rounded-lg shadow-sm lg:sticky lg:top-32 relative pt-[20px] pb-[20px] pl-[20px] pr-[20px] ml-[50px] mr-[50px] mt-[50px] mb-[50px] text-left">
               
               {/* Mobile Close Button */}
               <div className="lg:hidden flex items-center justify-between mb-4">
