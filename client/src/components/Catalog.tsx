@@ -30,7 +30,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   const [showSearch, setShowSearch] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   
-  const [visibleRows, setVisibleRows] = useState(5);
+  const [visibleRows, setVisibleRows] = useState(3); // Reduced from 5 to 3 rows for mobile (6 items -> 5 items on mobile)
   const ITEMS_PER_ROW = 2; // 2 items per row
   const ROWS_TO_LOAD = 5; // Load 5 more rows at a time
   
@@ -195,7 +195,9 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
   // Get visible products based on pagination
   const visibleProducts = useMemo(() => {
-    const totalItemsToShow = visibleRows * ITEMS_PER_ROW;
+    // Mobile: show 5 items (2.5 rows), Desktop: show as calculated
+    const isMobile = window.innerWidth < 768;
+    const totalItemsToShow = isMobile ? 5 : visibleRows * ITEMS_PER_ROW;
     return filteredProducts.slice(0, totalItemsToShow);
   }, [filteredProducts, visibleRows]);
 

@@ -73,14 +73,14 @@ export default function Certificates() {
         </div>
 
         {/* Quality Standards */}
-        <div className="grid md:grid-cols-3 gap-6 lg:gap-8 mb-10 lg:mb-16">
+        <div className="grid md:grid-cols-3 gap-4 lg:gap-8 mb-8 lg:mb-16">
           {qualityStandards.map((standard, index) => (
-            <div key={index} className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 lg:p-8 border border-gray-100 hover:shadow-lg transition-shadow">
-              <div className="w-14 h-14 lg:w-16 lg:h-16 bg-[#e90039] bg-opacity-10 rounded-full flex items-center justify-center mb-4 lg:mb-6">
-                <standard.icon className="w-6 h-6 lg:w-8 lg:h-8 text-[#e90039]" />
+            <div key={index} className="bg-gradient-to-br from-gray-50 to-white rounded-xl lg:rounded-2xl p-4 lg:p-8 border border-gray-100 hover:shadow-lg transition-shadow">
+              <div className="w-12 h-12 lg:w-16 lg:h-16 bg-[#e90039] bg-opacity-10 rounded-full flex items-center justify-center mb-3 lg:mb-6">
+                <standard.icon className="w-5 h-5 lg:w-8 lg:h-8 text-[#e90039]" />
               </div>
-              <h3 className="text-lg lg:text-xl font-semibold text-[#2f378b] mb-2 lg:mb-3">{standard.title}</h3>
-              <p className="text-gray-600 mb-3 lg:mb-4 text-sm lg:text-base">{standard.description}</p>
+              <h3 className="text-base lg:text-xl font-semibold text-[#2f378b] mb-2 lg:mb-3">{standard.title}</h3>
+              <p className="text-gray-600 mb-2 lg:mb-4 text-xs lg:text-base">{standard.description}</p>
               <div className="text-xs lg:text-sm text-[#e90039] font-medium">{standard.standard}</div>
             </div>
           ))}
@@ -91,33 +91,33 @@ export default function Certificates() {
           <h3 className="text-xl lg:text-2xl font-bold text-[#2f378b] mb-6 lg:mb-8 text-center">
             Официальные сертификаты
           </h3>
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-6">
             {certificates.slice(0, 6).map((cert) => (
-              <div key={cert.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
-                <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-xl flex items-center justify-center">
+              <div key={cert.id} className="bg-white rounded-lg lg:rounded-xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
+                <div className="h-32 lg:h-48 bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-lg lg:rounded-t-xl flex items-center justify-center">
                   {cert.imageUrl ? (
-                    <img src={cert.imageUrl} alt={cert.title} className="w-full h-full object-cover rounded-t-xl" />
+                    <img src={cert.imageUrl} alt={cert.title} className="w-full h-full object-cover rounded-t-lg lg:rounded-t-xl" />
                   ) : (
                     <Award className="w-20 h-20 text-gray-400" />
                   )}
                 </div>
-                <div className="p-4 lg:p-6">
-                  <h4 className="font-bold text-[#2f378b] mb-2 lg:mb-3 text-sm lg:text-lg leading-tight">{cert.title}</h4>
-                  <p className="text-xs lg:text-sm text-gray-600 mb-3 lg:mb-4 leading-relaxed line-clamp-3">{cert.description}</p>
+                <div className="p-3 lg:p-6">
+                  <h4 className="font-bold text-[#2f378b] mb-1 lg:mb-3 text-xs lg:text-lg leading-tight line-clamp-2">{cert.title}</h4>
+                  <p className="text-xs lg:text-sm text-gray-600 mb-2 lg:mb-4 leading-relaxed line-clamp-2">{cert.description}</p>
                   
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center text-sm text-gray-500">
-                      <Calendar className="w-4 h-4 mr-2" />
+                  <div className="space-y-1 lg:space-y-2 mb-2 lg:mb-4">
+                    <div className="flex items-center text-xs lg:text-sm text-gray-500">
+                      <Calendar className="w-3 h-3 lg:w-4 lg:h-4 mr-1 lg:mr-2" />
                       <span>Выдан: {cert.issueDate}</span>
                     </div>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <MapPin className="w-4 h-4 mr-2" />
+                    <div className="flex items-center text-xs lg:text-sm text-gray-500">
+                      <MapPin className="w-3 h-3 lg:w-4 lg:h-4 mr-1 lg:mr-2" />
                       <span className="line-clamp-1">{cert.issuer}</span>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">{cert.size}</span>
+                    <span className="text-xs lg:text-sm text-gray-500">{cert.size}</span>
                     {cert.fileUrl ? (
                       <a href={cert.fileUrl} download className="bg-[#e90039] text-white px-3 py-2 rounded-lg hover:bg-[#c8002f] transition-colors flex items-center gap-2 text-sm">
                         <Download size={14} />
