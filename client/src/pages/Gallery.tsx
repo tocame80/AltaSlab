@@ -200,20 +200,48 @@ export default function Gallery() {
                             {projectMaterials.slice(0, 4).map((material, index) => (
                               <div 
                                 key={material.id} 
-                                className="group/material border border-gray-200 rounded-lg p-2 hover:border-[#e90039] hover:shadow-md transition-all duration-200 cursor-pointer"
+                                className="group/material border border-gray-200 rounded-lg overflow-hidden hover:border-[#e90039] hover:shadow-md transition-all duration-200 cursor-pointer"
                               >
-                                <div className="text-xs">
-                                  <p className="font-medium text-gray-800 line-clamp-1 group-hover/material:text-[#e90039] transition-colors">
-                                    {material.name}
-                                  </p>
-                                  <p className="text-gray-500 line-clamp-1 mt-0.5">
-                                    {material.collection}
-                                  </p>
-                                  {material.price && (
-                                    <p className="font-semibold text-[#e90039] mt-1">
-                                      от {material.price}
+                                {/* Material Image */}
+                                <div className="relative aspect-[3/2] overflow-hidden">
+                                  <img 
+                                    src={material.image} 
+                                    alt={`${material.design} - ${material.collection}`}
+                                    className="w-full h-full object-cover transition-transform duration-300 group-hover/material:scale-105"
+                                  />
+                                  
+                                  {/* Collection badge */}
+                                  <div className="absolute top-1 left-1">
+                                    <span className="px-2 py-0.5 bg-black/70 text-white text-[10px] font-medium rounded">
+                                      {material.collection === 'МАГИЯ БЕТОНА' ? 'БЕТОН' : 
+                                       material.collection === 'ТКАНЕВАЯ РОСКОШЬ' ? 'ТКАНЬ' : 
+                                       material.collection === 'МАТОВАЯ ЭСТЕТИКА' ? 'МАТОВОЕ' : 
+                                       material.collection === 'МРАМОРНАЯ ФЕЕРИЯ' ? 'МРАМОР' : 'АКСЕССУАРЫ'}
+                                    </span>
+                                  </div>
+                                  
+                                  {/* Price overlay */}
+                                  <div className="absolute bottom-0 right-0 p-1">
+                                    <div className="text-right">
+                                      {material.price && (
+                                        <div className="text-white text-[10px] font-bold drop-shadow-lg">
+                                          {material.price.toLocaleString('ru-RU')} ₽
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                {/* Material Info */}
+                                <div className="p-2">
+                                  <div className="text-xs">
+                                    <p className="font-medium text-gray-800 line-clamp-1 group-hover/material:text-[#e90039] transition-colors">
+                                      {material.color}
                                     </p>
-                                  )}
+                                    <p className="text-gray-500 line-clamp-1 mt-0.5">
+                                      {material.format}
+                                    </p>
+                                  </div>
                                 </div>
                               </div>
                             ))}
