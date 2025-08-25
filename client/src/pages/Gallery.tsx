@@ -4,6 +4,8 @@ import { ChevronLeft, ChevronRight, MapPin, Calendar, Maximize2, Filter, Chevron
 import { products } from '@/data/products';
 import ProductCard from '@/components/ProductCard';
 import { useFavoritesContext } from '@/contexts/FavoritesContext';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 interface GalleryProject {
   id: string;
@@ -67,21 +69,27 @@ export default function Gallery() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 pt-20">
-        <div className="container mx-auto px-4 lg:px-6">
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#e90039] mx-auto mb-4"></div>
-              <p className="text-secondary">Загрузка галереи...</p>
+      <div className="min-h-screen bg-white">
+        <Header />
+        <div className="bg-gray-50 pt-20">
+          <div className="container mx-auto px-4 lg:px-6">
+            <div className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#e90039] mx-auto mb-4"></div>
+                <p className="text-secondary">Загрузка галереи...</p>
+              </div>
             </div>
           </div>
         </div>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20">
+    <div className="min-h-screen bg-white">
+      <Header />
+      <div className="bg-gray-50 pt-20">
       <div className="container mx-auto px-4 lg:px-6 py-8 md:py-12">
         
         {/* Header */}
@@ -284,6 +292,8 @@ export default function Gallery() {
           </div>
         </div>
       </div>
+      </div>
+      <Footer />
     </div>
   );
 }
