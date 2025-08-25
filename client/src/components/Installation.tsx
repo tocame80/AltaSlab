@@ -24,7 +24,7 @@ export default function Installation() {
         
         <div className="max-w-4xl mx-auto">
           <div className="bg-white p-6 lg:p-8 rounded-lg shadow-sm mb-6 lg:mb-8">
-            <h3 className="text-xl lg:text-2xl font-bold text-[#2f378b] mb-4 lg:mb-6">Краткая инструкция</h3>
+            <h3 className="text-xl lg:text-2xl font-bold text-[#2f378b] mb-4 lg:mb-6 text-center">Краткая инструкция</h3>
             <p className="text-secondary mb-4 lg:mb-6 text-sm lg:text-base">
               SeamlessLock + клей АЛЬТА СТИК. Следуйте допускам, используйте ровное основание, соблюдайте зазоры и рекомендации производителя.
             </p>
