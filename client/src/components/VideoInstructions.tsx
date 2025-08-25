@@ -230,9 +230,15 @@ export default function VideoInstructions() {
         )}
 
         {/* Video Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8 justify-items-center justify-center">
+        <div className={`gap-4 lg:gap-6 mb-6 lg:mb-8 ${
+          filteredVideos.length <= 2 
+            ? 'flex flex-wrap justify-center' 
+            : 'grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4'
+        }`}>
           {filteredVideos.map((video) => (
-            <div key={video.id} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden">
+            <div key={video.id} className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden ${
+              filteredVideos.length <= 2 ? 'w-64 flex-shrink-0' : ''
+            }`}>
               <button
                 className="w-full text-left"
                 onClick={() => {
