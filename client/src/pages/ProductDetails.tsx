@@ -1,10 +1,11 @@
 import { useState, useContext, useMemo, useEffect } from 'react';
 import { useRoute } from 'wouter';
-import { ArrowLeft, Heart, ShoppingCart, Calculator, Download, Share2, Eye, Maximize2, CheckCircle, Clock, Truck, Mail, Search, X, ZoomIn, Save } from 'lucide-react';
+import { ArrowLeft, Heart, ShoppingCart, Calculator, Download, Share2, Eye, Maximize2, CheckCircle, Clock, Truck, X, ZoomIn, Save } from 'lucide-react';
 import { products } from '@/data/products';
 import { FavoritesContext } from '@/contexts/FavoritesContext';
 import { Collection } from '@/types';
 import Footer from '@/components/Footer';
+import Header from '@/components/Header';
 
 export default function ProductDetails() {
   const [, params] = useRoute('/product/:id');
@@ -192,42 +193,7 @@ export default function ProductDetails() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-50">
-        <div className="container mx-auto px-6">
-          <div className="flex items-center justify-between py-4">
-            {/* Logo */}
-            <a href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-              <div className="w-12 h-12 bg-[#E95D22] rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">АС</span>
-              </div>
-              <div>
-                <h1 className="text-gray-900 font-bold text-xl">АЛЬТА СЛЭБ</h1>
-                <p className="text-gray-500 text-xs">SPC ПАНЕЛИ</p>
-              </div>
-            </a>
-
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-8">
-              <a href="/catalog" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">КАТАЛОГ</a>
-              <a href="/calculator" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">КАЛЬКУЛЯТОР</a>
-              <a href="/certificates" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">СЕРТИФИКАТЫ</a>
-              <a href="/video" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">ВИДЕО</a>
-              <a href="/faq" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">ВОПРОСЫ</a>
-              <a href="/about" className="text-gray-700 hover:text-[#E95D22] font-medium transition-colors">О НАС</a>
-            </nav>
-
-            {/* Contact Info */}
-            <div className="hidden md:flex items-center space-x-4">
-              <a href="/contact" className="text-gray-500 hover:text-[#E95D22] transition-colors">
-                <Mail className="w-5 h-5" />
-              </a>
-              <Search className="text-gray-500 w-5 h-5" />
-              <span className="text-[#E95D22] font-semibold">8 800 555-77-73</span>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
       {/* Collections Navigation with Colors */}
       <div className="bg-gray-50 py-4 border-t border-gray-200">
         <div className="container mx-auto px-6">
