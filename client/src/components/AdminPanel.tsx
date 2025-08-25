@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit, Play, Database, Download } from 'lucide-react';
+import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit, Play, Database, Download, Image } from 'lucide-react';
 import { products } from '../data/products';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Certificate, insertCertificateSchema, VideoInstruction, insertVideoInstructionSchema, HeroImage, insertHeroImageSchema } from '@shared/schema';
+import { Certificate, insertCertificateSchema, VideoInstruction, insertVideoInstructionSchema, HeroImage, insertHeroImageSchema, GalleryProject, insertGalleryProjectSchema } from '@shared/schema';
 import { apiRequest } from '@/lib/queryClient';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,7 +27,7 @@ interface ExistingImage {
   url: string;
 }
 
-type AdminTab = 'images' | 'certificates' | 'videos' | 'catalog' | 'hero';
+type AdminTab = 'images' | 'certificates' | 'videos' | 'catalog' | 'hero' | 'gallery';
 
 const certificateFormSchema = insertCertificateSchema.extend({
   // Form validation schema with required fields
@@ -53,9 +53,21 @@ const heroImageFormSchema = insertHeroImageSchema.extend({
   imageUrl: z.string().min(1, 'URL изображения обязателен'),
 });
 
+const galleryProjectFormSchema = insertGalleryProjectSchema.extend({
+  title: z.string().min(1, 'Название проекта обязательно'),
+  description: z.string().min(1, 'Описание обязательно'),
+  application: z.string().min(1, 'Тип применения обязателен'),
+  images: z.array(z.string()).min(1, 'Добавьте хотя бы одно изображение'),
+  materialsUsed: z.array(z.string()).default([]),
+  location: z.string().optional(),
+  area: z.string().optional(),
+  year: z.string().optional(),
+});
+
 type CertificateFormData = z.infer<typeof certificateFormSchema>;
 type VideoFormData = z.infer<typeof videoFormSchema>;
 type HeroImageFormData = z.infer<typeof heroImageFormSchema>;
+type GalleryProjectFormData = z.infer<typeof galleryProjectFormSchema>;
 
 export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [activeTab, setActiveTab] = useState<AdminTab>('images');
@@ -70,6 +82,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [showVideoForm, setShowVideoForm] = useState(false);
   const [editingHeroImage, setEditingHeroImage] = useState<HeroImage | null>(null);
   const [showHeroForm, setShowHeroForm] = useState(false);
+  const [editingGalleryProject, setEditingGalleryProject] = useState<GalleryProject | null>(null);
+  const [showGalleryForm, setShowGalleryForm] = useState(false);
+  const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
@@ -286,6 +302,97 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       imageUrl: '',
       sortOrder: 0,
       isActive: 1,
+    },
+  });
+
+  // Gallery form
+  const galleryForm = useForm<GalleryProjectFormData>({
+    resolver: zodResolver(galleryProjectFormSchema),
+    defaultValues: {
+      title: '',
+      description: '',
+      application: '',
+      images: [],
+      materialsUsed: [],
+      location: '',
+      area: '',
+      year: '',
+      sortOrder: 0,
+      isActive: 1,
+    },
+  });
+
+  // Queries and mutations for gallery projects
+  const { data: galleryProjects = [], isLoading: galleryProjectsLoading } = useQuery<GalleryProject[]>({
+    queryKey: ['/api/gallery-projects'],
+  });
+
+  const createGalleryProjectMutation = useMutation({
+    mutationFn: async (data: GalleryProjectFormData) => {
+      return apiRequest('POST', '/api/gallery-projects', data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/gallery-projects'] });
+      setShowGalleryForm(false);
+      galleryForm.reset();
+      setSelectedMaterials([]);
+      setGalleryImages([]);
+      toast({
+        title: 'Успешно',
+        description: 'Проект галереи создан',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось создать проект галереи',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const updateGalleryProjectMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<GalleryProjectFormData> }) => {
+      return apiRequest('PUT', `/api/gallery-projects/${id}`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/gallery-projects'] });
+      setEditingGalleryProject(null);
+      setShowGalleryForm(false);
+      galleryForm.reset();
+      setSelectedMaterials([]);
+      setGalleryImages([]);
+      toast({
+        title: 'Успешно',
+        description: 'Проект галереи обновлен',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось обновить проект галереи',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const deleteGalleryProjectMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return apiRequest('DELETE', `/api/gallery-projects/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/gallery-projects'] });
+      toast({
+        title: 'Успешно',
+        description: 'Проект галереи удален',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось удалить проект галереи',
+        variant: 'destructive',
+      });
     },
   });
 
@@ -758,6 +865,17 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
             >
               <Database size={16} />
               Каталог
+            </button>
+            <button
+              onClick={() => setActiveTab('gallery')}
+              className={`px-6 py-3 text-sm font-medium transition-colors flex items-center gap-2 ${
+                activeTab === 'gallery'
+                  ? 'border-b-2 border-[#E95D22] text-[#E95D22] bg-white'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Image size={16} />
+              Галерея
             </button>
           </div>
         </div>
@@ -1565,6 +1683,342 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* Gallery Tab */}
+          {activeTab === 'gallery' && (
+            <div className="p-6 space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-semibold text-gray-900">Управление галереей проектов</h3>
+                <button
+                  onClick={() => setShowGalleryForm(true)}
+                  className="bg-[#E95D22] text-white px-4 py-2 rounded-lg hover:bg-[#d54a1a] transition-colors flex items-center gap-2"
+                >
+                  <Plus size={16} />
+                  Добавить проект
+                </button>
+              </div>
+
+              {/* Instructions */}
+              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <h3 className="font-semibold text-blue-800 mb-2">Инструкция:</h3>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li>• Добавляйте URL изображений проектов через запятую</li>
+                  <li>• Выбирайте материалы из каталога для отображения в проекте</li>
+                  <li>• Укажите тип применения: интерьер, экстерьер, коммерческий, жилой</li>
+                  <li>• Заполните дополнительную информацию: локация, площадь, год</li>
+                </ul>
+              </div>
+
+              {/* Existing Gallery Projects */}
+              {galleryProjectsLoading ? (
+                <div className="p-8 text-center text-gray-500">Загрузка проектов...</div>
+              ) : galleryProjects.length > 0 ? (
+                <div>
+                  <h4 className="text-lg font-semibold mb-4">Существующие проекты ({galleryProjects.length})</h4>
+                  <div className="grid gap-4">
+                    {galleryProjects.map((project) => (
+                      <div key={project.id} className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex gap-4">
+                            {/* Project Image */}
+                            {project.images && project.images.length > 0 && (
+                              <div className="w-24 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                                <img
+                                  src={project.images[0]}
+                                  alt={project.title}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                  }}
+                                />
+                              </div>
+                            )}
+                            
+                            {/* Project Info */}
+                            <div className="flex-1">
+                              <h5 className="font-semibold text-gray-900 mb-2">{project.title}</h5>
+                              <p className="text-sm text-gray-600 mb-2 line-clamp-2">{project.description}</p>
+                              <div className="flex gap-4 text-sm text-gray-500">
+                                <span>Тип: {project.application}</span>
+                                {project.location && <span>Локация: {project.location}</span>}
+                                {project.area && <span>Площадь: {project.area}</span>}
+                                {project.year && <span>Год: {project.year}</span>}
+                              </div>
+                              {project.materialsUsed && project.materialsUsed.length > 0 && (
+                                <div className="mt-2">
+                                  <span className="text-xs text-gray-500">Материалы: {project.materialsUsed.length} шт.</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          
+                          {/* Actions */}
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => {
+                                setEditingGalleryProject(project);
+                                setSelectedMaterials(project.materialsUsed || []);
+                                setGalleryImages(project.images || []);
+                                galleryForm.reset({
+                                  title: project.title,
+                                  description: project.description,
+                                  application: project.application,
+                                  images: project.images || [],
+                                  materialsUsed: project.materialsUsed || [],
+                                  location: project.location || '',
+                                  area: project.area || '',
+                                  year: project.year || '',
+                                  sortOrder: project.sortOrder || 0,
+                                  isActive: project.isActive || 1,
+                                });
+                                setShowGalleryForm(true);
+                              }}
+                              className="text-blue-600 hover:text-blue-700 p-2"
+                              title="Редактировать"
+                            >
+                              <Edit size={16} />
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (confirm('Удалить этот проект?')) {
+                                  deleteGalleryProjectMutation.mutate(project.id);
+                                }
+                              }}
+                              className="text-red-600 hover:text-red-700 p-2"
+                              title="Удалить"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-12 text-gray-500">
+                  <Image className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                  <p>Проекты не найдены</p>
+                  <p className="text-sm">Добавьте первый проект в галерею</p>
+                </div>
+              )}
+
+              {/* Gallery Form Modal */}
+              {showGalleryForm && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                  <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                    <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+                      <h4 className="text-lg font-semibold">
+                        {editingGalleryProject ? 'Редактировать проект' : 'Добавить проект'}
+                      </h4>
+                      <button
+                        onClick={() => {
+                          setShowGalleryForm(false);
+                          setEditingGalleryProject(null);
+                          setSelectedMaterials([]);
+                          setGalleryImages([]);
+                          galleryForm.reset();
+                        }}
+                        className="text-gray-500 hover:text-gray-700"
+                      >
+                        <X size={20} />
+                      </button>
+                    </div>
+                    
+                    <form
+                      onSubmit={galleryForm.handleSubmit((data) => {
+                        const formData = {
+                          ...data,
+                          images: galleryImages,
+                          materialsUsed: selectedMaterials,
+                        };
+                        
+                        if (editingGalleryProject) {
+                          updateGalleryProjectMutation.mutate({
+                            id: editingGalleryProject.id,
+                            data: formData,
+                          });
+                        } else {
+                          createGalleryProjectMutation.mutate(formData);
+                        }
+                      })}
+                      className="p-6 space-y-6"
+                    >
+                      {/* Basic Info */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Название проекта *
+                          </label>
+                          <input
+                            {...galleryForm.register('title')}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                            placeholder="Введите название проекта"
+                          />
+                          {galleryForm.formState.errors.title && (
+                            <p className="text-red-600 text-sm mt-1">{galleryForm.formState.errors.title.message}</p>
+                          )}
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Тип применения *
+                          </label>
+                          <select
+                            {...galleryForm.register('application')}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                          >
+                            <option value="">Выберите тип</option>
+                            <option value="interior">Интерьер</option>
+                            <option value="exterior">Экстерьер</option>
+                            <option value="commercial">Коммерческий</option>
+                            <option value="residential">Жилой</option>
+                          </select>
+                          {galleryForm.formState.errors.application && (
+                            <p className="text-red-600 text-sm mt-1">{galleryForm.formState.errors.application.message}</p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Description */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Описание *
+                        </label>
+                        <textarea
+                          {...galleryForm.register('description')}
+                          rows={4}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                          placeholder="Введите описание проекта"
+                        />
+                        {galleryForm.formState.errors.description && (
+                          <p className="text-red-600 text-sm mt-1">{galleryForm.formState.errors.description.message}</p>
+                        )}
+                      </div>
+
+                      {/* Images */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Изображения проекта *
+                        </label>
+                        <textarea
+                          value={galleryImages.join('\n')}
+                          onChange={(e) => setGalleryImages(e.target.value.split('\n').filter(url => url.trim()))}
+                          rows={4}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                          placeholder="Вставьте URL изображений, каждый на новой строке"
+                        />
+                        <p className="text-sm text-gray-500 mt-1">Каждый URL на новой строке</p>
+                        {galleryImages.length === 0 && (
+                          <p className="text-red-600 text-sm mt-1">Добавьте хотя бы одно изображение</p>
+                        )}
+                      </div>
+
+                      {/* Materials Selection */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Используемые материалы
+                        </label>
+                        <div className="border border-gray-300 rounded-lg p-4 max-h-60 overflow-y-auto">
+                          <div className="grid grid-cols-1 gap-2">
+                            {products.filter(p => p.category !== 'accessories').map((product) => (
+                              <label key={product.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={selectedMaterials.includes(product.id)}
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      setSelectedMaterials(prev => [...prev, product.id]);
+                                    } else {
+                                      setSelectedMaterials(prev => prev.filter(id => id !== product.id));
+                                    }
+                                  }}
+                                  className="rounded"
+                                />
+                                <img
+                                  src={product.image}
+                                  alt={product.name}
+                                  className="w-12 h-8 object-cover rounded"
+                                />
+                                <div className="flex-1">
+                                  <p className="text-sm font-medium">{product.color}</p>
+                                  <p className="text-xs text-gray-500">{product.collection} - {product.format}</p>
+                                </div>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-500 mt-1">Выбрано: {selectedMaterials.length} материалов</p>
+                      </div>
+
+                      {/* Additional Info */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Локация
+                          </label>
+                          <input
+                            {...galleryForm.register('location')}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                            placeholder="Город, регион"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Площадь
+                          </label>
+                          <input
+                            {...galleryForm.register('area')}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                            placeholder="85 кв.м"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Год
+                          </label>
+                          <input
+                            {...galleryForm.register('year')}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                            placeholder="2024"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex gap-3 pt-4 border-t border-gray-200">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowGalleryForm(false);
+                            setEditingGalleryProject(null);
+                            setSelectedMaterials([]);
+                            setGalleryImages([]);
+                            galleryForm.reset();
+                          }}
+                          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                          Отмена
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={createGalleryProjectMutation.isPending || updateGalleryProjectMutation.isPending}
+                          className="flex-1 bg-[#E95D22] text-white px-4 py-2 rounded-lg hover:bg-[#d54a1a] transition-colors disabled:opacity-50"
+                        >
+                          {createGalleryProjectMutation.isPending || updateGalleryProjectMutation.isPending 
+                            ? 'Сохранение...' 
+                            : editingGalleryProject ? 'Обновить' : 'Создать'
+                          }
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
