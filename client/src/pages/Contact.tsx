@@ -64,7 +64,7 @@ export default function Contact() {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
                       placeholder="Ваше имя"
                     />
                   </div>
@@ -76,7 +76,7 @@ export default function Contact() {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
                       placeholder="your@email.com"
                     />
                   </div>
@@ -128,7 +128,7 @@ export default function Contact() {
 
                 <button
                   type="submit"
-                  className="w-full bg-[#E95D22] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#d54a1a] transition-colors flex items-center justify-center gap-2"
+                  className="w-full bg-[#e90039] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#c8002f] transition-colors flex items-center justify-center gap-2"
                 >
                   <Send size={20} />
                   Отправить сообщение
@@ -151,18 +151,18 @@ export default function Contact() {
                 
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
-                    <Phone className="text-[#E95D22] w-6 h-6 mt-1 flex-shrink-0" />
+                    <Phone className="text-[#e90039] w-6 h-6 mt-1 flex-shrink-0" />
                     <div>
                       <div className="font-semibold text-gray-900">Телефон</div>
                       <div className="text-gray-600 mt-1">
-                        <div className="text-lg font-semibold text-[#E95D22]">8 (800) 555-35-35</div>
+                        <div className="text-lg font-semibold text-[#e90039]">8 (800) 555-35-35</div>
                         <div className="text-sm">Бесплатный звонок по России</div>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <Mail className="text-[#E95D22] w-6 h-6 mt-1 flex-shrink-0" />
+                    <Mail className="text-[#e90039] w-6 h-6 mt-1 flex-shrink-0" />
                     <div>
                       <div className="font-semibold text-gray-900">Email</div>
                       <div className="text-gray-600 mt-1">
@@ -173,7 +173,7 @@ export default function Contact() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <MapPin className="text-[#E95D22] w-6 h-6 mt-1 flex-shrink-0" />
+                    <MapPin className="text-[#e90039] w-6 h-6 mt-1 flex-shrink-0" />
                     <div>
                       <div className="font-semibold text-gray-900">Адрес офиса</div>
                       <div className="text-gray-600 mt-1">
@@ -184,7 +184,7 @@ export default function Contact() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <Clock className="text-[#E95D22] w-6 h-6 mt-1 flex-shrink-0" />
+                    <Clock className="text-[#e90039] w-6 h-6 mt-1 flex-shrink-0" />
                     <div>
                       <div className="font-semibold text-gray-900">Время работы</div>
                       <div className="text-gray-600 mt-1">
@@ -231,7 +231,7 @@ export default function Contact() {
 
           {/* Emergency Contact - Full Width */}
           <div className="mt-12">
-            <div className="bg-[#E95D22] rounded-xl p-8 text-white text-center">
+            <div className="bg-[#e90039] rounded-xl p-8 text-white text-center">
               <h3 className="text-2xl font-bold mb-4">Срочные вопросы?</h3>
               <p className="mb-6 text-lg">Если у вас срочный вопрос по уже размещенному заказу или технической поддержке:</p>
               <div className="text-2xl font-bold mb-2">+7 (495) 123-45-67</div>
