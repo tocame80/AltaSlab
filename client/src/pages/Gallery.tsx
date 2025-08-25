@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { ChevronLeft, ChevronRight, MapPin, Calendar, Maximize2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MapPin, Calendar, Maximize2, Filter, ChevronDown, X } from 'lucide-react';
 import { products } from '@/data/products';
 import ProductCard from '@/components/ProductCard';
 import { useFavoritesContext } from '@/contexts/FavoritesContext';
@@ -22,6 +22,7 @@ export default function Gallery() {
   
   const [selectedApplication, setSelectedApplication] = useState<string>('');
   const [currentImageIndexes, setCurrentImageIndexes] = useState<{ [key: string]: number }>({});
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   // Fetch gallery projects
   const { data: galleryProjects = [], isLoading } = useQuery<GalleryProject[]>({
@@ -91,29 +92,71 @@ export default function Gallery() {
           </p>
         </div>
 
-        {/* Application Filters */}
-        <div className="mb-8">
-          <div className="flex flex-wrap gap-2">
-            {applicationFilters.map(filter => (
-              <button
-                key={filter.key}
-                onClick={() => setSelectedApplication(filter.key)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  selectedApplication === filter.key
-                    ? 'bg-[#e90039] text-white'
-                    : 'bg-white text-secondary hover:bg-gray-100 border border-gray-300'
-                }`}
-                data-testid={`filter-application-${filter.key || 'all'}`}
-              >
-                {filter.label}
-              </button>
-            ))}
-          </div>
+        {/* Mobile Filter Toggle Button */}
+        <div className="lg:hidden mb-4">
+          <button
+            onClick={() => setShowMobileFilters(!showMobileFilters)}
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors w-full justify-between"
+            data-testid="button-toggle-mobile-filters"
+          >
+            <div className="flex items-center gap-2">
+              <Filter className="w-4 h-4" />
+              <span className="font-medium">Фильтры</span>
+            </div>
+            <ChevronDown className={`w-4 h-4 transition-transform ${showMobileFilters ? 'rotate-180' : ''}`} />
+          </button>
         </div>
 
-        {/* Projects Grid */}
-        {filteredProjects.length > 0 ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Left Sidebar Filters */}
+          <div className={`w-full lg:w-80 lg:flex-shrink-0 ${showMobileFilters ? 'block' : 'hidden lg:block'}`}>
+            <div className="bg-white p-4 lg:p-6 rounded-lg shadow-sm lg:sticky lg:top-32 relative pt-[20px] pb-[20px] pl-[20px] pr-[20px] ml-[50px] mr-[50px] mt-[50px] mb-[50px] text-left">
+              
+              {/* Mobile Close Button */}
+              <div className="lg:hidden flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-[#2f378b]">Фильтры</h3>
+                <button
+                  onClick={() => setShowMobileFilters(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  data-testid="button-close-mobile-filters"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <h3 className="hidden lg:block text-lg font-bold text-[#2f378b] mb-4">Фильтры</h3>
+              
+              {/* Application Filter */}
+              <div className="mb-6">
+                <h4 className="font-semibold text-[#2f378b] mb-3">Применение</h4>
+                <div className="space-y-2">
+                  {applicationFilters.map(filter => (
+                    <label key={filter.key} className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="application"
+                        value={filter.key}
+                        checked={selectedApplication === filter.key}
+                        onChange={(e) => {
+                          setSelectedApplication(e.target.value);
+                          // Close mobile filters after selection on mobile
+                          if (window.innerWidth < 1024) {
+                            setTimeout(() => setShowMobileFilters(false), 300);
+                          }
+                        }}
+                        className="mr-2 accent-[#e90039]"
+                      />
+                      <span className="text-secondary text-sm">{filter.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Projects Grid */}
+          <div className="flex-1">
+            {filteredProjects.length > 0 ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {filteredProjects.map((project: GalleryProject) => {
               const currentImageIndex = currentImageIndexes[project.id] || 0;
               const projectMaterials = getProjectMaterials(project.materialsUsed);
@@ -227,17 +270,19 @@ export default function Gallery() {
                 </div>
               );
             })}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-secondary text-lg">
+                  {selectedApplication 
+                    ? `Проекты категории "${applicationFilters.find(f => f.key === selectedApplication)?.label}" не найдены`
+                    : 'Проекты не найдены'
+                  }
+                </p>
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-secondary text-lg">
-              {selectedApplication 
-                ? `Проекты категории "${applicationFilters.find(f => f.key === selectedApplication)?.label}" не найдены`
-                : 'Проекты не найдены'
-              }
-            </p>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
