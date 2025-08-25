@@ -1,5 +1,5 @@
 import { Product } from '@/types';
-import { Heart, Download, Calculator, ShoppingCart, Truck, CheckCircle, Clock } from 'lucide-react';
+import { Heart, Download, Calculator, ShoppingCart, Truck } from 'lucide-react';
 import { useState } from 'react';
 
 interface ProductCardProps {
@@ -39,12 +39,6 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
   const gallery = product.gallery || [product.image];
   const currentImage = gallery[currentImageIndex];
 
-  // Simulate availability data if not provided
-  const availability = product.availability || {
-    inStock: Math.random() > 0.3,
-    deliveryTime: Math.random() > 0.5 ? '1-3 дня' : '5-7 дней',
-    quantity: Math.floor(Math.random() * 50) + 10
-  };
 
   const getCollectionDisplayName = () => {
     if (product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ') {
@@ -66,6 +60,22 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
       return 'Клей Альта Стик';
     }
     return product.design;
+  };
+
+  const getPanelSize = () => {
+    // Only show size badges for panels (not accessories)
+    if (product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ') {
+      return null;
+    }
+    
+    // Determine size based on format
+    if (product.format === '300×600×2,4мм') {
+      return 'M';
+    } else if (product.format === '600×1200×2,4мм') {
+      return 'XL';
+    }
+    
+    return null;
   };
 
   return (
@@ -117,24 +127,15 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
           <div className={`absolute inset-0 bg-black/20 transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'} pointer-events-none`}>
           </div>
 
-          {/* Status Badges */}
+          {/* Size Badges */}
           <div className="absolute top-2 left-2 lg:top-3 lg:left-3 flex flex-col gap-1 lg:gap-2">
-            {product.isPremium && (
-              <span className="px-2 py-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-xs font-semibold rounded-full">
-                ПРЕМИУМ
-              </span>
-            )}
-            {availability.inStock ? (
-              <span className="px-2 py-1 bg-green-500 text-white text-xs font-semibold rounded-full flex items-center gap-1">
-                <CheckCircle size={10} />
-                <span className="hidden sm:inline">В НАЛИЧИИ</span>
-                <span className="sm:hidden">В НАЛ.</span>
-              </span>
-            ) : (
-              <span className="px-2 py-1 bg-orange-500 text-white text-xs font-semibold rounded-full flex items-center gap-1">
-                <Clock size={10} />
-                <span className="hidden sm:inline">ПОД ЗАКАЗ</span>
-                <span className="sm:hidden">ЗАК.</span>
+            {getPanelSize() && (
+              <span className={`px-3 py-1 text-white text-sm font-bold rounded-full ${
+                getPanelSize() === 'M' 
+                  ? 'bg-gradient-to-r from-blue-500 to-blue-600' 
+                  : 'bg-gradient-to-r from-purple-500 to-purple-600'
+              }`}>
+                {getPanelSize()}
               </span>
             )}
           </div>
