@@ -7,6 +7,7 @@ import { useFavoritesContext } from '@/contexts/FavoritesContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import GalleryNav from '@/components/GalleryNav';
+import ProjectModal from '@/components/ProjectModal';
 
 interface GalleryProject {
   id: string;
@@ -25,6 +26,8 @@ export default function Gallery() {
   
   const [selectedApplication, setSelectedApplication] = useState<string>('');
   const [currentImageIndexes, setCurrentImageIndexes] = useState<{ [key: string]: number }>({});
+  const [selectedProject, setSelectedProject] = useState<GalleryProject | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch gallery projects
   const { data: galleryProjects = [], isLoading } = useQuery<GalleryProject[]>({
@@ -56,6 +59,19 @@ export default function Gallery() {
   // Get materials used in project
   const getProjectMaterials = (materialIds: string[]) => {
     return products.filter(product => materialIds.includes(product.id));
+  };
+
+  // Handle project modal
+  const openProjectModal = (project: GalleryProject) => {
+    setSelectedProject(project);
+    setIsModalOpen(true);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeProjectModal = () => {
+    setIsModalOpen(false);
+    setSelectedProject(null);
+    document.body.style.overflow = 'auto';
   };
 
   if (isLoading) {
@@ -109,7 +125,12 @@ export default function Gallery() {
                 const projectMaterials = getProjectMaterials(project.materialsUsed);
                 
                 return (
-                  <div key={project.id} className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                  <div 
+                    key={project.id} 
+                    className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                    onClick={() => openProjectModal(project)}
+                    data-testid={`card-project-${project.id}`}
+                  >
                     
                     {/* Image Slider */}
                     <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
@@ -124,48 +145,17 @@ export default function Gallery() {
                           {/* Gradient Overlay */}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                           
-                          {/* Navigation Arrows */}
-                          {project.images.length > 1 && (
-                            <>
-                              <button
-                                onClick={() => navigateImage(project.id, 'prev', project.images.length)}
-                                className="absolute left-3 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-2.5 rounded-full hover:bg-white/30 transition-all duration-200 opacity-0 group-hover:opacity-100"
-                                data-testid={`button-prev-image-${project.id}`}
-                              >
-                                <ChevronLeft className="w-5 h-5" />
-                              </button>
-                              <button
-                                onClick={() => navigateImage(project.id, 'next', project.images.length)}
-                                className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-2.5 rounded-full hover:bg-white/30 transition-all duration-200 opacity-0 group-hover:opacity-100"
-                                data-testid={`button-next-image-${project.id}`}
-                              >
-                                <ChevronRight className="w-5 h-5" />
-                              </button>
-                            </>
-                          )}
+                          {/* Click to view overlay */}
+                          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                            <div className="bg-white/90 backdrop-blur-sm text-gray-900 px-4 py-2 rounded-full font-medium">
+                              Нажмите для просмотра
+                            </div>
+                          </div>
                           
                           {/* Image Counter */}
                           {project.images.length > 1 && (
                             <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
-                              {currentImageIndex + 1} / {project.images.length}
-                            </div>
-                          )}
-                          
-                          {/* Image Indicators */}
-                          {project.images.length > 1 && (
-                            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-1.5">
-                              {project.images.map((_, index) => (
-                                <button
-                                  key={index}
-                                  onClick={() => setCurrentImageIndexes(prev => ({ ...prev, [project.id]: index }))}
-                                  className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                                    index === currentImageIndex 
-                                      ? 'bg-white scale-125' 
-                                      : 'bg-white/50 hover:bg-white/75'
-                                  }`}
-                                  data-testid={`indicator-image-${project.id}-${index}`}
-                                />
-                              ))}
+                              1 / {project.images.length}
                             </div>
                           )}
                         </>
@@ -277,6 +267,15 @@ export default function Gallery() {
         </div>
       </div>
       <Footer />
+
+      {/* Project Modal */}
+      {selectedProject && (
+        <ProjectModal
+          project={selectedProject}
+          isOpen={isModalOpen}
+          onClose={closeProjectModal}
+        />
+      )}
     </div>
   );
 }
