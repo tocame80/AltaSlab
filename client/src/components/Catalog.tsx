@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { products } from '@/data/products';
 import { Collection } from '@/types';
 import ProductCard from './ProductCard';
-import { ChevronDown, Search } from 'lucide-react';
+import { ChevronDown, Search, Filter, X } from 'lucide-react';
 import { useFavoritesContext } from '@/contexts/FavoritesContext';
 import { useStickyNav } from '@/hooks/useStickyNav';
 
@@ -28,6 +28,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('default');
   const [showSearch, setShowSearch] = useState(false);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   
   const [visibleRows, setVisibleRows] = useState(5);
   const ITEMS_PER_ROW = 2; // 2 items per row
@@ -299,11 +300,38 @@ export default function Catalog({ activeCollection }: CatalogProps) {
           </p>
         </div>
 
-        <div className="flex gap-8">
+        {/* Mobile Filter Toggle Button */}
+        <div className="lg:hidden mb-4">
+          <button
+            onClick={() => setShowMobileFilters(!showMobileFilters)}
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors w-full justify-between"
+            data-testid="button-toggle-mobile-filters"
+          >
+            <div className="flex items-center gap-2">
+              <Filter className="w-4 h-4" />
+              <span className="font-medium">Фильтры</span>
+            </div>
+            <ChevronDown className={`w-4 h-4 transition-transform ${showMobileFilters ? 'rotate-180' : ''}`} />
+          </button>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Sidebar Filters */}
-          <div className="w-80 flex-shrink-0">
-            <div className={`bg-white p-6 rounded-lg shadow-sm ${isNavSticky ? 'sticky top-32' : 'sticky top-6'}`}>
-              <h3 className="text-lg font-bold text-primary mb-4">Фильтры</h3>
+          <div className={`w-full lg:w-80 lg:flex-shrink-0 ${showMobileFilters ? 'block' : 'hidden lg:block'}`}>
+            <div className={`bg-white p-4 lg:p-6 rounded-lg shadow-sm ${isNavSticky ? 'lg:sticky lg:top-32' : 'lg:sticky lg:top-6'} relative`}>
+              
+              {/* Mobile Close Button */}
+              <div className="lg:hidden flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-primary">Фильтры</h3>
+                <button
+                  onClick={() => setShowMobileFilters(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  data-testid="button-close-mobile-filters"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <h3 className="hidden lg:block text-lg font-bold text-primary mb-4">Фильтры</h3>
               
               {/* Show different filters based on active collection */}
               {activeCollection !== 'accessories' && (
@@ -455,17 +483,32 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         {(filters.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' || filters.collection === 'ПРОФИЛИ' || filters.collection === 'КЛЕЙ' || activeCollection === 'accessories') ? 'Все характеристики' : 'Все размеры'}
                       </span>
                     </label>
-                    {availableSizes.map(size => (
-                      <label key={size} className="flex items-center cursor-pointer">
+                    {availableSizes
+                      .sort((a, b) => {
+                        // Extract numbers for sorting
+                        const getNumber = (str: string) => {
+                          const match = str.match(/\d+/);
+                          return match ? parseInt(match[0]) : 0;
+                        };
+                        return getNumber(a) - getNumber(b);
+                      })
+                      .map(size => (
+                      <label key={size} className="flex items-center cursor-pointer group">
                         <input
                           type="radio"
                           name="size"
                           value={size}
                           checked={filters.size === size}
-                          onChange={(e) => setFilters(prev => ({ ...prev, size: e.target.value }))}
-                          className="mr-2"
+                          onChange={(e) => {
+                            setFilters(prev => ({ ...prev, size: e.target.value }));
+                            // Close mobile filters after selection on mobile
+                            if (window.innerWidth < 1024) {
+                              setTimeout(() => setShowMobileFilters(false), 300);
+                            }
+                          }}
+                          className="mr-2 accent-[#E95D22]"
                         />
-                        <span className="text-secondary text-sm">{size}</span>
+                        <span className="text-secondary text-sm group-hover:text-primary transition-colors">{size}</span>
                       </label>
                     ))}
                   </div>
@@ -574,14 +617,14 @@ export default function Catalog({ activeCollection }: CatalogProps) {
           </div>
 
           {/* Right Content Area */}
-          <div className="flex-1">
+          <div className="flex-1 w-full lg:w-auto">
             {/* Results Info */}
             <div className="flex justify-between items-center mb-6">
               <span className="text-muted">Показано {visibleProducts.length} из {filteredProducts.length} товаров</span>
             </div>
 
             {/* Product Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 mb-12">
               {visibleProducts.map((product) => (
                 <ProductCard 
                   key={product.id} 

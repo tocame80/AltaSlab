@@ -78,7 +78,7 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
       {/* Header Section */}
       <div className="relative overflow-hidden">
         {/* Image Gallery */}
-        <div className="relative w-full aspect-[2/1]">
+        <div className="relative w-full aspect-[3/2] lg:aspect-[2/1]">
           <img 
             src={product.image} 
             alt={`${product.design} - ${product.collection}`}
@@ -87,26 +87,28 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
           />
           
           {/* Favorite button */}
-          <div className="absolute top-3 right-3">
+          <div className="absolute top-2 right-2 lg:top-3 lg:right-3">
             {isFavorite ? (
               // Always visible when favorited
               <button
                 onClick={handleFavoriteClick}
-                className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white shadow-md text-red-500 hover:text-red-600"
+                className="w-7 h-7 lg:w-8 lg:h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white shadow-md text-red-500 hover:text-red-600"
                 aria-label="Убрать из избранного"
+                data-testid="button-remove-favorite"
               >
-                <Heart size={14} className="fill-current" />
+                <Heart size={12} className="lg:w-[14px] lg:h-[14px] fill-current" />
               </button>
             ) : (
-              // Visible only on hover when not favorited
+              // Visible on hover for desktop, always visible on mobile
               <button
                 onClick={handleFavoriteClick}
-                className={`w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white shadow-md text-gray-600 hover:text-red-500 ${
-                  isHovered ? 'opacity-100' : 'opacity-0'
+                className={`w-7 h-7 lg:w-8 lg:h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white shadow-md text-gray-600 hover:text-red-500 ${
+                  isHovered ? 'opacity-100' : 'opacity-60 lg:opacity-0'
                 }`}
                 aria-label="Добавить в избранное"
+                data-testid="button-add-favorite"
               >
-                <Heart size={14} />
+                <Heart size={12} className="lg:w-[14px] lg:h-[14px]" />
               </button>
             )}
           </div>
@@ -116,7 +118,7 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
           </div>
 
           {/* Status Badges */}
-          <div className="absolute top-3 left-3 flex flex-col gap-2">
+          <div className="absolute top-2 left-2 lg:top-3 lg:left-3 flex flex-col gap-1 lg:gap-2">
             {product.isPremium && (
               <span className="px-2 py-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-xs font-semibold rounded-full">
                 ПРЕМИУМ
@@ -125,32 +127,34 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
             {availability.inStock ? (
               <span className="px-2 py-1 bg-green-500 text-white text-xs font-semibold rounded-full flex items-center gap-1">
                 <CheckCircle size={10} />
-                В НАЛИЧИИ
+                <span className="hidden sm:inline">В НАЛИЧИИ</span>
+                <span className="sm:hidden">В НАЛ.</span>
               </span>
             ) : (
               <span className="px-2 py-1 bg-orange-500 text-white text-xs font-semibold rounded-full flex items-center gap-1">
                 <Clock size={10} />
-                ПОД ЗАКАЗ
+                <span className="hidden sm:inline">ПОД ЗАКАЗ</span>
+                <span className="sm:hidden">ЗАК.</span>
               </span>
             )}
           </div>
 
           {/* Product Info Overlay - Bottom Left - Three Lines */}
-          <div className="absolute bottom-0 left-0 p-3 transition-all duration-300">
+          <div className="absolute bottom-0 left-0 p-2 lg:p-3 transition-all duration-300">
             <div>
               {/* Line 1: Collection */}
-              <div className="text-gray-600 hover:text-[#E95D22] text-xs font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+              <div className="text-gray-600 hover:text-[#E95D22] text-[10px] lg:text-xs font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
                 {getCollectionDisplayName()}
               </div>
               
               {/* Line 2: Color */}
-              <div className="text-gray-900 hover:text-[#E95D22] text-sm font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+              <div className="text-gray-900 hover:text-[#E95D22] text-xs lg:text-sm font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
                 {product.color}
               </div>
               
               {/* Line 3: Price per m² */}
               {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
-                <div className="text-gray-900 hover:text-[#E95D22] text-sm font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                <div className="text-gray-900 hover:text-[#E95D22] text-xs lg:text-sm font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
                   {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽/м²
                 </div>
               )}
@@ -158,15 +162,15 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
           </div>
 
           {/* Additional Info Overlay - Bottom Right - Three Lines */}
-          <div className="absolute bottom-0 right-0 p-3 transition-all duration-300">
+          <div className="absolute bottom-0 right-0 p-2 lg:p-3 transition-all duration-300">
             <div className="text-right">
               {/* Line 1: Size */}
-              <div className="text-gray-600 hover:text-[#E95D22] text-xs font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+              <div className="text-gray-600 hover:text-[#E95D22] text-[10px] lg:text-xs font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
                 {product.format}
               </div>
               
               {/* Line 2: Area/Quantity per package */}
-              <div className="text-gray-900 hover:text-[#E95D22] text-sm font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+              <div className="text-gray-900 hover:text-[#E95D22] text-xs lg:text-sm font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
                 {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' 
                   ? `${product.areaPerPackage} м²` 
                   : `${product.piecesPerPackage} шт`
@@ -174,7 +178,7 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
               </div>
               
               {/* Line 3: Price per package */}
-              <div className="text-gray-900 hover:text-[#E95D22] text-sm font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
+              <div className="text-gray-900 hover:text-[#E95D22] text-xs lg:text-sm font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
                 {product.price.toLocaleString('ru-RU')} ₽ {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'за шт.' : 'за упак.'}
               </div>
             </div>

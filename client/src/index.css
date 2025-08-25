@@ -63,6 +63,17 @@
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   }
 
+  /* Mobile touch optimizations */
+  @media (max-width: 1023px) {
+    .product-card:hover {
+      transform: none;
+    }
+    
+    .product-card:active {
+      transform: scale(0.98);
+    }
+  }
+
   .filter-dropdown {
     transition: border-color 0.2s ease;
   }
