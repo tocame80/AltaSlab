@@ -215,11 +215,17 @@ export default function VideoPage() {
 
           {/* Video Grid */}
           {filteredVideos.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div className={`gap-6 lg:gap-8 ${
+              filteredVideos.length <= 2 
+                ? 'flex flex-wrap justify-center' 
+                : 'grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+            }`}>
               {filteredVideos.map((video, index) => (
               <div 
                 key={video.id} 
-                className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden cursor-pointer"
+                className={`bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden cursor-pointer ${
+                  filteredVideos.length <= 2 ? 'w-80 flex-shrink-0' : ''
+                }`}
                 onClick={() => {
                   // Найти индекс видео в полном списке
                   const fullIndex = videoInstructions.findIndex((v: VideoInstruction) => v.id === video.id);
@@ -245,8 +251,7 @@ export default function VideoPage() {
                   </div>
                   
                   {/* Duration badge */}
-                  <div className="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
-                    <Clock size={10} />
+                  <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
                     {video.duration}
                   </div>
 
@@ -254,29 +259,22 @@ export default function VideoPage() {
                   <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
                 
-                <div className="p-6">
-                  <h3 className="font-bold text-gray-900 mb-3 text-lg leading-tight line-clamp-2">
+                <div className="p-3 lg:p-4">
+                  <h3 className="font-semibold text-[#2f378b] mb-1 lg:mb-2 line-clamp-2 text-sm lg:text-base">
                     {video.title}
                   </h3>
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-3 leading-relaxed">
+                  <p className="text-xs lg:text-sm text-gray-600 mb-2 lg:mb-3 line-clamp-2">
                     {video.description}
                   </p>
-                  
-                  <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-1">
-                        <Eye size={12} />
-                        Видео
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <ThumbsUp size={12} />
-                        {video.category}
-                      </div>
-                    </div>
-                    <span>{video.duration}</span>
+                  <div className="flex items-center justify-between text-xs lg:text-sm text-gray-500">
+                    <span className="bg-gray-100 px-2 py-1 rounded text-xs font-medium">
+                      {videoCategories.find(cat => cat.id === video.category)?.name || video.category}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock size={12} />
+                      {video.duration}
+                    </span>
                   </div>
-
-
                 </div>
               </div>
               ))}
