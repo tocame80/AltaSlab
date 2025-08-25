@@ -99,7 +99,7 @@
   }
 
   .btn-primary:hover {
-    background-color: #d14d1a;
+    background-color: #e90039;
   }
 
   .btn-outline {
@@ -175,7 +175,7 @@
   }
 
   .back-to-top:hover {
-    background-color: #d14d1a;
+    background-color: #e90039;
     transform: translateY(-2px);
   }
 
