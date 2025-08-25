@@ -85,7 +85,7 @@ export default function Hero() {
                   <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                     <button 
                       onClick={scrollToCalculator}
-                      className="bg-[#e85e2e] hover:bg-[#e85e2e]/90 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                      className="hover:bg-[#e85e2e]/90 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 bg-[#e90039]"
                     >
                       Рассчитать материал
                     </button>
