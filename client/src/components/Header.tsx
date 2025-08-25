@@ -66,7 +66,7 @@ export default function Header() {
             href="/"
             className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
           >
-            <div className="w-12 h-12 bg-accent rounded-lg flex items-center justify-center">
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-[#e90039]">
               <span className="text-white font-bold text-lg">АС</span>
             </div>
             <div>
