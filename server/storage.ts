@@ -170,7 +170,7 @@ export class DatabaseStorage implements IStorage {
   async createGalleryProject(insertGalleryProject: InsertGalleryProject): Promise<GalleryProject> {
     const [galleryProject] = await db
       .insert(galleryProjects)
-      .values([insertGalleryProject])
+      .values(insertGalleryProject)
       .returning();
     return galleryProject;
   }
@@ -201,7 +201,7 @@ export class DatabaseStorage implements IStorage {
   async createDealerLocation(insertDealerLocation: InsertDealerLocation): Promise<DealerLocation> {
     const [dealerLocation] = await db
       .insert(dealerLocations)
-      .values([insertDealerLocation])
+      .values(insertDealerLocation)
       .returning();
     return dealerLocation;
   }

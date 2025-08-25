@@ -53,8 +53,8 @@ export const galleryProjects = pgTable("gallery_projects", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   application: text("application").notNull(), // interior, exterior, commercial, residential
-  images: json("images").$type<string[]>().notNull().default([]),
-  materialsUsed: json("materials_used").$type<string[]>().notNull().default([]), // Product IDs from catalog
+  images: json("images").$type<string[]>().notNull().default(sql`'[]'`),
+  materialsUsed: json("materials_used").$type<string[]>().notNull().default(sql`'[]'`), // Product IDs from catalog
   location: text("location"),
   area: text("area"),
   year: text("year"),
@@ -76,7 +76,7 @@ export const dealerLocations = pgTable("dealer_locations", {
   latitude: text("latitude").notNull(),
   longitude: text("longitude").notNull(),
   dealerType: text("dealer_type").notNull(), // retail, wholesale, authorized
-  services: json("services").$type<string[]>().notNull().default([]), // installation, delivery, consultation
+  services: json("services").$type<string[]>().notNull().default(sql`'[]'`), // installation, delivery, consultation
   workingHours: text("working_hours"),
   isActive: integer("is_active").default(1),
   sortOrder: integer("sort_order").default(0),
