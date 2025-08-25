@@ -147,7 +147,7 @@ export default function Gallery() {
                           
                           {/* Click to view overlay */}
                           <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                            <div className="bg-white/90 backdrop-blur-sm text-gray-900 px-4 py-2 rounded-full font-medium">
+                            <div className="bg-white/90 backdrop-blur-sm text-gray-900 px-2.5 py-1.5 rounded-full text-sm">
                               Нажмите для просмотра
                             </div>
                           </div>
