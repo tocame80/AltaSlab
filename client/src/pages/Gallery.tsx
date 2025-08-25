@@ -196,58 +196,56 @@ export default function Gallery() {
                             </span>
                           </div>
                           
-                          <div className="grid grid-cols-4 gap-1.5">
-                            {projectMaterials.slice(0, 4).map((material, index) => (
+                          <div className="grid grid-cols-3 gap-2">
+                            {projectMaterials.slice(0, 3).map((material, index) => (
                               <div 
                                 key={material.id} 
-                                className="group/material border border-gray-200 rounded-md overflow-hidden hover:border-[#e90039] hover:shadow-sm transition-all duration-200 cursor-pointer"
+                                className="group/material rounded-lg overflow-hidden hover:shadow-md transition-all duration-300 cursor-pointer"
                               >
                                 {/* Material Image */}
-                                <div className="relative aspect-square overflow-hidden">
+                                <div className="relative aspect-[2/1] overflow-hidden">
                                   <img 
                                     src={material.image} 
                                     alt={`${material.design} - ${material.collection}`}
-                                    className="w-full h-full object-cover transition-transform duration-300 group-hover/material:scale-105"
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover/material:scale-105"
                                   />
                                   
-                                  {/* Collection badge */}
-                                  <div className="absolute top-0.5 left-0.5">
-                                    <span className="px-1 py-0.5 bg-black/70 text-white text-[8px] font-medium rounded">
-                                      {material.collection === 'МАГИЯ БЕТОНА' ? 'БЕТОН' : 
-                                       material.collection === 'ТКАНЕВАЯ РОСКОШЬ' ? 'ТКАНЬ' : 
-                                       material.collection === 'МАТОВАЯ ЭСТЕТИКА' ? 'МАТОВОЕ' : 
-                                       material.collection === 'МРАМОРНАЯ ФЕЕРИЯ' ? 'МРАМОР' : 'АКСЕССУАРЫ'}
-                                    </span>
-                                  </div>
-                                  
-                                  {/* Price overlay */}
-                                  <div className="absolute bottom-0 right-0 p-0.5">
-                                    <div className="text-right">
+                                  {/* Image Overlay - darkening effect on hover */}
+                                  <div className="absolute inset-0 bg-black/20 transition-opacity duration-300 opacity-0 group-hover/material:opacity-100 pointer-events-none"></div>
+
+                                  {/* Product Info Overlay - Bottom Left */}
+                                  <div className="absolute bottom-0 left-0 p-2 transition-all duration-300">
+                                    <div>
+                                      {/* Collection */}
+                                      <div className="text-white text-[10px] font-medium mb-1 drop-shadow-lg transition-colors duration-300">
+                                        {material.collection === 'МАГИЯ БЕТОНА' ? 'МАГИЯ БЕТОНА' : 
+                                         material.collection === 'ТКАНЕВАЯ РОСКОШЬ' ? 'ТКАНЕВАЯ РОСКОШЬ' : 
+                                         material.collection === 'МАТОВАЯ ЭСТЕТИКА' ? 'МАТОВАЯ ЭСТЕТИКА' : 
+                                         material.collection === 'МРАМОРНАЯ ФЕЕРИЯ' ? 'МРАМОРНАЯ ФЕЕРИЯ' : material.collection}
+                                      </div>
+                                      
+                                      {/* Design/Color */}
+                                      <div className="text-white text-xs font-semibold mb-1 drop-shadow-lg transition-colors duration-300">
+                                        {material.color}
+                                      </div>
+                                      
+                                      {/* Price */}
                                       {material.price && (
-                                        <div className="text-white text-[8px] font-bold drop-shadow-lg">
+                                        <div className="text-white text-xs font-bold drop-shadow-lg transition-colors duration-300">
                                           {material.price.toLocaleString('ru-RU')} ₽
                                         </div>
                                       )}
                                     </div>
                                   </div>
                                 </div>
-                                
-                                {/* Material Info */}
-                                <div className="p-1">
-                                  <div className="text-[10px]">
-                                    <p className="font-medium text-gray-800 line-clamp-1 group-hover/material:text-[#e90039] transition-colors">
-                                      {material.color}
-                                    </p>
-                                  </div>
-                                </div>
                               </div>
                             ))}
                           </div>
                           
-                          {projectMaterials.length > 4 && (
+                          {projectMaterials.length > 3 && (
                             <div className="mt-3 p-2 bg-gray-50 rounded-lg text-center">
                               <p className="text-xs text-gray-600">
-                                + еще <span className="font-semibold text-[#e90039]">{projectMaterials.length - 4}</span> материалов
+                                + еще <span className="font-semibold text-[#e90039]">{projectMaterials.length - 3}</span> материалов
                               </p>
                             </div>
                           )}
