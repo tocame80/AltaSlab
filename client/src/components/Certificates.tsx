@@ -73,7 +73,7 @@ export default function Certificates() {
         </div>
 
         {/* Quality Standards */}
-        <div className="grid md:grid-cols-3 gap-4 lg:gap-8 mb-8 lg:mb-16">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 lg:gap-8 mb-8 lg:mb-16">
           {qualityStandards.map((standard, index) => (
             <div key={index} className="bg-gradient-to-br from-gray-50 to-white rounded-xl lg:rounded-2xl p-4 lg:p-8 border border-gray-100 hover:shadow-lg transition-shadow">
               <div className="w-12 h-12 lg:w-16 lg:h-16 bg-[#e90039] bg-opacity-10 rounded-full flex items-center justify-center mb-3 lg:mb-6">
