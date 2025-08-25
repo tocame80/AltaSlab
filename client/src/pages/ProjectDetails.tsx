@@ -257,19 +257,24 @@ export default function ProjectDetails() {
         {projectMaterials.length > 0 && (
           <div className="bg-white rounded-xl shadow-sm p-8">
             <div className="mb-8">
-              <h2 className="text-2xl font-bold text-[#2f378b] mb-2">Использованные материалы</h2>
+              <h2 className="text-2xl font-bold text-[#2f378b] mb-2">В проекте использован слэб</h2>
               <p className="text-gray-600">Панели АЛЬТА СЛЭБ, использованные в данном проекте</p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {projectMaterials.map((material) => (
-                <ProductCard
-                  key={material.id}
-                  product={material}
-                  isFavorite={isFavorite(material.id)}
-                  onToggleFavorite={() => toggleFavorite(material.id)}
-                />
-              ))}
+            {/* Horizontal scrolling container */}
+            <div className="overflow-x-auto scrollbar-hide">
+              <div className="flex gap-6 pb-4 min-w-max lg:min-w-0 lg:grid lg:grid-cols-4 lg:gap-6">
+                {projectMaterials.map((material) => (
+                  <div key={material.id} className="w-72 flex-shrink-0 lg:w-auto lg:flex-shrink">
+                    <ProductCard
+                      product={material}
+                      isFavorite={isFavorite(material.id)}
+                      onToggleFavorite={() => toggleFavorite(material.id)}
+                      onClick={() => window.location.href = `/product/${material.id}`}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
