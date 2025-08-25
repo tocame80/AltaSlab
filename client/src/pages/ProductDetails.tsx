@@ -441,6 +441,126 @@ export default function ProductDetails() {
 
         {/* Product Information */}
         <div className="space-y-8">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <div className="grid lg:grid-cols-3 gap-8">
+              {/* Product Title and Details */}
+              <div className="lg:col-span-2 space-y-6">
+                <div>
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="px-3 py-1 bg-[#E95D22] text-white text-sm font-semibold rounded-full">
+                      {getCollectionDisplayName()}
+                    </span>
+                    {product.isPremium && (
+                      <span className="px-3 py-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-sm font-semibold rounded-full">
+                        ПРЕМИУМ
+                      </span>
+                    )}
+                  </div>
+                  <h1 className="text-3xl font-bold text-gray-900 mb-2">{getProductDisplayName()}</h1>
+                  <p className="text-lg text-gray-600">{product.color}</p>
+                </div>
+
+                {/* Specifications Grid */}
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="text-sm text-gray-600 mb-1">Формат</div>
+                    <div className="font-semibold text-gray-900">{product.format}</div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="text-sm text-gray-600 mb-1">
+                      {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'Площадь упаковки' : 'Количество в упаковке'}
+                    </div>
+                    <div className="font-semibold text-gray-900">
+                      {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' 
+                        ? `${product.areaPerPackage} м²` 
+                        : `${product.piecesPerPackage} шт`
+                      }
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="text-sm text-gray-600 mb-1">Наличие</div>
+                    <div className={`font-semibold ${availability.inStock ? 'text-green-600' : 'text-orange-600'}`}>
+                      {availability.inStock ? 'В наличии' : 'Под заказ'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Price and Actions */}
+              <div className="space-y-6">
+                <div className="bg-gray-50 rounded-xl p-6">
+                  <div className="text-center space-y-4">
+                    <div>
+                      <div className="text-3xl font-bold text-gray-900">
+                        {product.price.toLocaleString('ru-RU')} ₽
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'за штуку' : 'за упаковку'}
+                      </div>
+                      {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
+                        <div className="text-lg font-semibold text-[#E95D22] mt-2">
+                          {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽/м²
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Quantity Selector */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-center gap-3">
+                        <button 
+                          onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                          className="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors"
+                        >
+                          -
+                        </button>
+                        <span className="font-semibold text-lg w-12 text-center">{quantity}</span>
+                        <button 
+                          onClick={() => setQuantity(quantity + 1)}
+                          className="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        Итого: {(product.price * quantity).toLocaleString('ru-RU')} ₽
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="space-y-3">
+                      <button className="w-full bg-[#E95D22] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#d54a1a] transition-colors flex items-center justify-center gap-2">
+                        <ShoppingCart size={20} />
+                        Добавить в корзину
+                      </button>
+                      <button
+                        onClick={() => toggleFavorite(product.id)}
+                        className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 ${
+                          isFavorite 
+                            ? 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100' 
+                            : 'bg-gray-50 text-gray-700 border border-gray-200 hover:bg-gray-100'
+                        }`}
+                      >
+                        <Heart size={20} className={isFavorite ? 'fill-current' : ''} />
+                        {isFavorite ? 'Убрать из избранного' : 'Добавить в избранное'}
+                      </button>
+                    </div>
+
+                    {/* Delivery Info */}
+                    <div className="pt-4 border-t border-gray-200">
+                      <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+                        <Truck size={16} />
+                        <span>Доставка: {availability.deliveryTime}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Calculator size={16} />
+                        <span>Остаток: {availability.quantity} шт</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Tabs Section */}
@@ -1254,6 +1374,71 @@ export default function ProductDetails() {
               </div>
             )}
 
+          </div>
+        </div>
+
+        {/* Related Products Section */}
+        <div className="mt-16">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">Похожие товары</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {products
+                .filter(p => p.collection === product.collection && p.id !== product.id)
+                .slice(0, 4)
+                .map(relatedProduct => (
+                  <div 
+                    key={relatedProduct.id}
+                    className="group bg-gray-50 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-100 hover:border-[#E95D22]"
+                    onClick={() => window.location.href = `/product/${relatedProduct.id}`}
+                  >
+                    <div className="aspect-square relative overflow-hidden">
+                      <img
+                        src={relatedProduct.image}
+                        alt={relatedProduct.design}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute top-2 left-2">
+                        <span className="px-2 py-1 bg-black/70 text-white text-xs font-medium rounded">
+                          {relatedProduct.collection === 'МАГИЯ БЕТОНА' ? 'БЕТОН' : 
+                           relatedProduct.collection === 'ТКАНЕВАЯ РОСКОШЬ' ? 'ТКАНЬ' : 
+                           relatedProduct.collection === 'МАТОВАЯ ЭСТЕТИКА' ? 'МАТОВОЕ' : 
+                           relatedProduct.collection === 'МРАМОРНАЯ ФЕЕРИЯ' ? 'МРАМОР' : 'АКСЕССУАРЫ'}
+                        </span>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFavorite(relatedProduct.id);
+                        }}
+                        className={`absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                          favorites.has(relatedProduct.id)
+                            ? 'bg-red-50 text-red-500' 
+                            : 'bg-white/80 text-gray-600 hover:bg-white hover:text-red-500'
+                        }`}
+                      >
+                        <Heart size={14} className={favorites.has(relatedProduct.id) ? 'fill-current' : ''} />
+                      </button>
+                    </div>
+                    <div className="p-4">
+                      <div className="text-sm text-gray-600 mb-1">{relatedProduct.color}</div>
+                      <div className="font-semibold text-gray-900 mb-2 line-clamp-1">{relatedProduct.design}</div>
+                      <div className="flex items-center justify-between">
+                        <div className="text-[#E95D22] font-bold">
+                          {relatedProduct.price.toLocaleString('ru-RU')} ₽
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {relatedProduct.format}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+            {products.filter(p => p.collection === product.collection && p.id !== product.id).length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                <p>Нет похожих товаров в этой коллекции</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
