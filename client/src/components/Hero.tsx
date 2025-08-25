@@ -57,7 +57,7 @@ export default function Hero() {
               <div className="container mx-auto px-6">
                 <div className="text-center text-white">
                   <h1 
-                    className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-[#e85e2e]" 
+                    className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-[#e90039]" 
                     style={{ 
                       letterSpacing: '2px',
                       textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7), 0 0 8px rgba(0, 0, 0, 0.5)'
