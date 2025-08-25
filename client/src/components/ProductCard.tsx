@@ -179,7 +179,7 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
               </div>
               
               {/* Line 3: Price per package */}
-              <div className="text-gray-900 hover:text-[#E95D22] text-xs lg:text-sm font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
+              <div className="text-gray-900 hover:text-[#e90039] text-xs lg:text-sm font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
                 {product.price.toLocaleString('ru-RU')} ₽ {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'за шт.' : 'за упак.'}
               </div>
             </div>

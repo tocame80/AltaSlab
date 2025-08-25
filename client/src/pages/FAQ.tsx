@@ -171,7 +171,7 @@ export default function FAQ() {
           </div>
 
           {/* Contact Info */}
-          <div className="bg-[#E95D22] rounded-xl p-8 text-white">
+          <div className="bg-[#e90039] rounded-xl p-8 text-white">
             <div className="text-center">
               <h3 className="text-2xl font-bold mb-4">Не нашли ответ на ваш вопрос?</h3>
               <p className="text-lg mb-6">Обратитесь к нашим специалистам за персональной консультацией</p>

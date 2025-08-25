@@ -28,7 +28,7 @@ export default function ProductDetails() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Продукт не найден</h1>
-          <a href="/catalog" className="text-[#E95D22] hover:underline">
+          <a href="/catalog" className="text-[#e90039] hover:underline">
             Вернуться в каталог
           </a>
         </div>
@@ -253,7 +253,7 @@ export default function ProductDetails() {
         {/* Back Button */}
         <button
           onClick={() => window.history.back()}
-          className="flex items-center gap-2 text-gray-600 hover:text-[#E95D22] mb-6 transition-colors"
+          className="flex items-center gap-2 text-gray-600 hover:text-[#e90039] mb-6 transition-colors"
         >
           <ArrowLeft size={20} />
           Вернуться в каталог
@@ -274,18 +274,18 @@ export default function ProductDetails() {
               <div className="absolute bottom-0 left-0 p-4 transition-all duration-300">
                 <div>
                   {/* Line 1: Collection */}
-                  <div className="text-gray-600 hover:text-[#E95D22] text-sm font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                  <div className="text-gray-600 hover:text-[#e90039] text-sm font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
                     {getCollectionDisplayName()}
                   </div>
                   
                   {/* Line 2: Color */}
-                  <div className="text-gray-900 hover:text-[#E95D22] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                  <div className="text-gray-900 hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
                     {product.color}
                   </div>
                   
                   {/* Line 3: Price per m² */}
                   {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
-                    <div className="text-gray-900 hover:text-[#E95D22] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                    <div className="text-gray-900 hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
                       {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽/м²
                     </div>
                   )}
@@ -296,12 +296,12 @@ export default function ProductDetails() {
               <div className="absolute bottom-0 right-0 p-4 transition-all duration-300">
                 <div className="text-right">
                   {/* Line 1: Size */}
-                  <div className="text-gray-600 hover:text-[#E95D22] text-sm font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                  <div className="text-gray-600 hover:text-[#e90039] text-sm font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
                     {product.format}
                   </div>
                   
                   {/* Line 2: Area/Quantity per package */}
-                  <div className="text-gray-900 hover:text-[#E95D22] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                  <div className="text-gray-900 hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
                     {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' 
                       ? `${product.areaPerPackage} м²` 
                       : `${product.piecesPerPackage} шт`
@@ -309,7 +309,7 @@ export default function ProductDetails() {
                   </div>
                   
                   {/* Line 3: Price per package */}
-                  <div className="text-gray-900 hover:text-[#E95D22] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                  <div className="text-gray-900 hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
                     {product.price.toLocaleString('ru-RU')} ₽ {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'за шт.' : 'за упак.'}
                   </div>
                 </div>
@@ -320,28 +320,28 @@ export default function ProductDetails() {
             <div className="absolute top-4 right-4 flex gap-2">
               <button 
                 onClick={openFullscreen}
-                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#E95D22] transition-all"
+                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#e90039] transition-all"
                 title="Полноэкранный просмотр"
               >
                 <Maximize2 size={16} />
               </button>
               <button 
                 onClick={openImageViewer}
-                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#E95D22] transition-all"
+                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#e90039] transition-all"
                 title="Увеличить изображение"
               >
                 <ZoomIn size={16} />
               </button>
               <button 
                 onClick={shareImage}
-                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#E95D22] transition-all"
+                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#e90039] transition-all"
                 title="Поделиться"
               >
                 <Share2 size={16} />
               </button>
               <button 
                 onClick={downloadImage}
-                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#E95D22] transition-all"
+                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#e90039] transition-all"
                 title="Скачать оригинал"
               >
                 <Save size={16} />
@@ -371,7 +371,7 @@ export default function ProductDetails() {
                   key={index}
                   onClick={() => setCurrentImageIndex(index)}
                   className={`flex-shrink-0 w-24 h-12 rounded-lg overflow-hidden border-2 transition-all ${
-                    index === currentImageIndex ? 'border-[#E95D22]' : 'border-gray-200 hover:border-gray-300'
+                    index === currentImageIndex ? 'border-[#e90039]' : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
                   <img
@@ -408,7 +408,7 @@ export default function ProductDetails() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                     activeTab === tab.id
-                      ? 'border-[#E95D22] text-[#E95D22]'
+                      ? 'border-[#e90039] text-[#e90039]'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
                 >
@@ -473,7 +473,7 @@ export default function ProductDetails() {
                 <div className="grid md:grid-cols-2 gap-8">
                   <div className="bg-white border border-gray-200 rounded-xl p-6">
                     <h4 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                      <div className="w-2 h-2 bg-[#E95D22] rounded-full"></div>
+                      <div className="w-2 h-2 bg-[#e90039] rounded-full"></div>
                       Параметры продукта
                     </h4>
                     <div className="space-y-4">
@@ -521,7 +521,7 @@ export default function ProductDetails() {
 
                   <div className="bg-white border border-gray-200 rounded-xl p-6">
                     <h4 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                      <div className="w-2 h-2 bg-[#E95D22] rounded-full"></div>
+                      <div className="w-2 h-2 bg-[#e90039] rounded-full"></div>
                       Технические характеристики
                     </h4>
                     <div className="space-y-4">
@@ -591,12 +591,12 @@ export default function ProductDetails() {
                 {/* Price Information */}
                 <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-6">
                   <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <div className="w-2 h-2 bg-[#E95D22] rounded-full"></div>
+                    <div className="w-2 h-2 bg-[#e90039] rounded-full"></div>
                     Ценовая информация
                   </h4>
                   <div className="grid md:grid-cols-3 gap-6">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-[#E95D22]">
+                      <div className="text-2xl font-bold text-[#e90039]">
                         {product.price.toLocaleString('ru-RU')} ₽
                       </div>
                       <div className="text-sm text-gray-600">
@@ -628,7 +628,7 @@ export default function ProductDetails() {
               <div className="space-y-8">
                 <div className="flex items-center justify-between">
                   <h4 className="text-lg font-semibold text-gray-900">Инструкция по монтажу</h4>
-                  <button className="bg-[#E95D22] text-white px-4 py-2 rounded-lg hover:bg-[#d54a1a] transition-colors flex items-center gap-2">
+                  <button className="bg-[#e90039] text-white px-4 py-2 rounded-lg hover:bg-[#c8002f] transition-colors flex items-center gap-2">
                     <Download size={16} />
                     Скачать PDF инструкцию
                   </button>
@@ -664,7 +664,7 @@ export default function ProductDetails() {
                           <div className="font-medium text-gray-900">Подробная инструкция по монтажу</div>
                           <div className="text-sm text-gray-600">PDF, 2.4 МБ</div>
                         </div>
-                        <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors">
+                        <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
                           <Download size={20} />
                         </button>
                       </div>
@@ -676,7 +676,7 @@ export default function ProductDetails() {
                           <div className="font-medium text-gray-900">Схемы раскладки панелей</div>
                           <div className="text-sm text-gray-600">PDF, 1.8 МБ</div>
                         </div>
-                        <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors">
+                        <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
                           <Download size={20} />
                         </button>
                       </div>
@@ -688,7 +688,7 @@ export default function ProductDetails() {
                           <div className="font-medium text-gray-900">Рекомендации по уходу</div>
                           <div className="text-sm text-gray-600">PDF, 850 КБ</div>
                         </div>
-                        <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors">
+                        <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
                           <Download size={20} />
                         </button>
                       </div>
@@ -700,7 +700,7 @@ export default function ProductDetails() {
                           <div className="font-medium text-gray-900">Гарантийные условия</div>
                           <div className="text-sm text-gray-600">PDF, 650 КБ</div>
                         </div>
-                        <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors">
+                        <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
                           <Download size={20} />
                         </button>
                       </div>
@@ -738,7 +738,7 @@ export default function ProductDetails() {
                           <label className="block text-sm font-medium text-gray-700 mb-2">Длина помещения (м)</label>
                           <input 
                             type="number" 
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent" 
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent" 
                             placeholder="Введите длину"
                             step="0.1"
                             min="0"
@@ -748,7 +748,7 @@ export default function ProductDetails() {
                           <label className="block text-sm font-medium text-gray-700 mb-2">Ширина помещения (м)</label>
                           <input 
                             type="number" 
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent" 
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent" 
                             placeholder="Введите ширину"
                             step="0.1"
                             min="0"
@@ -756,7 +756,7 @@ export default function ProductDetails() {
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">Запас материала (%)</label>
-                          <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent">
+                          <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent">
                             <option value="5">5% - стандартный запас</option>
                             <option value="10">10% - с учетом подрезки</option>
                             <option value="15">15% - сложная геометрия</option>
@@ -783,12 +783,12 @@ export default function ProductDetails() {
                           </div>
                           <div className="flex justify-between mt-2">
                             <span className="text-gray-600">Общая стоимость:</span>
-                            <span className="font-bold text-[#E95D22] text-lg">-- ₽</span>
+                            <span className="font-bold text-[#e90039] text-lg">-- ₽</span>
                           </div>
                         </div>
                       </div>
                       
-                      <button className="w-full mt-4 bg-[#E95D22] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#d54a1a] transition-colors">
+                      <button className="w-full mt-4 bg-[#e90039] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#c8002f] transition-colors">
                         Рассчитать
                       </button>
                     </div>
@@ -825,7 +825,7 @@ export default function ProductDetails() {
                             <div className="font-medium text-gray-900">Сертификат соответствия ГОСТ</div>
                             <div className="text-sm text-gray-600">Действителен до: 15.06.2025</div>
                           </div>
-                          <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors">
+                          <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
                             <Download size={20} />
                           </button>
                         </div>
@@ -836,7 +836,7 @@ export default function ProductDetails() {
                             <div className="font-medium text-gray-900">Декларация соответствия ТР ТС</div>
                             <div className="text-sm text-gray-600">Действительна до: 22.08.2025</div>
                           </div>
-                          <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors">
+                          <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
                             <Download size={20} />
                           </button>
                         </div>
@@ -853,7 +853,7 @@ export default function ProductDetails() {
                             <div className="font-medium text-gray-900">ISO 14001 (Экологический менеджмент)</div>
                             <div className="text-sm text-gray-600">Международный стандарт</div>
                           </div>
-                          <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors">
+                          <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
                             <Download size={20} />
                           </button>
                         </div>
@@ -864,7 +864,7 @@ export default function ProductDetails() {
                             <div className="font-medium text-gray-900">CE Marking</div>
                             <div className="text-sm text-gray-600">Европейское соответствие</div>
                           </div>
-                          <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors">
+                          <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
                             <Download size={20} />
                           </button>
                         </div>
@@ -883,7 +883,7 @@ export default function ProductDetails() {
                             <div className="font-medium text-gray-900">Сертификат пожарной безопасности</div>
                             <div className="text-sm text-gray-600">Класс КМ2 по НПБ 244-97</div>
                           </div>
-                          <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors">
+                          <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
                             <Download size={20} />
                           </button>
                         </div>
@@ -900,7 +900,7 @@ export default function ProductDetails() {
                             <div className="font-medium text-gray-900">Гарантийный талон</div>
                             <div className="text-sm text-gray-600">Гарантия 15 лет от производителя</div>
                           </div>
-                          <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors">
+                          <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
                             <Download size={20} />
                           </button>
                         </div>
@@ -998,7 +998,7 @@ export default function ProductDetails() {
                       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                         <div className="aspect-video bg-gray-100 flex items-center justify-center">
                           <div className="text-center">
-                            <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
+                            <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
                               <Play size={24} className="text-white" />
                             </div>
                             <div className="text-sm text-gray-600">Видео недоступно</div>
@@ -1013,7 +1013,7 @@ export default function ProductDetails() {
                       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                         <div className="aspect-video bg-gray-100 flex items-center justify-center">
                           <div className="text-center">
-                            <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
+                            <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
                               <Play size={24} className="text-white" />
                             </div>
                             <div className="text-sm text-gray-600">Видео недоступно</div>
@@ -1033,7 +1033,7 @@ export default function ProductDetails() {
                       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                         <div className="aspect-video bg-gray-100 flex items-center justify-center">
                           <div className="text-center">
-                            <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
+                            <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
                               <Play size={24} className="text-white" />
                             </div>
                             <div className="text-sm text-gray-600">Видео недоступно</div>
@@ -1048,7 +1048,7 @@ export default function ProductDetails() {
                       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                         <div className="aspect-video bg-gray-100 flex items-center justify-center">
                           <div className="text-center">
-                            <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
+                            <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
                               <Play size={24} className="text-white" />
                             </div>
                             <div className="text-sm text-gray-600">Видео недоступно</div>
@@ -1069,7 +1069,7 @@ export default function ProductDetails() {
                     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                       <div className="aspect-video bg-gray-100 flex items-center justify-center">
                         <div className="text-center">
-                          <div className="w-12 h-12 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
+                          <div className="w-12 h-12 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
                             <Play size={16} className="text-white" />
                           </div>
                           <div className="text-xs text-gray-600">Видео недоступно</div>
@@ -1084,7 +1084,7 @@ export default function ProductDetails() {
                     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                       <div className="aspect-video bg-gray-100 flex items-center justify-center">
                         <div className="text-center">
-                          <div className="w-12 h-12 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
+                          <div className="w-12 h-12 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
                             <Play size={16} className="text-white" />
                           </div>
                           <div className="text-xs text-gray-600">Видео недоступно</div>
@@ -1099,7 +1099,7 @@ export default function ProductDetails() {
                     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                       <div className="aspect-video bg-gray-100 flex items-center justify-center">
                         <div className="text-center">
-                          <div className="w-12 h-12 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-2">
+                          <div className="w-12 h-12 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
                             <Play size={16} className="text-white" />
                           </div>
                           <div className="text-xs text-gray-600">Видео недоступно</div>
@@ -1125,7 +1125,7 @@ export default function ProductDetails() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">Ваше имя</label>
                         <input 
                           type="text" 
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent" 
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent" 
                           placeholder="Введите ваше имя"
                         />
                       </div>
@@ -1133,7 +1133,7 @@ export default function ProductDetails() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">Телефон</label>
                         <input 
                           type="tel" 
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent" 
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent" 
                           placeholder="+7 (___) ___-__-__"
                         />
                       </div>
@@ -1141,11 +1141,11 @@ export default function ProductDetails() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">Сообщение</label>
                         <textarea 
                           rows={4} 
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent" 
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent" 
                           placeholder="Опишите ваш вопрос или пожелание"
                         ></textarea>
                       </div>
-                      <button className="w-full bg-[#E95D22] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#d54a1a] transition-colors">
+                      <button className="w-full bg-[#e90039] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#c8002f] transition-colors">
                         Отправить сообщение
                       </button>
                     </form>
@@ -1156,14 +1156,14 @@ export default function ProductDetails() {
                       <h4 className="text-lg font-semibold text-gray-900 mb-4">Техническая поддержка</h4>
                       <div className="space-y-3">
                         <div className="flex items-center gap-3">
-                          <Mail size={20} className="text-[#E95D22]" />
+                          <Mail size={20} className="text-[#e90039]" />
                           <div>
                             <div className="font-medium text-gray-900">Email</div>
                             <div className="text-gray-600">support@altaslab.ru</div>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
-                          <Search size={20} className="text-[#E95D22]" />
+                          <Search size={20} className="text-[#e90039]" />
                           <div>
                             <div className="font-medium text-gray-900">Горячая линия</div>
                             <div className="text-gray-600">8 (800) 555-35-35</div>
@@ -1178,7 +1178,7 @@ export default function ProductDetails() {
                         <p className="text-gray-700 mb-3">
                           Закажите бесплатные образцы материала для оценки качества и цвета
                         </p>
-                        <button className="bg-[#E95D22] text-white py-2 px-4 rounded-lg font-medium hover:bg-[#d54a1a] transition-colors">
+                        <button className="bg-[#e90039] text-white py-2 px-4 rounded-lg font-medium hover:bg-[#c8002f] transition-colors">
                           Заказать образцы
                         </button>
                       </div>
@@ -1190,7 +1190,7 @@ export default function ProductDetails() {
                         <p className="text-gray-700 mb-3">
                           Получите профессиональную консультацию по выбору материалов для вашего проекта
                         </p>
-                        <button className="bg-[#E95D22] text-white py-2 px-4 rounded-lg font-medium hover:bg-[#d54a1a] transition-colors">
+                        <button className="bg-[#e90039] text-white py-2 px-4 rounded-lg font-medium hover:bg-[#c8002f] transition-colors">
                           Записаться на консультацию
                         </button>
                       </div>

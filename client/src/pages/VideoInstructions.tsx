@@ -33,7 +33,7 @@ export default function VideoInstructions() {
               <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                 <div className="aspect-video bg-gray-100 flex items-center justify-center relative">
                   <div className="text-center">
-                    <div className="w-20 h-20 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-4 hover:bg-[#d54a1a] transition-colors cursor-pointer">
+                    <div className="w-20 h-20 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-4 hover:bg-[#c8002f] transition-colors cursor-pointer">
                       <Play size={32} className="text-white ml-1" />
                     </div>
                     <div className="text-gray-600">Видео недоступно в демо-режиме</div>
@@ -49,7 +49,7 @@ export default function VideoInstructions() {
               <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                 <div className="aspect-video bg-gray-100 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="w-20 h-20 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-4 hover:bg-[#d54a1a] transition-colors cursor-pointer">
+                    <div className="w-20 h-20 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-4 hover:bg-[#c8002f] transition-colors cursor-pointer">
                       <Play size={32} className="text-white ml-1" />
                     </div>
                     <div className="text-gray-600">Видео недоступно в демо-режиме</div>
@@ -65,7 +65,7 @@ export default function VideoInstructions() {
               <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                 <div className="aspect-video bg-gray-100 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="w-20 h-20 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-4 hover:bg-[#d54a1a] transition-colors cursor-pointer">
+                    <div className="w-20 h-20 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-4 hover:bg-[#c8002f] transition-colors cursor-pointer">
                       <Play size={32} className="text-white ml-1" />
                     </div>
                     <div className="text-gray-600">Видео недоступно в демо-режиме</div>
@@ -81,7 +81,7 @@ export default function VideoInstructions() {
               <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                 <div className="aspect-video bg-gray-100 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="w-20 h-20 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-4 hover:bg-[#d54a1a] transition-colors cursor-pointer">
+                    <div className="w-20 h-20 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-4 hover:bg-[#c8002f] transition-colors cursor-pointer">
                       <Play size={32} className="text-white ml-1" />
                     </div>
                     <div className="text-gray-600">Видео недоступно в демо-режиме</div>
@@ -103,7 +103,7 @@ export default function VideoInstructions() {
               <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                 <div className="aspect-video bg-gray-100 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-[#d54a1a] transition-colors cursor-pointer">
+                    <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-[#c8002f] transition-colors cursor-pointer">
                       <Play size={24} className="text-white ml-1" />
                     </div>
                     <div className="text-sm text-gray-600">Видео недоступно</div>
@@ -118,7 +118,7 @@ export default function VideoInstructions() {
               <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                 <div className="aspect-video bg-gray-100 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-[#d54a1a] transition-colors cursor-pointer">
+                    <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-[#c8002f] transition-colors cursor-pointer">
                       <Play size={24} className="text-white ml-1" />
                     </div>
                     <div className="text-sm text-gray-600">Видео недоступно</div>
@@ -133,7 +133,7 @@ export default function VideoInstructions() {
               <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                 <div className="aspect-video bg-gray-100 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-[#d54a1a] transition-colors cursor-pointer">
+                    <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-[#c8002f] transition-colors cursor-pointer">
                       <Play size={24} className="text-white ml-1" />
                     </div>
                     <div className="text-sm text-gray-600">Видео недоступно</div>
@@ -154,7 +154,7 @@ export default function VideoInstructions() {
               <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                 <div className="aspect-video bg-gray-100 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-[#d54a1a] transition-colors cursor-pointer">
+                    <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-[#c8002f] transition-colors cursor-pointer">
                       <Play size={24} className="text-white ml-1" />
                     </div>
                     <div className="text-sm text-gray-600">Видео недоступно</div>
@@ -169,7 +169,7 @@ export default function VideoInstructions() {
               <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                 <div className="aspect-video bg-gray-100 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-[#d54a1a] transition-colors cursor-pointer">
+                    <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-[#c8002f] transition-colors cursor-pointer">
                       <Play size={24} className="text-white ml-1" />
                     </div>
                     <div className="text-sm text-gray-600">Видео недоступно</div>
@@ -184,7 +184,7 @@ export default function VideoInstructions() {
               <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                 <div className="aspect-video bg-gray-100 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-[#d54a1a] transition-colors cursor-pointer">
+                    <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-[#c8002f] transition-colors cursor-pointer">
                       <Play size={24} className="text-white ml-1" />
                     </div>
                     <div className="text-sm text-gray-600">Видео недоступно</div>
@@ -199,7 +199,7 @@ export default function VideoInstructions() {
               <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                 <div className="aspect-video bg-gray-100 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-[#d54a1a] transition-colors cursor-pointer">
+                    <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-[#c8002f] transition-colors cursor-pointer">
                       <Play size={24} className="text-white ml-1" />
                     </div>
                     <div className="text-sm text-gray-600">Видео недоступно</div>
@@ -214,7 +214,7 @@ export default function VideoInstructions() {
               <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                 <div className="aspect-video bg-gray-100 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-[#d54a1a] transition-colors cursor-pointer">
+                    <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-[#c8002f] transition-colors cursor-pointer">
                       <Play size={24} className="text-white ml-1" />
                     </div>
                     <div className="text-sm text-gray-600">Видео недоступно</div>
@@ -229,7 +229,7 @@ export default function VideoInstructions() {
               <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                 <div className="aspect-video bg-gray-100 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="w-16 h-16 bg-[#E95D22] rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-[#d54a1a] transition-colors cursor-pointer">
+                    <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-3 hover:bg-[#c8002f] transition-colors cursor-pointer">
                       <Play size={24} className="text-white ml-1" />
                     </div>
                     <div className="text-sm text-gray-600">Видео недоступно</div>

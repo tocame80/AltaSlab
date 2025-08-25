@@ -130,7 +130,7 @@ export default function FAQPage() {
                   placeholder="Поиск по вопросам..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
                 />
               </div>
             </div>
@@ -142,7 +142,7 @@ export default function FAQPage() {
                   onClick={() => setActiveCategory(category.id)}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                     activeCategory === category.id
-                      ? 'bg-[#E95D22] text-white'
+                      ? 'bg-[#e90039] text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
@@ -162,8 +162,8 @@ export default function FAQPage() {
                     onClick={() => setOpenIndex(openIndex === index ? null : index)}
                   >
                     <div className="flex items-start gap-4">
-                      <div className="w-8 h-8 bg-[#E95D22] bg-opacity-10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                        <MessageCircle className="w-4 h-4 text-[#E95D22]" />
+                      <div className="w-8 h-8 bg-[#e90039] bg-opacity-10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                        <MessageCircle className="w-4 h-4 text-[#e90039]" />
                       </div>
                       <span className="font-semibold text-gray-900 pr-4 text-lg">{faq.question}</span>
                     </div>
@@ -194,13 +194,13 @@ export default function FAQPage() {
           </div>
 
           {/* Contact Section */}
-          <div className="mt-16 bg-gradient-to-r from-[#E95D22] to-[#d54a1a] rounded-2xl p-8 text-white text-center">
+          <div className="mt-16 bg-gradient-to-r from-[#e90039] to-[#c8002f] rounded-2xl p-8 text-white text-center">
             <h2 className="text-2xl font-bold mb-4">Не нашли ответ на свой вопрос?</h2>
             <p className="text-lg opacity-90 mb-6">
               Свяжитесь с нами, и наши специалисты ответят на любые вопросы о продукции и услугах
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="tel:88005557773" className="bg-white text-[#E95D22] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              <a href="tel:88005557773" className="bg-white text-[#e90039] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
                 8 800 555-77-73
               </a>
               <a href="mailto:info@alta-slab.ru" className="bg-white bg-opacity-20 text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-30 transition-colors">

@@ -37,7 +37,7 @@ export default function Certificates() {
                     <div className="text-sm text-gray-600 mb-2">Действителен до: 15.06.2025</div>
                     <div className="text-sm text-gray-500">Подтверждает соответствие продукции требованиям ГОСТ Р</div>
                   </div>
-                  <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors ml-4">
+                  <button className="text-[#e90039] hover:text-[#c8002f] transition-colors ml-4">
                     <Download size={24} />
                   </button>
                 </div>
@@ -50,7 +50,7 @@ export default function Certificates() {
                     <div className="text-sm text-gray-600 mb-2">Действительна до: 22.08.2025</div>
                     <div className="text-sm text-gray-500">Соответствие техническим регламентам Таможенного союза</div>
                   </div>
-                  <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors ml-4">
+                  <button className="text-[#e90039] hover:text-[#c8002f] transition-colors ml-4">
                     <Download size={24} />
                   </button>
                 </div>
@@ -69,7 +69,7 @@ export default function Certificates() {
                     <div className="text-sm text-gray-600 mb-2">Международный стандарт</div>
                     <div className="text-sm text-gray-500">Система экологического менеджмента</div>
                   </div>
-                  <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors ml-4">
+                  <button className="text-[#e90039] hover:text-[#c8002f] transition-colors ml-4">
                     <Download size={24} />
                   </button>
                 </div>
@@ -82,7 +82,7 @@ export default function Certificates() {
                     <div className="text-sm text-gray-600 mb-2">Европейское соответствие</div>
                     <div className="text-sm text-gray-500">Соответствие европейским стандартам безопасности</div>
                   </div>
-                  <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors ml-4">
+                  <button className="text-[#e90039] hover:text-[#c8002f] transition-colors ml-4">
                     <Download size={24} />
                   </button>
                 </div>
@@ -101,7 +101,7 @@ export default function Certificates() {
                     <div className="text-sm text-gray-600 mb-2">Класс КМ2 по НПБ 244-97</div>
                     <div className="text-sm text-gray-500">Подтверждает соответствие требованиям пожарной безопасности</div>
                   </div>
-                  <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors ml-4">
+                  <button className="text-[#e90039] hover:text-[#c8002f] transition-colors ml-4">
                     <Download size={24} />
                   </button>
                 </div>
@@ -117,7 +117,7 @@ export default function Certificates() {
                     <div className="text-sm text-gray-600 mb-2">Гарантия 15 лет от производителя</div>
                     <div className="text-sm text-gray-500">Официальная гарантия на всю продукцию АЛЬТА СЛЭБ</div>
                   </div>
-                  <button className="text-[#E95D22] hover:text-[#d54a1a] transition-colors ml-4">
+                  <button className="text-[#e90039] hover:text-[#c8002f] transition-colors ml-4">
                     <Download size={24} />
                   </button>
                 </div>
