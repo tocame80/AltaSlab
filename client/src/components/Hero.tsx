@@ -27,12 +27,7 @@ export default function Hero() {
     setCurrentSlide((prev) => (prev + 1) % images.length);
   };
 
-  const scrollToCalculator = () => {
-    const calculatorElement = document.getElementById('calculator');
-    if (calculatorElement) {
-      calculatorElement.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  
 
   return (
     <section className="relative w-full">
@@ -82,13 +77,7 @@ export default function Hero() {
                   >
                     Инновационное решение для современного строительства. Долговечность, экологичность и превосходный дизайн в каждой панели.
                   </p>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                    <button 
-                      onClick={scrollToCalculator}
-                      className="hover:bg-[#e85e2e]/90 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 bg-[#e90039]"
-                    >
-                      Рассчитать материал
-                    </button>
+                  <div className="flex justify-center">
                     <button 
                       onClick={() => document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })}
                       className="border-2 border-white text-white hover:bg-white hover:text-[#e85e2e] px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
