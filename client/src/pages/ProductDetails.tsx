@@ -399,12 +399,7 @@ export default function ProductDetails() {
                   ПРЕМИУМ
                 </span>
               )}
-              {availability.inStock ? (
-                <span className="px-3 py-1 bg-green-500 text-white text-sm font-semibold rounded-full flex items-center gap-1">
-                  <CheckCircle size={12} />
-                  В НАЛИЧИИ
-                </span>
-              ) : (
+              {!availability.inStock && (
                 <span className="px-3 py-1 bg-orange-500 text-white text-sm font-semibold rounded-full flex items-center gap-1">
                   <Clock size={12} />
                   ПОД ЗАКАЗ
