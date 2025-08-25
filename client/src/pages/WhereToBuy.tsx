@@ -1,6 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Phone, Mail, Globe, MapPin, Clock, Filter, Search } from 'lucide-react';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 interface DealerLocation {
   id: string;
@@ -188,7 +190,9 @@ export default function WhereToBuy() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20">
+    <div className="min-h-screen bg-white">
+      <Header />
+      <div className="bg-gray-50 pt-20">
       <div className="container mx-auto px-4 lg:px-6 py-8 md:py-12">
         
         {/* Header */}
@@ -396,6 +400,8 @@ export default function WhereToBuy() {
           </div>
         </div>
       </div>
+      </div>
+      <Footer />
     </div>
   );
 }
