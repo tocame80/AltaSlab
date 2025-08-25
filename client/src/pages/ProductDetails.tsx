@@ -1,6 +1,6 @@
 import { useState, useContext, useMemo, useEffect } from 'react';
 import { useRoute } from 'wouter';
-import { ArrowLeft, Heart, ShoppingCart, Calculator, Download, Share2, Eye, Maximize2, CheckCircle, Clock, Truck, X, ZoomIn, Save } from 'lucide-react';
+import { ArrowLeft, Heart, ShoppingCart, Calculator, Download, Share2, Eye, Maximize2, CheckCircle, Clock, Truck, X, ZoomIn, Save, Search, Mail } from 'lucide-react';
 import { products } from '@/data/products';
 import { FavoritesContext } from '@/contexts/FavoritesContext';
 import { Collection } from '@/types';
