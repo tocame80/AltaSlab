@@ -196,14 +196,14 @@ export default function Gallery() {
                             </span>
                           </div>
                           
-                          <div className="grid grid-cols-2 gap-2">
+                          <div className="grid grid-cols-4 gap-1.5">
                             {projectMaterials.slice(0, 4).map((material, index) => (
                               <div 
                                 key={material.id} 
-                                className="group/material border border-gray-200 rounded-lg overflow-hidden hover:border-[#e90039] hover:shadow-md transition-all duration-200 cursor-pointer"
+                                className="group/material border border-gray-200 rounded-md overflow-hidden hover:border-[#e90039] hover:shadow-sm transition-all duration-200 cursor-pointer"
                               >
                                 {/* Material Image */}
-                                <div className="relative aspect-[3/2] overflow-hidden">
+                                <div className="relative aspect-square overflow-hidden">
                                   <img 
                                     src={material.image} 
                                     alt={`${material.design} - ${material.collection}`}
@@ -211,8 +211,8 @@ export default function Gallery() {
                                   />
                                   
                                   {/* Collection badge */}
-                                  <div className="absolute top-1 left-1">
-                                    <span className="px-2 py-0.5 bg-black/70 text-white text-[10px] font-medium rounded">
+                                  <div className="absolute top-0.5 left-0.5">
+                                    <span className="px-1 py-0.5 bg-black/70 text-white text-[8px] font-medium rounded">
                                       {material.collection === 'МАГИЯ БЕТОНА' ? 'БЕТОН' : 
                                        material.collection === 'ТКАНЕВАЯ РОСКОШЬ' ? 'ТКАНЬ' : 
                                        material.collection === 'МАТОВАЯ ЭСТЕТИКА' ? 'МАТОВОЕ' : 
@@ -221,10 +221,10 @@ export default function Gallery() {
                                   </div>
                                   
                                   {/* Price overlay */}
-                                  <div className="absolute bottom-0 right-0 p-1">
+                                  <div className="absolute bottom-0 right-0 p-0.5">
                                     <div className="text-right">
                                       {material.price && (
-                                        <div className="text-white text-[10px] font-bold drop-shadow-lg">
+                                        <div className="text-white text-[8px] font-bold drop-shadow-lg">
                                           {material.price.toLocaleString('ru-RU')} ₽
                                         </div>
                                       )}
@@ -233,13 +233,10 @@ export default function Gallery() {
                                 </div>
                                 
                                 {/* Material Info */}
-                                <div className="p-2">
-                                  <div className="text-xs">
+                                <div className="p-1">
+                                  <div className="text-[10px]">
                                     <p className="font-medium text-gray-800 line-clamp-1 group-hover/material:text-[#e90039] transition-colors">
                                       {material.color}
-                                    </p>
-                                    <p className="text-gray-500 line-clamp-1 mt-0.5">
-                                      {material.format}
                                     </p>
                                   </div>
                                 </div>
