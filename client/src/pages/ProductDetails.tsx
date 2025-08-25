@@ -4,6 +4,7 @@ import { ArrowLeft, Heart, ShoppingCart, Calculator, Download, Share2, Eye, Maxi
 import { products } from '@/data/products';
 import { FavoritesContext } from '@/contexts/FavoritesContext';
 import { Collection } from '@/types';
+import Footer from '@/components/Footer';
 
 export default function ProductDetails() {
   const [, params] = useRoute('/product/:id');
@@ -392,20 +393,6 @@ export default function ProductDetails() {
               </button>
             </div>
 
-            {/* Status Badges */}
-            <div className="absolute top-4 left-4 flex flex-col gap-2">
-              {product.isPremium && (
-                <span className="px-3 py-1 bg-gradient-to-r from-amber-400 to-amber-500 text-white text-sm font-semibold rounded-full">
-                  ПРЕМИУМ
-                </span>
-              )}
-              {!availability.inStock && (
-                <span className="px-3 py-1 bg-orange-500 text-white text-sm font-semibold rounded-full flex items-center gap-1">
-                  <Clock size={12} />
-                  ПОД ЗАКАЗ
-                </span>
-              )}
-            </div>
 
 
           </div>
@@ -1250,71 +1237,8 @@ export default function ProductDetails() {
           </div>
         </div>
 
-        {/* Related Products Section */}
-        <div className="mt-16">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">Похожие товары</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {products
-                .filter(p => p.collection === product.collection && p.id !== product.id)
-                .slice(0, 4)
-                .map(relatedProduct => (
-                  <div 
-                    key={relatedProduct.id}
-                    className="group bg-gray-50 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-100 hover:border-[#E95D22]"
-                    onClick={() => window.location.href = `/product/${relatedProduct.id}`}
-                  >
-                    <div className="aspect-square relative overflow-hidden">
-                      <img
-                        src={relatedProduct.image}
-                        alt={relatedProduct.design}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute top-2 left-2">
-                        <span className="px-2 py-1 bg-black/70 text-white text-xs font-medium rounded">
-                          {relatedProduct.collection === 'МАГИЯ БЕТОНА' ? 'БЕТОН' : 
-                           relatedProduct.collection === 'ТКАНЕВАЯ РОСКОШЬ' ? 'ТКАНЬ' : 
-                           relatedProduct.collection === 'МАТОВАЯ ЭСТЕТИКА' ? 'МАТОВОЕ' : 
-                           relatedProduct.collection === 'МРАМОРНАЯ ФЕЕРИЯ' ? 'МРАМОР' : 'АКСЕССУАРЫ'}
-                        </span>
-                      </div>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleFavorite(relatedProduct.id);
-                        }}
-                        className={`absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-                          favorites.has(relatedProduct.id)
-                            ? 'bg-red-50 text-red-500' 
-                            : 'bg-white/80 text-gray-600 hover:bg-white hover:text-red-500'
-                        }`}
-                      >
-                        <Heart size={14} className={favorites.has(relatedProduct.id) ? 'fill-current' : ''} />
-                      </button>
-                    </div>
-                    <div className="p-4">
-                      <div className="text-sm text-gray-600 mb-1">{relatedProduct.color}</div>
-                      <div className="font-semibold text-gray-900 mb-2 line-clamp-1">{relatedProduct.design}</div>
-                      <div className="flex items-center justify-between">
-                        <div className="text-[#E95D22] font-bold">
-                          {relatedProduct.price.toLocaleString('ru-RU')} ₽
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {relatedProduct.format}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-            </div>
-            {products.filter(p => p.collection === product.collection && p.id !== product.id).length === 0 && (
-              <div className="text-center py-8 text-gray-500">
-                <p>Нет похожих товаров в этой коллекции</p>
-              </div>
-            )}
-          </div>
-        </div>
       </div>
+      <Footer />
       {/* Fullscreen Modal */}
       {isFullscreenOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center">
