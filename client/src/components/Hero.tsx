@@ -31,7 +31,7 @@ export default function Hero() {
 
   return (
     <section className="relative w-full">
-      <div className="aspect-[4/3] relative overflow-hidden">
+      <div className="aspect-[4/3] lg:aspect-[4/3] md:aspect-[3/2] aspect-[4/3] relative overflow-hidden">
         {images.map((image, index) => (
           <div
             key={`hero-slide-${image.id || index}`}
@@ -57,7 +57,7 @@ export default function Hero() {
               <div className="container mx-auto px-6">
                 <div className="text-center text-white">
                   <h1 
-                    className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-[#e90039]" 
+                    className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 lg:mb-6 text-[#e90039]" 
                     style={{ 
                       letterSpacing: '2px',
                       textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7), 0 0 8px rgba(0, 0, 0, 0.5)'
@@ -66,13 +66,13 @@ export default function Hero() {
                     АЛЬТА СЛЭБ
                   </h1>
                   <p 
-                    className="text-lg md:text-xl lg:text-2xl mb-8 font-light"
+                    className="text-base sm:text-lg md:text-xl lg:text-2xl mb-4 lg:mb-8 font-light"
                     style={{ textShadow: '1px 1px 3px rgba(0, 0, 0, 0.8)' }}
                   >
                     Панели стеновые и потолочные SPC
                   </p>
                   <p 
-                    className="text-base md:text-lg mb-12 text-gray-200 max-w-3xl mx-auto"
+                    className="text-sm sm:text-base md:text-lg mb-6 lg:mb-12 text-gray-200 max-w-3xl mx-auto"
                     style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.7)' }}
                   >
                     Инновационное решение для современного строительства. Долговечность, экологичность и превосходный дизайн в каждой панели.
@@ -80,7 +80,7 @@ export default function Hero() {
                   <div className="flex justify-center">
                     <button 
                       onClick={() => document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="border-2 border-white text-white hover:bg-white hover:text-[#e85e2e] px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                      className="border-2 border-white text-white hover:bg-white hover:text-[#e85e2e] px-6 lg:px-8 py-3 lg:py-4 rounded-lg font-semibold text-base lg:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                     >
                       Каталог продукции
                     </button>

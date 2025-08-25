@@ -23,20 +23,20 @@ export default function Applications() {
   ];
 
   return (
-    <section className="py-20 bg-white">
-      <div className="container mx-auto px-6">
-        <h2 className="text-4xl font-bold text-primary text-center mb-16">ПРИМЕНЕНИЕ</h2>
+    <section className="py-12 lg:py-20 bg-white">
+      <div className="container mx-auto px-4 lg:px-6">
+        <h2 className="text-2xl lg:text-4xl font-bold text-primary text-center mb-8 lg:mb-16">ПРИМЕНЕНИЕ</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
           {applications.map((application, index) => (
             <div key={index} className="text-center">
               <img 
                 src={application.image} 
                 alt={application.title}
-                className="w-full h-48 object-cover rounded-lg mb-4"
+                className="w-full h-32 lg:h-48 object-cover rounded-lg mb-3 lg:mb-4"
               />
-              <h3 className="text-lg font-bold text-primary mb-2">{application.title}</h3>
-              <p className="text-secondary text-sm">{application.description}</p>
+              <h3 className="text-sm lg:text-lg font-bold text-primary mb-1 lg:mb-2">{application.title}</h3>
+              <p className="text-secondary text-xs lg:text-sm">{application.description}</p>
             </div>
           ))}
         </div>

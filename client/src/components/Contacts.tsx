@@ -28,35 +28,35 @@ export default function Contacts() {
   };
 
   return (
-    <section id="contacts" className="py-20 bg-gray-50">
-      <div className="container mx-auto px-6">
-        <h2 className="text-4xl font-bold text-primary text-center mb-16">КОНТАКТЫ</h2>
+    <section id="contacts" className="py-12 lg:py-20 bg-gray-50">
+      <div className="container mx-auto px-4 lg:px-6">
+        <h2 className="text-2xl lg:text-4xl font-bold text-primary text-center mb-8 lg:mb-16">КОНТАКТЫ</h2>
         
         <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
             <div>
-              <h3 className="text-xl font-bold text-primary mb-6">Свяжитесь с нами</h3>
+              <h3 className="text-lg lg:text-xl font-bold text-primary mb-4 lg:mb-6">Свяжитесь с нами</h3>
               
-              <div className="space-y-4">
+              <div className="space-y-3 lg:space-y-4">
                 <div className="flex items-center">
-                  <Phone className="text-accent mr-4 w-5 h-5" />
-                  <span className="text-lg font-semibold text-primary">8 800 555-77-73</span>
+                  <Phone className="text-accent mr-3 lg:mr-4 w-4 h-4 lg:w-5 lg:h-5" />
+                  <span className="text-base lg:text-lg font-semibold text-primary">8 800 555-77-73</span>
                 </div>
                 
                 <div className="flex items-center">
-                  <Mail className="text-accent mr-4 w-5 h-5" />
-                  <span className="text-secondary">info@alta-slab.ru</span>
+                  <Mail className="text-accent mr-3 lg:mr-4 w-4 h-4 lg:w-5 lg:h-5" />
+                  <span className="text-secondary text-sm lg:text-base">info@alta-slab.ru</span>
                 </div>
                 
                 <div className="flex items-start">
-                  <MapPin className="text-accent mr-4 mt-1 w-5 h-5" />
-                  <span className="text-secondary">Россия, производство АЛЬТА-ПРОФИЛЬ</span>
+                  <MapPin className="text-accent mr-3 lg:mr-4 mt-1 w-4 h-4 lg:w-5 lg:h-5" />
+                  <span className="text-secondary text-sm lg:text-base">Россия, производство АЛЬТА-ПРОФИЛЬ</span>
                 </div>
               </div>
             </div>
             
             <div>
-              <h3 className="text-xl font-bold text-primary mb-6">Оставить заявку</h3>
+              <h3 className="text-lg lg:text-xl font-bold text-primary mb-4 lg:mb-6">Оставить заявку</h3>
               
               <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>

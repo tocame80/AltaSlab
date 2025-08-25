@@ -40,23 +40,23 @@ export default function Calculator() {
   };
 
   return (
-    <section id="calculator" className="py-16 bg-gray-50">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+    <section id="calculator" className="py-12 lg:py-16 bg-gray-50">
+      <div className="container mx-auto px-4 lg:px-6">
+        <div className="text-center mb-8 lg:mb-12">
+          <h2 className="text-2xl lg:text-3xl xl:text-4xl font-bold text-gray-900 mb-3 lg:mb-4">
             Калькулятор материала
           </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className="text-sm lg:text-lg text-gray-600 max-w-3xl mx-auto">
             Рассчитайте необходимое количество панелей и стоимость для вашего проекта
           </p>
         </div>
 
         {/* Calculator */}
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-xl p-8 shadow-sm">
-            <div className="grid md:grid-cols-2 gap-8">
+          <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm">
+            <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-6">Параметры помещения</h3>
+                <h3 className="text-lg lg:text-xl font-semibold text-gray-900 mb-4 lg:mb-6">Параметры помещения</h3>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Длина помещения (м)</label>
@@ -105,8 +105,8 @@ export default function Calculator() {
               </div>
               
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-6">Результат расчета</h3>
-                <div className="bg-gray-50 rounded-lg p-6 space-y-4">
+                <h3 className="text-lg lg:text-xl font-semibold text-gray-900 mb-4 lg:mb-6">Результат расчета</h3>
+                <div className="bg-gray-50 rounded-lg p-4 lg:p-6 space-y-3 lg:space-y-4">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Площадь помещения:</span>
                     <span className="font-medium text-gray-900">

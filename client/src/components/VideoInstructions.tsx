@@ -93,21 +93,21 @@ export default function VideoInstructions() {
   }
 
   return (
-    <section id="video-instructions" className="py-16 bg-gray-50">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+    <section id="video-instructions" className="py-12 lg:py-16 bg-gray-50">
+      <div className="container mx-auto px-4 lg:px-6">
+        <div className="text-center mb-8 lg:mb-12">
+          <h2 className="text-2xl lg:text-3xl xl:text-4xl font-bold text-gray-900 mb-3 lg:mb-4">
             Видеоинструкции
           </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className="text-sm lg:text-lg text-gray-600 max-w-3xl mx-auto">
             Наглядные видеоуроки по монтажу SPC панелей АЛЬТА СЛЭБ. 
             Следуйте нашим рекомендациям для качественной установки.
           </p>
         </div>
 
         {/* Category Filter */}
-        <div className="mb-8">
-          <div className="flex flex-wrap justify-center gap-3">
+        <div className="mb-6 lg:mb-8">
+          <div className="flex flex-wrap justify-center gap-2 lg:gap-3">
             {videoCategories.map((category) => (
               <button
                 key={category.id}
@@ -230,7 +230,7 @@ export default function VideoInstructions() {
         )}
 
         {/* Video Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8">
           {filteredVideos.map((video) => (
             <div key={video.id} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden">
               <button
@@ -262,14 +262,14 @@ export default function VideoInstructions() {
                   </div>
                 </div>
                 
-                <div className="p-4">
-                  <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
+                <div className="p-3 lg:p-4">
+                  <h3 className="font-semibold text-gray-900 mb-1 lg:mb-2 line-clamp-2 text-sm lg:text-base">
                     {video.title}
                   </h3>
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                  <p className="text-xs lg:text-sm text-gray-600 mb-2 lg:mb-3 line-clamp-2">
                     {video.description}
                   </p>
-                  <div className="flex items-center justify-between text-sm text-gray-500">
+                  <div className="flex items-center justify-between text-xs lg:text-sm text-gray-500">
                     <span className="bg-gray-100 px-2 py-1 rounded text-xs font-medium">
                       {videoCategories.find(cat => cat.id === video.category)?.name || video.category}
                     </span>

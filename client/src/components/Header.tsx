@@ -59,18 +59,18 @@ export default function Header() {
         isHeaderVisible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
-      <div className="container mx-auto px-6">
-        <div className="flex items-center justify-between py-4">
+      <div className="container mx-auto px-4 lg:px-6">
+        <div className="flex items-center justify-between py-3 lg:py-4">
           {/* Logo */}
           <Link
             href="/"
             className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
           >
-            <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-[#e90039]">
-              <span className="text-white font-bold text-lg">АС</span>
+            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg flex items-center justify-center bg-[#e90039]">
+              <span className="text-white font-bold text-base lg:text-lg">АС</span>
             </div>
             <div>
-              <h1 className="font-bold text-xl text-[#2f378b]">АЛЬТА СЛЭБ</h1>
+              <h1 className="font-bold text-lg lg:text-xl text-[#2f378b]">АЛЬТА СЛЭБ</h1>
               <p className="text-muted text-xs">SPC ПАНЕЛИ</p>
             </div>
           </Link>
@@ -95,21 +95,21 @@ export default function Header() {
           </nav>
 
           {/* Contact Info */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-3 lg:space-x-4">
             <Link
               href="/contact"
               className="text-muted hover:text-[#E95D22] transition-colors"
             >
-              <Mail className="w-5 h-5" />
+              <Mail className="w-4 h-4 lg:w-5 lg:h-5" />
             </Link>
             <button
               onClick={handleSearchClick}
               className="text-muted hover:text-[#E95D22] transition-colors"
               aria-label="Поиск"
             >
-              <Search className="w-5 h-5" />
+              <Search className="w-4 h-4 lg:w-5 lg:h-5" />
             </button>
-            <span className="text-accent font-semibold">8 800 555-77-73</span>
+            <span className="text-accent font-semibold text-sm lg:text-base">8 800 555-77-73</span>
           </div>
 
           {/* Mobile Menu Button */}

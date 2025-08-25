@@ -260,16 +260,16 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   const uniqueSizes = Array.from(new Set(products.map(p => p.format)));
 
   return (
-    <section id="catalog" className="py-16 bg-gray-50">
-      <div className="container mx-auto px-6 mt-[24px] mb-[24px]">
+    <section id="catalog" className="py-8 lg:py-16 bg-gray-50">
+      <div className="container mx-auto px-4 lg:px-6 mt-3 lg:mt-[24px] mb-3 lg:mb-[24px]">
 
 
-        <div className="mb-8">
-          <div className="flex items-center justify-between gap-4 mb-4">
-            <h2 className="text-4xl font-bold text-primary">{getCollectionTitle()}</h2>
+        <div className="mb-6 lg:mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+            <h2 className="text-2xl lg:text-4xl font-bold text-primary">{getCollectionTitle()}</h2>
             
             {/* Search Bar - Always visible */}
-            <div className="flex items-center gap-2 flex-1 max-w-lg">
+            <div className="flex items-center gap-2 w-full lg:flex-1 lg:max-w-lg">
               <div className="relative flex-1">
                 <input
                   id="catalog-search-input"
@@ -292,7 +292,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
               )}
             </div>
           </div>
-          <p className="text-secondary text-lg">
+          <p className="text-secondary text-sm lg:text-lg">
             {searchQuery 
               ? `Результаты поиска по запросу "${searchQuery}" - найдено ${filteredProducts.length} товаров`
               : "В данном разделе вы можете подобрать необходимые вам цвета, изменив параметры поиска."
