@@ -230,7 +230,7 @@ export default function VideoInstructions() {
         )}
 
         {/* Video Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8 justify-items-center">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8 justify-items-center justify-center">
           {filteredVideos.map((video) => (
             <div key={video.id} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden">
               <button
