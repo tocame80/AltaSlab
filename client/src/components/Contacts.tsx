@@ -30,17 +30,17 @@ export default function Contacts() {
   return (
     <section id="contacts" className="py-12 lg:py-20 bg-gray-50">
       <div className="container mx-auto px-4 lg:px-6">
-        <h2 className="text-2xl lg:text-4xl font-bold text-primary text-center mb-8 lg:mb-16">КОНТАКТЫ</h2>
+        <h2 className="text-2xl lg:text-4xl font-bold text-[#2f378b] text-center mb-8 lg:mb-16">КОНТАКТЫ</h2>
         
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
             <div>
-              <h3 className="text-lg lg:text-xl font-bold text-primary mb-4 lg:mb-6">Свяжитесь с нами</h3>
+              <h3 className="text-lg lg:text-xl font-bold text-[#2f378b] mb-4 lg:mb-6">Свяжитесь с нами</h3>
               
               <div className="space-y-3 lg:space-y-4">
                 <div className="flex items-center">
                   <Phone className="text-accent mr-3 lg:mr-4 w-4 h-4 lg:w-5 lg:h-5" />
-                  <span className="text-base lg:text-lg font-semibold text-primary">8 800 555-77-73</span>
+                  <span className="text-base lg:text-lg font-semibold text-[#2f378b]">8 800 555-77-73</span>
                 </div>
                 
                 <div className="flex items-center">
@@ -56,7 +56,7 @@ export default function Contacts() {
             </div>
             
             <div>
-              <h3 className="text-lg lg:text-xl font-bold text-primary mb-4 lg:mb-6">Оставить заявку</h3>
+              <h3 className="text-lg lg:text-xl font-bold text-[#2f378b] mb-4 lg:mb-6">Оставить заявку</h3>
               
               <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>

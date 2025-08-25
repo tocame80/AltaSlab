@@ -324,7 +324,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
               
               {/* Mobile Close Button */}
               <div className="lg:hidden flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-primary">Фильтры</h3>
+                <h3 className="text-lg font-bold text-[#2f378b]">Фильтры</h3>
                 <button
                   onClick={() => setShowMobileFilters(false)}
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -333,14 +333,14 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <h3 className="hidden lg:block text-lg font-bold text-primary mb-4">Фильтры</h3>
+              <h3 className="hidden lg:block text-lg font-bold text-[#2f378b] mb-4">Фильтры</h3>
               
               {/* Show different filters based on active collection */}
               {activeCollection !== 'accessories' && (
                 <>
                   {/* Panel Collections Filter */}
                   <div className="mb-6">
-                    <h4 className="font-semibold text-primary mb-3">Коллекции панелей</h4>
+                    <h4 className="font-semibold text-[#2f378b] mb-3">Коллекции панелей</h4>
                     <div className="space-y-2">
                       {[
                         { key: '', label: 'Все коллекции' },
@@ -374,7 +374,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
               {/* Accessories Filter - Show only when accessories, all, or favorites is selected */}
               {(activeCollection === 'accessories' || activeCollection === 'all' || activeCollection === 'favorites') && (
                 <div className="mb-6">
-                  <h4 className="font-semibold text-primary mb-3">Комплектующие</h4>
+                  <h4 className="font-semibold text-[#2f378b] mb-3">Комплектующие</h4>
                   <div className="space-y-2">
                     <label className="flex items-center cursor-pointer">
                       <input
@@ -435,7 +435,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                activeCollection !== 'favorites' && 
                (activeCollection !== 'accessories' || filters.collection === 'ПРОФИЛИ') && (
                 <div className="mb-6">
-                  <h4 className="font-semibold text-primary mb-3">Цвета</h4>
+                  <h4 className="font-semibold text-[#2f378b] mb-3">Цвета</h4>
                   <div className="space-y-2">
                     <label className="flex items-center cursor-pointer">
                       <input
@@ -468,7 +468,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
               {/* Size/Characteristics Filter */}
               {((filters.collection && activeCollection !== 'favorites') || activeCollection === 'accessories') && (
                 <div className="mb-6">
-                  <h4 className="font-semibold text-primary mb-3">
+                  <h4 className="font-semibold text-[#2f378b] mb-3">
                     {(filters.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' || filters.collection === 'ПРОФИЛИ' || filters.collection === 'КЛЕЙ' || activeCollection === 'accessories') ? 'Характеристики' : 'Размеры панелей'}
                   </h4>
                   <div className="space-y-2">
@@ -510,7 +510,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                           }}
                           className="mr-2 accent-[#e90039]"
                         />
-                        <span className="text-secondary text-sm group-hover:text-primary transition-colors">{size}</span>
+                        <span className="text-secondary text-sm group-hover:text-[#2f378b] transition-colors">{size}</span>
                       </label>
                     ))}
                   </div>
@@ -523,7 +523,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 (activeCollection !== 'accessories' && filters.collection === 'МАГИЯ БЕТОНА') ||
                 activeCollection === 'all') && (
                 <div>
-                  <h4 className="font-semibold text-primary mb-3">Дополнительно</h4>
+                  <h4 className="font-semibold text-[#2f378b] mb-3">Дополнительно</h4>
                   <div className="space-y-2">
                     <label className="flex items-center cursor-pointer">
                       <input
@@ -567,7 +567,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
               {/* Sorting Section */}
               <div className="mt-8 pt-6 border-t border-gray-200">
-                <h4 className="font-semibold text-primary mb-3">Сортировка</h4>
+                <h4 className="font-semibold text-[#2f378b] mb-3">Сортировка</h4>
                 <div className="space-y-2">
                   <label className="flex items-center cursor-pointer">
                     <input
