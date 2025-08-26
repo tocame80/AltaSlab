@@ -1502,6 +1502,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                 <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
                 К загрузке ({getProductsBySelection().length})
               </h3>
+              {console.log('Debug uploadedImages:', uploadedImages)}
+              {console.log('Debug selectedProduct:', selectedProduct)}
+              {console.log('Debug getProductsBySelection():', getProductsBySelection())}
               <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 max-h-60 overflow-y-auto">
                 {getProductsBySelection().map((img, index) => (
                   <div key={index} className="relative group">
