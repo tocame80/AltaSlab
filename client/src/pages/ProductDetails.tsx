@@ -78,12 +78,22 @@ export default function ProductDetails() {
           );
           setProduct(foundProduct || null);
           
-          // Если продукт найден, загружаем все цвета из той же коллекции
+          // Если продукт найден, загружаем все уникальные цвета из той же коллекции
           if (foundProduct) {
             const sameCollectionProducts = products.filter((p: Product) => 
               p.collection === foundProduct.collection
             );
-            setCollectionColors(sameCollectionProducts);
+            
+            // Группируем по цветам и берем первый продукт каждого цвета
+            const uniqueColors = sameCollectionProducts.reduce((acc: Product[], current: Product) => {
+              const existingColor = acc.find(p => p.color === current.color);
+              if (!existingColor) {
+                acc.push(current);
+              }
+              return acc;
+            }, []);
+            
+            setCollectionColors(uniqueColors);
           }
         }
       } catch (error) {
