@@ -225,16 +225,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Helper function to get local image paths for a product
   const getLocalProductImages = (productId: string, collection: string) => {
-    const cleanId = productId?.replace('SPC', '') || productId;
-    // Return local image paths based on product structure
-    const basePath = `/products/${cleanId}`;
+    // If no photo available, use placeholder
     return {
-      image: `${basePath}-1.jpg`,
-      gallery: [
-        `${basePath}-1.jpg`,
-        `${basePath}-2.jpg`,
-        `${basePath}-3.jpg`
-      ]
+      image: '/placeholder-product.jpg',
+      gallery: ['/placeholder-product.jpg']
     };
   };
 
