@@ -5,6 +5,7 @@ import { FavoritesContext } from '@/contexts/FavoritesContext';
 import { Collection } from '@/types';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
+import { getProductMainImage, getProductGallery } from '@/assets/products/imageMap';
 
 interface Product {
   id: string;
@@ -46,13 +47,20 @@ export default function ProductDetails() {
   const [collectionColors, setCollectionColors] = useState<Product[]>([]);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
 
-  // Parse images from database - этот хук должен быть здесь, до условных возвратов
+  // Parse images using imageMap functions for local images
   const gallery = useMemo(() => {
     if (!product) return ['/placeholder-product.jpg'];
     
-    // Use local gallery images or fallback to single image
-    const productGallery = (product as any).gallery;
-    return productGallery || (product.image ? [product.image] : ['/placeholder-product.jpg']);
+    const productId = product.productCode?.replace('SPC', '') || product.id;
+    
+    // Check if API returned USE_IMAGEMAP signal
+    if (product.image?.startsWith('USE_IMAGEMAP:') || (product as any).gallery?.[0]?.startsWith('USE_IMAGEMAP:')) {
+      // Use imageMap functions for local images
+      return getProductGallery(productId, product.collection);
+    }
+    
+    // Fallback - also use imageMap by default
+    return getProductGallery(productId, product.collection);
   }, [product]);
 
   useEffect(() => {

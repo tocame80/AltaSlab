@@ -194,7 +194,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Catalog product routes
+  // Catalog product routes - with LOCAL images only
   app.get('/api/catalog-products', async (req, res) => {
     try {
       // Устанавливаем заголовки для отключения кеширования
@@ -206,19 +206,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       const catalogProducts = await storage.getCatalogProducts();
-      console.log('API: returning', catalogProducts.length, 'products'); // Отладка
+      console.log('API: returning', catalogProducts.length, 'products with LOCAL images');
       
-      // Отладка для продукта 8934
-      const product8934 = catalogProducts.find(p => p.productCode === 'SPC8934');
-      if (product8934) {
-        console.log('API: Product 8934 data:', {
-          id: product8934.id,
-          productCode: product8934.productCode,
-          images: product8934.images
-        });
-      }
+      // Transform products to use only local images
+      const transformedProducts = catalogProducts.map(product => {
+        const productId = product.productCode?.replace('SPC', '') || product.productCode;
+        const localImages = getLocalProductImages(productId, product.collection || '');
+        
+        return {
+          ...product,
+          // Override with local image signals
+          image: localImages.image,
+          gallery: localImages.gallery,
+          // Remove external images from database
+          images: undefined
+        };
+      });
       
-      res.json(catalogProducts);
+      res.json(transformedProducts);
     } catch (error) {
       console.error('Error fetching catalog products:', error);
       res.status(500).json({ message: 'Failed to fetch catalog products' });
