@@ -1421,10 +1421,15 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
             <div
               className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                 selectedProduct 
-                  ? 'border-gray-300 hover:border-[#E95D22] cursor-pointer' 
+                  ? isDragOver
+                    ? 'border-[#E95D22] bg-orange-50'
+                    : 'border-gray-300 hover:border-[#E95D22] cursor-pointer'
                   : 'border-gray-200 bg-gray-50 cursor-not-allowed'
               }`}
               onClick={() => selectedProduct && fileInputRef.current?.click()}
+              onDrop={selectedProduct ? handleDrop : undefined}
+              onDragOver={selectedProduct ? handleDragOver : undefined}
+              onDragLeave={selectedProduct ? handleDragLeave : undefined}
             >
               <Upload className="mx-auto mb-4 text-gray-400" size={48} />
               <p className="text-gray-600">
