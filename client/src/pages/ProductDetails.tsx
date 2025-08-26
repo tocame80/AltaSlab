@@ -370,7 +370,7 @@ export default function ProductDetails() {
                 <div className="text-right">
                   {/* Line 1: Size */}
                   <div className="text-white hover:text-[#e90039] text-sm font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                    {product.format}
+                    {product.format || 'Размер не указан'}
                   </div>
                   
                   {/* Line 2: Area/Quantity per package */}

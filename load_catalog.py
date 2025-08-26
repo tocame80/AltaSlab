@@ -65,12 +65,16 @@ try:
             
             # Извлекаем формат из названия товара
             name = product_data['name']
-            if '×' in name:
-                # Ищем размеры типа 300×600×2,4мм
-                import re
-                format_match = re.search(r'(\d+×\d+×[\d,]+мм)', name)
+            import re
+            # Ищем размеры типа 300х600х2,4мм или 300×600×2,4мм (и латинские х и математические ×)
+            format_match = re.search(r'(\d+[х×]\d+[х×][\d,]+мм)', name)
+            if not format_match:
+                # Если не нашли полный формат с толщиной, ищем хотя бы размеры 300х600
+                format_match = re.search(r'(\d+[х×]\d+)', name)
                 if format_match:
-                    product_data['format'] = format_match.group(1)
+                    product_data['format'] = format_match.group(1) + '×2,4мм'  # Добавляем стандартную толщину
+            else:
+                product_data['format'] = format_match.group(1)
             
             # Обрабатываем изображения
             images = []
