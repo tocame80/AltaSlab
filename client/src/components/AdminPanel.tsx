@@ -99,6 +99,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [showGalleryForm, setShowGalleryForm] = useState(false);
   const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
+  const [galleryImageFiles, setGalleryImageFiles] = useState<File[]>([]);
+  const [galleryImagePreviews, setGalleryImagePreviews] = useState<string[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
   const [materialSearchQuery, setMaterialSearchQuery] = useState<string>('');
   const [editingCatalogProduct, setEditingCatalogProduct] = useState<CatalogProduct | null>(null);
   const [showCatalogForm, setShowCatalogForm] = useState(false);
@@ -125,6 +128,46 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
           product.collection.toLowerCase().includes(query)
         );
       });
+  };
+
+  // Gallery image upload handlers
+  const handleGalleryImageDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    const files = Array.from(e.dataTransfer.files).filter(file => 
+      file.type.startsWith('image/')
+    );
+    
+    if (files.length > 0) {
+      addGalleryImageFiles(files);
+    }
+  };
+
+  const handleGalleryImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      addGalleryImageFiles(files);
+    }
+  };
+
+  const addGalleryImageFiles = (files: File[]) => {
+    // Add files to state
+    setGalleryImageFiles(prev => [...prev, ...files]);
+    
+    // Create preview URLs
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setGalleryImagePreviews(prev => [...prev, e.target?.result as string]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeGalleryImage = (index: number) => {
+    setGalleryImageFiles(prev => prev.filter((_, i) => i !== index));
+    setGalleryImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   // Helper function to filter catalog products based on search query
@@ -2499,6 +2542,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           setEditingGalleryProject(null);
                           setSelectedMaterials([]);
                           setGalleryImages([]);
+                          setGalleryImageFiles([]);
+                          setGalleryImagePreviews([]);
+                          setIsDragging(false);
                           setMaterialSearchQuery('');
                           galleryForm.reset();
                         }}
@@ -2509,10 +2555,44 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     </div>
                     
                     <form
-                      onSubmit={galleryForm.handleSubmit((data) => {
+                      onSubmit={galleryForm.handleSubmit(async (data) => {
+                        let imageUrls = [];
+                        
+                        // If there are files to upload, upload them first
+                        if (galleryImageFiles.length > 0) {
+                          const uploadData = new FormData();
+                          galleryImageFiles.forEach((file, index) => {
+                            uploadData.append('images', file);
+                          });
+
+                          try {
+                            const uploadResponse = await fetch('/api/admin/upload-gallery-images', {
+                              method: 'POST',
+                              body: uploadData,
+                            });
+
+                            if (!uploadResponse.ok) {
+                              throw new Error('Ошибка загрузки изображений');
+                            }
+
+                            const uploadResult = await uploadResponse.json();
+                            imageUrls = uploadResult.files.map((f: any) => f.url);
+                          } catch (error) {
+                            console.error('Upload error:', error);
+                            toast({
+                              title: 'Ошибка',
+                              description: 'Не удалось загрузить изображения',
+                              variant: 'destructive',
+                            });
+                            return;
+                          }
+                        } else {
+                          imageUrls = galleryImages; // Use existing URLs if no files uploaded
+                        }
+                        
                         const formData = {
                           ...data,
-                          images: galleryImages,
+                          images: imageUrls,
                           materialsUsed: selectedMaterials,
                         };
                         
@@ -2524,6 +2604,17 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         } else {
                           createGalleryProjectMutation.mutate(formData);
                         }
+
+                        // Clear form after successful submission
+                        setShowGalleryForm(false);
+                        setEditingGalleryProject(null);
+                        setSelectedMaterials([]);
+                        setGalleryImages([]);
+                        setGalleryImageFiles([]);
+                        setGalleryImagePreviews([]);
+                        setIsDragging(false);
+                        setMaterialSearchQuery('');
+                        galleryForm.reset();
                       })}
                       className="p-6 space-y-6"
                     >
@@ -2584,15 +2675,81 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Изображения проекта *
                         </label>
-                        <textarea
-                          value={galleryImages.join('\n')}
-                          onChange={(e) => setGalleryImages(e.target.value.split('\n').filter(url => url.trim()))}
-                          rows={4}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
-                          placeholder="Вставьте URL изображений, каждый на новой строке"
-                        />
-                        <p className="text-sm text-gray-500 mt-1">Каждый URL на новой строке</p>
-                        {galleryImages.length === 0 && (
+                        
+                        {/* Drag & Drop Upload Area */}
+                        <div
+                          onDrop={handleGalleryImageDrop}
+                          onDragOver={(e) => {
+                            e.preventDefault();
+                            setIsDragging(true);
+                          }}
+                          onDragLeave={() => setIsDragging(false)}
+                          className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                            isDragging
+                              ? 'border-[#E95D22] bg-orange-50'
+                              : 'border-gray-300 hover:border-gray-400'
+                          }`}
+                        >
+                          <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                          <p className="text-lg font-medium text-gray-700 mb-2">
+                            Перетащите изображения сюда
+                          </p>
+                          <p className="text-sm text-gray-500 mb-4">
+                            или нажмите для выбора файлов
+                          </p>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={handleGalleryImageSelect}
+                            className="hidden"
+                            id="gallery-image-upload"
+                          />
+                          <label
+                            htmlFor="gallery-image-upload"
+                            className="inline-flex items-center px-4 py-2 bg-[#E95D22] text-white rounded-lg hover:bg-[#d54a1a] cursor-pointer transition-colors"
+                          >
+                            <Upload className="w-4 h-4 mr-2" />
+                            Выбрать файлы
+                          </label>
+                        </div>
+
+                        {/* Image Previews */}
+                        {galleryImagePreviews.length > 0 && (
+                          <div className="mt-4">
+                            <h4 className="font-medium text-gray-700 mb-3">
+                              Загружено изображений: {galleryImagePreviews.length}
+                            </h4>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                              {galleryImagePreviews.map((preview, index) => (
+                                <div key={index} className="relative group">
+                                  <img
+                                    src={preview}
+                                    alt={`Preview ${index + 1}`}
+                                    className="w-full h-24 object-cover rounded-lg border border-gray-200"
+                                  />
+                                  <div className="absolute top-2 right-2 flex gap-1">
+                                    <button
+                                      type="button"
+                                      onClick={() => removeGalleryImage(index)}
+                                      className="bg-red-600 text-white p-1 rounded-full hover:bg-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
+                                      title="Удалить"
+                                    >
+                                      <X size={14} />
+                                    </button>
+                                  </div>
+                                  {galleryImageFiles[index] && (
+                                    <div className="absolute bottom-2 left-2 bg-black/75 text-white text-xs px-2 py-1 rounded">
+                                      {(galleryImageFiles[index].size / (1024 * 1024)).toFixed(1)} MB
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {galleryImagePreviews.length === 0 && (
                           <p className="text-red-600 text-sm mt-1">Добавьте хотя бы одно изображение</p>
                         )}
                       </div>

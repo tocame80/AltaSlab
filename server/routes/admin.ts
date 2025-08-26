@@ -329,4 +329,56 @@ router.delete('/delete-hero-image', async (req, res) => {
   }
 });
 
+// Upload gallery images
+router.post('/upload-gallery-images', upload.any(), async (req, res) => {
+  try {
+    const files = req.files as Express.Multer.File[];
+
+    if (!files || files.length === 0) {
+      return res.status(400).json({ error: 'No files provided' });
+    }
+
+    // Create gallery folder path
+    const galleryPath = path.join(process.cwd(), 'client', 'src', 'assets', 'gallery');
+    
+    // Ensure folder exists
+    try {
+      await fs.access(galleryPath);
+    } catch {
+      await fs.mkdir(galleryPath, { recursive: true });
+    }
+
+    // Get existing files count to continue numbering
+    const existingFiles = await fs.readdir(galleryPath).catch(() => []);
+    const existingCount = existingFiles.filter(file => 
+      /^gallery-\d+\./i.test(file)
+    ).length;
+
+    // Save each file and return URLs
+    const savedFiles = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const extension = path.extname(file.originalname);
+      const fileName = `gallery-${existingCount + i + 1}${extension}`;
+      const filePath = path.join(galleryPath, fileName);
+
+      await fs.writeFile(filePath, file.buffer);
+      savedFiles.push({
+        fileName,
+        url: `/assets/gallery/${fileName}`
+      });
+    }
+
+    res.json({ 
+      success: true, 
+      message: `Uploaded ${savedFiles.length} gallery images`,
+      files: savedFiles 
+    });
+
+  } catch (error) {
+    console.error('Error uploading gallery images:', error);
+    res.status(500).json({ error: 'Failed to upload gallery images' });
+  }
+});
+
 export default router;
