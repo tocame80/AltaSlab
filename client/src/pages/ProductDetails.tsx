@@ -242,7 +242,11 @@ export default function ProductDetails() {
     }
   };
 
-
+  // Функция для определения текущей коллекции
+  const getCurrentCollection = () => {
+    if (!product) return null;
+    return collections.find(col => col.dbName === product.collection);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -251,15 +255,22 @@ export default function ProductDetails() {
       <div className="bg-gray-50 py-4 border-t border-gray-200">
         <div className="container mx-auto px-6">
           <nav className="flex flex-wrap items-center gap-8">
-            {collections.map((collection) => (
-              <button
-                key={collection.key}
-                onClick={() => navigateToCollection(collection)}
-                className="text-sm font-medium transition-colors uppercase tracking-wide text-gray-500 hover:text-gray-700"
-              >
-                {collection.label}
-              </button>
-            ))}
+            {collections.map((collection) => {
+              const isActive = getCurrentCollection()?.key === collection.key;
+              return (
+                <button
+                  key={collection.key}
+                  onClick={() => navigateToCollection(collection)}
+                  className={`text-sm font-medium transition-colors uppercase tracking-wide ${
+                    isActive 
+                      ? 'text-gray-900 font-bold' 
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  {collection.label}
+                </button>
+              );
+            })}
             <button
               onClick={() => setLocation('/#catalog')}
               className="text-sm font-medium transition-colors uppercase tracking-wide text-gray-500 hover:text-gray-700"
@@ -414,7 +425,7 @@ export default function ProductDetails() {
           {/* Thumbnail Gallery */}
           {gallery.length > 1 && (
             <div className="flex gap-3 justify-center overflow-x-auto pb-2">
-              {gallery.map((image, index) => (
+              {gallery.map((image: string, index: number) => (
                 <button
                   key={index}
                   onClick={() => setCurrentImageIndex(index)}
