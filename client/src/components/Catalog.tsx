@@ -21,6 +21,10 @@ interface Product {
     deliveryTime: string;
     quantity: number;
   };
+  isPremium?: boolean;
+  areaPerPiece?: number;
+  piecesPerPackage?: number;
+  areaPerPackage?: number;
 }
 import ProductCard from './ProductCard';
 import { ChevronDown, Search, Filter, X } from 'lucide-react';
@@ -179,7 +183,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
     // Apply additional filters
     if (additionalFilters.novelties) {
-      filtered = filtered.filter(product => product.isPremium);
+      filtered = filtered.filter(product => product.isPremium || false);
     }
     if (additionalFilters.favorites) {
       // Show only favorite products when favorites filter is active
@@ -187,7 +191,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     }
     if (additionalFilters.discount) {
       // For demo purposes, show premium items as discounted
-      filtered = filtered.filter(product => product.isPremium);
+      filtered = filtered.filter(product => product.isPremium || false);
     }
     if (additionalFilters.inStock) {
       // For demo purposes, all products are in stock
@@ -201,7 +205,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
         return (
           product.name.toLowerCase().includes(searchLower) ||
           product.color.toLowerCase().includes(searchLower) ||
-          product.design.toLowerCase().includes(searchLower) ||
+          (product.design || '').toLowerCase().includes(searchLower) ||
           product.collection.toLowerCase().includes(searchLower) ||
           product.format.toLowerCase().includes(searchLower)
         );
@@ -214,7 +218,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     } else if (sortBy === 'price-desc') {
       filtered.sort((a, b) => b.price - a.price);
     } else if (sortBy === 'name') {
-      filtered.sort((a, b) => a.design.localeCompare(b.design));
+      filtered.sort((a, b) => (a.design || '').localeCompare(b.design || ''));
     }
 
     return filtered;
@@ -668,7 +672,10 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 {visibleProducts.map((product) => (
                   <ProductCard 
                     key={product.id} 
-                    product={product} 
+                    product={{
+                      ...product,
+                      design: product.design || product.color || product.name
+                    } as any} 
                     isFavorite={isFavorite(product.id)}
                     onToggleFavorite={() => toggleFavorite(product.id)}
                     onClick={() => {
