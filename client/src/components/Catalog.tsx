@@ -110,7 +110,10 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   }, [activeCollection]);
 
   const filteredProducts = useMemo(() => {
-    let filtered = products;
+    // First filter out collection headers (AUTO_ products) to show only real products
+    let filtered = products.filter(product => 
+      product.id && !product.id.startsWith('AUTO_')
+    );
 
     // Filter by activeCollection first (favorites and all show everything)
     if (activeCollection === 'accessories') {
