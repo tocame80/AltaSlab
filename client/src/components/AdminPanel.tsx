@@ -86,10 +86,27 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [showGalleryForm, setShowGalleryForm] = useState(false);
   const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
+  const [materialSearchQuery, setMaterialSearchQuery] = useState<string>('');
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  // Helper function to filter materials based on search query
+  const getFilteredMaterials = () => {
+    return products
+      .filter(p => p.category !== 'accessories')
+      .filter(product => {
+        if (!materialSearchQuery.trim()) return true;
+        const query = materialSearchQuery.toLowerCase();
+        return (
+          product.id.toLowerCase().includes(query) ||
+          product.name.toLowerCase().includes(query) ||
+          product.color.toLowerCase().includes(query) ||
+          product.collection.toLowerCase().includes(query)
+        );
+      });
+  };
 
   // Certificate form
   const certificateForm = useForm<CertificateFormData>({
@@ -337,6 +354,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       galleryForm.reset();
       setSelectedMaterials([]);
       setGalleryImages([]);
+      setMaterialSearchQuery('');
       toast({
         title: 'Успешно',
         description: 'Проект галереи создан',
@@ -362,6 +380,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       galleryForm.reset();
       setSelectedMaterials([]);
       setGalleryImages([]);
+      setMaterialSearchQuery('');
       toast({
         title: 'Успешно',
         description: 'Проект галереи обновлен',
@@ -1819,6 +1838,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           setEditingGalleryProject(null);
                           setSelectedMaterials([]);
                           setGalleryImages([]);
+                          setMaterialSearchQuery('');
                           galleryForm.reset();
                         }}
                         className="text-gray-500 hover:text-gray-700"
@@ -1921,9 +1941,38 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Используемые материалы
                         </label>
+                        
+                        {/* Search Input */}
+                        <div className="mb-3 flex gap-2">
+                          <input
+                            type="text"
+                            value={materialSearchQuery}
+                            onChange={(e) => setMaterialSearchQuery(e.target.value)}
+                            placeholder="Поиск по артикулу или названию материала..."
+                            className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22] text-sm"
+                            data-testid="input-material-search"
+                          />
+                          {materialSearchQuery && (
+                            <button
+                              type="button"
+                              onClick={() => setMaterialSearchQuery('')}
+                              className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
+                              data-testid="button-clear-search"
+                            >
+                              Очистить
+                            </button>
+                          )}
+                        </div>
+
                         <div className="border border-gray-300 rounded-lg p-4 max-h-60 overflow-y-auto">
                           <div className="grid grid-cols-1 gap-2">
-                            {products.filter(p => p.category !== 'accessories').map((product) => (
+                            {getFilteredMaterials().length === 0 ? (
+                              <div className="text-center py-8 text-gray-500">
+                                <p>Материалы не найдены</p>
+                                <p className="text-sm">Попробуйте изменить поисковый запрос</p>
+                              </div>
+                            ) : (
+                              getFilteredMaterials().map((product) => (
                               <label key={product.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
                                 <input
                                   type="checkbox"
@@ -1945,12 +1994,19 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                 <div className="flex-1">
                                   <p className="text-sm font-medium">{product.color}</p>
                                   <p className="text-xs text-gray-500">{product.collection} - {product.format}</p>
+                                  <p className="text-xs text-gray-400">Артикул: {product.id}</p>
                                 </div>
                               </label>
-                            ))}
+                              ))
+                            )}
                           </div>
                         </div>
-                        <p className="text-sm text-gray-500 mt-1">Выбрано: {selectedMaterials.length} материалов</p>
+                        <div className="text-sm text-gray-500 mt-1 flex justify-between">
+                          <span>Выбрано: {selectedMaterials.length} материалов</span>
+                          <span>
+                            Показано: {getFilteredMaterials().length} из {products.filter(p => p.category !== 'accessories').length}
+                          </span>
+                        </div>
                       </div>
 
                       {/* Additional Info */}
