@@ -136,7 +136,8 @@ export function ProductCatalog() {
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredProducts.map(product => (
-          <Card key={product.id} className="hover:shadow-lg transition-shadow" data-testid={`card-product-${product.id}`}>
+          <Card key={product.id} className="hover:shadow-lg transition-shadow cursor-pointer" data-testid={`card-product-${product.id}`}
+                onClick={() => window.location.href = `/product/${product.barcode || product.id}`}>
             <CardHeader className="p-0">
               <div className="aspect-square overflow-hidden rounded-t-lg">
                 <img
@@ -144,7 +145,13 @@ export function ProductCatalog() {
                     if (product.images) {
                       try {
                         const images = Array.isArray(product.images) ? product.images : JSON.parse(product.images);
-                        return images.length > 0 ? images[0] : '/placeholder-product.jpg';
+                        const firstImage = images.length > 0 ? images[0] : '';
+                        // Если есть внешняя ссылка, используем её
+                        if (firstImage && (firstImage.startsWith('http://') || firstImage.startsWith('https://'))) {
+                          return firstImage;
+                        }
+                        // Иначе используем заглушку
+                        return '/placeholder-product.jpg';
                       } catch {
                         return '/placeholder-product.jpg';
                       }

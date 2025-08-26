@@ -239,8 +239,26 @@ export default function ProductDetails() {
           Вернуться в каталог
         </button>
 
+        {/* Product Header - Collection and Color */}
+        <div className="bg-white rounded-xl p-6 mb-6 shadow-sm">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{getCollectionDisplayName()}</h1>
+              <div className="text-xl text-gray-600">{product.color}</div>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-[#e90039]">
+                {Math.round(product.price).toLocaleString('ru-RU')} ₽ за упак.
+              </div>
+              <div className="text-sm text-gray-500">
+                {product.format}
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Full Width Image Gallery */}
-        <div className="mb-12">
+        <div className="mb-8">
           {/* Main Image */}
           <div className="group relative bg-white rounded-xl overflow-hidden shadow-sm mb-6">
             <div className="aspect-[2/1] relative">
@@ -249,46 +267,6 @@ export default function ProductDetails() {
                 alt={getProductDisplayName()}
                 className="w-full h-full object-cover"
               />
-              
-              {/* Product Info Overlay - Bottom Left - Three Lines */}
-              <div className="absolute bottom-0 left-0 p-4 transition-all duration-300">
-                <div>
-                  {/* Line 1: Collection */}
-                  <div className="text-gray-600 hover:text-[#e90039] text-sm font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                    {getCollectionDisplayName()}
-                  </div>
-                  
-                  {/* Line 2: Color */}
-                  <div className="text-gray-900 hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                    {product.color}
-                  </div>
-                  
-                  {/* Line 3: Price per unit */}
-                  <div className="text-gray-900 hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                    {Math.round(product.price).toLocaleString('ru-RU')} ₽/{product.unit || 'упак'}
-                  </div>
-                </div>
-              </div>
-
-              {/* Additional Info Overlay - Bottom Right - Three Lines */}
-              <div className="absolute bottom-0 right-0 p-4 transition-all duration-300">
-                <div className="text-right">
-                  {/* Line 1: Size */}
-                  <div className="text-gray-600 hover:text-[#e90039] text-sm font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                    {product.format}
-                  </div>
-                  
-                  {/* Line 2: Quantity per package */}
-                  <div className="text-gray-900 hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                    {product.quantity || 1} {product.unit || 'шт'}
-                  </div>
-                  
-                  {/* Line 3: Price per package */}
-                  <div className="text-gray-900 hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                    {product.price.toLocaleString('ru-RU')} ₽ {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'за шт.' : 'за упак.'}
-                  </div>
-                </div>
-              </div>
             </div>
             
             {/* Image Controls */}
@@ -414,172 +392,28 @@ export default function ProductDetails() {
             )}
 
             {activeTab === 'specifications' && (
-              <div className="space-y-8">
-                {/* Quick Specs Cards */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 text-center">
-                    <div className="text-2xl font-bold text-blue-700">{product.format.split('×')[0]}</div>
-                    <div className="text-sm text-blue-600 font-medium">Ширина, мм</div>
+              <div className="bg-white rounded-xl p-6 shadow-sm">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Характеристики</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Размер панели</span>
+                    <span className="font-semibold text-gray-900">{product.format}</span>
                   </div>
-                  <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 text-center">
-                    <div className="text-2xl font-bold text-green-700">{product.format.split('×')[1]}</div>
-                    <div className="text-sm text-green-600 font-medium">Длина, мм</div>
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Коллекция</span>
+                    <span className="font-semibold text-gray-900">{getCollectionDisplayName()}</span>
                   </div>
-                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 text-center">
-                    <div className="text-2xl font-bold text-purple-700">
-                      {product.quantity || 1}
-                    </div>
-                    <div className="text-sm text-purple-600 font-medium">
-                      {product.unit || 'упак'}
-                    </div>
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Цвет/дизайн</span>
+                    <span className="font-semibold text-gray-900">{product.color}</span>
                   </div>
-                  <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 text-center">
-                    <div className="text-2xl font-bold text-orange-700">
-                      {Math.round(product.price)}
-                    </div>
-                    <div className="text-sm text-orange-600 font-medium">
-                      ₽ за {product.unit || 'упак'}
-                    </div>
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Количество в упаковке</span>
+                    <span className="font-semibold text-gray-900">{product.quantity || 1} {product.unit || 'шт'}</span>
                   </div>
-                </div>
-
-                {/* Detailed Specifications */}
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div className="bg-white border border-gray-200 rounded-xl p-6">
-                    <h4 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                      <div className="w-2 h-2 bg-[#e90039] rounded-full"></div>
-                      Параметры продукта
-                    </h4>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                        <span className="text-gray-600 flex items-center gap-2">
-                          <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                          Размер панели
-                        </span>
-                        <span className="font-semibold text-gray-900">{product.format}</span>
-                      </div>
-                      <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                        <span className="text-gray-600 flex items-center gap-2">
-                          <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                          Цвет/дизайн
-                        </span>
-                        <span className="font-semibold text-gray-900">{product.color}</span>
-                      </div>
-                      {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
-                        <>
-                          <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                            <span className="text-gray-600 flex items-center gap-2">
-                              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                              Количество в упаковке
-                            </span>
-                            <span className="font-semibold text-gray-900">{product.quantity || 1} {product.unit || 'шт'}</span>
-                          </div>
-                        </>
-                      )}
-                      <div className="flex items-center justify-between py-3">
-                        <span className="text-gray-600 flex items-center gap-2">
-                          <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                          Коллекция
-                        </span>
-                        <span className="font-semibold text-gray-900">{product.collection}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white border border-gray-200 rounded-xl p-6">
-                    <h4 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                      <div className="w-2 h-2 bg-[#e90039] rounded-full"></div>
-                      Технические характеристики
-                    </h4>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                        <span className="text-gray-600 flex items-center gap-2">
-                          <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                          Материал
-                        </span>
-                        <span className="font-semibold text-gray-900">SPC композит</span>
-                      </div>
-                      <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                        <span className="text-gray-600 flex items-center gap-2">
-                          <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                          Тип монтажа
-                        </span>
-                        <span className="font-semibold text-gray-900">Клеевой</span>
-                      </div>
-                      <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                        <span className="text-gray-600 flex items-center gap-2">
-                          <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                          Применение
-                        </span>
-                        <span className="font-semibold text-gray-900">Стены, потолки</span>
-                      </div>
-                      {product.specifications && (
-                        <>
-                          {product.specifications.thickness && (
-                            <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                              <span className="text-gray-600 flex items-center gap-2">
-                                <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                                Толщина
-                              </span>
-                              <span className="font-semibold text-gray-900">{product.specifications.thickness}</span>
-                            </div>
-                          )}
-                          {product.specifications.wearClass && (
-                            <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                              <span className="text-gray-600 flex items-center gap-2">
-                                <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                                Класс износостойкости
-                              </span>
-                              <span className="font-semibold text-gray-900">{product.specifications.wearClass}</span>
-                            </div>
-                          )}
-                          {product.specifications.weight && (
-                            <div className="flex items-center justify-between py-3">
-                              <span className="text-gray-600 flex items-center gap-2">
-                                <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                                Вес
-                              </span>
-                              <span className="font-semibold text-gray-900">{product.specifications.weight}</span>
-                            </div>
-                          )}
-                        </>
-                      )}
-                      <div className="flex items-center justify-between py-3">
-                        <span className="text-gray-600 flex items-center gap-2">
-                          <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                          Производство
-                        </span>
-                        <span className="font-semibold text-gray-900">Россия</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Price Information */}
-                <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-6">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <div className="w-2 h-2 bg-[#e90039] rounded-full"></div>
-                    Ценовая информация
-                  </h4>
-                  <div className="grid md:grid-cols-3 gap-6">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-[#e90039]">
-                        {product.price.toLocaleString('ru-RU')} ₽
-                      </div>
-                      <div className="text-sm text-gray-600">
-                        {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'за штуку' : 'за упаковку'}
-                      </div>
-                    </div>
-                    {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
-                      <>
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-blue-600">
-                            {product.price.toLocaleString('ru-RU')} ₽
-                          </div>
-                          <div className="text-sm text-gray-600">за {product.unit || 'упак'}</div>
-                        </div>
-                      </>
-                    )}
+                  <div className="flex justify-between items-center py-2">
+                    <span className="text-gray-600">Цена за упаковку</span>
+                    <span className="font-semibold text-[#e90039]">{Math.round(product.price).toLocaleString('ru-RU')} ₽</span>
                   </div>
                 </div>
               </div>
