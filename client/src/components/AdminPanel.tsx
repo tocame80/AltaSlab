@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit, Play, Database, Download, Image } from 'lucide-react';
+import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit, Play, Database, Download, Image, RotateCw, HardDrive } from 'lucide-react';
 import { products } from '../data/products';
 import * as XLSX from 'xlsx';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -1548,23 +1548,58 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       <img
                         src={img.preview}
                         alt={img.fileName}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover transition-transform duration-300"
+                        style={{ transform: `rotate(${img.rotation}deg)` }}
                       />
                     </div>
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
+                      <button
+                        onClick={() => rotateImage(uploadedImages.findIndex(image => image === img))}
+                        className="text-white hover:text-blue-400 transition-colors p-1 bg-black/20 rounded"
+                        title="Повернуть"
+                      >
+                        <RotateCw size={16} />
+                      </button>
+                      <button
+                        onClick={() => downloadOriginal(img)}
+                        className="text-white hover:text-green-400 transition-colors p-1 bg-black/20 rounded"
+                        title="Скачать оригинал"
+                      >
+                        <Download size={16} />
+                      </button>
+                      <button
+                        onClick={() => toggleFavorite(uploadedImages.findIndex(image => image === img))}
+                        className={`transition-colors p-1 bg-black/20 rounded ${
+                          img.isFavorite ? 'text-yellow-400' : 'text-white hover:text-yellow-400'
+                        }`}
+                        title="Добавить в избранное"
+                      >
+                        <HardDrive size={16} />
+                      </button>
                       <button
                         onClick={() => removeUploadedImage(uploadedImages.findIndex(image => image === img))}
-                        className="text-white hover:text-red-400 transition-colors"
+                        className="text-white hover:text-red-400 transition-colors p-1 bg-black/20 rounded"
+                        title="Удалить"
                       >
-                        <Trash2 size={20} />
+                        <Trash2 size={16} />
                       </button>
                     </div>
                     <div className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
                       Новый
                     </div>
-                    <p className="text-xs text-gray-600 mt-1 truncate" title={img.fileName}>
-                      {img.fileName}
-                    </p>
+                    {img.isFavorite && (
+                      <div className="absolute top-2 right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded">
+                        ★
+                      </div>
+                    )}
+                    <div className="mt-1">
+                      <p className="text-xs text-gray-600 truncate" title={img.fileName}>
+                        {img.fileName}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        ({img.size})
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>
