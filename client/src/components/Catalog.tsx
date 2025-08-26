@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { products } from '@/data/products';
+import { useQuery } from '@tanstack/react-query';
 import { Collection } from '@/types';
 import ProductCard from './ProductCard';
 import { ChevronDown, Search, Filter, X } from 'lucide-react';
@@ -13,6 +13,12 @@ interface CatalogProps {
 export default function Catalog({ activeCollection }: CatalogProps) {
   const { favorites, toggleFavorite, isFavorite } = useFavoritesContext();
   const isNavSticky = useStickyNav();
+  
+  // Load products from API database
+  const { data: products = [], isLoading, error } = useQuery({
+    queryKey: ['/api/catalog-products'],
+    staleTime: 30000, // Cache for 30 seconds
+  });
   
   const [filters, setFilters] = useState({
     collection: '',
@@ -620,25 +626,48 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
           {/* Right Content Area */}
           <div className="flex-1 w-full lg:w-auto">
-            {/* Results Info */}
-            <div className="flex justify-between items-center mb-6">
-              <span className="text-muted">Показано {visibleProducts.length} из {filteredProducts.length} товаров</span>
-            </div>
+            {/* Loading State */}
+            {isLoading && (
+              <div className="flex justify-center items-center py-12">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#e90039] mx-auto mb-4"></div>
+                  <p className="text-muted">Загружаем каталог...</p>
+                </div>
+              </div>
+            )}
 
-            {/* Product Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 mb-12">
-              {visibleProducts.map((product) => (
-                <ProductCard 
-                  key={product.id} 
-                  product={product} 
-                  isFavorite={isFavorite(product.id)}
-                  onToggleFavorite={() => toggleFavorite(product.id)}
-                  onClick={() => {
-                    window.location.href = `/product/${product.id}`;
-                  }}
-                />
-              ))}
-            </div>
+            {/* Error State */}
+            {error && (
+              <div className="text-center py-12">
+                <p className="text-red-600 text-lg">Ошибка загрузки каталога</p>
+                <p className="text-muted mt-2">Пожалуйста, обновите страницу</p>
+              </div>
+            )}
+
+            {/* Products Content */}
+            {!isLoading && !error && (
+              <>
+                {/* Results Info */}
+                <div className="flex justify-between items-center mb-6">
+                  <span className="text-muted">Показано {visibleProducts.length} из {filteredProducts.length} товаров</span>
+                </div>
+
+                {/* Product Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 mb-12">
+                  {visibleProducts.map((product) => (
+                    <ProductCard 
+                      key={product.id} 
+                      product={product} 
+                      isFavorite={isFavorite(product.id)}
+                      onToggleFavorite={() => toggleFavorite(product.id)}
+                      onClick={() => {
+                        window.location.href = `/product/${product.id}`;
+                      }}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
 
             {/* Load More Button */}
             {hasMoreItems && (
