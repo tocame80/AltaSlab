@@ -365,15 +365,25 @@ export default function ProductDetails() {
                 </div>
               </div>
 
-              {/* Additional Info Overlay - Bottom Right - Single Line (like in catalog) */}
+              {/* Additional Info Overlay - Bottom Right - Three Lines (like in catalog) */}
               <div className="absolute bottom-0 right-0 p-4 transition-all duration-300">
                 <div className="text-right">
-                  {/* Area per package only (like in catalog) */}
-                  <div className="text-white hover:text-[#e90039] text-base font-semibold drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                  {/* Line 1: Size */}
+                  <div className="text-white hover:text-[#e90039] text-sm font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                    {product.format}
+                  </div>
+                  
+                  {/* Line 2: Area/Quantity per package */}
+                  <div className="text-white hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
                     {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' 
                       ? (product.areaPerPackage ? `${product.areaPerPackage} м²` : 'Нет данных о площади')
                       : (product.pcsPerPackage ? `${product.pcsPerPackage} шт` : 'Нет данных о количестве')
                     }
+                  </div>
+                  
+                  {/* Line 3: Price per package */}
+                  <div className="text-white hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                    {product.price.toLocaleString('ru-RU')} ₽ {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'за шт.' : 'за упак.'}
                   </div>
                 </div>
               </div>
