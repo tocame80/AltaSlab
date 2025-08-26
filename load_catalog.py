@@ -49,7 +49,7 @@ try:
                 'unit': str(row.get('Единица измерения', 'упак')).strip(),
                 'quantity': int(row.get('Количество', 0)) if not pd.isna(row.get('Количество', 0)) else 0,
                 'pcs_per_package': float(row.get('Шт в уп', 1)) if not pd.isna(row.get('Шт в уп', 1)) else None,
-                'area_per_package': float(row.get('м2 в уп', 0)) if not pd.isna(row.get('м2 в уп', 0)) else None,
+                'area_per_package': float(row.get('м2 в уп')) if not pd.isna(row.get('м2 в уп')) and row.get('м2 в уп') != '' else None,
                 'barcode': str(row.get('Штрихкод упаковки', '')).strip() if not pd.isna(row.get('Штрихкод упаковки', '')) else None,
                 'price': str(row.get('Цена за единицу измерения', '0')).strip(),
                 'category': 'SPC панели',

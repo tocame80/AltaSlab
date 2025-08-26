@@ -7,6 +7,9 @@ This is a React-based SPA (Single Page Application) for "АЛЬТА СЛЭБ" - 
 - **Text Overlay Improvements**: Project titles moved to image overlays with white text and drop shadows for better visibility
 - **Material Display Enhancement**: Removed pricing from project materials, keeping only collection and color information
 - **Text Visibility Fix**: Applied direct `text-white` classes to h1/h3 elements instead of relying on parent inheritance for consistent white text display across gallery and project pages
+- **Catalog Import/Export Enhancement**: Updated Excel import/export to support new "Каталог Slab для сайта 26.08.2025" format with "Шт в уп" and "м2 в уп" fields
+- **Admin Catalog Pagination**: Added pagination to admin catalog (5 items per page with "Show more" button) for better performance with 74 products
+- **Package Data Fix**: Corrected area_per_package and pcs_per_package field mapping - now displays correct values like "4,32м2" instead of "0,0м2" in product cards
 
 # User Preferences
 
