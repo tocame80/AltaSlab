@@ -104,7 +104,7 @@ export default function Gallery() {
       <div className="bg-gray-50">
         <div className="container mx-auto px-4 lg:px-6 py-8">
           {filteredProjects.length > 0 ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
               {filteredProjects.map((project: GalleryProject) => {
                 const currentImageIndex = currentImageIndexes[project.id] || 0;
                 const projectMaterials = getProjectMaterials(project.materialsUsed);
@@ -117,7 +117,7 @@ export default function Gallery() {
                     data-testid={`card-project-${project.id}`}
                   >
                     
-                    {/* Image Slider */}
+                    {/* Image with Text Overlay */}
                     <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
                       {project.images && project.images.length > 0 ? (
                         <>
@@ -128,8 +128,42 @@ export default function Gallery() {
                           />
                           
                           {/* Gradient Overlay */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                           
+                          {/* Text Overlay */}
+                          <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                            {/* Title */}
+                            <h3 className="text-lg font-bold mb-2 line-clamp-2 drop-shadow-lg">
+                              {project.title}
+                            </h3>
+                            
+                            {/* Description */}
+                            <p className="text-sm text-white/90 line-clamp-2 leading-relaxed drop-shadow mb-3">
+                              {project.description}
+                            </p>
+                            
+                            {/* Project Details */}
+                            <div className="flex flex-wrap gap-2">
+                              {project.location && (
+                                <div className="flex items-center gap-1 px-2 py-1 bg-white/20 backdrop-blur-sm rounded text-xs">
+                                  <MapPin className="w-3 h-3" />
+                                  <span>{project.location}</span>
+                                </div>
+                              )}
+                              {project.area && (
+                                <div className="flex items-center gap-1 px-2 py-1 bg-white/20 backdrop-blur-sm rounded text-xs">
+                                  <Maximize2 className="w-3 h-3" />
+                                  <span>{project.area}</span>
+                                </div>
+                              )}
+                              {project.year && (
+                                <div className="flex items-center gap-1 px-2 py-1 bg-white/20 backdrop-blur-sm rounded text-xs">
+                                  <Calendar className="w-3 h-3" />
+                                  <span>{project.year}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
                           
                           {/* Image Counter */}
                           {project.images.length > 1 && (
@@ -152,106 +186,64 @@ export default function Gallery() {
                       )}
                     </div>
                     
-                    {/* Project Info */}
-                    <div className="p-6">
-                      {/* Title and Description */}
-                      <div className="mb-4">
-                        <h3 className="text-xl font-bold text-[#2f378b] mb-2 line-clamp-2 group-hover:text-[#e90039] transition-colors duration-200">
-                          {project.title}
-                        </h3>
-                        <p className="text-gray-600 text-sm line-clamp-3 leading-relaxed">
-                          {project.description}
-                        </p>
-                      </div>
-                      
-                      {/* Project Details */}
-                      <div className="flex flex-wrap gap-3 mb-5">
-                        {project.location && (
-                          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-lg text-sm text-gray-600 hover:bg-gray-100 transition-colors">
-                            <MapPin className="w-4 h-4 text-[#e90039]" />
-                            <span className="font-medium">{project.location}</span>
-                          </div>
-                        )}
-                        {project.area && (
-                          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-lg text-sm text-gray-600 hover:bg-gray-100 transition-colors">
-                            <Maximize2 className="w-4 h-4 text-[#e90039]" />
-                            <span className="font-medium">{project.area}</span>
-                          </div>
-                        )}
-                        {project.year && (
-                          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-lg text-sm text-gray-600 hover:bg-gray-100 transition-colors">
-                            <Calendar className="w-4 h-4 text-[#e90039]" />
-                            <span className="font-medium">{project.year}</span>
-                          </div>
-                        )}
-                      </div>
+                    {/* Materials Used */}
+                    {projectMaterials.length > 0 && (
+                      <div className="p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="font-semibold text-[#2f378b] text-sm">МАТЕРИАЛЫ ПРОЕКТА</h4>
+                          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                            {projectMaterials.length} шт.
+                          </span>
+                        </div>
+                        
+                        <div className="grid grid-cols-3 gap-2">
+                          {projectMaterials.slice(0, 3).map((material, index) => (
+                            <div 
+                              key={material.id} 
+                              className="group/material rounded-lg overflow-hidden hover:shadow-md transition-all duration-300 cursor-pointer"
+                            >
+                              {/* Material Image */}
+                              <div className="relative aspect-[2/1] overflow-hidden">
+                                <img 
+                                  src={material.image} 
+                                  alt={`${material.design} - ${material.collection}`}
+                                  className="w-full h-full object-cover transition-transform duration-500 group-hover/material:scale-105"
+                                />
+                                
+                                {/* Image Overlay - darkening effect on hover */}
+                                <div className="absolute inset-0 bg-black/20 transition-opacity duration-300 opacity-0 group-hover/material:opacity-100 pointer-events-none"></div>
 
-                      {/* Materials Used */}
-                      {projectMaterials.length > 0 && (
-                        <div className="border-t pt-4">
-                          <div className="flex items-center justify-between mb-3">
-                            <h4 className="font-semibold text-[#2f378b] text-sm">МАТЕРИАЛЫ ПРОЕКТА</h4>
-                            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                              {projectMaterials.length} шт.
-                            </span>
-                          </div>
-                          
-                          <div className="grid grid-cols-3 gap-2">
-                            {projectMaterials.slice(0, 3).map((material, index) => (
-                              <div 
-                                key={material.id} 
-                                className="group/material rounded-lg overflow-hidden hover:shadow-md transition-all duration-300 cursor-pointer"
-                              >
-                                {/* Material Image */}
-                                <div className="relative aspect-[2/1] overflow-hidden">
-                                  <img 
-                                    src={material.image} 
-                                    alt={`${material.design} - ${material.collection}`}
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover/material:scale-105"
-                                  />
-                                  
-                                  {/* Image Overlay - darkening effect on hover */}
-                                  <div className="absolute inset-0 bg-black/20 transition-opacity duration-300 opacity-0 group-hover/material:opacity-100 pointer-events-none"></div>
-
-                                  {/* Product Info Overlay - Bottom Left */}
-                                  <div className="absolute bottom-0 left-0 p-2 transition-all duration-300">
-                                    <div>
-                                      {/* Collection */}
-                                      <div className="text-white text-[10px] font-medium mb-1 drop-shadow-lg transition-colors duration-300">
-                                        {material.collection === 'МАГИЯ БЕТОНА' ? 'МАГИЯ БЕТОНА' : 
-                                         material.collection === 'ТКАНЕВАЯ РОСКОШЬ' ? 'ТКАНЕВАЯ РОСКОШЬ' : 
-                                         material.collection === 'МАТОВАЯ ЭСТЕТИКА' ? 'МАТОВАЯ ЭСТЕТИКА' : 
-                                         material.collection === 'МРАМОРНАЯ ФЕЕРИЯ' ? 'МРАМОРНАЯ ФЕЕРИЯ' : material.collection}
-                                      </div>
-                                      
-                                      {/* Design/Color */}
-                                      <div className="text-white text-xs font-semibold mb-1 drop-shadow-lg transition-colors duration-300">
-                                        {material.color}
-                                      </div>
-                                      
-                                      {/* Price */}
-                                      {material.price && (
-                                        <div className="text-white text-xs font-bold drop-shadow-lg transition-colors duration-300">
-                                          {material.price.toLocaleString('ru-RU')} ₽
-                                        </div>
-                                      )}
+                                {/* Product Info Overlay - Bottom Left */}
+                                <div className="absolute bottom-0 left-0 p-2 transition-all duration-300">
+                                  <div>
+                                    {/* Collection */}
+                                    <div className="text-white text-[10px] font-medium mb-1 drop-shadow-lg transition-colors duration-300">
+                                      {material.collection === 'МАГИЯ БЕТОНА' ? 'МАГИЯ БЕТОНА' : 
+                                       material.collection === 'ТКАНЕВАЯ РОСКОШЬ' ? 'ТКАНЕВАЯ РОСКОШЬ' : 
+                                       material.collection === 'МАТОВАЯ ЭСТЕТИКА' ? 'МАТОВАЯ ЭСТЕТИКА' : 
+                                       material.collection === 'МРАМОРНАЯ ФЕЕРИЯ' ? 'МРАМОРНАЯ ФЕЕРИЯ' : material.collection}
+                                    </div>
+                                    
+                                    {/* Design/Color */}
+                                    <div className="text-white text-xs font-semibold drop-shadow-lg transition-colors duration-300">
+                                      {material.color}
                                     </div>
                                   </div>
                                 </div>
                               </div>
-                            ))}
-                          </div>
-                          
-                          {projectMaterials.length > 3 && (
-                            <div className="mt-3 p-2 bg-gray-50 rounded-lg text-center">
-                              <p className="text-xs text-gray-600">
-                                + еще <span className="font-semibold text-[#e90039]">{projectMaterials.length - 3}</span> материалов
-                              </p>
                             </div>
-                          )}
+                          ))}
                         </div>
-                      )}
-                    </div>
+                        
+                        {projectMaterials.length > 3 && (
+                          <div className="mt-3 p-2 bg-gray-50 rounded-lg text-center">
+                            <p className="text-xs text-gray-600">
+                              + еще <span className="font-semibold text-[#e90039]">{projectMaterials.length - 3}</span> материалов
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 );
               })}
