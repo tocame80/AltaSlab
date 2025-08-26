@@ -169,7 +169,7 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
               </div>
               
               {/* Line 3: Price per m² */}
-              {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
+              {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && product.areaPerPackage && (
                 <div className="text-gray-900 hover:text-[#e90039] text-xs lg:text-sm font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
                   {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽/м²
                 </div>

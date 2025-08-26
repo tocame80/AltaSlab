@@ -222,7 +222,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           image: localImages.image,
           gallery: localImages.gallery,
           // Remove external images from database
-          images: undefined
+          images: undefined,
+          // Ensure numeric types are properly converted
+          price: product.price ? parseFloat(product.price.toString()) : 0,
+          areaPerPackage: product.areaPerPackage ? parseFloat(product.areaPerPackage.toString()) : null,
+          pcsPerPackage: product.pcsPerPackage ? parseFloat(product.pcsPerPackage.toString()) : null,
+          quantity: product.quantity ? parseInt(product.quantity.toString()) : 0
         };
       });
       

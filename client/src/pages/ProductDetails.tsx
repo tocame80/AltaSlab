@@ -351,10 +351,16 @@ export default function ProductDetails() {
                     {product.color}
                   </div>
                   
-                  {/* Line 3: Price per unit */}
-                  <div className="text-white hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                    {Math.round(product.price).toLocaleString('ru-RU')} ₽/{product.unit || 'упак'}
-                  </div>
+                  {/* Line 3: Price per m² */}
+                  {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && product.areaPerPackage ? (
+                    <div className="text-white hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                      {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽/м²
+                    </div>
+                  ) : (
+                    <div className="text-white hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                      {Math.round(product.price).toLocaleString('ru-RU')} ₽/{product.unit || 'упак'}
+                    </div>
+                  )}
                 </div>
               </div>
 
