@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit, Play, Database, Download, Image } from 'lucide-react';
 import { products } from '../data/products';
+import * as XLSX from 'xlsx';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Certificate, insertCertificateSchema, VideoInstruction, insertVideoInstructionSchema, HeroImage, insertHeroImageSchema, GalleryProject, insertGalleryProjectSchema, CatalogProduct, insertCatalogProductSchema } from '@shared/schema';
 import { apiRequest } from '@/lib/queryClient';
@@ -726,60 +727,171 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     }
   };
 
-  // Download template function
+  // Download Excel template function
   const downloadTemplate = () => {
+    // Create workbook and worksheet
+    const workbook = XLSX.utils.book_new();
+    
+    // Template data with examples
     const templateData = [
       {
-        productCode: 'ABC123',
-        name: 'Панель SPC Дуб Классик',
-        unit: 'м²',
-        quantity: 100,
-        price: 1250.50,
-        barcode: '1234567890123',
-        sortOrder: 1,
-        isActive: 1
+        'Артикул': 'ABC123',
+        'Название товара': 'Панель SPC Дуб Классик',
+        'Единица измерения': 'м²',
+        'Количество': 100,
+        'Цена': 1250.50,
+        'Штрихкод': '1234567890123',
+        'Порядок сортировки': 1,
+        'Активный (1/0)': 1
       },
       {
-        productCode: 'DEF456',
-        name: 'Плинтус универсальный',
-        unit: 'м',
-        quantity: 50,
-        price: 350.00,
-        barcode: '2345678901234',
-        sortOrder: 2,
-        isActive: 1
+        'Артикул': 'DEF456',
+        'Название товара': 'Плинтус универсальный белый',
+        'Единица измерения': 'м',
+        'Количество': 50,
+        'Цена': 350.00,
+        'Штрихкод': '2345678901234',
+        'Порядок сортировки': 2,
+        'Активный (1/0)': 1
+      },
+      {
+        'Артикул': 'GHI789',
+        'Название товара': 'Уголок наружный',
+        'Единица измерения': 'шт',
+        'Количество': 25,
+        'Цена': 125.00,
+        'Штрихкод': '3456789012345',
+        'Порядок сортировки': 3,
+        'Активный (1/0)': 1
       }
     ];
 
-    const headers = [
-      'Артикул (productCode)',
-      'Название (name)',
-      'Единица измерения (unit)',
-      'Количество (quantity)',
-      'Цена (price)',
-      'Штрихкод (barcode)',
-      'Порядок сортировки (sortOrder)',
-      'Активный 1/0 (isActive)'
+    // Create worksheet from data
+    const worksheet = XLSX.utils.json_to_sheet(templateData);
+    
+    // Set column widths
+    const columnWidths = [
+      { wch: 12 }, // Артикул
+      { wch: 30 }, // Название товара
+      { wch: 18 }, // Единица измерения
+      { wch: 12 }, // Количество
+      { wch: 12 }, // Цена
+      { wch: 18 }, // Штрихкод
+      { wch: 20 }, // Порядок сортировки
+      { wch: 15 }  // Активный
     ];
+    worksheet['!cols'] = columnWidths;
 
+    // Add worksheet to workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Каталог товаров');
+    
+    // Create and download Excel file
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], { 
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+    });
+    
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'Шаблон_каталог_товаров.xlsx';
+    link.click();
+    URL.revokeObjectURL(link.href);
+  };
+
+  // Export functions for catalog data
+  const exportToExcel = () => {
+    if (catalogProducts.length === 0) {
+      alert('Нет данных для экспорта');
+      return;
+    }
+
+    const workbook = XLSX.utils.book_new();
+    
+    const exportData = catalogProducts.map(product => ({
+      'Артикул': product.productCode,
+      'Название товара': product.name,
+      'Единица измерения': product.unit,
+      'Количество': product.quantity,
+      'Цена': product.price,
+      'Штрихкод': product.barcode || '',
+      'Порядок сортировки': product.sortOrder ?? 0,
+      'Активный (1/0)': product.isActive ?? 1
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    
+    const columnWidths = [
+      { wch: 12 }, { wch: 30 }, { wch: 18 }, { wch: 12 },
+      { wch: 12 }, { wch: 18 }, { wch: 20 }, { wch: 15 }
+    ];
+    worksheet['!cols'] = columnWidths;
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Каталог товаров');
+    
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], { 
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+    });
+    
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `Каталог_товаров_${new Date().toISOString().split('T')[0]}.xlsx`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  };
+
+  const exportToCSV = () => {
+    if (catalogProducts.length === 0) {
+      alert('Нет данных для экспорта');
+      return;
+    }
+
+    const headers = ['Артикул', 'Название товара', 'Единица измерения', 'Количество', 'Цена', 'Штрихкод', 'Порядок сортировки', 'Активный (1/0)'];
+    
     const csvContent = [
       headers.join(','),
-      ...templateData.map(row => [
-        row.productCode,
-        `"${row.name}"`,
-        row.unit,
-        row.quantity,
-        row.price,
-        row.barcode,
-        row.sortOrder,
-        row.isActive
+      ...catalogProducts.map(product => [
+        product.productCode,
+        `"${product.name}"`,
+        product.unit,
+        product.quantity,
+        product.price,
+        product.barcode || '',
+        product.sortOrder ?? 0,
+        product.isActive ?? 1
       ].join(','))
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'template_catalog_products.csv';
+    link.download = `Каталог_товаров_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  };
+
+  const exportToJSON = () => {
+    if (catalogProducts.length === 0) {
+      alert('Нет данных для экспорта');
+      return;
+    }
+
+    const exportData = catalogProducts.map(product => ({
+      productCode: product.productCode,
+      name: product.name,
+      unit: product.unit,
+      quantity: product.quantity,
+      price: product.price,
+      barcode: product.barcode || '',
+      sortOrder: product.sortOrder ?? 0,
+      isActive: product.isActive ?? 1
+    }));
+
+    const jsonContent = JSON.stringify(exportData, null, 2);
+    const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `Каталог_товаров_${new Date().toISOString().split('T')[0]}.json`;
     link.click();
     URL.revokeObjectURL(link.href);
   };
@@ -1865,6 +1977,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                   
                   <div className="space-y-3">
                     <button 
+                      onClick={exportToExcel}
                       className="w-full bg-[#E95D22] text-white px-4 py-3 rounded-lg hover:bg-[#d54a1a] transition-colors flex items-center justify-center gap-2"
                       data-testid="button-export-excel"
                     >
@@ -1873,6 +1986,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     </button>
                     
                     <button 
+                      onClick={exportToCSV}
                       className="w-full bg-gray-600 text-white px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
                       data-testid="button-export-csv"
                     >
@@ -1881,6 +1995,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     </button>
                     
                     <button 
+                      onClick={exportToJSON}
                       className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
                       data-testid="button-export-json"
                     >
