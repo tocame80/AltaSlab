@@ -12,8 +12,32 @@ if not db_url:
     exit(1)
 
 try:
-    # Читаем Excel файл (самая новая версия с данными о площади)
-    df = pd.read_excel('attached_assets/Каталог Slab для сайта 26.08.2025_1756235298728.xlsx')
+    # Автоматически находим самый новый файл каталога
+    import glob
+    import os
+    
+    # Ищем все файлы каталога
+    catalog_patterns = [
+        'attached_assets/Каталог Slab для сайта*.xlsx',
+        'attached_assets/Каталог*Slab*.xlsx',
+        'attached_assets/*каталог*.xlsx',
+        'attached_assets/*Каталог*.xlsx'
+    ]
+    
+    catalog_files = []
+    for pattern in catalog_patterns:
+        catalog_files.extend(glob.glob(pattern))
+    
+    if not catalog_files:
+        print("Файлы каталога не найдены!")
+        exit(1)
+    
+    # Сортируем по времени изменения файла (самый новый первым)
+    catalog_files.sort(key=os.path.getmtime, reverse=True)
+    latest_catalog = catalog_files[0]
+    
+    print(f"Используется самый новый каталог: {latest_catalog}")
+    df = pd.read_excel(latest_catalog)
     
     print(f"Загружен Excel файл с {len(df)} строками")
     print("Колонки:", df.columns.tolist())

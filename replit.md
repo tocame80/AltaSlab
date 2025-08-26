@@ -11,7 +11,8 @@ This is a React-based SPA (Single Page Application) for "АЛЬТА СЛЭБ" - 
 - **Admin Catalog Pagination**: Added pagination to admin catalog (5 items per page with "Show more" button) for better performance with 74 products
 - **Package Data Fix**: Corrected area_per_package and pcs_per_package field mapping - now displays correct values like "4,32м2" instead of "0,0м2" in product cards
 - **Price Display Enhancement**: Updated price display to show price per m² instead of price per package - improves price comparison across products
-- **Product Details Layout**: Simplified overlay layout to match catalog cards - removed size display, prioritized area per package information
+- **Product Details Layout**: Updated overlay layout to match catalog format with three-line display: size (300×600×2,4мм), area per package (4.32 м²), and price per package
+- **Catalog Auto-Detection**: Enhanced Python script to automatically detect and use the latest catalog file based on modification time - ensures current data is always loaded
 
 # User Preferences
 
