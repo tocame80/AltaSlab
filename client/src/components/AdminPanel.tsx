@@ -437,7 +437,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
 
   const createGalleryProjectMutation = useMutation({
     mutationFn: async (data: GalleryProjectFormData) => {
-      return apiRequest('POST', '/api/gallery-projects', data);
+      console.log('Mutation: Sending POST request with data:', data);
+      const result = await apiRequest('POST', '/api/gallery-projects', data);
+      console.log('Mutation: Received response:', result);
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/gallery-projects'] });
@@ -454,7 +457,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         description: 'Проект галереи создан',
       });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Mutation: Create project failed with error:', error);
       toast({
         title: 'Ошибка',
         description: 'Не удалось создать проект галереи',
