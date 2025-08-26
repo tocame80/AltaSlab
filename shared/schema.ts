@@ -84,6 +84,31 @@ export const dealerLocations = pgTable("dealer_locations", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const catalogProducts = pgTable("catalog_products", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  productCode: text("product_code").notNull().unique(), // Код товара (например: SS34, SS35, SS30)
+  name: text("name").notNull(), // Наименование товара
+  unit: text("unit").notNull().default("упак"), // Единица измерения 
+  quantity: integer("quantity").default(0), // Количество
+  barcode: text("barcode"), // Штрих код
+  price: text("price"), // Цена
+  category: text("category").notNull(), // Категория (например: АЛЬТА ИНТЕРЬЕР, Альта Слэб, Матовая Эстетика)
+  collection: text("collection"), // Коллекция 
+  color: text("color"), // Цвет/декор
+  format: text("format"), // Формат (размеры)
+  surface: text("surface"), // Поверхность
+  imageUrl: text("image_url"), // Ссылка на фото
+  images: json("images").$type<string[]>().notNull().default(sql`'[]'`), // Дополнительные фото
+  description: text("description"), // Описание
+  specifications: json("specifications").$type<Record<string, string>>().default(sql`'{}'`), // Технические характеристики
+  profile: text("profile"), // Соответствие профиля
+  availability: text("availability").default("В наличии"), // Наличие товара
+  isActive: integer("is_active").default(1),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -119,6 +144,12 @@ export const insertDealerLocationSchema = createInsertSchema(dealerLocations).om
   updatedAt: true,
 });
 
+export const insertCatalogProductSchema = createInsertSchema(catalogProducts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Certificate = typeof certificates.$inferSelect;
@@ -131,3 +162,5 @@ export type GalleryProject = typeof galleryProjects.$inferSelect;
 export type InsertGalleryProject = z.infer<typeof insertGalleryProjectSchema>;
 export type DealerLocation = typeof dealerLocations.$inferSelect;
 export type InsertDealerLocation = z.infer<typeof insertDealerLocationSchema>;
+export type CatalogProduct = typeof catalogProducts.$inferSelect;
+export type InsertCatalogProduct = z.infer<typeof insertCatalogProductSchema>;

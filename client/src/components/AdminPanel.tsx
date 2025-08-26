@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit, Play, Database, Download, Image } from 'lucide-react';
 import { products } from '../data/products';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Certificate, insertCertificateSchema, VideoInstruction, insertVideoInstructionSchema, HeroImage, insertHeroImageSchema, GalleryProject, insertGalleryProjectSchema } from '@shared/schema';
+import { Certificate, insertCertificateSchema, VideoInstruction, insertVideoInstructionSchema, HeroImage, insertHeroImageSchema, GalleryProject, insertGalleryProjectSchema, CatalogProduct, insertCatalogProductSchema } from '@shared/schema';
 import { apiRequest } from '@/lib/queryClient';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -64,10 +64,19 @@ const galleryProjectFormSchema = insertGalleryProjectSchema.extend({
   year: z.string().optional(),
 });
 
+const catalogProductFormSchema = insertCatalogProductSchema.extend({
+  productCode: z.string().min(1, 'Артикул обязателен'),
+  name: z.string().min(1, 'Название обязательно'),
+  unit: z.string().min(1, 'Единица измерения обязательна'),
+  quantity: z.number().min(0, 'Количество не может быть отрицательным'),
+  price: z.number().min(0, 'Цена не может быть отрицательной'),
+});
+
 type CertificateFormData = z.infer<typeof certificateFormSchema>;
 type VideoFormData = z.infer<typeof videoFormSchema>;
 type HeroImageFormData = z.infer<typeof heroImageFormSchema>;
 type GalleryProjectFormData = z.infer<typeof galleryProjectFormSchema>;
+type CatalogProductFormData = z.infer<typeof catalogProductFormSchema>;
 
 export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [activeTab, setActiveTab] = useState<AdminTab>('images');
@@ -87,6 +96,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
   const [materialSearchQuery, setMaterialSearchQuery] = useState<string>('');
+  const [editingCatalogProduct, setEditingCatalogProduct] = useState<CatalogProduct | null>(null);
+  const [showCatalogForm, setShowCatalogForm] = useState(false);
+  const [catalogSearchQuery, setCatalogSearchQuery] = useState<string>('');
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
@@ -106,6 +118,19 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
           product.collection.toLowerCase().includes(query)
         );
       });
+  };
+
+  // Helper function to filter catalog products based on search query
+  const getFilteredCatalogProducts = () => {
+    return catalogProducts.filter(product => {
+      if (!catalogSearchQuery.trim()) return true;
+      const query = catalogSearchQuery.toLowerCase();
+      return (
+        product.productCode.toLowerCase().includes(query) ||
+        product.name.toLowerCase().includes(query) ||
+        (product.barcode && product.barcode.toLowerCase().includes(query))
+      );
+    });
   };
 
   // Certificate form
@@ -339,6 +364,22 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     },
   });
 
+  // Catalog product form
+  const catalogProductForm = useForm<CatalogProductFormData>({
+    resolver: zodResolver(catalogProductFormSchema),
+    defaultValues: {
+      productCode: '',
+      name: '',
+      unit: '',
+      quantity: 0,
+      barcode: '',
+      price: 0,
+      images: [],
+      sortOrder: 0,
+      isActive: 1,
+    },
+  });
+
   // Queries and mutations for gallery projects
   const { data: galleryProjects = [], isLoading: galleryProjectsLoading } = useQuery<GalleryProject[]>({
     queryKey: ['/api/gallery-projects'],
@@ -410,6 +451,76 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       toast({
         title: 'Ошибка',
         description: 'Не удалось удалить проект галереи',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  // Queries and mutations for catalog products
+  const { data: catalogProducts = [], isLoading: catalogProductsLoading } = useQuery<CatalogProduct[]>({
+    queryKey: ['/api/catalog-products'],
+  });
+
+  const createCatalogProductMutation = useMutation({
+    mutationFn: async (data: CatalogProductFormData) => {
+      return apiRequest('POST', '/api/catalog-products', data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/catalog-products'] });
+      setShowCatalogForm(false);
+      catalogProductForm.reset();
+      toast({
+        title: 'Успешно',
+        description: 'Товар каталога создан',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось создать товар каталога',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const updateCatalogProductMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<CatalogProductFormData> }) => {
+      return apiRequest('PUT', `/api/catalog-products/${id}`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/catalog-products'] });
+      setEditingCatalogProduct(null);
+      setShowCatalogForm(false);
+      catalogProductForm.reset();
+      toast({
+        title: 'Успешно',
+        description: 'Товар каталога обновлен',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось обновить товар каталога',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const deleteCatalogProductMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return apiRequest('DELETE', `/api/catalog-products/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/catalog-products'] });
+      toast({
+        title: 'Успешно',
+        description: 'Товар каталога удален',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось удалить товар каталога',
         variant: 'destructive',
       });
     },
@@ -578,6 +689,40 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const handleDeleteCertificate = (id: string) => {
     if (confirm('Вы уверены, что хотите удалить этот сертификат?')) {
       deleteCertificateMutation.mutate(id);
+    }
+  };
+
+  // Catalog product form handlers
+  const startEditingCatalogProduct = (catalogProduct: CatalogProduct) => {
+    setEditingCatalogProduct(catalogProduct);
+    setShowCatalogForm(true);
+    catalogProductForm.reset({
+      productCode: catalogProduct.productCode,
+      name: catalogProduct.name,
+      unit: catalogProduct.unit,
+      quantity: catalogProduct.quantity,
+      barcode: catalogProduct.barcode || '',
+      price: catalogProduct.price,
+      images: catalogProduct.images || [],
+      sortOrder: catalogProduct.sortOrder ?? 0,
+      isActive: catalogProduct.isActive ?? 1,
+    });
+  };
+
+  const handleSubmitCatalogProduct = (data: CatalogProductFormData) => {
+    if (editingCatalogProduct) {
+      updateCatalogProductMutation.mutate({
+        id: editingCatalogProduct.id,
+        data,
+      });
+    } else {
+      createCatalogProductMutation.mutate(data);
+    }
+  };
+
+  const handleDeleteCatalogProduct = (id: string) => {
+    if (confirm('Вы уверены, что хотите удалить этот товар каталога?')) {
+      deleteCatalogProductMutation.mutate(id);
     }
   };
 
@@ -1549,156 +1694,129 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
           {/* Catalog Tab */}
           {activeTab === 'catalog' && (
             <div className="p-6">
-              <div className="max-w-4xl mx-auto">
-                <h3 className="text-xl font-semibold text-gray-900 mb-6">Управление каталогом</h3>
-                
-                <div className="grid md:grid-cols-2 gap-8">
-                  {/* Export Section */}
-                  <div className="bg-gray-50 rounded-lg p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Download className="w-6 h-6 text-[#E95D22]" />
-                      <h4 className="text-lg font-semibold text-gray-900">Выгрузка каталога</h4>
-                    </div>
-                    
-                    <p className="text-gray-600 mb-6">
-                      Экспортируйте каталог товаров в различных форматах для обмена данными или резервного копирования.
-                    </p>
-                    
-                    <div className="space-y-4">
-                      <button className="w-full bg-[#E95D22] text-white px-4 py-3 rounded-lg hover:bg-[#d54a1a] transition-colors flex items-center justify-center gap-2">
-                        <Download size={16} />
-                        Скачать Excel (.xlsx)
-                      </button>
-                      
-                      <button className="w-full bg-gray-600 text-white px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors flex items-center justify-center gap-2">
-                        <Download size={16} />
-                        Скачать CSV
-                      </button>
-                      
-                      <button className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
-                        <Download size={16} />
-                        Скачать JSON
-                      </button>
-                    </div>
-                    
-                    <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                      <h5 className="font-medium text-blue-900 mb-2">Что включается в выгрузку:</h5>
-                      <ul className="text-sm text-blue-800 space-y-1">
-                        <li>• Полная информация о товарах</li>
-                        <li>• Цены и характеристики</li>
-                        <li>• Ссылки на изображения</li>
-                        <li>• Категории и коллекции</li>
-                        <li>• Статус наличия</li>
-                      </ul>
-                    </div>
-                  </div>
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-semibold text-gray-900">Каталог продукции</h3>
+                <button
+                  onClick={() => setShowCatalogForm(true)}
+                  className="bg-[#E95D22] text-white px-4 py-2 rounded-lg hover:bg-[#d54a1a] transition-colors flex items-center gap-2"
+                  data-testid="button-add-catalog-product"
+                >
+                  <Plus size={16} />
+                  Добавить товар
+                </button>
+              </div>
 
-                  {/* Import Section */}
-                  <div className="bg-gray-50 rounded-lg p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Upload className="w-6 h-6 text-[#E95D22]" />
-                      <h4 className="text-lg font-semibold text-gray-900">Загрузка каталога</h4>
-                    </div>
-                    
-                    <p className="text-gray-600 mb-6">
-                      Импортируйте данные каталога из файла для массового обновления товаров.
-                    </p>
-                    
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-[#E95D22] transition-colors">
-                      <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-600 mb-2">Перетащите файл сюда или</p>
-                      <button className="text-[#E95D22] hover:text-[#d54a1a] font-medium">
-                        выберите файл
-                      </button>
-                      <p className="text-xs text-gray-500 mt-2">
-                        Поддерживаются форматы: .xlsx, .csv, .json
-                      </p>
-                    </div>
-                    
-                    <div className="mt-6 p-4 bg-yellow-50 rounded-lg">
-                      <h5 className="font-medium text-yellow-900 mb-2">Важные замечания:</h5>
-                      <ul className="text-sm text-yellow-800 space-y-1">
-                        <li>• Создайте резервную копию перед загрузкой</li>
-                        <li>• Файл должен соответствовать шаблону</li>
-                        <li>• Существующие товары будут обновлены</li>
-                        <li>• Новые товары будут добавлены</li>
-                      </ul>
-                    </div>
-                    
-                    <div className="mt-4 flex gap-3">
-                      <button className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm">
-                        Скачать шаблон
-                      </button>
-                      <button className="flex-1 bg-[#E95D22] text-white px-4 py-2 rounded-lg hover:bg-[#d54a1a] transition-colors text-sm" disabled>
-                        Загрузить файл
-                      </button>
-                    </div>
+              {/* Search */}
+              <div className="mb-4">
+                <input
+                  type="text"
+                  placeholder="Поиск по артикулу, названию или штрихкоду..."
+                  value={catalogSearchQuery}
+                  onChange={(e) => setCatalogSearchQuery(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
+                  data-testid="input-search-catalog"
+                />
+                {catalogSearchQuery && (
+                  <div className="mt-2 text-sm text-gray-600">
+                    Найдено товаров: {getFilteredCatalogProducts().length}
+                    <button
+                      onClick={() => setCatalogSearchQuery('')}
+                      className="ml-4 text-[#E95D22] hover:text-[#d54a1a]"
+                      data-testid="button-clear-search"
+                    >
+                      Очистить поиск
+                    </button>
                   </div>
+                )}
+              </div>
+
+              {catalogProductsLoading ? (
+                <div className="text-center py-8">
+                  <div className="text-gray-500">Загрузка товаров...</div>
                 </div>
-                
-                {/* Statistics Section */}
-                <div className="mt-8 bg-white border border-gray-200 rounded-lg p-6">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Статистика каталога</h4>
-                  
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-[#E95D22] mb-1">
-                        {products.filter(p => p.category !== 'accessories').length}
-                      </div>
-                      <div className="text-sm text-gray-600">Панели</div>
-                    </div>
-                    
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-[#E95D22] mb-1">
-                        {products.filter(p => p.category === 'accessories').length}
-                      </div>
-                      <div className="text-sm text-gray-600">Аксессуары</div>
-                    </div>
-                    
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-[#E95D22] mb-1">
-                        {new Set(products.map(p => p.collection)).size}
-                      </div>
-                      <div className="text-sm text-gray-600">Коллекции</div>
-                    </div>
-                    
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-[#E95D22] mb-1">
-                        {products.filter(p => p.isPremium).length}
-                      </div>
-                      <div className="text-sm text-gray-600">Премиум</div>
-                    </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full border border-gray-200 rounded-lg overflow-hidden">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Артикул</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Название</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Ед. изм.</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Кол-во</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Цена</th>
+                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Штрихкод</th>
+                        <th className="px-4 py-3 text-center text-sm font-medium text-gray-700">Действия</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {getFilteredCatalogProducts().length === 0 ? (
+                        <tr>
+                          <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
+                            {catalogSearchQuery ? 'Товары не найдены' : 'Нет товаров в каталоге'}
+                          </td>
+                        </tr>
+                      ) : (
+                        getFilteredCatalogProducts().map((product) => (
+                          <tr key={product.id} className="hover:bg-gray-50" data-testid={`row-catalog-product-${product.id}`}>
+                            <td className="px-4 py-3 text-sm font-medium text-gray-900">{product.productCode}</td>
+                            <td className="px-4 py-3 text-sm text-gray-900">{product.name}</td>
+                            <td className="px-4 py-3 text-sm text-gray-600">{product.unit}</td>
+                            <td className="px-4 py-3 text-sm text-gray-600">{product.quantity}</td>
+                            <td className="px-4 py-3 text-sm text-gray-600">{product.price} ₽</td>
+                            <td className="px-4 py-3 text-sm text-gray-600">{product.barcode || '—'}</td>
+                            <td className="px-4 py-3 text-center">
+                              <div className="flex justify-center gap-2">
+                                <button
+                                  onClick={() => startEditingCatalogProduct(product)}
+                                  className="text-blue-600 hover:text-blue-700 p-1"
+                                  title="Редактировать"
+                                  data-testid={`button-edit-catalog-product-${product.id}`}
+                                >
+                                  <Edit size={16} />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteCatalogProduct(product.id)}
+                                  className="text-red-600 hover:text-red-700 p-1"
+                                  title="Удалить"
+                                  data-testid={`button-delete-catalog-product-${product.id}`}
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              
+              {/* Statistics */}
+              <div className="mt-6 bg-gray-50 rounded-lg p-4">
+                <h4 className="font-medium text-gray-900 mb-2">Статистика каталога</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                  <div>
+                    <div className="text-xl font-bold text-[#E95D22]">{catalogProducts.length}</div>
+                    <div className="text-sm text-gray-600">Всего товаров</div>
                   </div>
-                </div>
-                
-                {/* Recent Activity */}
-                <div className="mt-8 bg-white border border-gray-200 rounded-lg p-6">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Последние операции</h4>
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                      <div className="flex items-center gap-3">
-                        <Download className="w-4 h-4 text-green-600" />
-                        <span className="text-sm text-gray-900">Выгрузка каталога Excel</span>
-                      </div>
-                      <span className="text-xs text-gray-500">2 часа назад</span>
+                  <div>
+                    <div className="text-xl font-bold text-[#E95D22]">
+                      {catalogProducts.reduce((sum, p) => sum + p.quantity, 0)}
                     </div>
-                    
-                    <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                      <div className="flex items-center gap-3">
-                        <Upload className="w-4 h-4 text-blue-600" />
-                        <span className="text-sm text-gray-900">Загрузка обновлений цен</span>
-                      </div>
-                      <span className="text-xs text-gray-500">1 день назад</span>
+                    <div className="text-sm text-gray-600">Общее кол-во</div>
+                  </div>
+                  <div>
+                    <div className="text-xl font-bold text-[#E95D22]">
+                      {catalogProducts.reduce((sum, p) => sum + (p.price * p.quantity), 0).toLocaleString()} ₽
                     </div>
-                    
-                    <div className="flex items-center justify-between py-2">
-                      <div className="flex items-center gap-3">
-                        <Download className="w-4 h-4 text-green-600" />
-                        <span className="text-sm text-gray-900">Экспорт для поставщика</span>
-                      </div>
-                      <span className="text-xs text-gray-500">3 дня назад</span>
+                    <div className="text-sm text-gray-600">Общая стоимость</div>
+                  </div>
+                  <div>
+                    <div className="text-xl font-bold text-[#E95D22]">
+                      {catalogProducts.filter(p => p.quantity > 0).length}
                     </div>
+                    <div className="text-sm text-gray-600">В наличии</div>
                   </div>
                 </div>
               </div>
@@ -2373,6 +2491,197 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           {createHeroImageMutation.isPending || updateHeroImageMutation.isPending
                             ? 'Сохранение...'
                             : editingHeroImage
+                            ? 'Обновить'
+                            : 'Создать'}
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
+
+              {/* Catalog Product Form Modal */}
+              {showCatalogForm && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                  <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+                    <h3 className="text-lg font-semibold mb-4">
+                      {editingCatalogProduct ? 'Редактировать товар' : 'Добавить товар'}
+                    </h3>
+                    
+                    <form onSubmit={catalogProductForm.handleSubmit(handleSubmitCatalogProduct)} className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Артикул *
+                        </label>
+                        <input
+                          {...catalogProductForm.register('productCode')}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
+                          placeholder="ABC123"
+                          data-testid="input-product-code"
+                        />
+                        {catalogProductForm.formState.errors.productCode && (
+                          <p className="mt-1 text-sm text-red-600">
+                            {catalogProductForm.formState.errors.productCode.message}
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Название *
+                        </label>
+                        <input
+                          {...catalogProductForm.register('name')}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
+                          placeholder="Название товара"
+                          data-testid="input-product-name"
+                        />
+                        {catalogProductForm.formState.errors.name && (
+                          <p className="mt-1 text-sm text-red-600">
+                            {catalogProductForm.formState.errors.name.message}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Единица измерения *
+                          </label>
+                          <select
+                            {...catalogProductForm.register('unit')}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
+                            data-testid="select-unit"
+                          >
+                            <option value="">Выберите</option>
+                            <option value="шт">шт</option>
+                            <option value="м²">м²</option>
+                            <option value="м">м</option>
+                            <option value="кг">кг</option>
+                            <option value="л">л</option>
+                            <option value="упак">упак</option>
+                            <option value="комплект">комплект</option>
+                          </select>
+                          {catalogProductForm.formState.errors.unit && (
+                            <p className="mt-1 text-sm text-red-600">
+                              {catalogProductForm.formState.errors.unit.message}
+                            </p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Количество *
+                          </label>
+                          <input
+                            type="number"
+                            {...catalogProductForm.register('quantity', { valueAsNumber: true })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
+                            placeholder="0"
+                            min="0"
+                            data-testid="input-quantity"
+                          />
+                          {catalogProductForm.formState.errors.quantity && (
+                            <p className="mt-1 text-sm text-red-600">
+                              {catalogProductForm.formState.errors.quantity.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Цена (₽) *
+                          </label>
+                          <input
+                            type="number"
+                            step="0.01"
+                            {...catalogProductForm.register('price', { valueAsNumber: true })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
+                            placeholder="0.00"
+                            min="0"
+                            data-testid="input-price"
+                          />
+                          {catalogProductForm.formState.errors.price && (
+                            <p className="mt-1 text-sm text-red-600">
+                              {catalogProductForm.formState.errors.price.message}
+                            </p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Порядок сортировки
+                          </label>
+                          <input
+                            type="number"
+                            {...catalogProductForm.register('sortOrder', { valueAsNumber: true })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
+                            placeholder="0"
+                            min="0"
+                            data-testid="input-sort-order"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Штрихкод
+                        </label>
+                        <input
+                          {...catalogProductForm.register('barcode')}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
+                          placeholder="1234567890123"
+                          data-testid="input-barcode"
+                        />
+                        {catalogProductForm.formState.errors.barcode && (
+                          <p className="mt-1 text-sm text-red-600">
+                            {catalogProductForm.formState.errors.barcode.message}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          {...catalogProductForm.register('isActive', { 
+                            setValueAs: (value) => value ? 1 : 0 
+                          })}
+                          className="h-4 w-4 text-[#E95D22] focus:ring-[#E95D22] border-gray-300 rounded"
+                          data-testid="checkbox-is-active"
+                        />
+                        <label className="ml-2 block text-sm text-gray-700">
+                          Активный товар
+                        </label>
+                      </div>
+
+                      <div className="flex gap-3 pt-4">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowCatalogForm(false);
+                            setEditingCatalogProduct(null);
+                            catalogProductForm.reset();
+                          }}
+                          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                          data-testid="button-cancel-catalog-form"
+                        >
+                          Отмена
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={
+                            createCatalogProductMutation.isPending || 
+                            updateCatalogProductMutation.isPending
+                          }
+                          className="flex-1 px-4 py-2 bg-[#E95D22] text-white rounded-lg hover:bg-[#d54a1a] transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                          data-testid="button-submit-catalog-form"
+                        >
+                          <Save size={16} />
+                          {createCatalogProductMutation.isPending || updateCatalogProductMutation.isPending
+                            ? 'Сохранение...'
+                            : editingCatalogProduct
                             ? 'Обновить'
                             : 'Создать'}
                         </button>

@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Certificate, type InsertCertificate, type VideoInstruction, type InsertVideoInstruction, type HeroImage, type InsertHeroImage, type GalleryProject, type InsertGalleryProject, type DealerLocation, type InsertDealerLocation, users, certificates, videoInstructions, heroImages, galleryProjects, dealerLocations } from "@shared/schema";
+import { type User, type InsertUser, type Certificate, type InsertCertificate, type VideoInstruction, type InsertVideoInstruction, type HeroImage, type InsertHeroImage, type GalleryProject, type InsertGalleryProject, type DealerLocation, type InsertDealerLocation, type CatalogProduct, type InsertCatalogProduct, users, certificates, videoInstructions, heroImages, galleryProjects, dealerLocations, catalogProducts } from "@shared/schema";
 import { db } from "./db";
 import { eq, asc } from "drizzle-orm";
 
@@ -42,6 +42,16 @@ export interface IStorage {
   createDealerLocation(dealerLocation: InsertDealerLocation): Promise<DealerLocation>;
   updateDealerLocation(id: string, dealerLocation: Partial<InsertDealerLocation>): Promise<DealerLocation>;
   deleteDealerLocation(id: string): Promise<void>;
+  
+  // Catalog product methods
+  getCatalogProducts(): Promise<CatalogProduct[]>;
+  getCatalogProduct(id: string): Promise<CatalogProduct | undefined>;
+  getCatalogProductByCode(productCode: string): Promise<CatalogProduct | undefined>;
+  createCatalogProduct(catalogProduct: InsertCatalogProduct): Promise<CatalogProduct>;
+  updateCatalogProduct(id: string, catalogProduct: Partial<InsertCatalogProduct>): Promise<CatalogProduct>;
+  deleteCatalogProduct(id: string): Promise<void>;
+  importCatalogProducts(products: InsertCatalogProduct[]): Promise<CatalogProduct[]>;
+  exportCatalogProducts(): Promise<CatalogProduct[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -217,6 +227,64 @@ export class DatabaseStorage implements IStorage {
 
   async deleteDealerLocation(id: string): Promise<void> {
     await db.delete(dealerLocations).where(eq(dealerLocations.id, id));
+  }
+
+  // Catalog product methods
+  async getCatalogProducts(): Promise<CatalogProduct[]> {
+    return await db.select().from(catalogProducts).where(eq(catalogProducts.isActive, 1)).orderBy(asc(catalogProducts.sortOrder));
+  }
+
+  async getCatalogProduct(id: string): Promise<CatalogProduct | undefined> {
+    const [catalogProduct] = await db.select().from(catalogProducts).where(eq(catalogProducts.id, id));
+    return catalogProduct || undefined;
+  }
+
+  async getCatalogProductByCode(productCode: string): Promise<CatalogProduct | undefined> {
+    const [catalogProduct] = await db.select().from(catalogProducts).where(eq(catalogProducts.productCode, productCode));
+    return catalogProduct || undefined;
+  }
+
+  async createCatalogProduct(insertCatalogProduct: InsertCatalogProduct): Promise<CatalogProduct> {
+    const [catalogProduct] = await db
+      .insert(catalogProducts)
+      .values(insertCatalogProduct)
+      .returning();
+    return catalogProduct;
+  }
+
+  async updateCatalogProduct(id: string, updates: Partial<InsertCatalogProduct>): Promise<CatalogProduct> {
+    const [catalogProduct] = await db
+      .update(catalogProducts)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(catalogProducts.id, id))
+      .returning();
+    return catalogProduct;
+  }
+
+  async deleteCatalogProduct(id: string): Promise<void> {
+    await db.delete(catalogProducts).where(eq(catalogProducts.id, id));
+  }
+
+  async importCatalogProducts(products: InsertCatalogProduct[]): Promise<CatalogProduct[]> {
+    const results: CatalogProduct[] = [];
+    for (const product of products) {
+      // Check if product already exists by code
+      const existing = await this.getCatalogProductByCode(product.productCode);
+      if (existing) {
+        // Update existing product
+        const updated = await this.updateCatalogProduct(existing.id, product);
+        results.push(updated);
+      } else {
+        // Create new product
+        const created = await this.createCatalogProduct(product);
+        results.push(created);
+      }
+    }
+    return results;
+  }
+
+  async exportCatalogProducts(): Promise<CatalogProduct[]> {
+    return await this.getCatalogProducts();
   }
 }
 

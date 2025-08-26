@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertCertificateSchema, insertVideoInstructionSchema, insertHeroImageSchema, insertGalleryProjectSchema, insertDealerLocationSchema } from "@shared/schema";
+import { insertCertificateSchema, insertVideoInstructionSchema, insertHeroImageSchema, insertGalleryProjectSchema, insertDealerLocationSchema, insertCatalogProductSchema } from "@shared/schema";
 import adminRoutes from "./routes/admin";
 import {
   ObjectStorageService,
@@ -189,6 +189,81 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error deleting dealer location:', error);
       res.status(500).json({ message: 'Failed to delete dealer location' });
+    }
+  });
+
+  // Catalog product routes
+  app.get('/api/catalog-products', async (req, res) => {
+    try {
+      const catalogProducts = await storage.getCatalogProducts();
+      res.json(catalogProducts);
+    } catch (error) {
+      console.error('Error fetching catalog products:', error);
+      res.status(500).json({ message: 'Failed to fetch catalog products' });
+    }
+  });
+
+  app.post('/api/catalog-products', async (req, res) => {
+    try {
+      const productData = insertCatalogProductSchema.parse(req.body);
+      const catalogProduct = await storage.createCatalogProduct(productData);
+      res.status(201).json(catalogProduct);
+    } catch (error) {
+      console.error('Error creating catalog product:', error);
+      res.status(400).json({ message: 'Failed to create catalog product' });
+    }
+  });
+
+  app.put('/api/catalog-products/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = insertCatalogProductSchema.partial().parse(req.body);
+      const catalogProduct = await storage.updateCatalogProduct(id, updates);
+      res.json(catalogProduct);
+    } catch (error) {
+      console.error('Error updating catalog product:', error);
+      res.status(400).json({ message: 'Failed to update catalog product' });
+    }
+  });
+
+  app.delete('/api/catalog-products/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteCatalogProduct(id);
+      res.status(204).send();
+    } catch (error) {
+      console.error('Error deleting catalog product:', error);
+      res.status(500).json({ message: 'Failed to delete catalog product' });
+    }
+  });
+
+  // Import/export routes for catalog
+  app.post('/api/catalog-products/import', async (req, res) => {
+    try {
+      const { products } = req.body;
+      if (!Array.isArray(products)) {
+        return res.status(400).json({ message: 'Products must be an array' });
+      }
+      
+      const validatedProducts = products.map(product => insertCatalogProductSchema.parse(product));
+      const result = await storage.importCatalogProducts(validatedProducts);
+      res.json({ 
+        message: `Successfully imported ${result.length} products`,
+        products: result 
+      });
+    } catch (error) {
+      console.error('Error importing catalog products:', error);
+      res.status(400).json({ message: 'Failed to import catalog products' });
+    }
+  });
+
+  app.get('/api/catalog-products/export', async (req, res) => {
+    try {
+      const products = await storage.exportCatalogProducts();
+      res.json(products);
+    } catch (error) {
+      console.error('Error exporting catalog products:', error);
+      res.status(500).json({ message: 'Failed to export catalog products' });
     }
   });
 
