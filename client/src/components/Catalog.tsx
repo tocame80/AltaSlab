@@ -1,10 +1,10 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Collection, Product } from '@/types';
+import { products } from '@/data/products';
+import { Collection } from '@/types';
 import ProductCard from './ProductCard';
 import { ChevronDown, Search, Filter, X } from 'lucide-react';
 import { useFavoritesContext } from '@/contexts/FavoritesContext';
 import { useStickyNav } from '@/hooks/useStickyNav';
-import { useQuery } from '@tanstack/react-query';
 
 interface CatalogProps {
   activeCollection: Collection;
@@ -13,11 +13,6 @@ interface CatalogProps {
 export default function Catalog({ activeCollection }: CatalogProps) {
   const { favorites, toggleFavorite, isFavorite } = useFavoritesContext();
   const isNavSticky = useStickyNav();
-  
-  // Fetch products from API
-  const { data: products = [], isLoading } = useQuery<Product[]>({
-    queryKey: ['/api/catalog-products'],
-  });
   
   const [filters, setFilters] = useState({
     collection: '',
@@ -631,31 +626,19 @@ export default function Catalog({ activeCollection }: CatalogProps) {
             </div>
 
             {/* Product Grid */}
-            {isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 mb-12">
-                {Array.from({ length: 6 }).map((_, index) => (
-                  <div key={index} className="animate-pulse">
-                    <div className="bg-gray-200 h-48 rounded-lg mb-4"></div>
-                    <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 mb-12">
-                {visibleProducts.map((product) => (
-                  <ProductCard 
-                    key={product.id} 
-                    product={product} 
-                    isFavorite={isFavorite(product.id)}
-                    onToggleFavorite={() => toggleFavorite(product.id)}
-                    onClick={() => {
-                      window.location.href = `/product/${product.id}`;
-                    }}
-                  />
-                ))}
-              </div>
-            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 mb-12">
+              {visibleProducts.map((product) => (
+                <ProductCard 
+                  key={product.id} 
+                  product={product} 
+                  isFavorite={isFavorite(product.id)}
+                  onToggleFavorite={() => toggleFavorite(product.id)}
+                  onClick={() => {
+                    window.location.href = `/product/${product.id}`;
+                  }}
+                />
+              ))}
+            </div>
 
             {/* Load More Button */}
             {hasMoreItems && (
