@@ -41,9 +41,11 @@ export function ProductCatalog() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('/api/catalog-products');
+      // Добавляем timestamp для принудительного обновления кеша
+      const response = await fetch(`/api/catalog-products?_t=${Date.now()}`);
       if (response.ok) {
         const data = await response.json();
+        console.log('Fetched products data:', data.slice(0, 2)); // Логируем первые 2 продукта для отладки
         setProducts(data);
       }
     } catch (error) {
@@ -142,6 +144,15 @@ export function ProductCatalog() {
               <div className="aspect-square overflow-hidden rounded-t-lg">
                 <img
                   src={(() => {
+                    // Отладка для продукта 8934
+                    if (product.id === 'a917381e-755c-48f7-946e-25651f05077e') {
+                      console.log('Product 8934 image debug:', {
+                        id: product.id,
+                        images: product.images,
+                        image: product.image
+                      });
+                    }
+                    
                     if (product.images) {
                       try {
                         const images = Array.isArray(product.images) ? product.images : JSON.parse(product.images);
