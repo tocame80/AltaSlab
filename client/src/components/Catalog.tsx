@@ -114,14 +114,25 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
     // Filter by activeCollection first (favorites and all show everything)
     if (activeCollection === 'accessories') {
-      // Show only accessories
-      filtered = filtered.filter(product => product.category === 'accessories');
+      // Show only accessories (products with "Клей" or "Профиль" in collection)
+      filtered = filtered.filter(product => 
+        product.collection === 'Клей' || product.collection === 'Профиль'
+      );
     } else if (activeCollection === 'favorites' || activeCollection === 'all') {
       // For favorites and all, don't filter by collection - show all products
       // Additional filtering will be handled later
     } else {
-      // Filter by specific collection
-      filtered = filtered.filter(product => product.category === activeCollection);
+      // Filter by specific collection based on activeCollection
+      const collectionMap = {
+        'concrete': 'Магия бетона',
+        'fabric': 'Тканевая Роскошь',
+        'matte': 'Матовая эстетика', 
+        'marble': 'Мраморная феерия'
+      };
+      const collectionName = collectionMap[activeCollection as keyof typeof collectionMap];
+      if (collectionName) {
+        filtered = filtered.filter(product => product.collection === collectionName);
+      }
     }
 
     // Apply collection filters
