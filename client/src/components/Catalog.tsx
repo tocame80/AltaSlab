@@ -41,7 +41,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   
   // Fetch products from API
   const { data: products = [], isLoading } = useQuery<Product[]>({
-    queryKey: ['/api/catalog-products'],
+    queryKey: ['/api/products'],
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
   

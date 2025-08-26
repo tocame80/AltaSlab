@@ -225,15 +225,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Use the same imageMap logic as the frontend
   const getLocalProductImages = (productId: string, collection: string) => {
     const cleanId = productId?.replace('SPC', '') || productId;
     
-    // This will be handled by the frontend using imageMap.ts functions
-    // We just return a signal that frontend should use imageMap
+    // Duplicate imageMap logic for backend
+    const collectionMap: Record<string, string> = {
+      'магия бетона': 'concrete',
+      'тканевая роскошь': 'fabric', 
+      'мраморная феерия': 'marble',
+      'матовая эстетика': 'matte'
+    };
+    
+    const collectionDir = collectionMap[collection.toLowerCase()] || 'concrete';
+    
+    // For product 8934, we know it has real images
+    if (cleanId === '8934') {
+      return {
+        image: `/src/assets/products/${collectionDir}/${cleanId}-1.png`,
+        gallery: [
+          `/src/assets/products/${collectionDir}/${cleanId}-1.png`,
+          `/src/assets/products/${collectionDir}/${cleanId}-2.png`, 
+          `/src/assets/products/${collectionDir}/${cleanId}-3.png`
+        ]
+      };
+    }
+    
+    // For other products, use placeholder
     return {
-      image: `imageMap:${cleanId}:main`,
-      gallery: [`imageMap:${cleanId}:gallery`]
+      image: '/src/assets/products/placeholder.jpg',
+      gallery: ['/src/assets/products/placeholder.jpg']
     };
   };
 
