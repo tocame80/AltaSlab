@@ -372,37 +372,31 @@ export default function ProductDetails() {
 
         </div>
 
-        {/* Collection Colors Section */}
-        <div className="mb-8">
-          <div className="bg-white rounded-xl p-6 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Коллекция {getCollectionDisplayName()}</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {collectionColors.map((colorProduct) => (
-                <div 
-                  key={colorProduct.id}
-                  onClick={() => setLocation(`/product/${colorProduct.id}`)}
-                  className="group cursor-pointer transition-transform hover:scale-105"
-                >
-                  <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-2">
-                    <img
-                      src={colorProduct.image || '/api/placeholder/150/150'}
-                      alt={colorProduct.color}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                  </div>
-                  <div className="text-center">
-                    <div className={`text-sm font-medium ${colorProduct.id === product?.id ? 'text-[#e90039]' : 'text-gray-700'}`}>
-                      {colorProduct.color}
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {Math.round(colorProduct.price).toLocaleString('ru-RU')} ₽
-                    </div>
-                  </div>
-                </div>
-              ))}
+        {/* Collection Colors Navigator */}
+        {collectionColors.length > 0 && (
+          <div className="bg-gray-50 py-4 border-t border-gray-200 mb-8">
+            <div className="container mx-auto px-6">
+              <nav className="flex flex-wrap items-center gap-8">
+                <span className="text-sm font-medium text-gray-900 uppercase tracking-wide">
+                  Цвета коллекции {getCollectionDisplayName()}:
+                </span>
+                {collectionColors.map((colorProduct) => (
+                  <button
+                    key={colorProduct.id}
+                    onClick={() => setLocation(`/product/${colorProduct.id}`)}
+                    className={`text-sm font-medium transition-colors uppercase tracking-wide ${
+                      colorProduct.id === product?.id
+                        ? 'text-gray-900' 
+                        : 'text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    {colorProduct.color}
+                  </button>
+                ))}
+              </nav>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Tabs Section */}
         <div className="mt-16">
