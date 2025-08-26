@@ -322,19 +322,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/catalog-products/import', async (req, res) => {
     try {
       const { products } = req.body;
+      console.log('Starting catalog import, received products:', products?.length || 0);
+      
       if (!Array.isArray(products)) {
         return res.status(400).json({ message: 'Products must be an array' });
       }
       
-      const validatedProducts = products.map(product => insertCatalogProductSchema.parse(product));
+      console.log('Validating products with schema...');
+      const validatedProducts = products.map((product, index) => {
+        try {
+          return insertCatalogProductSchema.parse(product);
+        } catch (error) {
+          console.error(`Validation error for product ${index}:`, error);
+          console.error('Product data:', product);
+          throw error;
+        }
+      });
+      
+      console.log('Products validated, importing to storage...');
       const result = await storage.importCatalogProducts(validatedProducts);
+      console.log(`Import successful: ${result.length} products processed`);
+      
       res.json({ 
         message: `Successfully imported ${result.length} products`,
         products: result 
       });
     } catch (error) {
       console.error('Error importing catalog products:', error);
-      res.status(400).json({ message: 'Failed to import catalog products' });
+      if (error instanceof Error) {
+        console.error('Error details:', error.message);
+        console.error('Error stack:', error.stack);
+      }
+      res.status(400).json({ 
+        message: 'Failed to import catalog products',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   });
 

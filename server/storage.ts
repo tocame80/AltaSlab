@@ -273,19 +273,34 @@ export class DatabaseStorage implements IStorage {
 
   async importCatalogProducts(products: InsertCatalogProduct[]): Promise<CatalogProduct[]> {
     const results: CatalogProduct[] = [];
-    for (const product of products) {
-      // Check if product already exists by code
-      const existing = await this.getCatalogProductByCode(product.productCode);
-      if (existing) {
-        // Update existing product
-        const updated = await this.updateCatalogProduct(existing.id, product);
-        results.push(updated);
-      } else {
-        // Create new product
-        const created = await this.createCatalogProduct(product);
-        results.push(created);
+    console.log(`Starting storage import for ${products.length} products`);
+    
+    for (let i = 0; i < products.length; i++) {
+      const product = products[i];
+      console.log(`Processing product ${i + 1}/${products.length}: ${product.productCode}`);
+      
+      try {
+        // Check if product already exists by code
+        const existing = await this.getCatalogProductByCode(product.productCode);
+        if (existing) {
+          console.log(`Updating existing product: ${product.productCode}`);
+          // Update existing product
+          const updated = await this.updateCatalogProduct(existing.id, product);
+          results.push(updated);
+        } else {
+          console.log(`Creating new product: ${product.productCode}`);
+          // Create new product
+          const created = await this.createCatalogProduct(product);
+          results.push(created);
+        }
+      } catch (error) {
+        console.error(`Error processing product ${product.productCode}:`, error);
+        console.error('Product data:', product);
+        throw error;
       }
     }
+    
+    console.log(`Storage import complete: ${results.length} products processed`);
     return results;
   }
 
