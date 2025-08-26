@@ -43,6 +43,7 @@ export default function ProductDetails() {
   const [isImageViewerOpen, setIsImageViewerOpen] = useState(false);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [collectionColors, setCollectionColors] = useState<Product[]>([]);
 
   // Parse images from database - этот хук должен быть здесь, до условных возвратов
   const gallery = useMemo(() => {
@@ -73,6 +74,14 @@ export default function ProductDetails() {
             p.name.includes(params?.id || '')
           );
           setProduct(foundProduct || null);
+          
+          // Если продукт найден, загружаем другие цвета из той же коллекции
+          if (foundProduct) {
+            const sameCollectionProducts = products.filter((p: Product) => 
+              p.collection === foundProduct.collection && p.id !== foundProduct.id
+            );
+            setCollectionColors(sameCollectionProducts);
+          }
         }
       } catch (error) {
         console.error('Error fetching product:', error);
@@ -363,7 +372,37 @@ export default function ProductDetails() {
 
         </div>
 
-        
+        {/* Collection Colors Section */}
+        <div className="mb-8">
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Коллекция {getCollectionDisplayName()}</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {collectionColors.map((colorProduct) => (
+                <div 
+                  key={colorProduct.id}
+                  onClick={() => setLocation(`/product/${colorProduct.id}`)}
+                  className="group cursor-pointer transition-transform hover:scale-105"
+                >
+                  <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-2">
+                    <img
+                      src={colorProduct.image || '/api/placeholder/150/150'}
+                      alt={colorProduct.color}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                  </div>
+                  <div className="text-center">
+                    <div className={`text-sm font-medium ${colorProduct.id === product?.id ? 'text-[#e90039]' : 'text-gray-700'}`}>
+                      {colorProduct.color}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {Math.round(colorProduct.price).toLocaleString('ru-RU')} ₽
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
 
         {/* Tabs Section */}
         <div className="mt-16">
