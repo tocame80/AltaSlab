@@ -12,8 +12,8 @@ if not db_url:
     exit(1)
 
 try:
-    # Читаем Excel файл
-    df = pd.read_excel('attached_assets/Каталог Slab для сайта_1756208983762.xlsx')
+    # Читаем Excel файл (самая новая версия с данными о площади)
+    df = pd.read_excel('attached_assets/Каталог Slab для сайта 26.08.2025_1756235298728.xlsx')
     
     print(f"Загружен Excel файл с {len(df)} строками")
     print("Колонки:", df.columns.tolist())
@@ -49,7 +49,7 @@ try:
                 'unit': str(row.get('Единица измерения', 'упак')).strip(),
                 'quantity': int(row.get('Количество', 0)) if not pd.isna(row.get('Количество', 0)) else 0,
                 'pcs_per_package': float(row.get('Шт в уп', 1)) if not pd.isna(row.get('Шт в уп', 1)) else None,
-                'area_per_package': float(row.get('м2 в уп')) if not pd.isna(row.get('м2 в уп')) and row.get('м2 в уп') != '' else None,
+                'area_per_package': None,
                 'barcode': str(row.get('Штрихкод упаковки', '')).strip() if not pd.isna(row.get('Штрихкод упаковки', '')) else None,
                 'price': str(row.get('Цена за единицу измерения', '0')).strip(),
                 'category': 'SPC панели',
@@ -75,6 +75,14 @@ try:
                     product_data['format'] = format_match.group(1) + '×2,4мм'  # Добавляем стандартную толщину
             else:
                 product_data['format'] = format_match.group(1)
+            
+            # Обрабатываем area_per_package с правильной конвертацией
+            try:
+                area_value = row.get('м2 в уп', '')
+                if not pd.isna(area_value) and str(area_value).strip() != '' and str(area_value).strip() != ' ':
+                    product_data['area_per_package'] = float(str(area_value).strip())
+            except (ValueError, TypeError):
+                product_data['area_per_package'] = None
             
             # Обрабатываем изображения
             images = []
