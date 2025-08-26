@@ -221,8 +221,11 @@ export default function ProductDetails() {
     if (collection.dbName && allProducts.length > 0) {
       const firstProduct = allProducts.find(p => p.collection === collection.dbName);
       if (firstProduct) {
-        const productId = firstProduct.productCode?.replace('SPC', '') || firstProduct.id;
-        setLocation(`/product/${productId}`);
+        let productId = firstProduct.productCode;
+        if (productId?.startsWith('SPC')) {
+          productId = productId.replace('SPC', '');
+        }
+        setLocation(`/product/${productId || firstProduct.id}`);
       } else {
         setLocation('/#catalog');
       }
@@ -268,7 +271,13 @@ export default function ProductDetails() {
               {collectionColors.map((colorProduct) => (
                 <button
                   key={colorProduct.id}
-                  onClick={() => setLocation(`/product/${colorProduct.productCode?.replace('SPC', '') || colorProduct.id}`)}
+                  onClick={() => {
+                    let productId = colorProduct.productCode;
+                    if (productId?.startsWith('SPC')) {
+                      productId = productId.replace('SPC', '');
+                    }
+                    setLocation(`/product/${productId || colorProduct.id}`);
+                  }}
                   className={`text-sm font-medium transition-colors uppercase tracking-wide ${
                     colorProduct.id === product?.id
                       ? 'text-gray-900' 
