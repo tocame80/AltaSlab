@@ -97,7 +97,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     } else {
       // For other collections (fabric, matte, marble)
       const collectionMap = {
-        'fabric': 'Тканевая роскошь',
+        'fabric': 'Тканевая Роскошь',
         'matte': 'Матовая эстетика', 
         'marble': 'Мраморная феерия'
       };
@@ -344,7 +344,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                       {[
                         { key: '', label: 'Все коллекции' },
                         { key: 'Магия бетона', label: 'Магия бетона' },
-                        { key: 'Тканевая роскошь', label: 'Тканевая роскошь' },
+                        { key: 'Тканевая Роскошь', label: 'Тканевая роскошь' },
                         { key: 'Матовая эстетика', label: 'Матовая эстетика' },
                         { key: 'Мраморная феерия', label: 'Мраморная феерия' }
                       ].map(collection => (
