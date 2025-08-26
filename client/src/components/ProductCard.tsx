@@ -41,14 +41,14 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
   const getProductImages = () => {
     const productId = product.id?.replace('SPC', '') || product.id;
     
-    // Check if API returned imageMap signals or actual paths
-    if (product.gallery && product.gallery[0]?.startsWith('imageMap:')) {
-      // Use imageMap functions directly
+    // Check if API returned USE_IMAGEMAP signal
+    if (product.image?.startsWith('USE_IMAGEMAP:') || product.gallery?.[0]?.startsWith('USE_IMAGEMAP:')) {
+      // Always use imageMap functions for local images
       return getProductGallery(productId, product.collection);
     }
     
-    // Fallback to existing image paths if not using imageMap
-    return product.gallery || [product.image] || [getProductMainImage(productId, product.collection)];
+    // Also use imageMap by default for any product
+    return getProductGallery(productId, product.collection);
   };
   
   const gallery = getProductImages();

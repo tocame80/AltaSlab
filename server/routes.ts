@@ -225,15 +225,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Use the same imageMap logic as the frontend
+  // Get local product images only - no external links
   const getLocalProductImages = (productId: string, collection: string) => {
     const cleanId = productId?.replace('SPC', '') || productId;
     
-    // This will be handled by the frontend using imageMap.ts functions
-    // We just return a signal that frontend should use imageMap
+    // All images will be handled by frontend imageMap.ts
+    // Return signal for frontend to use imageMap functions
     return {
-      image: `imageMap:${cleanId}:main`,
-      gallery: [`imageMap:${cleanId}:gallery`]
+      image: `USE_IMAGEMAP:${cleanId}`,
+      gallery: [`USE_IMAGEMAP:${cleanId}`]
     };
   };
 
