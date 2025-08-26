@@ -1,6 +1,7 @@
 import { Product } from '@/types';
 import { Heart, Download, Calculator, ShoppingCart, Truck } from 'lucide-react';
 import { useState } from 'react';
+import { getProductMainImage, getProductGallery } from '@/assets/products/imageMap';
 
 interface ProductCardProps {
   product: Product;
@@ -36,24 +37,18 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
     }
   };
 
-  // Dynamic image import function
-  const getImageUrl = (imagePath: string) => {
-    if (imagePath.startsWith('@assets/')) {
-      try {
-        const assetPath = imagePath.replace('@assets/', '');
-        return new URL(`../assets/${assetPath}`, import.meta.url).href;
-      } catch (error) {
-        // Fallback to placeholder if image not found
-        return new URL(`../assets/products/placeholder.jpg`, import.meta.url).href;
-      }
-    }
-    return imagePath;
-  };
-
-  // Use local images from gallery or fallback to product.image
+  // Use imageMap functions to get correct images for this product
   const getProductImages = () => {
-    const images = product.gallery || [product.image] || ['@assets/products/placeholder.jpg'];
-    return images.map(img => getImageUrl(img));
+    const productId = product.id?.replace('SPC', '') || product.id;
+    
+    // Check if API returned imageMap signals or actual paths
+    if (product.gallery && product.gallery[0]?.startsWith('imageMap:')) {
+      // Use imageMap functions directly
+      return getProductGallery(productId, product.collection);
+    }
+    
+    // Fallback to existing image paths if not using imageMap
+    return product.gallery || [product.image] || [getProductMainImage(productId, product.collection)];
   };
   
   const gallery = getProductImages();

@@ -225,51 +225,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Helper function to get local image paths for a product
+  // Use the same imageMap logic as the frontend
   const getLocalProductImages = (productId: string, collection: string) => {
-    const fs = require('fs');
     const cleanId = productId?.replace('SPC', '') || productId;
     
-    // Map collection names to directory names
-    const collectionDirs: { [key: string]: string } = {
-      'Магия бетона': 'concrete',
-      'Тканевая Роскошь': 'fabric', 
-      'Мраморная феерия': 'marble',
-      'Матовая эстетика': 'matte'
-    };
-    
-    const collectionDir = collectionDirs[collection];
-    
-    if (collectionDir && cleanId) {
-      // Check if actual files exist
-      const assetsPath = path.join(import.meta.dirname, '../client/src/assets/products', collectionDir);
-      const existingImages = [];
-      
-      // Check for different formats
-      const extensions = ['.png', '.jpg', '.jpeg', '.webp'];
-      for (let i = 1; i <= 3; i++) {
-        for (const ext of extensions) {
-          const filename = `${cleanId}-${i}${ext}`;
-          const fullPath = path.join(assetsPath, filename);
-          if (fs.existsSync(fullPath)) {
-            existingImages.push(`@assets/products/${collectionDir}/${filename}`);
-            break; // Found one format, move to next image number
-          }
-        }
-      }
-      
-      if (existingImages.length > 0) {
-        return {
-          image: existingImages[0],
-          gallery: existingImages
-        };
-      }
-    }
-    
-    // Fallback to placeholder if no images found
+    // This will be handled by the frontend using imageMap.ts functions
+    // We just return a signal that frontend should use imageMap
     return {
-      image: '@assets/products/placeholder.jpg',
-      gallery: ['@assets/products/placeholder.jpg']
+      image: `imageMap:${cleanId}:main`,
+      gallery: [`imageMap:${cleanId}:gallery`]
     };
   };
 
