@@ -1,31 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { products } from '@/data/products';
 import { Collection } from '@/types';
-
-interface Product {
-  id: string;
-  name: string;
-  collection: string;
-  design?: string;
-  format: string;
-  price: number;
-  image: string;
-  category: string;
-  surface: string;
-  color: string;
-  barcode: string;
-  gallery?: string[];
-  specifications?: Record<string, string>;
-  availability?: {
-    inStock: boolean;
-    deliveryTime: string;
-    quantity: number;
-  };
-  isPremium?: boolean;
-  areaPerPiece?: number;
-  piecesPerPackage?: number;
-  areaPerPackage?: number;
-}
 import ProductCard from './ProductCard';
 import { ChevronDown, Search, Filter, X } from 'lucide-react';
 import { useFavoritesContext } from '@/contexts/FavoritesContext';
@@ -38,12 +13,6 @@ interface CatalogProps {
 export default function Catalog({ activeCollection }: CatalogProps) {
   const { favorites, toggleFavorite, isFavorite } = useFavoritesContext();
   const isNavSticky = useStickyNav();
-  
-  // Fetch products from API
-  const { data: products = [], isLoading } = useQuery<Product[]>({
-    queryKey: ['/api/products'],
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
   
   const [filters, setFilters] = useState({
     collection: '',
@@ -183,7 +152,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
     // Apply additional filters
     if (additionalFilters.novelties) {
-      filtered = filtered.filter(product => product.isPremium || false);
+      filtered = filtered.filter(product => product.isPremium);
     }
     if (additionalFilters.favorites) {
       // Show only favorite products when favorites filter is active
@@ -191,7 +160,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     }
     if (additionalFilters.discount) {
       // For demo purposes, show premium items as discounted
-      filtered = filtered.filter(product => product.isPremium || false);
+      filtered = filtered.filter(product => product.isPremium);
     }
     if (additionalFilters.inStock) {
       // For demo purposes, all products are in stock
@@ -205,7 +174,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
         return (
           product.name.toLowerCase().includes(searchLower) ||
           product.color.toLowerCase().includes(searchLower) ||
-          (product.design || '').toLowerCase().includes(searchLower) ||
+          product.design.toLowerCase().includes(searchLower) ||
           product.collection.toLowerCase().includes(searchLower) ||
           product.format.toLowerCase().includes(searchLower)
         );
@@ -218,7 +187,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     } else if (sortBy === 'price-desc') {
       filtered.sort((a, b) => b.price - a.price);
     } else if (sortBy === 'name') {
-      filtered.sort((a, b) => (a.design || '').localeCompare(b.design || ''));
+      filtered.sort((a, b) => a.design.localeCompare(b.design));
     }
 
     return filtered;
@@ -657,34 +626,19 @@ export default function Catalog({ activeCollection }: CatalogProps) {
             </div>
 
             {/* Product Grid */}
-            {isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 mb-12">
-                {[...Array(6)].map((_, index) => (
-                  <div key={index} className="bg-white rounded-lg shadow-sm p-4 animate-pulse">
-                    <div className="aspect-square bg-gray-200 rounded-lg mb-4"></div>
-                    <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                    <div className="h-3 bg-gray-200 rounded w-2/3"></div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 mb-12">
-                {visibleProducts.map((product) => (
-                  <ProductCard 
-                    key={product.id} 
-                    product={{
-                      ...product,
-                      design: product.design || product.color || product.name
-                    } as any} 
-                    isFavorite={isFavorite(product.id)}
-                    onToggleFavorite={() => toggleFavorite(product.id)}
-                    onClick={() => {
-                      window.location.href = `/product/${product.id}`;
-                    }}
-                  />
-                ))}
-              </div>
-            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 mb-12">
+              {visibleProducts.map((product) => (
+                <ProductCard 
+                  key={product.id} 
+                  product={product} 
+                  isFavorite={isFavorite(product.id)}
+                  onToggleFavorite={() => toggleFavorite(product.id)}
+                  onClick={() => {
+                    window.location.href = `/product/${product.id}`;
+                  }}
+                />
+              ))}
+            </div>
 
             {/* Load More Button */}
             {hasMoreItems && (

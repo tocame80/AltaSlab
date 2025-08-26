@@ -5,7 +5,6 @@ import { FavoritesContext } from '@/contexts/FavoritesContext';
 import { Collection } from '@/types';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
-import placeholderImage from '@/assets/products/placeholder.jpg';
 
 interface Product {
   id: string;
@@ -49,11 +48,11 @@ export default function ProductDetails() {
 
   // Parse images from database - этот хук должен быть здесь, до условных возвратов
   const gallery = useMemo(() => {
-    if (!product) return [placeholderImage];
+    if (!product) return ['/placeholder-product.jpg'];
     
     // Use local gallery images or fallback to single image
     const productGallery = (product as any).gallery;
-    return productGallery || (product.image ? [product.image] : [placeholderImage]);
+    return productGallery || (product.image ? [product.image] : ['/placeholder-product.jpg']);
   }, [product]);
 
   useEffect(() => {

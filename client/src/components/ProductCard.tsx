@@ -37,12 +37,18 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
     }
   };
 
-  // Always use imageMap functions to get correct images for this product
+  // Use imageMap functions to get correct images for this product
   const getProductImages = () => {
     const productId = product.id?.replace('SPC', '') || product.id;
     
-    // Always use imageMap functions - this ensures we get real images when available, placeholder when not
-    return getProductGallery(productId, product.collection);
+    // Check if API returned imageMap signals or actual paths
+    if (product.gallery && product.gallery[0]?.startsWith('imageMap:')) {
+      // Use imageMap functions directly
+      return getProductGallery(productId, product.collection);
+    }
+    
+    // Fallback to existing image paths if not using imageMap
+    return product.gallery || [product.image] || [getProductMainImage(productId, product.collection)];
   };
   
   const gallery = getProductImages();
