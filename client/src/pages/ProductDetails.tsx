@@ -1,5 +1,5 @@
 import { useState, useContext, useMemo, useEffect } from 'react';
-import { useRoute } from 'wouter';
+import { useRoute, useLocation } from 'wouter';
 import { ArrowLeft, Heart, ShoppingCart, Calculator, Download, Share2, Eye, Maximize2, CheckCircle, Clock, Truck, X, ZoomIn, Save, Search, Mail, Play } from 'lucide-react';
 import { FavoritesContext } from '@/contexts/FavoritesContext';
 import { Collection } from '@/types';
@@ -29,6 +29,7 @@ interface Product {
 
 export default function ProductDetails() {
   const [, params] = useRoute('/product/:id');
+  const [, setLocation] = useLocation();
   const favoritesContext = useContext(FavoritesContext);
   if (!favoritesContext) {
     throw new Error('ProductDetails must be used within a FavoritesProvider');
@@ -232,7 +233,7 @@ export default function ProductDetails() {
       <div className="container mx-auto px-6 py-8">
         {/* Back Button */}
         <button
-          onClick={() => window.history.back()}
+          onClick={() => setLocation('/#catalog')}
           className="flex items-center gap-2 text-gray-600 hover:text-[#e90039] mb-6 transition-colors"
         >
           <ArrowLeft size={20} />
