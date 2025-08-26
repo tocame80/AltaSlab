@@ -101,8 +101,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [showCatalogForm, setShowCatalogForm] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [catalogSearchQuery, setCatalogSearchQuery] = useState<string>('');
+  const [isImporting, setIsImporting] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const catalogFileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -947,6 +949,116 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     } finally {
       setIsExporting(false);
     }
+  };
+
+  // Import functions for catalog data
+  const importCatalogFromExcel = async (file: File) => {
+    setIsImporting(true);
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+      
+      if (jsonData.length === 0) {
+        toast({
+          title: 'Ошибка',
+          description: 'Файл Excel пуст или имеет неправильный формат',
+        });
+        return;
+      }
+
+      // Преобразуем данные Excel в формат для API
+      const productsToImport = jsonData.map((row: any, index: number) => {
+        // Определяем артикул
+        let productCode = '';
+        if (row['Артикул'] && !isNaN(row['Артикул'])) {
+          productCode = `SPC${parseInt(row['Артикул'])}`;
+        } else {
+          productCode = `AUTO_${index}`;
+        }
+
+        // Извлекаем формат из названия
+        const name = String(row['Название товара'] || '').trim();
+        let format = '';
+        if (name.includes('×')) {
+          const formatMatch = name.match(/(\d+×\d+×[\d,]+мм)/);
+          if (formatMatch) {
+            format = formatMatch[1];
+          }
+        }
+
+        return {
+          productCode,
+          name,
+          unit: String(row['Единица измерения'] || 'упак').trim(),
+          quantity: parseInt(row['Количество'] || '0') || 0,
+          price: String(row['Цена за единицу измерения'] || '0'),
+          barcode: String(row['Штрихкод упаковки'] || '').trim() || null,
+          category: 'SPC панели',
+          collection: String(row['Коллекция'] || '').trim(),
+          color: String(row['Цвета'] || 'Стандарт').trim(),
+          format,
+          surface: 'упак',
+          imageUrl: String(row['Ссылки на фото'] || '').trim() || null,
+          images: row['Ссылки на фото'] ? [String(row['Ссылки на фото']).trim()] : [],
+          description: `Панель ${name}`,
+          specifications: {},
+          profile: null,
+          availability: String(row['Наличие '] || 'В наличии').trim(),
+          isActive: 1,
+          sortOrder: index,
+        };
+      }).filter(product => product.name && product.collection); // Убираем пустые строки
+
+      console.log('Импортируем товары:', productsToImport.length);
+
+      // Отправляем на сервер
+      const response = await apiRequest('POST', '/api/catalog-products/import', {
+        products: productsToImport
+      });
+
+      // Обновляем кэш
+      queryClient.invalidateQueries({ queryKey: ['/api/catalog-products'] });
+
+      toast({
+        title: 'Успешно',
+        description: `Импортировано ${productsToImport.length} товаров`,
+      });
+
+    } catch (error) {
+      console.error('Ошибка импорта:', error);
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось импортировать каталог',
+      });
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
+  const handleCatalogFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+        importCatalogFromExcel(file);
+      } else {
+        toast({
+          title: 'Ошибка',
+          description: 'Поддерживаются только файлы Excel (.xlsx, .xls)',
+        });
+      }
+    }
+    
+    // Reset file input
+    if (catalogFileInputRef.current) {
+      catalogFileInputRef.current.value = '';
+    }
+  };
+
+  const triggerFileSelect = () => {
+    catalogFileInputRef.current?.click();
   };
 
   // Filter products to show only panel products (not accessories)
@@ -2097,15 +2209,24 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
                     <p className="text-gray-600 mb-2">Перетащите файл сюда или</p>
                     <button 
+                      onClick={triggerFileSelect}
                       className="text-[#E95D22] hover:text-[#d54a1a] font-medium"
                       data-testid="button-choose-file"
                     >
                       выберите файл
                     </button>
                     <p className="text-xs text-gray-500 mt-2">
-                      Поддерживаются форматы: .xlsx, .csv, .json
+                      Поддерживаются форматы: .xlsx, .xls
                     </p>
                   </div>
+                  
+                  <input
+                    ref={catalogFileInputRef}
+                    type="file"
+                    accept=".xlsx,.xls"
+                    onChange={handleCatalogFileSelect}
+                    className="hidden"
+                  />
                   
                   <div className="mt-4 flex gap-3">
                     <button 
@@ -2116,11 +2237,16 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       Скачать шаблон
                     </button>
                     <button 
-                      className="flex-1 bg-[#E95D22] text-white px-4 py-2 rounded-lg hover:bg-[#d54a1a] transition-colors text-sm" 
-                      disabled
+                      onClick={triggerFileSelect}
+                      disabled={isImporting}
+                      className={`flex-1 px-4 py-2 rounded-lg transition-colors text-sm ${
+                        isImporting 
+                          ? 'bg-gray-400 cursor-not-allowed' 
+                          : 'bg-[#E95D22] hover:bg-[#d54a1a]'
+                      } text-white`}
                       data-testid="button-upload-file"
                     >
-                      Загрузить файл
+                      {isImporting ? 'Загрузка...' : 'Загрузить файл'}
                     </button>
                   </div>
                 </div>
