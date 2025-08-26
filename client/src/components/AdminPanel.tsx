@@ -2617,6 +2617,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             data: formData,
                           });
                         } else {
+                          console.log('Creating new gallery project with data:', formData);
                           createGalleryProjectMutation.mutate(formData);
                         }
                       })}

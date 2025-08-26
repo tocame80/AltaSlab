@@ -178,10 +178,16 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createGalleryProject(insertGalleryProject: InsertGalleryProject): Promise<GalleryProject> {
+    console.log('Storage: Creating gallery project with data:', insertGalleryProject);
     const [galleryProject] = await db
       .insert(galleryProjects)
-      .values(insertGalleryProject)
+      .values({
+        ...insertGalleryProject,
+        images: insertGalleryProject.images || [],
+        materialsUsed: insertGalleryProject.materialsUsed || []
+      })
       .returning();
+    console.log('Storage: Created gallery project:', galleryProject);
     return galleryProject;
   }
 

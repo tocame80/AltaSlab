@@ -117,8 +117,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/gallery-projects', async (req, res) => {
     try {
+      console.log('Received gallery project data:', req.body);
       const projectData = insertGalleryProjectSchema.parse(req.body);
+      console.log('Parsed gallery project data:', projectData);
       const galleryProject = await storage.createGalleryProject(projectData);
+      console.log('Created gallery project:', galleryProject);
       res.status(201).json(galleryProject);
     } catch (error) {
       console.error('Error creating gallery project:', error);
