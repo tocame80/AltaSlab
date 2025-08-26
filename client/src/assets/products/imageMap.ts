@@ -5,18 +5,16 @@
 // Import placeholder image (used when no specific product images available)
 import placeholderImage from './placeholder.jpg';
 
-// Static imports for known products (kept for immediate availability) 
-import product8933_1 from './concrete/8933 (1).png';
-import product8933_2 from './concrete/8933 (2).png';
-import product8933_3 from './concrete/8933 (3).png';
-import product8933_4 from './concrete/8933 (2.2).png';
-import product8933_5 from './concrete/8933 (2.3).png';
+// Static imports for known products (kept for immediate availability)
 
-import product8934_1 from './concrete/8934-1.png';
-import product8934_2 from './concrete/8934-2.png';
-import product8934_3 from './concrete/8934-3.png';
+// Import product 8934 images from МагияБетонаЗАКАТ collection
+import product8934_1 from './concrete/МагияБетонаЗАКАТ/PNG/8934 (1).png';
+import product8934_2 from './concrete/МагияБетонаЗАКАТ/PNG/8934 (2.1).png';
+import product8934_3 from './concrete/МагияБетонаЗАКАТ/PNG/8934 (2.2).png';
+import product8934_4 from './concrete/МагияБетонаЗАКАТ/PNG/8934 (2.3).png';
+import product8934_5 from './concrete/МагияБетонаЗАКАТ/PNG/8934 (коллаж).png';
 
-import product8938_1 from './concrete/8938-1.jpg';
+
 
 // Dynamic product image storage (initialized once)
 let dynamicImageMap: Record<string, string[]> | null = null;
@@ -78,6 +76,11 @@ const initializeImageMap = () => {
 // Initialize image map immediately
 initializeImageMap();
 
+// Static fallback mappings for products with special paths  
+const staticImageMap: Record<string, string[]> = {
+  '8934': [product8934_1, product8934_2, product8934_3, product8934_4, product8934_5],
+};
+
 // Helper function to get product gallery
 export const getProductGallery = (productId: string, collection: string = ''): string[] => {
   // Initialize image map if needed
@@ -85,7 +88,12 @@ export const getProductGallery = (productId: string, collection: string = ''): s
     initializeImageMap();
   }
   
-  // Check if we have dynamic images for this product
+  // First check static mappings (guaranteed to work)
+  if (staticImageMap[productId]) {
+    return staticImageMap[productId];
+  }
+  
+  // Then check dynamic images
   if (dynamicImageMap && dynamicImageMap[productId] && dynamicImageMap[productId].length > 0) {
     return dynamicImageMap[productId];
   }
@@ -101,7 +109,12 @@ export const getProductMainImage = (productId: string, collection: string = ''):
     initializeImageMap();
   }
   
-  // Check if we have dynamic images for this product
+  // First check static mappings (guaranteed to work)
+  if (staticImageMap[productId] && staticImageMap[productId].length > 0) {
+    return staticImageMap[productId][0]; // Return first image
+  }
+  
+  // Then check dynamic images
   if (dynamicImageMap && dynamicImageMap[productId] && dynamicImageMap[productId].length > 0) {
     return dynamicImageMap[productId][0]; // Return first image
   }
