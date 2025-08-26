@@ -441,9 +441,16 @@ export default function ProductDetails() {
                   </div>
                   <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 text-center">
                     <div className="text-2xl font-bold text-orange-700">
-                      {Math.round(product.price / product.areaPerPackage)}
+                      {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 
+                        Math.round(product.price) :
+                        product.areaPerPackage && product.areaPerPackage > 0 ? 
+                          Math.round(product.price / product.areaPerPackage) : 
+                          Math.round(product.price)
+                      }
                     </div>
-                    <div className="text-sm text-orange-600 font-medium">₽ за м²</div>
+                    <div className="text-sm text-orange-600 font-medium">
+                      {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? '₽ за упак.' : '₽ за м²'}
+                    </div>
                   </div>
                 </div>
 
@@ -585,13 +592,19 @@ export default function ProductDetails() {
                       <>
                         <div className="text-center">
                           <div className="text-2xl font-bold text-blue-600">
-                            {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽
+                            {product.areaPerPackage && product.areaPerPackage > 0 ? 
+                              Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU') : 
+                              product.price.toLocaleString('ru-RU')
+                            } ₽
                           </div>
                           <div className="text-sm text-gray-600">за м²</div>
                         </div>
                         <div className="text-center">
                           <div className="text-2xl font-bold text-green-600">
-                            {Math.round(product.price / product.piecesPerPackage).toLocaleString('ru-RU')} ₽
+                            {product.piecesPerPackage && product.piecesPerPackage > 0 ? 
+                              Math.round(product.price / product.piecesPerPackage).toLocaleString('ru-RU') : 
+                              product.price.toLocaleString('ru-RU')
+                            } ₽
                           </div>
                           <div className="text-sm text-gray-600">за панель</div>
                         </div>
