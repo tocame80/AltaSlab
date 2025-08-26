@@ -209,13 +209,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       const catalogProducts = await storage.getCatalogProducts();
+      console.log('API: Got', catalogProducts.length, 'products from storage');
       
       // Filter out collection headers (AUTO_ entries) - internal system information
       const realProducts = catalogProducts.filter(product => 
-        product.id && !product.id.startsWith('AUTO_')
+        product.productCode && product.productCode.startsWith('SPC')
       );
       
-      console.log('API: returning', realProducts.length, 'products with LOCAL images');
+      console.log('API: After filtering AUTO_ headers:', realProducts.length, 'real products with LOCAL images');
       
       // Transform products to use only local images
       const transformedProducts = realProducts.map(product => {
@@ -263,8 +264,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Filter out collection headers (AUTO_ entries) - internal system information  
       const realProducts = catalogProducts.filter(product => 
-        product.id && !product.id.startsWith('AUTO_')
+        product.productCode && product.productCode.startsWith('SPC')
       );
+      console.log('API /products: returning', realProducts.length, 'real products');
       
       // Transform database products to frontend format using local images
       const frontendProducts = realProducts.map(product => {

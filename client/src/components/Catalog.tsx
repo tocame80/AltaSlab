@@ -89,17 +89,17 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       setFilters({ collection: '', color: '', size: '' });
       setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
     } else if (activeCollection === 'concrete') {
-      setFilters({ collection: 'МАГИЯ БЕТОНА', color: '', size: '' });
+      setFilters({ collection: 'Магия бетона', color: '', size: '' });
       setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
     } else if (activeCollection === 'accessories') {
-      setFilters({ collection: 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ', color: '', size: '' });
+      setFilters({ collection: 'Клей', color: '', size: '' });
       setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
     } else {
       // For other collections (fabric, matte, marble)
       const collectionMap = {
-        'fabric': 'ТКАНЕВАЯ РОСКОШЬ',
-        'matte': 'МАТОВАЯ ЭСТЕТИКА', 
-        'marble': 'МРАМОРНАЯ ФЕЕРИЯ'
+        'fabric': 'Тканевая роскошь',
+        'matte': 'Матовая эстетика', 
+        'marble': 'Мраморная феерия'
       };
       const collectionName = collectionMap[activeCollection as keyof typeof collectionMap];
       if (collectionName) {
@@ -126,20 +126,15 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
     // Apply collection filters
     if (filters.collection) {
-      if (filters.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ') {
-        // Show all accessories
-        filtered = filtered.filter(product => product.category === 'accessories');
-      } else if (filters.collection === 'ПРОФИЛИ') {
-        // Show only profile accessories containing "профиль" in name
-        filtered = filtered.filter(product => 
-          product.category === 'accessories' && 
-          product.name.toLowerCase().includes('профиль')
-        );
-      } else if (filters.collection === 'КЛЕЙ') {
+      if (filters.collection === 'Клей') {
         // Show only adhesive accessories containing "клей" in name  
         filtered = filtered.filter(product => 
-          product.category === 'accessories' && 
           product.name.toLowerCase().includes('клей')
+        );
+      } else if (filters.collection === 'Профили') {
+        // Show only profile accessories containing "профиль" in name
+        filtered = filtered.filter(product => 
+          product.name.toLowerCase().includes('профиль')
         );
       } else {
         // Filter by exact collection name
@@ -213,16 +208,14 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   const selectedCollectionProducts = useMemo(() => {
     if (!filters.collection) return products;
     
-    if (filters.collection === 'ПРОФИЛИ') {
+    if (filters.collection === 'Профили') {
       // Show only profile accessories containing "профиль" in name
       return products.filter(product => 
-        product.category === 'accessories' && 
         product.name.toLowerCase().includes('профиль')
       );
-    } else if (filters.collection === 'КЛЕЙ') {
+    } else if (filters.collection === 'Клей') {
       // Show only adhesive accessories containing "клей" in name  
       return products.filter(product => 
-        product.category === 'accessories' && 
         product.name.toLowerCase().includes('клей')
       );
     } else {
@@ -240,11 +233,11 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   };
 
   const availableColors = useMemo(() => {
-    return Array.from(new Set(selectedCollectionProducts.map(p => p.color).filter(color => color !== '')));
+    return Array.from(new Set(selectedCollectionProducts.map(p => p.color || p.design).filter(color => color && color !== '')));
   }, [selectedCollectionProducts]);
 
   const availableSizes = useMemo(() => {
-    return Array.from(new Set(selectedCollectionProducts.map(p => p.format)));
+    return Array.from(new Set(selectedCollectionProducts.map(p => p.format).filter(format => format && format !== '')));
   }, [selectedCollectionProducts]);
 
   const getCollectionTitle = () => {
@@ -350,10 +343,10 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                     <div className="space-y-2">
                       {[
                         { key: '', label: 'Все коллекции' },
-                        { key: 'МАГИЯ БЕТОНА', label: 'Магия бетона' },
-                        { key: 'ТКАНЕВАЯ РОСКОШЬ', label: 'Тканевая роскошь' },
-                        { key: 'МАТОВАЯ ЭСТЕТИКА', label: 'Матовая эстетика' },
-                        { key: 'МРАМОРНАЯ ФЕЕРИЯ', label: 'Мраморная феерия' }
+                        { key: 'Магия бетона', label: 'Магия бетона' },
+                        { key: 'Тканевая роскошь', label: 'Тканевая роскошь' },
+                        { key: 'Матовая эстетика', label: 'Матовая эстетика' },
+                        { key: 'Мраморная феерия', label: 'Мраморная феерия' }
                       ].map(collection => (
                         <label key={collection.key} className="flex items-center cursor-pointer">
                           <input
@@ -386,8 +379,8 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                       <input
                         type="radio"
                         name="collection"
-                        value="КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ"
-                        checked={filters.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ'}
+                        value="Клей"
+                        checked={filters.collection === 'Клей'}
                         onChange={(e) => setFilters(prev => ({ 
                           ...prev, 
                           collection: e.target.value,
@@ -402,8 +395,8 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                       <input
                         type="radio"
                         name="collection"
-                        value="ПРОФИЛИ"
-                        checked={filters.collection === 'ПРОФИЛИ'}
+                        value="Профили"
+                        checked={filters.collection === 'Профили'}
                         onChange={(e) => setFilters(prev => ({ 
                           ...prev, 
                           collection: e.target.value,
@@ -418,8 +411,8 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                       <input
                         type="radio"
                         name="collection"
-                        value="КЛЕЙ"
-                        checked={filters.collection === 'КЛЕЙ'}
+                        value="Клей"
+                        checked={filters.collection === 'Клей'}
                         onChange={(e) => setFilters(prev => ({ 
                           ...prev, 
                           collection: e.target.value,
@@ -436,10 +429,9 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
               {/* Colors Filter - Show for panel collections and profiles */}
               {filters.collection && 
-               filters.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && 
-               filters.collection !== 'КЛЕЙ' && 
+               filters.collection !== 'Клей' && 
                activeCollection !== 'favorites' && 
-               (activeCollection !== 'accessories' || filters.collection === 'ПРОФИЛИ') && (
+               (activeCollection !== 'accessories' || filters.collection === 'Профили') && (
                 <div className="mb-6">
                   <h4 className="font-semibold text-[#2f378b] mb-3">Цвета</h4>
                   <div className="space-y-2">
@@ -475,7 +467,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
               {((filters.collection && activeCollection !== 'favorites') || activeCollection === 'accessories') && (
                 <div className="mb-6">
                   <h4 className="font-semibold text-[#2f378b] mb-3">
-                    {(filters.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' || filters.collection === 'ПРОФИЛИ' || filters.collection === 'КЛЕЙ' || activeCollection === 'accessories') ? 'Характеристики' : 'Размеры панелей'}
+                    {(filters.collection === 'Профили' || filters.collection === 'Клей' || activeCollection === 'accessories') ? 'Характеристики' : 'Размеры панелей'}
                   </h4>
                   <div className="space-y-2">
                     <label className="flex items-center cursor-pointer">
@@ -488,7 +480,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         className="mr-2"
                       />
                       <span className="text-secondary text-sm">
-                        {(filters.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' || filters.collection === 'ПРОФИЛИ' || filters.collection === 'КЛЕЙ' || activeCollection === 'accessories') ? 'Все характеристики' : 'Все размеры'}
+                        {(filters.collection === 'Профили' || filters.collection === 'Клей' || activeCollection === 'accessories') ? 'Все характеристики' : 'Все размеры'}
                       </span>
                     </label>
                     {availableSizes
@@ -526,7 +518,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
               {/* Additional Filters - Show for panel collections, favorites, and "Магия бетона" */}
               {(activeCollection === 'concrete' || 
                 activeCollection === 'favorites' ||
-                (activeCollection !== 'accessories' && filters.collection === 'МАГИЯ БЕТОНА') ||
+                (activeCollection !== 'accessories' && filters.collection === 'Магия бетона') ||
                 activeCollection === 'all') && (
                 <div>
                   <h4 className="font-semibold text-[#2f378b] mb-3">Дополнительно</h4>
