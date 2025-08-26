@@ -195,7 +195,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Catalog product routes
   app.get('/api/catalog-products', async (req, res) => {
     try {
+      // Устанавливаем заголовки для отключения кеширования
+      res.set({
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'Surrogate-Control': 'no-store'
+      });
+      
       const catalogProducts = await storage.getCatalogProducts();
+      console.log('API: returning', catalogProducts.length, 'products'); // Отладка
+      
+      // Отладка для продукта 8934
+      const product8934 = catalogProducts.find(p => p.productCode === 'SPC8934');
+      if (product8934) {
+        console.log('API: Product 8934 data:', {
+          id: product8934.id,
+          productCode: product8934.productCode,
+          images: product8934.images
+        });
+      }
+      
       res.json(catalogProducts);
     } catch (error) {
       console.error('Error fetching catalog products:', error);
