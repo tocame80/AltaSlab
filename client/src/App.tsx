@@ -14,6 +14,7 @@ import VideoPage from "@/pages/VideoPage";
 import Contact from "@/pages/Contact";
 import Gallery from "@/pages/Gallery";
 import WhereToBuy from "@/pages/WhereToBuy";
+import { ProductCatalogPage } from "@/pages/ProductCatalogPage";
 import NotFound from "@/pages/not-found";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import AdminPanel from "@/components/AdminPanel";
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/product/:id" component={ProductDetails} />
       <Route path="/project/:id" component={ProjectDetails} />
+      <Route path="/catalog" component={ProductCatalogPage} />
       <Route path="/gallery" component={Gallery} />
       <Route path="/where-to-buy" component={WhereToBuy} />
       <Route path="/calculator" component={Calculator} />

@@ -9,16 +9,8 @@ export default function Header() {
   const isHeaderVisible = useScrollDirection();
 
   const handleCatalogClick = () => {
-    if (location === '/') {
-      // If on home page, scroll to catalog
-      const element = document.getElementById('catalog');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    } else {
-      // If on any other page, navigate to home page
-      window.location.href = '/#catalog';
-    }
+    // Navigate to dedicated catalog page
+    window.location.href = '/catalog';
   };
 
   const handleCompanyClick = () => {

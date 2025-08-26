@@ -203,6 +203,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Public API for website product catalog (returns products in format expected by frontend)
+  app.get('/api/products', async (req, res) => {
+    try {
+      const catalogProducts = await storage.getCatalogProducts();
+      
+      // Transform database products to frontend format
+      const frontendProducts = catalogProducts.map(product => ({
+        id: product.productCode,
+        name: product.name,
+        collection: product.collection || '',
+        design: product.color || '',
+        format: product.format || '',
+        price: parseFloat(product.price || '0'),
+        image: product.imageUrl || '',
+        category: product.category === 'SPC панели' ? 'concrete' : 'other',
+        surface: product.surface || 'упак',
+        color: product.color || '',
+        barcode: product.barcode || '',
+        gallery: product.images || [],
+        specifications: product.specifications || {},
+        availability: {
+          inStock: product.quantity > 0,
+          deliveryTime: product.availability === 'В наличии' ? '1-3 дня' : '7-10 дней',
+          quantity: product.quantity
+        }
+      }));
+      
+      res.json(frontendProducts);
+    } catch (error) {
+      console.error('Error fetching products for frontend:', error);
+      res.status(500).json({ error: 'Failed to fetch products' });
+    }
+  });
+
   app.post('/api/catalog-products', async (req, res) => {
     try {
       const productData = insertCatalogProductSchema.parse(req.body);
@@ -259,77 +293,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/catalog-products/export', async (req, res) => {
     try {
-      // Return sample catalog data based on existing product catalog
-      const sampleProducts = [
-        {
-          productCode: 'SPC8934',
-          name: 'Панель SPC стеновая Альта Слэб Магия Бетона 300×600×2,4мм Закат',
-          unit: 'упак',
-          quantity: 245,
-          price: 4739.04,
-          barcode: '4650218304115',
-          images: ['https://alta-slab.ru/images/spc-8934-zahat.jpg'],
-          sortOrder: 1,
-          isActive: 1
-        },
-        {
-          productCode: 'SPC8938',
-          name: 'Панель SPC стеновая Альта Слэб Магия Бетона 600×1200×2,4мм Закат',
-          unit: 'упак',
-          quantity: 0,
-          price: 5528.88,
-          barcode: '4650218304092',
-          images: ['https://alta-slab.ru/images/spc-8938-zahat.jpg'],
-          sortOrder: 2,
-          isActive: 0
-        },
-        {
-          productCode: 'SPC8930',
-          name: 'Панель SPC стеновая Альта Слэб Магия Бетона 300×600×2,4мм Метеорит',
-          unit: 'упак',
-          quantity: 150,
-          price: 4739.04,
-          barcode: '4650218304030',
-          images: ['https://alta-slab.ru/images/spc-8930-meteorit.jpg'],
-          sortOrder: 3,
-          isActive: 1
-        },
-        {
-          productCode: 'SPC9014',
-          name: 'Панель SPC стеновая Альта Слэб Текстиль 300×600×2,4мм Лён',
-          unit: 'упак',
-          quantity: 80,
-          price: 4739.04,
-          barcode: '4650218304245',
-          images: ['https://alta-slab.ru/images/spc-9014-len.jpg'],
-          sortOrder: 4,
-          isActive: 1
-        },
-        {
-          productCode: 'SPC9050',
-          name: 'Панель SPC стеновая Альта Слэб Матовая 300×600×2,4мм Ясень',
-          unit: 'упак',
-          quantity: 120,
-          price: 4530.72,
-          barcode: '4650218304375',
-          images: ['https://alta-slab.ru/images/spc-9050-ash.jpg'],
-          sortOrder: 5,
-          isActive: 1
-        },
-        {
-          productCode: 'SPC9086',
-          name: 'Панель SPC стеновая Альта Слэб Мрамор 300×600×2,4мм Каррара',
-          unit: 'упак',
-          quantity: 90,
-          price: 5320.56,
-          barcode: '4650218304520',
-          images: ['https://alta-slab.ru/images/spc-9086-carrara.jpg'],
-          sortOrder: 6,
-          isActive: 1
-        }
-      ];
-      
-      res.json(sampleProducts);
+      const products = await storage.exportCatalogProducts();
+      res.json(products);
     } catch (error) {
       console.error('Error exporting catalog products:', error);
       res.status(500).json({ message: 'Failed to export catalog products' });
