@@ -223,6 +223,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const productId = product.productCode?.replace('SPC', '') || product.productCode;
         const localImages = getLocalProductImages(productId, product.collection || '');
         
+        // Debug logging for product 8934
+        if (productId === '8934' || product.productCode === '8934' || product.productCode === 'SPC8934') {
+          console.log(`🔍 API: Found product 8934 with ID "${product.id}", productCode "${product.productCode}", name "${product.name}"`);
+        }
+        
         return {
           ...product,
           // Override with local image signals

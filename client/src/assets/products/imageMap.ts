@@ -90,15 +90,18 @@ export const getProductGallery = (productId: string, collection: string = ''): s
   
   // First check static mappings (guaranteed to work)
   if (staticImageMap[productId]) {
+    console.log(`📷 Found static images for product ${productId}:`, staticImageMap[productId].length, 'images');
     return staticImageMap[productId];
   }
   
   // Then check dynamic images
   if (dynamicImageMap && dynamicImageMap[productId] && dynamicImageMap[productId].length > 0) {
+    console.log(`📷 Found dynamic images for product ${productId}:`, dynamicImageMap[productId].length, 'images');
     return dynamicImageMap[productId];
   }
   
   // If no specific product images available, use single placeholder
+  console.log(`📷 No images found for product ${productId}, using placeholder`);
   return [placeholderImage];
 };
 
