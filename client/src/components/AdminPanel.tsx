@@ -61,7 +61,7 @@ const galleryProjectFormSchema = insertGalleryProjectSchema.extend({
   title: z.string().min(1, 'Название проекта обязательно'),
   description: z.string().min(1, 'Описание обязательно'),
   application: z.string().min(1, 'Тип применения обязателен'),
-  images: z.array(z.string()).min(1, 'Добавьте хотя бы одно изображение'),
+  images: z.array(z.string()).default([]),
   materialsUsed: z.array(z.string()).default([]),
   location: z.string().optional(),
   area: z.string().optional(),
