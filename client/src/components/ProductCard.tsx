@@ -41,6 +41,16 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
   const getProductImages = () => {
     const productId = product.id?.replace('SPC', '') || product.id;
     
+    // Debug log for product 8934
+    if (productId === '8934') {
+      console.log('DEBUG Product 8934:', {
+        productId,
+        collection: product.collection,
+        productData: product,
+        gallery: getProductGallery(productId, product.collection)
+      });
+    }
+    
     // Check if API returned USE_IMAGEMAP signal
     if (product.image?.startsWith('USE_IMAGEMAP:') || product.gallery?.[0]?.startsWith('USE_IMAGEMAP:')) {
       // Always use imageMap functions for local images

@@ -16,6 +16,7 @@ import product8934_3 from './concrete/8934-3.png';
 
 // Map collection names to folder paths
 const getCollectionFolder = (collection: string): string => {
+  const normalizedCollection = collection.toUpperCase();
   const folderMap: Record<string, string> = {
     'МАГИЯ БЕТОНА': 'concrete',
     'ТКАНЕВАЯ РОСКОШЬ': 'fabric',
@@ -23,7 +24,7 @@ const getCollectionFolder = (collection: string): string => {
     'МРАМОРНАЯ ФЕЕРИЯ': 'marble',
     'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ': 'accessories'
   };
-  return folderMap[collection] || 'concrete';
+  return folderMap[normalizedCollection] || 'concrete';
 };
 
 // Product-specific image mapping (manually add products that have real photos)
