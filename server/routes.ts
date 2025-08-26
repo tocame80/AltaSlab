@@ -227,8 +227,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const getLocalProductImages = (productId: string, collection: string) => {
     // If no photo available, use placeholder
     return {
-      image: '/placeholder-product.jpg',
-      gallery: ['/placeholder-product.jpg']
+      image: '/src/assets/products/placeholder.jpg',
+      gallery: ['/src/assets/products/placeholder.jpg']
     };
   };
 
