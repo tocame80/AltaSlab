@@ -99,6 +99,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [materialSearchQuery, setMaterialSearchQuery] = useState<string>('');
   const [editingCatalogProduct, setEditingCatalogProduct] = useState<CatalogProduct | null>(null);
   const [showCatalogForm, setShowCatalogForm] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [catalogSearchQuery, setCatalogSearchQuery] = useState<string>('');
   
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -803,104 +804,149 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   };
 
   // Export functions for catalog data
-  const exportToExcel = () => {
-    if (catalogProducts.length === 0) {
-      alert('Нет данных для экспорта');
-      return;
+  const exportToExcel = async () => {
+    setIsExporting(true);
+    try {
+      const response = await fetch('/api/catalog-products/export');
+      if (!response.ok) {
+        throw new Error('Ошибка при получении данных каталога');
+      }
+      
+      const products = await response.json();
+      
+      if (products.length === 0) {
+        alert('Нет данных для экспорта');
+        return;
+      }
+
+      const workbook = XLSX.utils.book_new();
+      
+      const exportData = products.map((product: any) => ({
+        'Артикул': product.productCode,
+        'Название товара': product.name,
+        'Единица измерения': product.unit,
+        'Количество': product.quantity,
+        'Цена': product.price,
+        'Штрихкод': product.barcode || '',
+        'Ссылки на фото': product.images ? product.images.join(';') : '',
+        'Порядок сортировки': product.sortOrder ?? 0,
+        'Активный (1/0)': product.isActive ?? 1
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      
+      const columnWidths = [
+        { wch: 12 }, { wch: 30 }, { wch: 18 }, { wch: 12 },
+        { wch: 12 }, { wch: 18 }, { wch: 40 }, { wch: 20 }, { wch: 15 }
+      ];
+      worksheet['!cols'] = columnWidths;
+
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Каталог товаров');
+      
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([excelBuffer], { 
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+      });
+      
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Каталог_товаров_${new Date().toISOString().split('T')[0]}.xlsx`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error('Ошибка экспорта Excel:', error);
+      alert('Ошибка при экспорте данных в Excel');
+    } finally {
+      setIsExporting(false);
     }
-
-    const workbook = XLSX.utils.book_new();
-    
-    const exportData = catalogProducts.map(product => ({
-      'Артикул': product.productCode,
-      'Название товара': product.name,
-      'Единица измерения': product.unit,
-      'Количество': product.quantity,
-      'Цена': product.price,
-      'Штрихкод': product.barcode || '',
-      'Ссылки на фото': product.images ? product.images.join(';') : '',
-      'Порядок сортировки': product.sortOrder ?? 0,
-      'Активный (1/0)': product.isActive ?? 1
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-    
-    const columnWidths = [
-      { wch: 12 }, { wch: 30 }, { wch: 18 }, { wch: 12 },
-      { wch: 12 }, { wch: 18 }, { wch: 40 }, { wch: 20 }, { wch: 15 }
-    ];
-    worksheet['!cols'] = columnWidths;
-
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Каталог товаров');
-    
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([excelBuffer], { 
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
-    });
-    
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `Каталог_товаров_${new Date().toISOString().split('T')[0]}.xlsx`;
-    link.click();
-    URL.revokeObjectURL(link.href);
   };
 
-  const exportToCSV = () => {
-    if (catalogProducts.length === 0) {
-      alert('Нет данных для экспорта');
-      return;
+  const exportToCSV = async () => {
+    setIsExporting(true);
+    try {
+      const response = await fetch('/api/catalog-products/export');
+      if (!response.ok) {
+        throw new Error('Ошибка при получении данных каталога');
+      }
+      
+      const products = await response.json();
+      
+      if (products.length === 0) {
+        alert('Нет данных для экспорта');
+        return;
+      }
+
+      const headers = ['Артикул', 'Название товара', 'Единица измерения', 'Количество', 'Цена', 'Штрихкод', 'Ссылки на фото', 'Порядок сортировки', 'Активный (1/0)'];
+      
+      const csvContent = [
+        headers.join(','),
+        ...products.map((product: any) => [
+          product.productCode,
+          `"${product.name}"`,
+          product.unit,
+          product.quantity,
+          product.price,
+          product.barcode || '',
+          `"${product.images ? product.images.join(';') : ''}"`,
+          product.sortOrder ?? 0,
+          product.isActive ?? 1
+        ].join(','))
+      ].join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Каталог_товаров_${new Date().toISOString().split('T')[0]}.csv`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error('Ошибка экспорта CSV:', error);
+      alert('Ошибка при экспорте данных в CSV');
+    } finally {
+      setIsExporting(false);
     }
-
-    const headers = ['Артикул', 'Название товара', 'Единица измерения', 'Количество', 'Цена', 'Штрихкод', 'Ссылки на фото', 'Порядок сортировки', 'Активный (1/0)'];
-    
-    const csvContent = [
-      headers.join(','),
-      ...catalogProducts.map(product => [
-        product.productCode,
-        `"${product.name}"`,
-        product.unit,
-        product.quantity,
-        product.price,
-        product.barcode || '',
-        `"${product.images ? product.images.join(';') : ''}"`,
-        product.sortOrder ?? 0,
-        product.isActive ?? 1
-      ].join(','))
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `Каталог_товаров_${new Date().toISOString().split('T')[0]}.csv`;
-    link.click();
-    URL.revokeObjectURL(link.href);
   };
 
-  const exportToJSON = () => {
-    if (catalogProducts.length === 0) {
-      alert('Нет данных для экспорта');
-      return;
+  const exportToJSON = async () => {
+    setIsExporting(true);
+    try {
+      const response = await fetch('/api/catalog-products/export');
+      if (!response.ok) {
+        throw new Error('Ошибка при получении данных каталога');
+      }
+      
+      const products = await response.json();
+      
+      if (products.length === 0) {
+        alert('Нет данных для экспорта');
+        return;
+      }
+
+      const exportData = products.map((product: any) => ({
+        productCode: product.productCode,
+        name: product.name,
+        unit: product.unit,
+        quantity: product.quantity,
+        price: product.price,
+        barcode: product.barcode || '',
+        images: product.images || [],
+        sortOrder: product.sortOrder ?? 0,
+        isActive: product.isActive ?? 1
+      }));
+
+      const jsonContent = JSON.stringify(exportData, null, 2);
+      const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Каталог_товаров_${new Date().toISOString().split('T')[0]}.json`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error('Ошибка экспорта JSON:', error);
+      alert('Ошибка при экспорте данных в JSON');
+    } finally {
+      setIsExporting(false);
     }
-
-    const exportData = catalogProducts.map(product => ({
-      productCode: product.productCode,
-      name: product.name,
-      unit: product.unit,
-      quantity: product.quantity,
-      price: product.price,
-      barcode: product.barcode || '',
-      images: product.images || [],
-      sortOrder: product.sortOrder ?? 0,
-      isActive: product.isActive ?? 1
-    }));
-
-    const jsonContent = JSON.stringify(exportData, null, 2);
-    const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `Каталог_товаров_${new Date().toISOString().split('T')[0]}.json`;
-    link.click();
-    URL.revokeObjectURL(link.href);
   };
 
   // Filter products to show only panel products (not accessories)
@@ -1985,29 +2031,44 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                   <div className="space-y-3">
                     <button 
                       onClick={exportToExcel}
-                      className="w-full bg-[#E95D22] text-white px-4 py-3 rounded-lg hover:bg-[#d54a1a] transition-colors flex items-center justify-center gap-2"
+                      disabled={isExporting}
+                      className={`w-full px-4 py-3 rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                        isExporting 
+                          ? 'bg-gray-400 cursor-not-allowed' 
+                          : 'bg-[#E95D22] hover:bg-[#d54a1a]'
+                      } text-white`}
                       data-testid="button-export-excel"
                     >
                       <Download size={16} />
-                      Скачать Excel (.xlsx)
+                      {isExporting ? 'Экспорт...' : 'Скачать Excel (.xlsx)'}
                     </button>
                     
                     <button 
                       onClick={exportToCSV}
-                      className="w-full bg-gray-600 text-white px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
+                      disabled={isExporting}
+                      className={`w-full px-4 py-3 rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                        isExporting 
+                          ? 'bg-gray-400 cursor-not-allowed' 
+                          : 'bg-gray-600 hover:bg-gray-700'
+                      } text-white`}
                       data-testid="button-export-csv"
                     >
                       <Download size={16} />
-                      Скачать CSV
+                      {isExporting ? 'Экспорт...' : 'Скачать CSV'}
                     </button>
                     
                     <button 
                       onClick={exportToJSON}
-                      className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                      disabled={isExporting}
+                      className={`w-full px-4 py-3 rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                        isExporting 
+                          ? 'bg-gray-400 cursor-not-allowed' 
+                          : 'bg-blue-600 hover:bg-blue-700'
+                      } text-white`}
                       data-testid="button-export-json"
                     >
                       <Download size={16} />
-                      Скачать JSON
+                      {isExporting ? 'Экспорт...' : 'Скачать JSON'}
                     </button>
                   </div>
                 </div>
