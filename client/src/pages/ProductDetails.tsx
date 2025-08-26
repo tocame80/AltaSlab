@@ -209,11 +209,12 @@ export default function ProductDetails() {
 
   const collections = [
     { key: 'all' as Collection, label: 'ВСЁ', color: 'bg-gray-400', dbName: null },
-    { key: 'concrete' as Collection, label: 'МАГИЯ БЕТОНА', color: 'bg-gray-600', dbName: 'МАГИЯ БЕТОНА' },
-    { key: 'fabric' as Collection, label: 'ТКАНЕВАЯ РОСКОШЬ', color: 'bg-purple-500', dbName: 'ТЕКСТИЛЬ' },
-    { key: 'matte' as Collection, label: 'МАТОВАЯ ЭСТЕТИКА', color: 'bg-green-500', dbName: 'МАТОВАЯ ЭСТЕТИКА' },
-    { key: 'marble' as Collection, label: 'МРАМОРНАЯ ФЕЕРИЯ', color: 'bg-blue-500', dbName: 'МРАМОР' },
-    { key: 'accessories' as Collection, label: 'КОМПЛЕКТУЮЩИЕ', color: 'bg-orange-500', dbName: 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' },
+    { key: 'concrete' as Collection, label: 'МАГИЯ БЕТОНА', color: 'bg-gray-600', dbName: 'Магия бетона' },
+    { key: 'fabric' as Collection, label: 'ТКАНЕВАЯ РОСКОШЬ', color: 'bg-purple-500', dbName: 'Тканевая Роскошь' },
+    { key: 'matte' as Collection, label: 'МАТОВАЯ ЭСТЕТИКА', color: 'bg-green-500', dbName: 'Матовая эстетика' },
+    { key: 'marble' as Collection, label: 'МРАМОРНАЯ ФЕЕРИЯ', color: 'bg-blue-500', dbName: 'Мраморная феерия' },
+    { key: 'accessories' as Collection, label: 'КОМПЛЕКТУЮЩИЕ', color: 'bg-orange-500', dbName: 'Профиль' },
+    { key: 'glue' as Collection, label: 'КЛЕЙ', color: 'bg-yellow-500', dbName: 'Клей' },
   ];
 
   // Функция для навигации к первому продукту коллекции
@@ -261,10 +262,10 @@ export default function ProductDetails() {
                 <button
                   key={collection.key}
                   onClick={() => navigateToCollection(collection)}
-                  className={`text-sm font-medium transition-colors uppercase tracking-wide ${
+                  className={`px-3 py-1 rounded-md text-sm font-medium transition-all uppercase tracking-wide ${
                     isActive 
-                      ? 'text-gray-900 font-bold' 
-                      : 'text-gray-500 hover:text-gray-700'
+                      ? 'bg-[#e90039] text-white shadow-md transform scale-105' 
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
                   }`}
                 >
                   {collection.label}
@@ -299,10 +300,10 @@ export default function ProductDetails() {
                     }
                     setLocation(`/product/${productId || colorProduct.id}`);
                   }}
-                  className={`text-sm font-medium transition-colors uppercase tracking-wide ${
-                    colorProduct.id === product?.id
-                      ? 'text-gray-900' 
-                      : 'text-gray-500 hover:text-gray-700'
+                  className={`px-3 py-1 rounded-md text-sm font-medium transition-all uppercase tracking-wide ${
+                    colorProduct.color === product?.color
+                      ? 'bg-[#e90039] text-white shadow-md transform scale-105' 
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
                   }`}
                 >
                   {colorProduct.color}
