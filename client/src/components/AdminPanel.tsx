@@ -20,6 +20,9 @@ interface ProductImage {
   fileName: string;
   file: File;
   preview: string;
+  rotation: number;
+  size: string;
+  isFavorite: boolean;
 }
 
 interface ExistingImage {
@@ -1131,12 +1134,16 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       if (file.type.startsWith('image/')) {
         const fileName = `${selectedProduct}-${currentCount + index + 1}.${file.name.split('.').pop()}`;
         const preview = URL.createObjectURL(file);
+        const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
         
         setUploadedImages(prev => [...prev, {
           productId: selectedProduct,
           fileName,
           file,
-          preview
+          preview,
+          rotation: 0,
+          size: `${sizeInMB} MB`,
+          isFavorite: false
         }]);
       }
     });
@@ -1177,6 +1184,37 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       newImages.splice(index, 1);
       return newImages;
     });
+  };
+
+  const rotateImage = (index: number) => {
+    setUploadedImages(prev => {
+      const newImages = [...prev];
+      newImages[index] = {
+        ...newImages[index],
+        rotation: (newImages[index].rotation + 90) % 360
+      };
+      return newImages;
+    });
+  };
+
+  const toggleFavorite = (index: number) => {
+    setUploadedImages(prev => {
+      const newImages = [...prev];
+      newImages[index] = {
+        ...newImages[index],
+        isFavorite: !newImages[index].isFavorite
+      };
+      return newImages;
+    });
+  };
+
+  const downloadOriginal = (img: ProductImage) => {
+    const link = document.createElement('a');
+    link.href = img.preview;
+    link.download = img.fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const removeExistingImage = async (image: ExistingImage) => {
@@ -1502,9 +1540,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                 <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
                 К загрузке ({getProductsBySelection().length})
               </h3>
-              {console.log('Debug uploadedImages:', uploadedImages)}
-              {console.log('Debug selectedProduct:', selectedProduct)}
-              {console.log('Debug getProductsBySelection():', getProductsBySelection())}
+
               <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 max-h-60 overflow-y-auto">
                 {getProductsBySelection().map((img, index) => (
                   <div key={index} className="relative group">
