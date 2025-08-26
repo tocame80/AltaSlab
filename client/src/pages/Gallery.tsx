@@ -131,8 +131,8 @@ export default function Gallery() {
                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                           
                           {/* Title Overlay */}
-                          <div className="absolute bottom-0 left-0 right-0 p-4">
-                            <h3 className="text-lg font-bold line-clamp-2 text-white drop-shadow-2xl" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.6)'}}>
+                          <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                            <h3 className="text-lg font-bold line-clamp-2 drop-shadow-lg">
                               {project.title}
                             </h3>
                           </div>
