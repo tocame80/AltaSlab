@@ -74,6 +74,7 @@ const catalogProductFormSchema = insertCatalogProductSchema.extend({
   unit: z.string().min(1, 'Единица измерения обязательна'),
   quantity: z.number().min(0, 'Количество не может быть отрицательным'),
   price: z.number().min(0, 'Цена не может быть отрицательной'),
+  areaPerPackage: z.string().optional(),
 });
 
 type CertificateFormData = z.infer<typeof certificateFormSchema>;
@@ -422,6 +423,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       name: '',
       unit: '',
       quantity: 0,
+      areaPerPackage: '',
       barcode: '',
       price: 0,
       images: [],
@@ -761,6 +763,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       name: catalogProduct.name,
       unit: catalogProduct.unit,
       quantity: catalogProduct.quantity ?? 0,
+      areaPerPackage: catalogProduct.areaPerPackage || '',
       barcode: catalogProduct.barcode || '',
       price: parseFloat(catalogProduct.price || '0'),
       images: catalogProduct.images || [],
@@ -1050,6 +1053,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
           name,
           unit: String(row['Единица измерения'] || 'упак').trim(),
           quantity: parseInt(row['Количество'] || '0') || 0,
+          areaPerPackage: String(row['м2 в упаковке'] || row['Площадь панели в упаковке'] || '').trim() || null,
           price: String(row['Цена за единицу измерения'] || '0'),
           barcode: String(row['Штрихкод упаковки'] || '').trim() || null,
           category: 'SPC панели',
@@ -3321,6 +3325,20 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
 
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
+                            м2 в упаковке
+                          </label>
+                          <input
+                            {...catalogProductForm.register('areaPerPackage')}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
+                            placeholder="0.5"
+                            data-testid="input-area-per-package"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
                             Порядок сортировки
                           </label>
                           <input
@@ -3331,6 +3349,20 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             min="0"
                             data-testid="input-sort-order"
                           />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Активность
+                          </label>
+                          <select
+                            {...catalogProductForm.register('isActive', { valueAsNumber: true })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
+                            data-testid="select-is-active"
+                          >
+                            <option value={1}>Активен</option>
+                            <option value={0}>Не активен</option>
+                          </select>
                         </div>
                       </div>
 

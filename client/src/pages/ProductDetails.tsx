@@ -17,6 +17,7 @@ interface Product {
   price: number;
   quantity?: number;
   unit?: string;
+  areaPerPackage?: string;
   image?: string;
   images?: string | string[];
   category: string;
@@ -365,9 +366,9 @@ export default function ProductDetails() {
                     {product.format}
                   </div>
                   
-                  {/* Line 2: Quantity per package */}
+                  {/* Line 2: Area per package */}
                   <div className="text-white hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                    {product.quantity || 1} {product.unit || 'шт'}
+                    {product.areaPerPackage ? `${product.areaPerPackage} м²` : `${product.quantity || 1} ${product.unit || 'шт'}`}
                   </div>
                   
                   {/* Line 3: Price per package */}
@@ -518,6 +519,12 @@ export default function ProductDetails() {
                     <span className="text-gray-600">Количество в упаковке</span>
                     <span className="font-semibold text-gray-900">{product.quantity || 1} {product.unit || 'шт'}</span>
                   </div>
+                  {product.areaPerPackage && (
+                    <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                      <span className="text-gray-600">Площадь в упаковке</span>
+                      <span className="font-semibold text-gray-900">{product.areaPerPackage} м²</span>
+                    </div>
+                  )}
                   <div className="flex justify-between items-center py-2">
                     <span className="text-gray-600">Цена за упаковку</span>
                     <span className="font-semibold text-[#e90039]">{Math.round(product.price).toLocaleString('ru-RU')} ₽</span>

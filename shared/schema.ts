@@ -90,6 +90,7 @@ export const catalogProducts = pgTable("catalog_products", {
   name: text("name").notNull(), // Наименование товара
   unit: text("unit").notNull().default("упак"), // Единица измерения 
   quantity: integer("quantity").default(0), // Количество
+  areaPerPackage: text("area_per_package"), // м2 в упаковке
   barcode: text("barcode"), // Штрих код
   price: text("price"), // Цена
   category: text("category").notNull(), // Категория (например: АЛЬТА ИНТЕРЬЕР, Альта Слэб, Матовая Эстетика)
