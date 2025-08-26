@@ -1,11 +1,29 @@
 import { useState, useContext, useMemo, useEffect } from 'react';
 import { useRoute } from 'wouter';
 import { ArrowLeft, Heart, ShoppingCart, Calculator, Download, Share2, Eye, Maximize2, CheckCircle, Clock, Truck, X, ZoomIn, Save, Search, Mail, Play } from 'lucide-react';
-import { products } from '@/data/products';
 import { FavoritesContext } from '@/contexts/FavoritesContext';
 import { Collection } from '@/types';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
+
+interface Product {
+  id: string;
+  productCode?: string;
+  name: string;
+  collection: string;
+  design?: string;
+  format: string;
+  price: number;
+  image?: string;
+  images?: string | string[];
+  category: string;
+  surface: string;
+  color: string;
+  barcode: string;
+  description?: string;
+  specifications?: Record<string, string>;
+  availability?: string;
+}
 
 export default function ProductDetails() {
   const [, params] = useRoute('/product/:id');
@@ -20,16 +38,81 @@ export default function ProductDetails() {
   const [selectedCollection, setSelectedCollection] = useState<Collection>('all');
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [isImageViewerOpen, setIsImageViewerOpen] = useState(false);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const product = products.find(p => p.id === params?.id);
+  // Parse images from database - этот хук должен быть здесь, до условных возвратов
+  const gallery = useMemo(() => {
+    if (!product) return ['/placeholder-product.jpg'];
+    
+    if (product.images) {
+      try {
+        const images = Array.isArray(product.images) ? product.images : JSON.parse(product.images);
+        return images.length > 0 ? images : ['/placeholder-product.jpg'];
+      } catch {
+        return ['/placeholder-product.jpg'];
+      }
+    }
+    return product.image ? [product.image] : ['/placeholder-product.jpg'];
+  }, [product?.images, product?.image]);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await fetch('/api/catalog-products');
+        if (response.ok) {
+          const products = await response.json();
+          const foundProduct = products.find((p: Product) => 
+            p.productCode === params?.id || 
+            p.id === params?.id ||
+            p.productCode === `SPC${params?.id}` ||
+            p.productCode?.includes(params?.id || '') ||
+            p.name.includes(params?.id || '')
+          );
+          setProduct(foundProduct || null);
+        }
+      } catch (error) {
+        console.error('Error fetching product:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (params?.id) {
+      fetchProduct();
+    }
+  }, [params?.id]);
+
+  // Handle escape key for modals
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        if (isFullscreenOpen) setIsFullscreenOpen(false);
+        if (isImageViewerOpen) setIsImageViewerOpen(false);
+      }
+    };
+
+    if (isFullscreenOpen || isImageViewerOpen) {
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
+    }
+  }, [isFullscreenOpen, isImageViewerOpen]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#E95D22]"></div>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Продукт не найден</h1>
-          <a href="/catalog" className="text-[#e90039] hover:underline">
-            Вернуться в каталог
+          <a href="/" className="text-[#e90039] hover:underline">
+            Вернуться на главную
           </a>
         </div>
       </div>
@@ -37,33 +120,19 @@ export default function ProductDetails() {
   }
 
   const isFavorite = favorites.has(product.id);
-  const gallery = product.gallery || [product.image];
-  const availability = product.availability || {
-    inStock: Math.random() > 0.3,
+
+  const availability = {
+    inStock: product.availability === 'В наличии' || product.availability === 'Склад',
     deliveryTime: '1-3 дня',
     quantity: Math.floor(Math.random() * 50) + 10
   };
 
   const getCollectionDisplayName = () => {
-    if (product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ') {
-      return product.name.toLowerCase().includes('профиль') ? 'ПРОФИЛИ' : 'КЛЕЙ';
-    }
-    return product.collection;
+    return product.collection || 'Общий каталог';
   };
 
   const getProductDisplayName = () => {
-    if (product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ') {
-      if (product.name.toLowerCase().includes('профиль')) {
-        const name = product.name;
-        if (name.includes('под рассеивателем')) return `Профиль под рассеивателем ${product.color}`;
-        if (name.includes('соединительный')) return `Профиль соединительный ${product.color}`;
-        if (name.includes('торцевой')) return `Профиль торцевой ${product.color}`;
-        if (name.includes('угловой')) return `Профиль угловой ${product.color}`;
-        return `Профиль ${product.color}`;
-      }
-      return 'Клей Альта Стик';
-    }
-    return product.design;
+    return product.design || product.color || product.name;
   };
 
   // Image gallery functions
@@ -113,21 +182,6 @@ export default function ProductDetails() {
     document.body.removeChild(link);
   };
 
-  // Handle escape key for modals
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        if (isFullscreenOpen) setIsFullscreenOpen(false);
-        if (isImageViewerOpen) setIsImageViewerOpen(false);
-      }
-    };
-
-    if (isFullscreenOpen || isImageViewerOpen) {
-      document.addEventListener('keydown', handleEscape);
-      return () => document.removeEventListener('keydown', handleEscape);
-    }
-  }, [isFullscreenOpen, isImageViewerOpen]);
-
   const collections = [
     { key: 'all' as Collection, label: 'ВСЁ', color: 'bg-gray-400' },
     { key: 'concrete' as Collection, label: 'МАГИЯ БЕТОНА', color: 'bg-gray-600' },
@@ -137,59 +191,7 @@ export default function ProductDetails() {
     { key: 'accessories' as Collection, label: 'КОМПЛЕКТУЮЩИЕ', color: 'bg-orange-500' },
   ];
 
-  // Get unique colors/designs for the selected collection
-  const getColorsForCollection = (collectionKey: Collection) => {
-    if (collectionKey === 'all') {
-      return [];
-    }
-    
-    const collectionMapping = {
-      'concrete': 'МАГИЯ БЕТОНА',
-      'fabric': 'ТКАНЕВАЯ РОСКОШЬ', 
-      'matte': 'МАТОВАЯ ЭСТЕТИКА',
-      'marble': 'МРАМОРНАЯ ФЕЕРИЯ',
-      'accessories': 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ'
-    };
 
-    const collectionName = collectionMapping[collectionKey as keyof typeof collectionMapping];
-    if (!collectionName) return [];
-
-    const filteredProducts = products.filter(p => p.collection === collectionName);
-    const uniqueColors = new Map();
-
-    filteredProducts.forEach(product => {
-      const key = product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' 
-        ? (product.name.toLowerCase().includes('профиль') ? product.color : 'Клей')
-        : product.design;
-      
-      if (!uniqueColors.has(key)) {
-        uniqueColors.set(key, {
-          name: key,
-          productId: product.id,
-          color: product.color
-        });
-      }
-    });
-
-    return Array.from(uniqueColors.values());
-  };
-
-  const currentCollectionColors = useMemo(() => 
-    getColorsForCollection(selectedCollection), 
-    [selectedCollection]
-  );
-
-  // Set initial collection based on current product
-  useEffect(() => {
-    if (product) {
-      const productCollection = product.collection;
-      if (productCollection === 'МАГИЯ БЕТОНА') setSelectedCollection('concrete');
-      else if (productCollection === 'ТКАНЕВАЯ РОСКОШЬ') setSelectedCollection('fabric');
-      else if (productCollection === 'МАТОВАЯ ЭСТЕТИКА') setSelectedCollection('matte');
-      else if (productCollection === 'МРАМОРНАЯ ФЕЕРИЯ') setSelectedCollection('marble');
-      else if (productCollection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ') setSelectedCollection('accessories');
-    }
-  }, [product]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -224,31 +226,7 @@ export default function ProductDetails() {
           </nav>
         </div>
       </div>
-      {/* Colors/Designs Navigation */}
-      {currentCollectionColors.length > 0 && (
-        <div className="bg-gray-50 py-3 border-t border-gray-200">
-          <div className="container mx-auto px-6">
-            <nav className="flex flex-wrap items-center gap-6">
-              {currentCollectionColors.map((colorItem) => (
-                <button
-                  key={colorItem.productId}
-                  onClick={() => window.location.href = `/product/${colorItem.productId}`}
-                  className={`text-gray-500 hover:text-gray-700 text-sm transition-colors ${
-                    product && (
-                      (product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && 
-                       ((product.name.toLowerCase().includes('профиль') && colorItem.name === product.color) ||
-                        (!product.name.toLowerCase().includes('профиль') && colorItem.name === 'Клей'))) ||
-                      (product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && colorItem.name === product.design)
-                    ) ? 'font-semibold text-gray-900' : ''
-                  }`}
-                >
-                  {colorItem.name}
-                </button>
-              ))}
-            </nav>
-          </div>
-        </div>
-      )}
+
       <div className="container mx-auto px-6 py-8">
         {/* Back Button */}
         <button
