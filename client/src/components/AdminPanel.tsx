@@ -883,22 +883,45 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       const workbook = XLSX.utils.book_new();
       
       const exportData = products.map((product: any) => ({
-        'Артикул': product.productCode,
+        'Код товара': product.productCode,
         'Название товара': product.name,
         'Единица измерения': product.unit,
         'Количество': product.quantity,
+        'м2 в упаковке': product.areaPerPackage || '',
+        'Штрих-код': product.barcode || '',
         'Цена': product.price,
-        'Штрихкод': product.barcode || '',
-        'Ссылки на фото': product.images ? product.images.join(';') : '',
-        'Порядок сортировки': product.sortOrder ?? 0,
-        'Активный (1/0)': product.isActive ?? 1
+        'Категория': product.category || '',
+        'Коллекция': product.collection || '',
+        'Цвет': product.color || '',
+        'Формат': product.format || '',
+        'Поверхность': product.surface || '',
+        'Описание': product.description || '',
+        'Профиль': product.profile || '',
+        'Наличие': product.availability || '',
+        'Активный (1/0)': product.isActive ?? 1,
+        'Порядок сортировки': product.sortOrder ?? 0
       }));
 
       const worksheet = XLSX.utils.json_to_sheet(exportData);
       
       const columnWidths = [
-        { wch: 12 }, { wch: 30 }, { wch: 18 }, { wch: 12 },
-        { wch: 12 }, { wch: 18 }, { wch: 40 }, { wch: 20 }, { wch: 15 }
+        { wch: 12 }, // Код товара
+        { wch: 40 }, // Название товара
+        { wch: 15 }, // Единица измерения
+        { wch: 12 }, // Количество
+        { wch: 15 }, // м2 в упаковке
+        { wch: 18 }, // Штрих-код
+        { wch: 12 }, // Цена
+        { wch: 15 }, // Категория
+        { wch: 20 }, // Коллекция
+        { wch: 15 }, // Цвет
+        { wch: 15 }, // Формат
+        { wch: 15 }, // Поверхность
+        { wch: 50 }, // Описание
+        { wch: 15 }, // Профиль
+        { wch: 15 }, // Наличие
+        { wch: 15 }, // Активный
+        { wch: 15 }  // Порядок сортировки
       ];
       worksheet['!cols'] = columnWidths;
 
@@ -937,7 +960,11 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         return;
       }
 
-      const headers = ['Артикул', 'Название товара', 'Единица измерения', 'Количество', 'Цена', 'Штрихкод', 'Ссылки на фото', 'Порядок сортировки', 'Активный (1/0)'];
+      const headers = [
+        'Код товара', 'Название товара', 'Единица измерения', 'Количество', 'м2 в упаковке', 
+        'Штрих-код', 'Цена', 'Категория', 'Коллекция', 'Цвет', 'Формат', 'Поверхность', 
+        'Описание', 'Профиль', 'Наличие', 'Активный (1/0)', 'Порядок сортировки'
+      ];
       
       const csvContent = [
         headers.join(','),
@@ -946,11 +973,19 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
           `"${product.name}"`,
           product.unit,
           product.quantity,
-          product.price,
+          product.areaPerPackage || '',
           product.barcode || '',
-          `"${product.images ? product.images.join(';') : ''}"`,
-          product.sortOrder ?? 0,
-          product.isActive ?? 1
+          product.price,
+          product.category || '',
+          product.collection || '',
+          product.color || '',
+          product.format || '',
+          product.surface || '',
+          `"${product.description || ''}"`,
+          product.profile || '',
+          product.availability || '',
+          product.isActive ?? 1,
+          product.sortOrder ?? 0
         ].join(','))
       ].join('\n');
 
@@ -988,9 +1023,17 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         name: product.name,
         unit: product.unit,
         quantity: product.quantity,
-        price: product.price,
+        areaPerPackage: product.areaPerPackage || '',
         barcode: product.barcode || '',
-        images: product.images || [],
+        price: product.price,
+        category: product.category || '',
+        collection: product.collection || '',
+        color: product.color || '',
+        format: product.format || '',
+        surface: product.surface || '',
+        description: product.description || '',
+        profile: product.profile || '',
+        availability: product.availability || '',
         sortOrder: product.sortOrder ?? 0,
         isActive: product.isActive ?? 1
       }));
