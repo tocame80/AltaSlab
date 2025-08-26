@@ -10,6 +10,8 @@ This is a React-based SPA (Single Page Application) for "АЛЬТА СЛЭБ" - 
 - **Catalog Import/Export Enhancement**: Updated Excel import/export to support new "Каталог Slab для сайта 26.08.2025" format with "Шт в уп" and "м2 в уп" fields
 - **Admin Catalog Pagination**: Added pagination to admin catalog (5 items per page with "Show more" button) for better performance with 74 products
 - **Package Data Fix**: Corrected area_per_package and pcs_per_package field mapping - now displays correct values like "4,32м2" instead of "0,0м2" in product cards
+- **Price Display Enhancement**: Updated price display to show price per m² instead of price per package - improves price comparison across products
+- **Product Details Layout**: Simplified overlay layout to match catalog cards - removed size display, prioritized area per package information
 
 # User Preferences
 
