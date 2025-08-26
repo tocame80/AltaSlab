@@ -51,8 +51,9 @@ export default function ProductDetails() {
     if (!product) return ['/placeholder-product.jpg'];
     
     // Use local gallery images or fallback to single image
-    return product.gallery || (product.image ? [product.image] : ['/placeholder-product.jpg']);
-  }, [product?.gallery, product?.image]);
+    const productGallery = (product as any).gallery;
+    return productGallery || (product.image ? [product.image] : ['/placeholder-product.jpg']);
+  }, [product]);
 
   useEffect(() => {
     const fetchProduct = async () => {

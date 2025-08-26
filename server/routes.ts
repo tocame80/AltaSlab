@@ -223,32 +223,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Helper function to get local image paths for a product
+  const getLocalProductImages = (productId: string, collection: string) => {
+    const cleanId = productId?.replace('SPC', '') || productId;
+    // Return local image paths based on product structure
+    const basePath = `/products/${cleanId}`;
+    return {
+      image: `${basePath}-1.jpg`,
+      gallery: [
+        `${basePath}-1.jpg`,
+        `${basePath}-2.jpg`,
+        `${basePath}-3.jpg`
+      ]
+    };
+  };
+
   // Public API for website product catalog (returns products in format expected by frontend)
   app.get('/api/products', async (req, res) => {
     try {
       const catalogProducts = await storage.getCatalogProducts();
       
-      // Transform database products to frontend format
-      const frontendProducts = catalogProducts.map(product => ({
-        id: product.productCode,
-        name: product.name,
-        collection: product.collection || '',
-        design: product.color || '',
-        format: product.format || '',
-        price: parseFloat(product.price || '0'),
-        image: product.imageUrl || '',
-        category: product.category === 'SPC панели' ? 'concrete' : 'other',
-        surface: product.surface || 'упак',
-        color: product.color || '',
-        barcode: product.barcode || '',
-        gallery: product.images || [],
-        specifications: product.specifications || {},
-        availability: {
-          inStock: product.quantity > 0,
-          deliveryTime: product.availability === 'В наличии' ? '1-3 дня' : '7-10 дней',
-          quantity: product.quantity
-        }
-      }));
+      // Transform database products to frontend format using local images
+      const frontendProducts = catalogProducts.map(product => {
+        const productId = product.productCode?.replace('SPC', '') || product.productCode;
+        const localImages = getLocalProductImages(productId, product.collection || '');
+        
+        return {
+          id: product.productCode,
+          name: product.name,
+          collection: product.collection || '',
+          design: product.color || '',
+          format: product.format || '',
+          price: parseFloat(product.price || '0'),
+          image: localImages.image,
+          category: product.category === 'SPC панели' ? 'concrete' : 'other',
+          surface: product.surface || 'упак',
+          color: product.color || '',
+          barcode: product.barcode || '',
+          gallery: localImages.gallery,
+          specifications: product.specifications || {},
+          availability: {
+            inStock: (product.quantity || 0) > 0,
+            deliveryTime: product.availability === 'В наличии' ? '1-3 дня' : '7-10 дней',
+            quantity: product.quantity || 0
+          }
+        };
+      });
       
       res.json(frontendProducts);
     } catch (error) {
