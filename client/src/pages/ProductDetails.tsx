@@ -50,16 +50,9 @@ export default function ProductDetails() {
   const gallery = useMemo(() => {
     if (!product) return ['/placeholder-product.jpg'];
     
-    if (product.images) {
-      try {
-        const images = Array.isArray(product.images) ? product.images : JSON.parse(product.images);
-        return images.length > 0 ? images : ['/placeholder-product.jpg'];
-      } catch {
-        return ['/placeholder-product.jpg'];
-      }
-    }
-    return product.image ? [product.image] : ['/placeholder-product.jpg'];
-  }, [product?.images, product?.image]);
+    // Use local gallery images or fallback to single image
+    return product.gallery || (product.image ? [product.image] : ['/placeholder-product.jpg']);
+  }, [product?.gallery, product?.image]);
 
   useEffect(() => {
     const fetchProduct = async () => {

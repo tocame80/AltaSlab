@@ -36,16 +36,8 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
     }
   };
 
-  // Parse images from database
+  // Use local images from gallery or fallback to product.image
   const getProductImages = () => {
-    if (product.images) {
-      try {
-        const images = Array.isArray(product.images) ? product.images : JSON.parse(product.images);
-        return images.length > 0 ? images : ['/placeholder-product.jpg'];
-      } catch {
-        return ['/placeholder-product.jpg'];
-      }
-    }
     return product.gallery || [product.image] || ['/placeholder-product.jpg'];
   };
   
