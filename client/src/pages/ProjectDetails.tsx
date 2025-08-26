@@ -124,7 +124,7 @@ export default function ProjectDetails() {
               />
               
               {/* Project Info Overlay - Bottom Left */}
-              <div className="absolute bottom-0 left-0 p-6 bg-gradient-to-r from-black/80 to-transparent">
+              <div className="absolute bottom-0 left-0 p-6">
                 <div className="text-white">
                   <h1 className="text-2xl font-bold mb-2 drop-shadow-lg">
                     {project.title}
