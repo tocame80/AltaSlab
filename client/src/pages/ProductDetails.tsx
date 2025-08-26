@@ -239,6 +239,32 @@ export default function ProductDetails() {
         </div>
       </div>
 
+      {/* Collection Colors Navigator */}
+      {collectionColors.length > 0 && (
+        <div className="bg-gray-50 py-4 border-t border-gray-200">
+          <div className="container mx-auto px-6">
+            <nav className="flex flex-wrap items-center gap-8">
+              <span className="text-sm font-medium text-gray-900 uppercase tracking-wide">
+                Цвета коллекции {getCollectionDisplayName()}:
+              </span>
+              {collectionColors.map((colorProduct) => (
+                <button
+                  key={colorProduct.id}
+                  onClick={() => setLocation(`/product/${colorProduct.id}`)}
+                  className={`text-sm font-medium transition-colors uppercase tracking-wide ${
+                    colorProduct.id === product?.id
+                      ? 'text-gray-900' 
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  {colorProduct.color}
+                </button>
+              ))}
+            </nav>
+          </div>
+        </div>
+      )}
+
       <div className="container mx-auto px-6 py-8">
         {/* Back Button */}
         <button
@@ -371,32 +397,6 @@ export default function ProductDetails() {
 
 
         </div>
-
-        {/* Collection Colors Navigator */}
-        {collectionColors.length > 0 && (
-          <div className="bg-gray-50 py-4 border-t border-gray-200 mb-8">
-            <div className="container mx-auto px-6">
-              <nav className="flex flex-wrap items-center gap-8">
-                <span className="text-sm font-medium text-gray-900 uppercase tracking-wide">
-                  Цвета коллекции {getCollectionDisplayName()}:
-                </span>
-                {collectionColors.map((colorProduct) => (
-                  <button
-                    key={colorProduct.id}
-                    onClick={() => setLocation(`/product/${colorProduct.id}`)}
-                    className={`text-sm font-medium transition-colors uppercase tracking-wide ${
-                      colorProduct.id === product?.id
-                        ? 'text-gray-900' 
-                        : 'text-gray-500 hover:text-gray-700'
-                    }`}
-                  >
-                    {colorProduct.color}
-                  </button>
-                ))}
-              </nav>
-            </div>
-          </div>
-        )}
 
         {/* Tabs Section */}
         <div className="mt-16">
