@@ -726,6 +726,64 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     }
   };
 
+  // Download template function
+  const downloadTemplate = () => {
+    const templateData = [
+      {
+        productCode: 'ABC123',
+        name: 'Панель SPC Дуб Классик',
+        unit: 'м²',
+        quantity: 100,
+        price: 1250.50,
+        barcode: '1234567890123',
+        sortOrder: 1,
+        isActive: 1
+      },
+      {
+        productCode: 'DEF456',
+        name: 'Плинтус универсальный',
+        unit: 'м',
+        quantity: 50,
+        price: 350.00,
+        barcode: '2345678901234',
+        sortOrder: 2,
+        isActive: 1
+      }
+    ];
+
+    const headers = [
+      'Артикул (productCode)',
+      'Название (name)',
+      'Единица измерения (unit)',
+      'Количество (quantity)',
+      'Цена (price)',
+      'Штрихкод (barcode)',
+      'Порядок сортировки (sortOrder)',
+      'Активный 1/0 (isActive)'
+    ];
+
+    const csvContent = [
+      headers.join(','),
+      ...templateData.map(row => [
+        row.productCode,
+        `"${row.name}"`,
+        row.unit,
+        row.quantity,
+        row.price,
+        row.barcode,
+        row.sortOrder,
+        row.isActive
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'template_catalog_products.csv';
+    link.click();
+    URL.revokeObjectURL(link.href);
+  };
+
   // Filter products to show only panel products (not accessories)
   const panelProducts = products.filter(product => product.category !== 'accessories');
 
@@ -1843,6 +1901,15 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     Импортируйте данные каталога из файла для массового обновления товаров.
                   </p>
                   
+                  <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+                    <h5 className="font-medium text-blue-900 mb-1">Шаблон файла содержит:</h5>
+                    <ul className="text-sm text-blue-800 space-y-1">
+                      <li>• Правильные названия колонок</li>
+                      <li>• Примеры заполнения данных</li>
+                      <li>• Допустимые значения полей</li>
+                    </ul>
+                  </div>
+                  
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-[#E95D22] transition-colors">
                     <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
                     <p className="text-gray-600 mb-2">Перетащите файл сюда или</p>
@@ -1859,6 +1926,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                   
                   <div className="mt-4 flex gap-3">
                     <button 
+                      onClick={downloadTemplate}
                       className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm"
                       data-testid="button-download-template"
                     >
