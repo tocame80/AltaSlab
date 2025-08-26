@@ -883,45 +883,35 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       const workbook = XLSX.utils.book_new();
       
       const exportData = products.map((product: any) => ({
-        'Код товара': product.productCode,
+        'Артикул': product.productCode?.replace('SPC', '') || '',
         'Название товара': product.name,
         'Единица измерения': product.unit,
-        'Количество': product.quantity,
-        'м2 в упаковке': product.areaPerPackage || '',
-        'Штрих-код': product.barcode || '',
-        'Цена': product.price,
-        'Категория': product.category || '',
+        'Количество': product.quantity || '',
+        'Шт в уп': '', // Поле из Excel, пока пустое
+        'м2 в уп': product.areaPerPackage || '',
         'Коллекция': product.collection || '',
-        'Цвет': product.color || '',
-        'Формат': product.format || '',
-        'Поверхность': product.surface || '',
-        'Описание': product.description || '',
-        'Профиль': product.profile || '',
-        'Наличие': product.availability || '',
-        'Активный (1/0)': product.isActive ?? 1,
-        'Порядок сортировки': product.sortOrder ?? 0
+        'Цвета': product.color || '',
+        'Цена за единицу измерения': product.price,
+        'Наличие ': product.availability || '',
+        'Штрихкод штуки': product.barcode || '',
+        'Штрихкод упаковки': product.barcode || ''
       }));
 
       const worksheet = XLSX.utils.json_to_sheet(exportData);
       
       const columnWidths = [
-        { wch: 12 }, // Код товара
-        { wch: 40 }, // Название товара
-        { wch: 15 }, // Единица измерения
+        { wch: 12 }, // Артикул
+        { wch: 50 }, // Название товара
+        { wch: 18 }, // Единица измерения
         { wch: 12 }, // Количество
-        { wch: 15 }, // м2 в упаковке
-        { wch: 18 }, // Штрих-код
-        { wch: 12 }, // Цена
-        { wch: 15 }, // Категория
+        { wch: 12 }, // Шт в уп
+        { wch: 12 }, // м2 в уп
         { wch: 20 }, // Коллекция
-        { wch: 15 }, // Цвет
-        { wch: 15 }, // Формат
-        { wch: 15 }, // Поверхность
-        { wch: 50 }, // Описание
-        { wch: 15 }, // Профиль
+        { wch: 15 }, // Цвета
+        { wch: 15 }, // Цена за единицу измерения
         { wch: 15 }, // Наличие
-        { wch: 15 }, // Активный
-        { wch: 15 }  // Порядок сортировки
+        { wch: 20 }, // Штрихкод штуки
+        { wch: 20 }  // Штрихкод упаковки
       ];
       worksheet['!cols'] = columnWidths;
 
@@ -961,31 +951,26 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       }
 
       const headers = [
-        'Код товара', 'Название товара', 'Единица измерения', 'Количество', 'м2 в упаковке', 
-        'Штрих-код', 'Цена', 'Категория', 'Коллекция', 'Цвет', 'Формат', 'Поверхность', 
-        'Описание', 'Профиль', 'Наличие', 'Активный (1/0)', 'Порядок сортировки'
+        'Артикул', 'Название товара', 'Единица измерения', 'Количество', 'Шт в уп', 
+        'м2 в уп', 'Коллекция', 'Цвета', 'Цена за единицу измерения', 'Наличие ', 
+        'Штрихкод штуки', 'Штрихкод упаковки'
       ];
       
       const csvContent = [
         headers.join(','),
         ...products.map((product: any) => [
-          product.productCode,
+          product.productCode?.replace('SPC', '') || '',
           `"${product.name}"`,
           product.unit,
-          product.quantity,
+          product.quantity || '',
+          '', // Шт в уп - пустое поле
           product.areaPerPackage || '',
-          product.barcode || '',
-          product.price,
-          product.category || '',
           product.collection || '',
           product.color || '',
-          product.format || '',
-          product.surface || '',
-          `"${product.description || ''}"`,
-          product.profile || '',
+          product.price,
           product.availability || '',
-          product.isActive ?? 1,
-          product.sortOrder ?? 0
+          product.barcode || '',
+          product.barcode || ''
         ].join(','))
       ].join('\n');
 
