@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, timestamp, integer, json } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, timestamp, integer, json, numeric } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -90,7 +90,8 @@ export const catalogProducts = pgTable("catalog_products", {
   name: text("name").notNull(), // Наименование товара
   unit: text("unit").notNull().default("упак"), // Единица измерения 
   quantity: integer("quantity").default(0), // Количество
-  areaPerPackage: text("area_per_package"), // м2 в упаковке
+  pcsPerPackage: numeric("pcs_per_package"), // Шт в уп
+  areaPerPackage: numeric("area_per_package"), // м2 в уп
   barcode: text("barcode"), // Штрих код
   price: text("price"), // Цена
   category: text("category").notNull(), // Категория (например: АЛЬТА ИНТЕРЬЕР, Альта Слэб, Матовая Эстетика)

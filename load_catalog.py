@@ -48,7 +48,8 @@ try:
                 'name': str(row.get('Название товара', '')).strip(),
                 'unit': str(row.get('Единица измерения', 'упак')).strip(),
                 'quantity': int(row.get('Количество', 0)) if not pd.isna(row.get('Количество', 0)) else 0,
-                'pieces_per_pack': int(row.get('Шт в уп', 1)) if not pd.isna(row.get('Шт в уп', 1)) else 1,
+                'pcs_per_package': float(row.get('Шт в уп', 1)) if not pd.isna(row.get('Шт в уп', 1)) else None,
+                'area_per_package': float(row.get('м2 в уп', 0)) if not pd.isna(row.get('м2 в уп', 0)) else None,
                 'barcode': str(row.get('Штрихкод упаковки', '')).strip() if not pd.isna(row.get('Штрихкод упаковки', '')) else None,
                 'price': str(row.get('Цена за единицу измерения', '0')).strip(),
                 'category': 'SPC панели',
@@ -92,12 +93,12 @@ try:
             # Вставляем в базу данных
             insert_query = """
             INSERT INTO catalog_products (
-                id, product_code, name, unit, quantity, barcode, price, category, 
-                collection, color, format, surface, image_url, images, description, 
-                specifications, profile, availability, is_active, sort_order, 
-                created_at, updated_at
+                id, product_code, name, unit, quantity, pcs_per_package, area_per_package, 
+                barcode, price, category, collection, color, format, surface, image_url, 
+                images, description, specifications, profile, availability, is_active, 
+                sort_order, created_at, updated_at
             ) VALUES (
-                gen_random_uuid(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                gen_random_uuid(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
             )
             """
             
@@ -106,6 +107,8 @@ try:
                 product_data['name'],
                 product_data['unit'],
                 product_data['quantity'],
+                product_data['pcs_per_package'],
+                product_data['area_per_package'],
                 product_data['barcode'],
                 product_data['price'],
                 product_data['category'],

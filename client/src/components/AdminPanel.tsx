@@ -109,6 +109,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [isExporting, setIsExporting] = useState(false);
   const [catalogSearchQuery, setCatalogSearchQuery] = useState<string>('');
   const [isImporting, setIsImporting] = useState(false);
+  const [catalogPage, setCatalogPage] = useState(0);
+  const catalogItemsPerPage = 5;
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const catalogFileInputRef = useRef<HTMLInputElement>(null);
@@ -129,6 +131,14 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
           product.collection.toLowerCase().includes(query)
         );
       });
+  };
+
+  // Helper function to get paginated catalog products
+  const getPaginatedCatalogProducts = () => {
+    const filtered = getFilteredCatalogProducts();
+    const startIndex = catalogPage * catalogItemsPerPage;
+    const endIndex = startIndex + catalogItemsPerPage;
+    return filtered.slice(startIndex, endIndex);
   };
 
   // Gallery image upload handlers
@@ -887,7 +897,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         'Название товара': product.name,
         'Единица измерения': product.unit,
         'Количество': product.quantity || '',
-        'Шт в уп': '', // Поле из Excel, пока пустое
+        'Шт в уп': product.pcsPerPackage || '',
         'м2 в уп': product.areaPerPackage || '',
         'Коллекция': product.collection || '',
         'Цвета': product.color || '',
@@ -963,7 +973,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
           `"${product.name}"`,
           product.unit,
           product.quantity || '',
-          '', // Шт в уп - пустое поле
+          product.pcsPerPackage || '',
           product.areaPerPackage || '',
           product.collection || '',
           product.color || '',
@@ -2211,7 +2221,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                   type="text"
                   placeholder="Поиск по артикулу, названию или штрихкоду..."
                   value={catalogSearchQuery}
-                  onChange={(e) => setCatalogSearchQuery(e.target.value)}
+                  onChange={(e) => {
+                    setCatalogSearchQuery(e.target.value);
+                    setCatalogPage(0); // Reset to first page when searching
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
                   data-testid="input-search-catalog"
                 />
@@ -2255,7 +2268,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           </td>
                         </tr>
                       ) : (
-                        getFilteredCatalogProducts().map((product) => (
+                        getPaginatedCatalogProducts().map((product) => (
                           <tr key={product.id} className="hover:bg-gray-50" data-testid={`row-catalog-product-${product.id}`}>
                             <td className="px-4 py-3 text-sm font-medium text-gray-900">{product.productCode}</td>
                             <td className="px-4 py-3 text-sm text-gray-900">{product.name}</td>
@@ -2288,6 +2301,25 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       )}
                     </tbody>
                   </table>
+                  
+                  {/* Pagination Controls */}
+                  {!catalogSearchQuery && getFilteredCatalogProducts().length > catalogItemsPerPage && (
+                    <div className="mt-4 flex justify-center">
+                      {catalogPage * catalogItemsPerPage + catalogItemsPerPage < getFilteredCatalogProducts().length ? (
+                        <button
+                          onClick={() => setCatalogPage(prev => prev + 1)}
+                          className="bg-[#E95D22] text-white px-6 py-2 rounded-lg hover:bg-[#d54a1a] transition-colors"
+                          data-testid="button-catalog-show-more"
+                        >
+                          Показать еще ({getFilteredCatalogProducts().length - (catalogPage * catalogItemsPerPage + catalogItemsPerPage)} товаров)
+                        </button>
+                      ) : (
+                        <div className="text-sm text-gray-500">
+                          Показано {getFilteredCatalogProducts().length} из {getFilteredCatalogProducts().length} товаров
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
               
