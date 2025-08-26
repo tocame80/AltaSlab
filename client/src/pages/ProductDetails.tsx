@@ -75,10 +75,10 @@ export default function ProductDetails() {
           );
           setProduct(foundProduct || null);
           
-          // Если продукт найден, загружаем другие цвета из той же коллекции
+          // Если продукт найден, загружаем все цвета из той же коллекции
           if (foundProduct) {
             const sameCollectionProducts = products.filter((p: Product) => 
-              p.collection === foundProduct.collection && p.id !== foundProduct.id
+              p.collection === foundProduct.collection
             );
             setCollectionColors(sameCollectionProducts);
           }
@@ -250,7 +250,7 @@ export default function ProductDetails() {
               {collectionColors.map((colorProduct) => (
                 <button
                   key={colorProduct.id}
-                  onClick={() => setLocation(`/product/${colorProduct.id}`)}
+                  onClick={() => setLocation(`/product/${colorProduct.productCode?.replace('SPC', '') || colorProduct.id}`)}
                   className={`text-sm font-medium transition-colors uppercase tracking-wide ${
                     colorProduct.id === product?.id
                       ? 'text-gray-900' 
