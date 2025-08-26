@@ -445,6 +445,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       galleryForm.reset();
       setSelectedMaterials([]);
       setGalleryImages([]);
+      setGalleryImageFiles([]);
+      setGalleryImagePreviews([]);
+      setIsDragging(false);
       setMaterialSearchQuery('');
       toast({
         title: 'Успешно',
@@ -471,6 +474,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       galleryForm.reset();
       setSelectedMaterials([]);
       setGalleryImages([]);
+      setGalleryImageFiles([]);
+      setGalleryImagePreviews([]);
+      setIsDragging(false);
       setMaterialSearchQuery('');
       toast({
         title: 'Успешно',
@@ -2556,6 +2562,15 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     
                     <form
                       onSubmit={galleryForm.handleSubmit(async (data) => {
+                        // Validate that we have at least one image
+                        if (galleryImageFiles.length === 0 && galleryImages.length === 0) {
+                          toast({
+                            title: 'Ошибка',
+                            description: 'Добавьте хотя бы одно изображение',
+                            variant: 'destructive',
+                          });
+                          return;
+                        }
                         let imageUrls = [];
                         
                         // If there are files to upload, upload them first
@@ -2604,17 +2619,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         } else {
                           createGalleryProjectMutation.mutate(formData);
                         }
-
-                        // Clear form after successful submission
-                        setShowGalleryForm(false);
-                        setEditingGalleryProject(null);
-                        setSelectedMaterials([]);
-                        setGalleryImages([]);
-                        setGalleryImageFiles([]);
-                        setGalleryImagePreviews([]);
-                        setIsDragging(false);
-                        setMaterialSearchQuery('');
-                        galleryForm.reset();
                       })}
                       className="p-6 space-y-6"
                     >
@@ -2749,7 +2753,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           </div>
                         )}
 
-                        {galleryImagePreviews.length === 0 && (
+                        {galleryImagePreviews.length === 0 && galleryImages.length === 0 && (
                           <p className="text-red-600 text-sm mt-1">Добавьте хотя бы одно изображение</p>
                         )}
                       </div>
