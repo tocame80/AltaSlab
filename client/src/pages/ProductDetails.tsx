@@ -14,6 +14,8 @@ interface Product {
   design?: string;
   format: string;
   price: number;
+  quantity?: number;
+  unit?: string;
   image?: string;
   images?: string | string[];
   category: string;
@@ -261,12 +263,10 @@ export default function ProductDetails() {
                     {product.color}
                   </div>
                   
-                  {/* Line 3: Price per m² */}
-                  {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && (
-                    <div className="text-gray-900 hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                      {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽/м²
-                    </div>
-                  )}
+                  {/* Line 3: Price per unit */}
+                  <div className="text-gray-900 hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                    {Math.round(product.price).toLocaleString('ru-RU')} ₽/{product.unit || 'упак'}
+                  </div>
                 </div>
               </div>
 
@@ -278,12 +278,9 @@ export default function ProductDetails() {
                     {product.format}
                   </div>
                   
-                  {/* Line 2: Area/Quantity per package */}
+                  {/* Line 2: Quantity per package */}
                   <div className="text-gray-900 hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                    {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' 
-                      ? `${product.areaPerPackage} м²` 
-                      : `${product.piecesPerPackage} шт`
-                    }
+                    {product.quantity || 1} {product.unit || 'шт'}
                   </div>
                   
                   {/* Line 3: Price per package */}
@@ -430,26 +427,18 @@ export default function ProductDetails() {
                   </div>
                   <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 text-center">
                     <div className="text-2xl font-bold text-purple-700">
-                      {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 
-                        product.piecesPerPackage :
-                        product.areaPerPackage
-                      }
+                      {product.quantity || 1}
                     </div>
                     <div className="text-sm text-purple-600 font-medium">
-                      {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'шт в упаковке' : 'м² в упаковке'}
+                      {product.unit || 'упак'}
                     </div>
                   </div>
                   <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 text-center">
                     <div className="text-2xl font-bold text-orange-700">
-                      {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 
-                        Math.round(product.price) :
-                        product.areaPerPackage && product.areaPerPackage > 0 ? 
-                          Math.round(product.price / product.areaPerPackage) : 
-                          Math.round(product.price)
-                      }
+                      {Math.round(product.price)}
                     </div>
                     <div className="text-sm text-orange-600 font-medium">
-                      {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? '₽ за упак.' : '₽ за м²'}
+                      ₽ за {product.unit || 'упак'}
                     </div>
                   </div>
                 </div>
@@ -481,16 +470,9 @@ export default function ProductDetails() {
                           <div className="flex items-center justify-between py-3 border-b border-gray-100">
                             <span className="text-gray-600 flex items-center gap-2">
                               <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                              Площадь панели
+                              Количество в упаковке
                             </span>
-                            <span className="font-semibold text-gray-900">{product.areaPerPiece} м²</span>
-                          </div>
-                          <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                            <span className="text-gray-600 flex items-center gap-2">
-                              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                              Панелей в упаковке
-                            </span>
-                            <span className="font-semibold text-gray-900">{product.piecesPerPackage} шт</span>
+                            <span className="font-semibold text-gray-900">{product.quantity || 1} {product.unit || 'шт'}</span>
                           </div>
                         </>
                       )}
@@ -592,21 +574,9 @@ export default function ProductDetails() {
                       <>
                         <div className="text-center">
                           <div className="text-2xl font-bold text-blue-600">
-                            {product.areaPerPackage && product.areaPerPackage > 0 ? 
-                              Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU') : 
-                              product.price.toLocaleString('ru-RU')
-                            } ₽
+                            {product.price.toLocaleString('ru-RU')} ₽
                           </div>
-                          <div className="text-sm text-gray-600">за м²</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-green-600">
-                            {product.piecesPerPackage && product.piecesPerPackage > 0 ? 
-                              Math.round(product.price / product.piecesPerPackage).toLocaleString('ru-RU') : 
-                              product.price.toLocaleString('ru-RU')
-                            } ₽
-                          </div>
-                          <div className="text-sm text-gray-600">за панель</div>
+                          <div className="text-sm text-gray-600">за {product.unit || 'упак'}</div>
                         </div>
                       </>
                     )}
