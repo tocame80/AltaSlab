@@ -36,9 +36,24 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
     }
   };
 
+  // Dynamic image import function
+  const getImageUrl = (imagePath: string) => {
+    if (imagePath.startsWith('@assets/')) {
+      try {
+        const assetPath = imagePath.replace('@assets/', '');
+        return new URL(`../assets/${assetPath}`, import.meta.url).href;
+      } catch (error) {
+        // Fallback to placeholder if image not found
+        return new URL(`../assets/products/placeholder.jpg`, import.meta.url).href;
+      }
+    }
+    return imagePath;
+  };
+
   // Use local images from gallery or fallback to product.image
   const getProductImages = () => {
-    return product.gallery || [product.image] || ['/placeholder-product.jpg'];
+    const images = product.gallery || [product.image] || ['@assets/products/placeholder.jpg'];
+    return images.map(img => getImageUrl(img));
   };
   
   const gallery = getProductImages();

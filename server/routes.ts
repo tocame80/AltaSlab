@@ -1,4 +1,6 @@
 import type { Express } from "express";
+import express from "express";
+import path from "path";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertCertificateSchema, insertVideoInstructionSchema, insertHeroImageSchema, insertGalleryProjectSchema, insertDealerLocationSchema, insertCatalogProductSchema } from "@shared/schema";
@@ -225,10 +227,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Helper function to get local image paths for a product
   const getLocalProductImages = (productId: string, collection: string) => {
-    // If no photo available, use placeholder
+    const cleanId = productId?.replace('SPC', '') || productId;
+    
+    // Map collection names to directory names
+    const collectionDirs: { [key: string]: string } = {
+      'Магия бетона': 'concrete',
+      'Тканевая Роскошь': 'fabric', 
+      'Мраморная феерия': 'marble',
+      'Матовая эстетика': 'matte'
+    };
+    
+    const collectionDir = collectionDirs[collection];
+    
+    if (collectionDir && cleanId) {
+      // Return Vite asset import paths - these will be resolved by frontend
+      const basePath = `@assets/products/${collectionDir}/${cleanId}`;
+      return {
+        image: `${basePath}-1.png`,
+        gallery: [
+          `${basePath}-1.png`,
+          `${basePath}-2.png`, 
+          `${basePath}-3.png`
+        ]
+      };
+    }
+    
+    // Fallback to placeholder if no collection match or missing ID
     return {
-      image: '/src/assets/products/placeholder.jpg',
-      gallery: ['/src/assets/products/placeholder.jpg']
+      image: '@assets/products/placeholder.jpg',
+      gallery: ['@assets/products/placeholder.jpg']
     };
   };
 
