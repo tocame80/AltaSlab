@@ -1792,9 +1792,92 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                 </div>
               )}
               
+              {/* Import/Export Section */}
+              <div className="mt-8 grid md:grid-cols-2 gap-6">
+                {/* Export Section */}
+                <div className="bg-gray-50 rounded-lg p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Download className="w-6 h-6 text-[#E95D22]" />
+                    <h4 className="text-lg font-semibold text-gray-900">Выгрузка каталога</h4>
+                  </div>
+                  
+                  <p className="text-gray-600 mb-6">
+                    Экспортируйте каталог товаров в различных форматах для обмена данными или резервного копирования.
+                  </p>
+                  
+                  <div className="space-y-3">
+                    <button 
+                      className="w-full bg-[#E95D22] text-white px-4 py-3 rounded-lg hover:bg-[#d54a1a] transition-colors flex items-center justify-center gap-2"
+                      data-testid="button-export-excel"
+                    >
+                      <Download size={16} />
+                      Скачать Excel (.xlsx)
+                    </button>
+                    
+                    <button 
+                      className="w-full bg-gray-600 text-white px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
+                      data-testid="button-export-csv"
+                    >
+                      <Download size={16} />
+                      Скачать CSV
+                    </button>
+                    
+                    <button 
+                      className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                      data-testid="button-export-json"
+                    >
+                      <Download size={16} />
+                      Скачать JSON
+                    </button>
+                  </div>
+                </div>
+
+                {/* Import Section */}
+                <div className="bg-gray-50 rounded-lg p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Upload className="w-6 h-6 text-[#E95D22]" />
+                    <h4 className="text-lg font-semibold text-gray-900">Загрузка каталога</h4>
+                  </div>
+                  
+                  <p className="text-gray-600 mb-6">
+                    Импортируйте данные каталога из файла для массового обновления товаров.
+                  </p>
+                  
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-[#E95D22] transition-colors">
+                    <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
+                    <p className="text-gray-600 mb-2">Перетащите файл сюда или</p>
+                    <button 
+                      className="text-[#E95D22] hover:text-[#d54a1a] font-medium"
+                      data-testid="button-choose-file"
+                    >
+                      выберите файл
+                    </button>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Поддерживаются форматы: .xlsx, .csv, .json
+                    </p>
+                  </div>
+                  
+                  <div className="mt-4 flex gap-3">
+                    <button 
+                      className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm"
+                      data-testid="button-download-template"
+                    >
+                      Скачать шаблон
+                    </button>
+                    <button 
+                      className="flex-1 bg-[#E95D22] text-white px-4 py-2 rounded-lg hover:bg-[#d54a1a] transition-colors text-sm" 
+                      disabled
+                      data-testid="button-upload-file"
+                    >
+                      Загрузить файл
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               {/* Statistics */}
-              <div className="mt-6 bg-gray-50 rounded-lg p-4">
-                <h4 className="font-medium text-gray-900 mb-2">Статистика каталога</h4>
+              <div className="mt-6 bg-white border border-gray-200 rounded-lg p-6">
+                <h4 className="font-medium text-gray-900 mb-4">Статистика каталога</h4>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                   <div>
                     <div className="text-xl font-bold text-[#E95D22]">{catalogProducts.length}</div>
