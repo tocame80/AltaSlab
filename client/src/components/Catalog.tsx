@@ -36,9 +36,9 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   const [showSearch, setShowSearch] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   
-  const [visibleRows, setVisibleRows] = useState(3); // Reduced from 5 to 3 rows for mobile (6 items -> 5 items on mobile)
+  const [visibleRows, setVisibleRows] = useState(4); // Increased initial load
   const ITEMS_PER_ROW = 2; // 2 items per row
-  const ROWS_TO_LOAD = 5; // Load 5 more rows at a time
+  const ROWS_TO_LOAD = 3; // Load 3 more rows at a time
   
   // Listen for search events from header
   useEffect(() => {

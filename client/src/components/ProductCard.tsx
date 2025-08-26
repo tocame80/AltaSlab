@@ -43,10 +43,7 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
     const productCode = (product as any).productCode;
     const productId = productCode?.replace('SPC', '') || product.id?.replace('SPC', '') || product.id;
     
-    // Debug logging for product 8934
-    if (productId === '8934' || productCode === 'SPC8934' || product.id === '8934') {
-      console.log(`🔍 ProductCard: Searching images for product ID "${productId}" (productCode: "${productCode}", id: "${product.id}"), name: "${product.name}"`);
-    }
+
     
     // Check if API returned USE_IMAGEMAP signal
     if (product.image?.startsWith('USE_IMAGEMAP:') || product.gallery?.[0]?.startsWith('USE_IMAGEMAP:')) {

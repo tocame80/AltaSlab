@@ -197,15 +197,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // In-memory cache for catalog products
+  let catalogCache: any[] | null = null;
+  let cacheTimestamp = 0;
+  const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
   // Catalog product routes - with LOCAL images only
   app.get('/api/catalog-products', async (req, res) => {
     try {
-      // Устанавливаем заголовки для отключения кеширования
+      // Check if cache is valid
+      const now = Date.now();
+      if (catalogCache && (now - cacheTimestamp) < CACHE_DURATION) {
+        console.log('API: Serving catalog from cache');
+        res.json(catalogCache);
+        return;
+      }
+
+      // Устанавливаем заголовки для клиентского кеширования (30 секунд)
       res.set({
-        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0',
-        'Surrogate-Control': 'no-store'
+        'Cache-Control': 'public, max-age=30',
+        'ETag': `catalog-${now}`
       });
       
       const catalogProducts = await storage.getCatalogProducts();
@@ -223,10 +234,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const productId = product.productCode?.replace('SPC', '') || product.productCode;
         const localImages = getLocalProductImages(productId, product.collection || '');
         
-        // Debug logging for product 8934
-        if (productId === '8934' || product.productCode === '8934' || product.productCode === 'SPC8934') {
-          console.log(`🔍 API: Found product 8934 with ID "${product.id}", productCode "${product.productCode}", name "${product.name}"`);
-        }
+
         
         return {
           ...product,
@@ -242,6 +250,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           quantity: product.quantity ? parseInt(product.quantity.toString()) : 0
         };
       });
+      
+      // Update cache
+      catalogCache = transformedProducts;
+      cacheTimestamp = now;
+      console.log('API: Generated and cached', transformedProducts.length, 'products');
       
       res.json(transformedProducts);
     } catch (error) {
