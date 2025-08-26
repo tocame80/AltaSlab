@@ -239,26 +239,8 @@ export default function ProductDetails() {
           Вернуться в каталог
         </button>
 
-        {/* Product Header - Collection and Color */}
-        <div className="bg-white rounded-xl p-6 mb-6 shadow-sm">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{getCollectionDisplayName()}</h1>
-              <div className="text-xl text-gray-600">{product.color}</div>
-            </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold text-[#e90039]">
-                {Math.round(product.price).toLocaleString('ru-RU')} ₽ за упак.
-              </div>
-              <div className="text-sm text-gray-500">
-                {product.format}
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Full Width Image Gallery */}
-        <div className="mb-8">
+        <div className="mb-12">
           {/* Main Image */}
           <div className="group relative bg-white rounded-xl overflow-hidden shadow-sm mb-6">
             <div className="aspect-[2/1] relative">
@@ -267,6 +249,46 @@ export default function ProductDetails() {
                 alt={getProductDisplayName()}
                 className="w-full h-full object-cover"
               />
+              
+              {/* Product Info Overlay - Bottom Left - Three Lines */}
+              <div className="absolute bottom-0 left-0 p-4 transition-all duration-300">
+                <div>
+                  {/* Line 1: Collection */}
+                  <div className="text-white hover:text-[#e90039] text-sm font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                    {getCollectionDisplayName()}
+                  </div>
+                  
+                  {/* Line 2: Color */}
+                  <div className="text-white hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                    {product.color}
+                  </div>
+                  
+                  {/* Line 3: Price per unit */}
+                  <div className="text-white hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                    {Math.round(product.price).toLocaleString('ru-RU')} ₽/{product.unit || 'упак'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional Info Overlay - Bottom Right - Three Lines */}
+              <div className="absolute bottom-0 right-0 p-4 transition-all duration-300">
+                <div className="text-right">
+                  {/* Line 1: Size */}
+                  <div className="text-white hover:text-[#e90039] text-sm font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                    {product.format}
+                  </div>
+                  
+                  {/* Line 2: Quantity per package */}
+                  <div className="text-white hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                    {product.quantity || 1} {product.unit || 'шт'}
+                  </div>
+                  
+                  {/* Line 3: Price per package */}
+                  <div className="text-white hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                    {product.price.toLocaleString('ru-RU')} ₽ {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'за шт.' : 'за упак.'}
+                  </div>
+                </div>
+              </div>
             </div>
             
             {/* Image Controls */}
