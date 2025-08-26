@@ -14,6 +14,7 @@ interface Product {
   format: string;
   price: number;
   image: string;
+  images?: string | string[];
   category: string;
   surface: string;
   color: string;
@@ -40,7 +41,7 @@ export function ProductCatalog() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('/api/products');
+      const response = await fetch('/api/catalog-products');
       if (response.ok) {
         const data = await response.json();
         setProducts(data);
@@ -139,7 +140,17 @@ export function ProductCatalog() {
             <CardHeader className="p-0">
               <div className="aspect-square overflow-hidden rounded-t-lg">
                 <img
-                  src={product.image || '/placeholder-product.jpg'}
+                  src={(() => {
+                    if (product.images) {
+                      try {
+                        const images = Array.isArray(product.images) ? product.images : JSON.parse(product.images);
+                        return images.length > 0 ? images[0] : '/placeholder-product.jpg';
+                      } catch {
+                        return '/placeholder-product.jpg';
+                      }
+                    }
+                    return product.image || '/placeholder-product.jpg';
+                  })()}
                   alt={product.name}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   data-testid={`img-product-${product.id}`}
