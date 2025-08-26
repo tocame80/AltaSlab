@@ -17,7 +17,8 @@ interface Product {
   price: number;
   quantity?: number;
   unit?: string;
-  areaPerPackage?: string;
+  areaPerPackage?: number;
+  pcsPerPackage?: number;
   image?: string;
   images?: string | string[];
   category: string;
@@ -370,8 +371,8 @@ export default function ProductDetails() {
                   {/* Line 1: Area per package (like in catalog) */}
                   <div className="text-white hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
                     {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' 
-                      ? `${product.areaPerPackage} м²` 
-                      : `${product.pcsPerPackage} шт`
+                      ? (product.areaPerPackage ? `${product.areaPerPackage} м²` : 'Нет данных о площади')
+                      : (product.pcsPerPackage ? `${product.pcsPerPackage} шт` : 'Нет данных о количестве')
                     }
                   </div>
                   
