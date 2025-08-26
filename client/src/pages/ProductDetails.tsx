@@ -44,6 +44,7 @@ export default function ProductDetails() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [collectionColors, setCollectionColors] = useState<Product[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
 
   // Parse images from database - этот хук должен быть здесь, до условных возвратов
   const gallery = useMemo(() => {
@@ -66,6 +67,8 @@ export default function ProductDetails() {
         const response = await fetch('/api/catalog-products');
         if (response.ok) {
           const products = await response.json();
+          setAllProducts(products);
+          
           const foundProduct = products.find((p: Product) => 
             p.productCode === params?.id || 
             p.id === params?.id ||
@@ -195,13 +198,36 @@ export default function ProductDetails() {
   };
 
   const collections = [
-    { key: 'all' as Collection, label: 'ВСЁ', color: 'bg-gray-400' },
-    { key: 'concrete' as Collection, label: 'МАГИЯ БЕТОНА', color: 'bg-gray-600' },
-    { key: 'fabric' as Collection, label: 'ТКАНЕВАЯ РОСКОШЬ', color: 'bg-purple-500' },
-    { key: 'matte' as Collection, label: 'МАТОВАЯ ЭСТЕТИКА', color: 'bg-green-500' },
-    { key: 'marble' as Collection, label: 'МРАМОРНАЯ ФЕЕРИЯ', color: 'bg-blue-500' },
-    { key: 'accessories' as Collection, label: 'КОМПЛЕКТУЮЩИЕ', color: 'bg-orange-500' },
+    { key: 'all' as Collection, label: 'ВСЁ', color: 'bg-gray-400', dbName: null },
+    { key: 'concrete' as Collection, label: 'МАГИЯ БЕТОНА', color: 'bg-gray-600', dbName: 'МАГИЯ БЕТОНА' },
+    { key: 'fabric' as Collection, label: 'ТКАНЕВАЯ РОСКОШЬ', color: 'bg-purple-500', dbName: 'ТЕКСТИЛЬ' },
+    { key: 'matte' as Collection, label: 'МАТОВАЯ ЭСТЕТИКА', color: 'bg-green-500', dbName: 'МАТОВАЯ ЭСТЕТИКА' },
+    { key: 'marble' as Collection, label: 'МРАМОРНАЯ ФЕЕРИЯ', color: 'bg-blue-500', dbName: 'МРАМОР' },
+    { key: 'accessories' as Collection, label: 'КОМПЛЕКТУЮЩИЕ', color: 'bg-orange-500', dbName: 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' },
   ];
+
+  // Функция для навигации к первому продукту коллекции
+  const navigateToCollection = (collection: typeof collections[0]) => {
+    if (collection.key === 'all') {
+      setLocation('/#catalog');
+      return;
+    }
+    
+    if (collection.key === 'favorites') {
+      setLocation('/#catalog');
+      return;
+    }
+
+    if (collection.dbName && allProducts.length > 0) {
+      const firstProduct = allProducts.find(p => p.collection === collection.dbName);
+      if (firstProduct) {
+        const productId = firstProduct.productCode?.replace('SPC', '') || firstProduct.id;
+        setLocation(`/product/${productId}`);
+      } else {
+        setLocation('/#catalog');
+      }
+    }
+  };
 
 
 
@@ -215,23 +241,15 @@ export default function ProductDetails() {
             {collections.map((collection) => (
               <button
                 key={collection.key}
-                onClick={() => setSelectedCollection(collection.key)}
-                className={`text-sm font-medium transition-colors uppercase tracking-wide ${
-                  selectedCollection === collection.key 
-                    ? 'text-gray-900' 
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
+                onClick={() => navigateToCollection(collection)}
+                className="text-sm font-medium transition-colors uppercase tracking-wide text-gray-500 hover:text-gray-700"
               >
                 {collection.label}
               </button>
             ))}
             <button
-              onClick={() => setSelectedCollection('favorites' as Collection)}
-              className={`text-sm font-medium transition-colors uppercase tracking-wide ${
-                selectedCollection === 'favorites' 
-                  ? 'text-gray-900' 
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
+              onClick={() => setLocation('/#catalog')}
+              className="text-sm font-medium transition-colors uppercase tracking-wide text-gray-500 hover:text-gray-700"
             >
               ИЗБРАННОЕ
             </button>
