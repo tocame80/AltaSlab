@@ -1,6 +1,27 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Collection } from '@/types';
+
+interface Product {
+  id: string;
+  name: string;
+  collection: string;
+  design?: string;
+  format: string;
+  price: number;
+  image: string;
+  category: string;
+  surface: string;
+  color: string;
+  barcode: string;
+  gallery?: string[];
+  specifications?: Record<string, string>;
+  availability?: {
+    inStock: boolean;
+    deliveryTime: string;
+    quantity: number;
+  };
+}
 import ProductCard from './ProductCard';
 import { ChevronDown, Search, Filter, X } from 'lucide-react';
 import { useFavoritesContext } from '@/contexts/FavoritesContext';
@@ -15,7 +36,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   const isNavSticky = useStickyNav();
   
   // Fetch products from API
-  const { data: products = [], isLoading } = useQuery({
+  const { data: products = [], isLoading } = useQuery<Product[]>({
     queryKey: ['/api/catalog-products'],
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
