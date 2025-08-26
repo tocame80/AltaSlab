@@ -36,7 +36,20 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
     }
   };
 
-  const gallery = product.gallery || [product.image];
+  // Parse images from database
+  const getProductImages = () => {
+    if (product.images) {
+      try {
+        const images = Array.isArray(product.images) ? product.images : JSON.parse(product.images);
+        return images.length > 0 ? images : ['/placeholder-product.jpg'];
+      } catch {
+        return ['/placeholder-product.jpg'];
+      }
+    }
+    return product.gallery || [product.image] || ['/placeholder-product.jpg'];
+  };
+  
+  const gallery = getProductImages();
   const currentImage = gallery[currentImageIndex];
 
 
@@ -90,7 +103,7 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
         {/* Image Gallery */}
         <div className="relative w-full aspect-[3/2] lg:aspect-[2/1]">
           <img 
-            src={product.image} 
+            src={currentImage}
             alt={`${product.design} - ${product.collection}`}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
