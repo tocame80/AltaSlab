@@ -701,9 +701,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       productCode: catalogProduct.productCode,
       name: catalogProduct.name,
       unit: catalogProduct.unit,
-      quantity: catalogProduct.quantity,
+      quantity: catalogProduct.quantity ?? 0,
       barcode: catalogProduct.barcode || '',
-      price: catalogProduct.price,
+      price: parseFloat(catalogProduct.price || '0'),
       images: catalogProduct.images || [],
       sortOrder: catalogProduct.sortOrder ?? 0,
       isActive: catalogProduct.isActive ?? 1,
@@ -741,6 +741,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         'Количество': 100,
         'Цена': 1250.50,
         'Штрихкод': '1234567890123',
+        'Ссылки на фото': 'https://example.com/photo1.jpg;https://example.com/photo2.jpg',
         'Порядок сортировки': 1,
         'Активный (1/0)': 1
       },
@@ -751,6 +752,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         'Количество': 50,
         'Цена': 350.00,
         'Штрихкод': '2345678901234',
+        'Ссылки на фото': 'https://example.com/photo3.jpg',
         'Порядок сортировки': 2,
         'Активный (1/0)': 1
       },
@@ -761,6 +763,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         'Количество': 25,
         'Цена': 125.00,
         'Штрихкод': '3456789012345',
+        'Ссылки на фото': '',
         'Порядок сортировки': 3,
         'Активный (1/0)': 1
       }
@@ -777,6 +780,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       { wch: 12 }, // Количество
       { wch: 12 }, // Цена
       { wch: 18 }, // Штрихкод
+      { wch: 40 }, // Ссылки на фото
       { wch: 20 }, // Порядок сортировки
       { wch: 15 }  // Активный
     ];
@@ -814,6 +818,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       'Количество': product.quantity,
       'Цена': product.price,
       'Штрихкод': product.barcode || '',
+      'Ссылки на фото': product.images ? product.images.join(';') : '',
       'Порядок сортировки': product.sortOrder ?? 0,
       'Активный (1/0)': product.isActive ?? 1
     }));
@@ -822,7 +827,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     
     const columnWidths = [
       { wch: 12 }, { wch: 30 }, { wch: 18 }, { wch: 12 },
-      { wch: 12 }, { wch: 18 }, { wch: 20 }, { wch: 15 }
+      { wch: 12 }, { wch: 18 }, { wch: 40 }, { wch: 20 }, { wch: 15 }
     ];
     worksheet['!cols'] = columnWidths;
 
@@ -846,7 +851,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       return;
     }
 
-    const headers = ['Артикул', 'Название товара', 'Единица измерения', 'Количество', 'Цена', 'Штрихкод', 'Порядок сортировки', 'Активный (1/0)'];
+    const headers = ['Артикул', 'Название товара', 'Единица измерения', 'Количество', 'Цена', 'Штрихкод', 'Ссылки на фото', 'Порядок сортировки', 'Активный (1/0)'];
     
     const csvContent = [
       headers.join(','),
@@ -857,6 +862,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         product.quantity,
         product.price,
         product.barcode || '',
+        `"${product.images ? product.images.join(';') : ''}"`,
         product.sortOrder ?? 0,
         product.isActive ?? 1
       ].join(','))
@@ -883,6 +889,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       quantity: product.quantity,
       price: product.price,
       barcode: product.barcode || '',
+      images: product.images || [],
       sortOrder: product.sortOrder ?? 0,
       isActive: product.isActive ?? 1
     }));
@@ -2068,19 +2075,23 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                   </div>
                   <div>
                     <div className="text-xl font-bold text-[#E95D22]">
-                      {catalogProducts.reduce((sum, p) => sum + p.quantity, 0)}
+                      {catalogProducts.reduce((sum, p) => sum + (p.quantity ?? 0), 0)}
                     </div>
                     <div className="text-sm text-gray-600">Общее кол-во</div>
                   </div>
                   <div>
                     <div className="text-xl font-bold text-[#E95D22]">
-                      {catalogProducts.reduce((sum, p) => sum + (p.price * p.quantity), 0).toLocaleString()} ₽
+                      {catalogProducts.reduce((sum, p) => {
+                        const price = parseFloat(p.price || '0');
+                        const quantity = p.quantity ?? 0;
+                        return sum + (price * quantity);
+                      }, 0).toLocaleString()} ₽
                     </div>
                     <div className="text-sm text-gray-600">Общая стоимость</div>
                   </div>
                   <div>
                     <div className="text-xl font-bold text-[#E95D22]">
-                      {catalogProducts.filter(p => p.quantity > 0).length}
+                      {catalogProducts.filter(p => (p.quantity ?? 0) > 0).length}
                     </div>
                     <div className="text-sm text-gray-600">В наличии</div>
                   </div>
