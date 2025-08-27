@@ -149,9 +149,9 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     // Apply collection filters only when explicitly set and not in 'all' mode with empty filter
     if (filters.collection && filters.collection.trim() !== '' && !(activeCollection === 'all' && filters.collection.trim() === '')) {
       if (filters.collection === 'Клей') {
-        // Show only adhesive accessories containing "клей" in name  
+        // Show only adhesive accessories by collection name
         filtered = filtered.filter(product => 
-          product.name.toLowerCase().includes('клей')
+          product.collection === 'Клей'
         );
       } else if (filters.collection === 'Профили') {
         // Show only profile accessories by collection name containing "профиль"
@@ -235,14 +235,14 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     if (!filters.collection) return products;
     
     if (filters.collection === 'Профили') {
-      // Show only profile accessories containing "профиль" in name
+      // Show only profile accessories by collection name containing "профиль"
       return products.filter(product => 
-        product.name.toLowerCase().includes('профиль')
+        product.collection.toLowerCase().includes('профиль')
       );
     } else if (filters.collection === 'Клей') {
-      // Show only adhesive accessories containing "клей" in name  
+      // Show only adhesive accessories by collection name
       return products.filter(product => 
-        product.name.toLowerCase().includes('клей')
+        product.collection === 'Клей'
       );
     } else {
       return products.filter(product => product.collection === filters.collection);
@@ -405,11 +405,11 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                       <input
                         type="radio"
                         name="collection"
-                        value="Клей"
-                        checked={filters.collection === 'Клей'}
+                        value=""
+                        checked={filters.collection === ''}
                         onChange={(e) => setFilters(prev => ({ 
                           ...prev, 
-                          collection: e.target.value,
+                          collection: '',
                           color: '', 
                           size: '' 
                         }))}
