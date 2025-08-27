@@ -103,7 +103,37 @@ export const getProductGallery = (productId: string, collection: string = ''): s
 };
 
 // Function to get main image for catalog display
-export const getProductMainImage = (productId: string, collection: string = ''): string => {
+export const getProductMainImage = (productId: string, collection: string = '', color: string = ''): string => {
+  // Special handling for profiles - use color-specific images
+  if (collection.toLowerCase().includes('профиль')) {
+    try {
+      const profileImages = import.meta.glob('./accessories/**/*.{png,jpg,jpeg,webp}', { eager: true }) as Record<string, { default: string }>;
+      
+      // Map profile collection names to folder names
+      const collectionFolderMap: Record<string, string> = {
+        'Профиль под рассеивателем': 'ПрофильПодРассеивателем',
+        'Профиль соединительный': 'ПрофильСоединительный', 
+        'Профиль торцевой': 'ПрофильТорцевой',
+        'Профиль угловой': 'ПрофильУгловойУниверсальный'
+      };
+      
+      const folderName = collectionFolderMap[collection];
+      if (folderName && color) {
+        // Look for image matching the color
+        const colorKey = Object.keys(profileImages).find(path => 
+          path.includes(folderName) && 
+          path.toLowerCase().includes(color.toLowerCase())
+        );
+        
+        if (colorKey && profileImages[colorKey]) {
+          return profileImages[colorKey].default;
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to load profile image:', error);
+    }
+  }
+  
   // Initialize image map if needed
   if (!imageMapInitialized) {
     initializeImageMap();

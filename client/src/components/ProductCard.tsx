@@ -43,7 +43,11 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
     const productCode = (product as any).productCode;
     const productId = productCode?.replace('SPC', '') || product.id?.replace('SPC', '') || product.id;
     
-
+    // For profiles, use color-specific main image
+    if (product.collection.toLowerCase().includes('профиль')) {
+      const mainImage = getProductMainImage(productId, product.collection, product.color);
+      return [mainImage];
+    }
     
     // Check if API returned USE_IMAGEMAP signal
     if (product.image?.startsWith('USE_IMAGEMAP:') || product.gallery?.[0]?.startsWith('USE_IMAGEMAP:')) {

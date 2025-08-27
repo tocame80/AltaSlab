@@ -55,6 +55,12 @@ export default function ProductDetails() {
     
     const productId = product.productCode?.replace('SPC', '') || product.id;
     
+    // For profiles, use color-specific image
+    if (product.collection.toLowerCase().includes('профиль')) {
+      const mainImage = getProductMainImage(productId, product.collection, product.color);
+      return [mainImage];
+    }
+    
     // Check if API returned USE_IMAGEMAP signal
     if (product.image?.startsWith('USE_IMAGEMAP:') || (product as any).gallery?.[0]?.startsWith('USE_IMAGEMAP:')) {
       // Use imageMap functions for local images
