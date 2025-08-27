@@ -386,9 +386,25 @@ export default function Catalog({ activeCollection }: CatalogProps) {
               </div>
               <h3 className="hidden lg:block text-lg font-bold text-[#2f378b] mb-4">Фильтры</h3>
               
+              {/* Reset Filters Button */}
+              <div className="mb-6">
+                <button
+                  onClick={() => {
+                    setFilters({ collection: '', color: '', size: '' });
+                    setAccessoryFilter('');
+                    setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
+                    setSearchQuery('');
+                    setSortBy('default');
+                  }}
+                  className="w-full px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors font-medium text-sm"
+                >
+                  Сбросить все фильтры
+                </button>
+              </div>
+
               {/* Show different filters based on active collection */}
-              {/* Panel Collections Filter - show when not in pure accessories mode AND when specific accessories are not selected */}
-              {(activeCollection !== 'accessories') && !(accessoryFilter === 'Профили' || accessoryFilter === 'Клей') && (
+              {/* Panel Collections Filter - show when not in pure accessories mode OR when in 'all' mode */}
+              {(activeCollection !== 'accessories') && (
                 <>
                   {/* Panel Collections Filter */}
                   <div className="mb-6">
@@ -408,14 +424,26 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                             value={collection.key}
                             checked={filters.collection === collection.key}
                             onChange={(e) => {
-                              setFilters(prev => ({ 
-                                ...prev, 
-                                collection: e.target.value,
-                                color: '', // Reset color when collection changes
-                                size: '' // Reset size when collection changes
-                              }));
-                              // Clear accessory filter when selecting panels
-                              setAccessoryFilter('');
+                              if (e.target.value === '') {
+                                // "Все коллекции" selected - reset to show all panels by default
+                                setFilters(prev => ({ 
+                                  ...prev, 
+                                  collection: '',
+                                  color: '', 
+                                  size: '' 
+                                }));
+                                setAccessoryFilter(''); // Clear accessories to show panels by default
+                              } else {
+                                // Specific collection selected
+                                setFilters(prev => ({ 
+                                  ...prev, 
+                                  collection: e.target.value,
+                                  color: '', // Reset color when collection changes
+                                  size: '' // Reset size when collection changes
+                                }));
+                                // Clear accessory filter when selecting panels
+                                setAccessoryFilter('');
+                              }
                             }}
                             className="mr-2"
                           />
@@ -497,10 +525,8 @@ export default function Catalog({ activeCollection }: CatalogProps) {
               )}
 
               {/* Colors Filter - Show for panel collections and profiles */}
-              {filters.collection && 
-               filters.collection !== 'Клей' && 
-               activeCollection !== 'favorites' && 
-               (activeCollection !== 'accessories' || filters.collection === 'Профили') && (
+              {((filters.collection && filters.collection !== 'Клей') || 
+                (activeCollection !== 'accessories' && activeCollection !== 'favorites' && !accessoryFilter)) && (
                 <div className="mb-6">
                   <h4 className="font-semibold text-[#2f378b] mb-3">Цвета</h4>
                   <div className="space-y-2">
@@ -532,8 +558,11 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 </div>
               )}
 
-              {/* Size/Characteristics Filter */}
-              {((filters.collection && activeCollection !== 'favorites') || activeCollection === 'accessories') && (
+              {/* Size/Characteristics Filter - Show for panels and accessories */}
+              {((filters.collection && activeCollection !== 'favorites') || 
+                (activeCollection !== 'accessories' && activeCollection !== 'favorites' && !accessoryFilter) ||
+                activeCollection === 'accessories' || 
+                accessoryFilter) && (
                 <div className="mb-6">
                   <h4 className="font-semibold text-[#2f378b] mb-3">
                     {(filters.collection === 'Профили' || filters.collection === 'Клей' || activeCollection === 'accessories') ? 'Характеристики' : 'Размеры панелей'}
