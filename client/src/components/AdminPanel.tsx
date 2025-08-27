@@ -2780,6 +2780,42 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         )}
                       </div>
 
+                      {/* Additional Info */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Локация
+                          </label>
+                          <input
+                            {...galleryForm.register('location')}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                            placeholder="Город, регион"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Площадь
+                          </label>
+                          <input
+                            {...galleryForm.register('area')}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                            placeholder="85 кв.м"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Год
+                          </label>
+                          <input
+                            {...galleryForm.register('year')}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                            placeholder="2024"
+                          />
+                        </div>
+                      </div>
+
                       {/* Images */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -3000,42 +3036,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           <span>
                             Показано: {getFilteredMaterials().length} из {products.filter(p => p.category !== 'accessories').length}
                           </span>
-                        </div>
-                      </div>
-
-                      {/* Additional Info */}
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Локация
-                          </label>
-                          <input
-                            {...galleryForm.register('location')}
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
-                            placeholder="Город, регион"
-                          />
-                        </div>
-                        
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Площадь
-                          </label>
-                          <input
-                            {...galleryForm.register('area')}
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
-                            placeholder="85 кв.м"
-                          />
-                        </div>
-                        
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Год
-                          </label>
-                          <input
-                            {...galleryForm.register('year')}
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
-                            placeholder="2024"
-                          />
                         </div>
                       </div>
 
