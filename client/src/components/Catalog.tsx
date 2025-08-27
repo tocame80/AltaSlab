@@ -402,13 +402,9 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 </button>
               </div>
 
-              {/* Show different filters based on active collection */}
-              {/* Panel Collections Filter - show when not in pure accessories mode OR when in 'all' mode */}
-              {(activeCollection !== 'accessories') && (
-                <>
-                  {/* Panel Collections Filter */}
-                  <div className="mb-6">
-                    <h4 className="font-semibold text-[#2f378b] mb-3">Коллекции панелей</h4>
+              {/* Panel Collections Filter - Always show unless pure accessories mode */}
+              <div className="mb-6">
+                <h4 className="font-semibold text-[#2f378b] mb-3">Коллекции панелей</h4>
                     <div className="space-y-2">
                       {[
                         { key: '', label: 'Все коллекции' },
@@ -451,78 +447,90 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         </label>
                       ))}
                     </div>
-                  </div>
-                </>
-              )}
+              </div>
 
-              {/* Accessories Filter - Show when accessories or all is selected AND no panels are selected */}
-              {(activeCollection === 'accessories' || activeCollection === 'all') && (
-                <div className="mb-6">
-                  <h4 className="font-semibold text-[#2f378b] mb-3">Комплектующие</h4>
-                  <div className="space-y-2">
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        name="accessories"
-                        value="all"
-                        checked={accessoryFilter === 'all'}
-                        onChange={(e) => {
-                          console.log('Все комплектующие clicked');
-                          setAccessoryFilter('all');
-                          setFilters(prev => ({ 
-                            ...prev, 
-                            collection: '', // Clear panel collection filter
-                            color: '', 
-                            size: '' 
-                          }));
-                        }}
-                        className="mr-2"
-                      />
-                      <span className="text-secondary text-sm">Все комплектующие</span>
-                    </label>
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        name="accessories"
-                        value="Профили"
-                        checked={accessoryFilter === 'Профили'}
-                        onChange={(e) => {
-                          console.log('Профили clicked');
-                          setAccessoryFilter('Профили');
-                          setFilters(prev => ({ 
-                            ...prev, 
-                            collection: '', // Clear panel collection filter, let accessoryFilter handle it
-                            color: '',
-                            size: ''
-                          }));
-                        }}
-                        className="mr-2"
-                      />
-                      <span className="text-secondary text-sm">Профили</span>
-                    </label>
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        name="accessories"
-                        value="Клей"
-                        checked={accessoryFilter === 'Клей'}
-                        onChange={(e) => {
-                          console.log('Клей clicked');
-                          setAccessoryFilter('Клей');
-                          setFilters(prev => ({ 
-                            ...prev, 
-                            collection: '', // Clear panel collection filter, let accessoryFilter handle it
-                            color: '',
-                            size: ''
-                          }));
-                        }}
-                        className="mr-2"
-                      />
-                      <span className="text-secondary text-sm">Клей</span>
-                    </label>
-                  </div>
+              {/* Accessories Filter - Show when accessories or all is selected */}
+              <div className="mb-6">
+                <h4 className="font-semibold text-[#2f378b] mb-3">Комплектующие</h4>
+                <div className="space-y-2">
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="accessories"
+                      value=""
+                      checked={accessoryFilter === ''}
+                      onChange={(e) => {
+                        setAccessoryFilter('');
+                        // Keep current panel filters when deselecting accessories
+                      }}
+                      className="mr-2"
+                    />
+                    <span className="text-secondary text-sm">Не выбраны</span>
+                  </label>
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="accessories"
+                      value="all"
+                      checked={accessoryFilter === 'all'}
+                      onChange={(e) => {
+                        console.log('Все комплектующие clicked');
+                        setAccessoryFilter('all');
+                        setFilters(prev => ({ 
+                          ...prev, 
+                          collection: '', // Clear panel collection filter
+                          color: '', 
+                          size: '' 
+                        }));
+                      }}
+                      className="mr-2"
+                    />
+                    <span className="text-secondary text-sm">Все комплектующие</span>
+                  </label>
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="accessories"
+                      value="Профили"
+                      checked={accessoryFilter === 'Профили'}
+                      onChange={(e) => {
+                        console.log('Профили clicked');
+                        setAccessoryFilter('Профили');
+                        setFilters(prev => ({ 
+                          ...prev, 
+                          collection: '', // Clear panel collection filter, let accessoryFilter handle it
+                          color: '',
+                          size: ''
+                        }));
+                      }}
+                      className="mr-2"
+                    />
+                    <span className="text-secondary text-sm">Профили</span>
+                  </label>
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="accessories"
+                      value="Клей"
+                      checked={accessoryFilter === 'Клей'}
+                      onChange={(e) => {
+                        console.log('Клей clicked');
+                        setAccessoryFilter('Клей');
+                        setFilters(prev => ({ 
+                          ...prev, 
+                          collection: '', // Clear panel collection filter
+                          color: '',
+                          size: ''
+                        }));
+                      }}
+                      className="mr-2"
+                    />
+                    <span className="text-secondary text-sm">Клей</span>
+                  </label>
                 </div>
-              )}
+              </div>
+
+
 
               {/* Colors Filter - Show for panel collections and profiles */}
               {((filters.collection && filters.collection !== 'Клей') || 
