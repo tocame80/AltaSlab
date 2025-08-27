@@ -1183,8 +1183,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         const existingImgs: ExistingImage[] = data.images.map((fileName: string) => ({
           productId,
           fileName,
-          // Use original filenames as they are returned by API
-          url: `/api/admin/static-images/${folderName}/${encodeURIComponent(fileName)}`
+          // Use original filenames as they are returned by API + timestamp to force cache refresh
+          url: `/api/admin/static-images/${folderName}/${encodeURIComponent(fileName)}?t=${Date.now()}`
         }));
         setExistingImages(existingImgs);
       }
