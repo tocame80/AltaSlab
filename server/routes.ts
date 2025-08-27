@@ -298,6 +298,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           design: product.color || '',
           format: product.format || '',
           price: parseFloat(product.price || '0'),
+          areaPerPackage: product.areaPerPackage ? parseFloat(product.areaPerPackage.toString()) : null,
+          pcsPerPackage: product.pcsPerPackage ? parseFloat(product.pcsPerPackage.toString()) : null,
           image: localImages.image,
           category: product.category === 'SPC панели' ? 'concrete' : 'other',
           surface: product.surface || 'упак',
