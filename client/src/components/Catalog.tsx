@@ -239,22 +239,37 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
   // Get colors and sizes for selected collection
   const selectedCollectionProducts = useMemo(() => {
-    if (!filters.collection) return products;
+    // If no collection filter is set, use the active collection
+    let targetCollection = filters.collection;
     
-    if (filters.collection === 'Профили') {
+    // If no specific collection filter but we have an active collection, map it
+    if (!targetCollection && activeCollection !== 'all' && activeCollection !== 'favorites' && activeCollection !== 'accessories') {
+      const collectionMap = {
+        'concrete': 'Магия бетона',
+        'fabric': 'Тканевая Роскошь',
+        'matte': 'Матовая эстетика', 
+        'marble': 'Мраморная феерия'
+      };
+      targetCollection = collectionMap[activeCollection as keyof typeof collectionMap] || '';
+    }
+    
+    // If still no target collection, return empty array (no colors to show)
+    if (!targetCollection) return [];
+    
+    if (targetCollection === 'Профили') {
       // Show only profile accessories by collection name containing "профиль"
       return products.filter(product => 
         product.collection.toLowerCase().includes('профиль')
       );
-    } else if (filters.collection === 'Клей') {
+    } else if (targetCollection === 'Клей') {
       // Show only adhesive accessories by collection name
       return products.filter(product => 
         product.collection === 'Клей'
       );
     } else {
-      return products.filter(product => product.collection === filters.collection);
+      return products.filter(product => product.collection === targetCollection);
     }
-  }, [filters.collection]);
+  }, [filters.collection, activeCollection, products]);
 
   // Reset pagination when filters change
   useEffect(() => {
