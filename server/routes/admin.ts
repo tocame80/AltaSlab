@@ -46,7 +46,39 @@ const findProductImagesGlobal = async (dir: string, productId: string): Promise<
     // Directory access error, skip
   }
   
-  return results;
+  return results.sort(); // Sort to ensure consistent order
+};
+
+// Function to rename files to preserve order
+const renameFilesToOrder = async (folderPath: string, productId: string, orderedFileNames: string[]) => {
+  try {
+    // Create temporary names to avoid conflicts
+    const tempRenames = [];
+    
+    for (let i = 0; i < orderedFileNames.length; i++) {
+      const currentName = orderedFileNames[i];
+      const extension = path.extname(currentName);
+      const tempName = `${productId}_temp_${i}${extension}`;
+      const newName = `${productId}-${i + 1}${extension}`;
+      
+      const currentPath = path.join(folderPath, currentName);
+      const tempPath = path.join(folderPath, tempName);
+      const newPath = path.join(folderPath, newName);
+      
+      // First rename to temp to avoid conflicts
+      await fs.rename(currentPath, tempPath);
+      tempRenames.push({ tempPath, newPath, tempName, newName });
+    }
+    
+    // Then rename from temp to final names
+    for (const { tempPath, newPath } of tempRenames) {
+      await fs.rename(tempPath, newPath);
+    }
+    
+  } catch (error) {
+    console.error('Error renaming files:', error);
+    throw error;
+  }
 };
 
 // Configure multer for file uploads
@@ -245,10 +277,16 @@ router.put('/set-main-image', async (req, res) => {
     // Move the selected image to first position
     const reorderedImages = [fileName, ...allImages.filter((img: string) => img !== fileName)];
 
+    // Physically rename files to preserve order
+    await renameFilesToOrder(folderPath, productId, reorderedImages);
+
+    // Get the updated file names after renaming
+    const updatedImages = await findProductImagesGlobal(folderPath, productId);
+
     res.json({ 
       success: true, 
       message: `Set ${fileName} as main image for product ${productId}`,
-      files: reorderedImages 
+      files: updatedImages 
     });
 
   } catch (error) {
@@ -280,10 +318,16 @@ router.put('/move-image-up', async (req, res) => {
     [reorderedImages[currentIndex - 1], reorderedImages[currentIndex]] = 
     [reorderedImages[currentIndex], reorderedImages[currentIndex - 1]];
 
+    // Physically rename files to preserve order
+    await renameFilesToOrder(folderPath, productId, reorderedImages);
+
+    // Get the updated file names after renaming
+    const updatedImages = await findProductImagesGlobal(folderPath, productId);
+
     res.json({ 
       success: true, 
       message: `Moved ${fileName} up for product ${productId}`,
-      files: reorderedImages 
+      files: updatedImages 
     });
 
   } catch (error) {
@@ -315,10 +359,16 @@ router.put('/move-image-down', async (req, res) => {
     [reorderedImages[currentIndex + 1], reorderedImages[currentIndex]] = 
     [reorderedImages[currentIndex], reorderedImages[currentIndex + 1]];
 
+    // Physically rename files to preserve order
+    await renameFilesToOrder(folderPath, productId, reorderedImages);
+
+    // Get the updated file names after renaming
+    const updatedImages = await findProductImagesGlobal(folderPath, productId);
+
     res.json({ 
       success: true, 
       message: `Moved ${fileName} down for product ${productId}`,
-      files: reorderedImages 
+      files: updatedImages 
     });
 
   } catch (error) {
