@@ -1368,10 +1368,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
 
-    const reorderedImages = [...existingImages];
-    [reorderedImages[index - 1], reorderedImages[index]] = [reorderedImages[index], reorderedImages[index - 1]];
+    const fileName = existingImages[index].fileName;
     
-    await reorderImages(productId, product.collection, reorderedImages);
+    await moveImageUpAPI(productId, product.collection, fileName);
   };
 
   const moveImageDown = async (index: number) => {
@@ -1381,10 +1380,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
 
-    const reorderedImages = [...existingImages];
-    [reorderedImages[index], reorderedImages[index + 1]] = [reorderedImages[index + 1], reorderedImages[index]];
+    const fileName = existingImages[index].fileName;
     
-    await reorderImages(productId, product.collection, reorderedImages);
+    await moveImageDownAPI(productId, product.collection, fileName);
   };
 
   const makeMainImage = async (index: number) => {
@@ -1394,11 +1392,156 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
 
-    const reorderedImages = [...existingImages];
-    const mainImage = reorderedImages.splice(index, 1)[0];
-    reorderedImages.unshift(mainImage);
+    const fileName = existingImages[index].fileName;
     
-    await reorderImages(productId, product.collection, reorderedImages);
+    await setMainImage(productId, product.collection, fileName);
+  };
+
+  const setMainImage = async (productId: string, collection: string, fileName: string) => {
+    try {
+      setIsLoading(true);
+      const folderName = getFolderName(collection);
+
+      const response = await fetch('/api/admin/set-main-image', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId,
+          folder: folderName,
+          fileName
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Update the state with reordered files
+        const updatedImages = data.files.map((fileName: string) => ({
+          productId,
+          fileName,
+          url: `/api/admin/static-images/${folderName}/${encodeURIComponent(fileName)}`
+        }));
+        setExistingImages(updatedImages);
+        toast({
+          title: 'Успешно',
+          description: 'Главное изображение изменено!',
+        });
+      } else {
+        toast({
+          title: 'Ошибка',
+          description: 'Не удалось изменить главное изображение',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Error setting main image:', error);
+      toast({
+        title: 'Ошибка',
+        description: 'Произошла ошибка при изменении главного изображения',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const moveImageUpAPI = async (productId: string, collection: string, fileName: string) => {
+    try {
+      setIsLoading(true);
+      const folderName = getFolderName(collection);
+
+      const response = await fetch('/api/admin/move-image-up', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId,
+          folder: folderName,
+          fileName
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Update the state with reordered files
+        const updatedImages = data.files.map((fileName: string) => ({
+          productId,
+          fileName,
+          url: `/api/admin/static-images/${folderName}/${encodeURIComponent(fileName)}`
+        }));
+        setExistingImages(updatedImages);
+        toast({
+          title: 'Успешно',
+          description: 'Изображение перемещено вверх!',
+        });
+      } else {
+        toast({
+          title: 'Ошибка',
+          description: 'Не удалось переместить изображение',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Error moving image up:', error);
+      toast({
+        title: 'Ошибка',
+        description: 'Произошла ошибка при перемещении изображения',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const moveImageDownAPI = async (productId: string, collection: string, fileName: string) => {
+    try {
+      setIsLoading(true);
+      const folderName = getFolderName(collection);
+
+      const response = await fetch('/api/admin/move-image-down', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId,
+          folder: folderName,
+          fileName
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Update the state with reordered files
+        const updatedImages = data.files.map((fileName: string) => ({
+          productId,
+          fileName,
+          url: `/api/admin/static-images/${folderName}/${encodeURIComponent(fileName)}`
+        }));
+        setExistingImages(updatedImages);
+        toast({
+          title: 'Успешно',
+          description: 'Изображение перемещено вниз!',
+        });
+      } else {
+        toast({
+          title: 'Ошибка',
+          description: 'Не удалось переместить изображение',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Error moving image down:', error);
+      toast({
+        title: 'Ошибка',
+        description: 'Произошла ошибка при перемещении изображения',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const reorderImages = async (productId: string, collection: string, reorderedImages: ExistingImage[]) => {

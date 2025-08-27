@@ -5,6 +5,50 @@ import { promises as fs } from 'fs';
 
 const router = Router();
 
+// Helper functions for finding product images
+const isProductImageFileGlobal = (filename: string, productId: string): boolean => {
+  const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(filename);
+  if (!isImage) return false;
+  
+  // Pattern 1: 8934-1.png, 8934-2.png
+  if (filename.startsWith(`${productId}-`)) return true;
+  
+  // Pattern 2: 8934 (2.2).png, 8934 (коллаж).png  
+  if (filename.startsWith(`${productId} (`)) return true;
+  
+  // Pattern 3: 8934.jpg
+  if (filename === `${productId}.jpg` || filename === `${productId}.png`) return true;
+  
+  return false;
+};
+
+const findProductImagesGlobal = async (dir: string, productId: string): Promise<string[]> => {
+  const results: string[] = [];
+  
+  try {
+    const items = await fs.readdir(dir, { withFileTypes: true });
+    
+    for (const item of items) {
+      const fullPath = path.join(dir, item.name);
+      
+      if (item.isDirectory()) {
+        // Recursively search subdirectories
+        const subImages = await findProductImagesGlobal(fullPath, productId);
+        results.push(...subImages);
+      } else if (item.isFile()) {
+        // Check if file matches product pattern
+        if (isProductImageFileGlobal(item.name, productId)) {
+          results.push(item.name);
+        }
+      }
+    }
+  } catch (error) {
+    // Directory access error, skip
+  }
+  
+  return results;
+};
+
 // Configure multer for file uploads
 const storage = multer.memoryStorage();
 const upload = multer({ 
@@ -178,6 +222,108 @@ router.post('/upload-images', upload.any(), async (req, res) => {
   } catch (error) {
     console.error('Error uploading images:', error);
     res.status(500).json({ error: 'Failed to upload images' });
+  }
+});
+
+// Set main image for product (move to first position)
+router.put('/set-main-image', async (req, res) => {
+  try {
+    const { productId, folder, fileName } = req.body;
+    
+    if (!productId || !folder || !fileName) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Find all images for this product
+    const folderPath = path.join(process.cwd(), 'client', 'src', 'assets', 'products', folder);
+    const allImages = await findProductImagesGlobal(folderPath, productId);
+    
+    if (!allImages.includes(fileName)) {
+      return res.status(404).json({ error: 'Image not found' });
+    }
+
+    // Move the selected image to first position
+    const reorderedImages = [fileName, ...allImages.filter((img: string) => img !== fileName)];
+
+    res.json({ 
+      success: true, 
+      message: `Set ${fileName} as main image for product ${productId}`,
+      files: reorderedImages 
+    });
+
+  } catch (error) {
+    console.error('Error setting main image:', error);
+    res.status(500).json({ error: 'Failed to set main image' });
+  }
+});
+
+// Move image up in order
+router.put('/move-image-up', async (req, res) => {
+  try {
+    const { productId, folder, fileName } = req.body;
+    
+    if (!productId || !folder || !fileName) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Find all images for this product
+    const folderPath = path.join(process.cwd(), 'client', 'src', 'assets', 'products', folder);
+    const allImages = await findProductImagesGlobal(folderPath, productId);
+    
+    const currentIndex = allImages.indexOf(fileName);
+    if (currentIndex <= 0) {
+      return res.status(400).json({ error: 'Image is already first or not found' });
+    }
+
+    // Swap with previous image
+    const reorderedImages = [...allImages];
+    [reorderedImages[currentIndex - 1], reorderedImages[currentIndex]] = 
+    [reorderedImages[currentIndex], reorderedImages[currentIndex - 1]];
+
+    res.json({ 
+      success: true, 
+      message: `Moved ${fileName} up for product ${productId}`,
+      files: reorderedImages 
+    });
+
+  } catch (error) {
+    console.error('Error moving image up:', error);
+    res.status(500).json({ error: 'Failed to move image up' });
+  }
+});
+
+// Move image down in order  
+router.put('/move-image-down', async (req, res) => {
+  try {
+    const { productId, folder, fileName } = req.body;
+    
+    if (!productId || !folder || !fileName) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Find all images for this product
+    const folderPath = path.join(process.cwd(), 'client', 'src', 'assets', 'products', folder);
+    const allImages = await findProductImagesGlobal(folderPath, productId);
+    
+    const currentIndex = allImages.indexOf(fileName);
+    if (currentIndex < 0 || currentIndex >= allImages.length - 1) {
+      return res.status(400).json({ error: 'Image is already last or not found' });
+    }
+
+    // Swap with next image
+    const reorderedImages = [...allImages];
+    [reorderedImages[currentIndex + 1], reorderedImages[currentIndex]] = 
+    [reorderedImages[currentIndex], reorderedImages[currentIndex + 1]];
+
+    res.json({ 
+      success: true, 
+      message: `Moved ${fileName} down for product ${productId}`,
+      files: reorderedImages 
+    });
+
+  } catch (error) {
+    console.error('Error moving image down:', error);
+    res.status(500).json({ error: 'Failed to move image down' });
   }
 });
 
