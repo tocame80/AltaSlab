@@ -654,8 +654,19 @@ export default function Catalog({ activeCollection }: CatalogProps) {
               </div>
             )}
 
-            {/* Products Content */}
-            {!isLoading && !error && (
+            {/* Always show debug info */}
+            <div className="mb-4 p-4 bg-yellow-100 rounded-lg text-sm">
+              <strong>Debug Info:</strong><br/>
+              Total products: {products.length}<br/>
+              Filtered products: {filteredProducts.length}<br/>
+              Visible products: {visibleProducts.length}<br/>
+              Active collection: {activeCollection}<br/>
+              Loading: {isLoading ? 'true' : 'false'}<br/>
+              Error: {error ? 'true' : 'false'}
+            </div>
+
+            {/* Products Content - show when we have products regardless of loading state */}
+            {!error && products.length > 0 && (
               <>
                 {/* Results Info */}
                 <div className="flex justify-between items-center mb-6">
@@ -692,10 +703,29 @@ export default function Catalog({ activeCollection }: CatalogProps) {
             )}
 
             {/* No Results */}
-            {!isLoading && !error && filteredProducts.length === 0 && (
+            {!isLoading && !error && products.length > 0 && filteredProducts.length === 0 && (
               <div className="text-center py-12">
                 <p className="text-muted text-lg">
                   По выбранным фильтрам товары не найдены. Попробуйте изменить критерии поиска.
+                </p>
+                <button 
+                  onClick={() => {
+                    setFilters({ collection: '', color: '', size: '' });
+                    setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
+                    setSearchQuery('');
+                  }}
+                  className="mt-4 btn-primary px-6 py-2 rounded-lg font-medium"
+                >
+                  Сбросить фильтры
+                </button>
+              </div>
+            )}
+
+            {/* Show message when no products loaded at all */}
+            {!isLoading && !error && products.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-muted text-lg">
+                  Каталог продуктов пока не загружен. Попробуйте обновить страницу.
                 </p>
               </div>
             )}
