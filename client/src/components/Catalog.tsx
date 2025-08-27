@@ -451,55 +451,6 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 </div>
               )}
 
-              {/* Accessories Filter - Show when in 'all' or 'accessories' sections */}
-              {(activeCollection === 'all' || activeCollection === 'accessories') && (
-                <div className="mb-6">
-                  <h4 className="font-semibold text-[#2f378b] mb-3">Комплектующие</h4>
-                  <div className="space-y-2">
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        name="accessories"
-                        value="Профили"
-                        checked={accessoryFilter === 'Профили'}
-                        onChange={() => {
-                          setAccessoryFilter('Профили');
-                          setFilters(prev => ({ 
-                            ...prev, 
-                            collection: '',
-                            color: '',
-                            size: ''
-                          }));
-                        }}
-                        className="mr-2"
-                      />
-                      <span className="text-secondary text-sm">Профили</span>
-                    </label>
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        name="accessories"
-                        value="Клей"
-                        checked={accessoryFilter === 'Клей'}
-                        onChange={() => {
-                          setAccessoryFilter('Клей');
-                          setFilters(prev => ({ 
-                            ...prev, 
-                            collection: '',
-                            color: '',
-                            size: ''
-                          }));
-                        }}
-                        className="mr-2"
-                      />
-                      <span className="text-secondary text-sm">Клей</span>
-                    </label>
-                  </div>
-                </div>
-              )}
-
-
-
               {/* Colors Filter - Show only when panel collection is selected */}
               {((filters.collection && filters.collection !== '' && filters.collection !== 'Клей') ||
                 (activeCollection === 'concrete' || activeCollection === 'fabric' || activeCollection === 'matte' || activeCollection === 'marble')) && 
@@ -586,6 +537,53 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         <span className="text-secondary text-sm group-hover:text-[#2f378b] transition-colors">{size}</span>
                       </label>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Accessories Filter - Show when in 'all' or 'accessories' sections */}
+              {(activeCollection === 'all' || activeCollection === 'accessories') && (
+                <div className="mb-6">
+                  <h4 className="font-semibold text-[#2f378b] mb-3">Комплектующие</h4>
+                  <div className="space-y-2">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="accessories"
+                        value="Профили"
+                        checked={accessoryFilter === 'Профили'}
+                        onChange={() => {
+                          setAccessoryFilter('Профили');
+                          setFilters(prev => ({ 
+                            ...prev, 
+                            collection: '',
+                            color: '',
+                            size: ''
+                          }));
+                        }}
+                        className="mr-2"
+                      />
+                      <span className="text-secondary text-sm">Профили</span>
+                    </label>
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="accessories"
+                        value="Клей"
+                        checked={accessoryFilter === 'Клей'}
+                        onChange={() => {
+                          setAccessoryFilter('Клей');
+                          setFilters(prev => ({ 
+                            ...prev, 
+                            collection: '',
+                            color: '',
+                            size: ''
+                          }));
+                        }}
+                        className="mr-2"
+                      />
+                      <span className="text-secondary text-sm">Клей</span>
+                    </label>
                   </div>
                 </div>
               )}
