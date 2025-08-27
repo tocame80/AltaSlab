@@ -200,9 +200,8 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
               <div className="text-gray-900 hover:text-[#e90039] text-xs lg:text-sm font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
                 {(() => {
                   if (product.collection.toLowerCase().includes('профиль')) {
-                    // For profiles: price * 30 pieces per package
-                    const packagePrice = product.price * 30;
-                    return `${packagePrice.toLocaleString('ru-RU')} ₽ за упак.`;
+                    // For profiles: show price per piece
+                    return `${product.price.toLocaleString('ru-RU')} ₽ за шт.`;
                   } else if (product.collection === 'Клей') {
                     // For glue: show per unit
                     return `${product.price.toLocaleString('ru-RU')} ₽ за шт.`;
