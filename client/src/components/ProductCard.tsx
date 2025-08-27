@@ -167,22 +167,22 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
           <div className="absolute bottom-0 left-0 p-2 lg:p-3 transition-all duration-300">
             <div>
               {/* Line 1: Collection */}
-              <div className="text-white hover:text-[#e90039] text-[10px] lg:text-xs font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+              <div className="text-gray-600 hover:text-[#e90039] text-[10px] lg:text-xs font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
                 {getCollectionDisplayName()}
               </div>
               
               {/* Line 2: Color */}
-              <div className="text-white hover:text-[#e90039] text-xs lg:text-sm font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+              <div className="text-gray-900 hover:text-[#e90039] text-xs lg:text-sm font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
                 {product.color}
               </div>
             </div>
           </div>
 
-          {/* Additional Info Overlay - Bottom Right - Size and Price */}
+          {/* Additional Info Overlay - Bottom Right - Size, Area and Price */}
           <div className="absolute bottom-0 right-0 p-2 lg:p-3 transition-all duration-300">
             <div className="text-right">
               {/* Line 1: Size + m² per package for panels, length for profiles */}
-              <div className="text-white hover:text-[#e90039] text-[10px] lg:text-xs font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+              <div className="text-gray-600 hover:text-[#e90039] text-[10px] lg:text-xs font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
                 {(() => {
                   if (product.collection.toLowerCase().includes('профиль')) {
                     return '2,7м';
@@ -196,7 +196,7 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
               </div>
               
               {/* Line 2: Price per package */}
-              <div className="text-white hover:text-[#e90039] text-xs lg:text-sm font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
+              <div className="text-gray-900 hover:text-[#e90039] text-xs lg:text-sm font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
                 {(() => {
                   if (product.collection.toLowerCase().includes('профиль')) {
                     // For profiles: show price per piece

@@ -349,18 +349,18 @@ export default function ProductDetails() {
               <div className="absolute bottom-0 left-0 p-4 transition-all duration-300">
                 <div>
                   {/* Line 1: Collection */}
-                  <div className="text-white hover:text-[#e90039] text-sm font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                  <div className="text-gray-600 hover:text-[#e90039] text-sm font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
                     {getCollectionDisplayName()}
                   </div>
                   
                   {/* Line 2: Color */}
-                  <div className="text-white hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                  <div className="text-gray-900 hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
                     {product.color}
                   </div>
                   
                   {/* Line 3: Price per m² (recalculation for panels only) */}
                   {!product.collection.toLowerCase().includes('профиль') && product.collection !== 'Клей' && product.areaPerPackage && (
-                    <div className="text-white hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                    <div className="text-gray-900 hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
                       {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽/м²
                     </div>
                   )}
@@ -371,19 +371,19 @@ export default function ProductDetails() {
               <div className="absolute bottom-0 right-0 p-4 transition-all duration-300">
                 <div className="text-right">
                   {/* Line 1: Size */}
-                  <div className="text-white hover:text-[#e90039] text-sm font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                  <div className="text-gray-600 hover:text-[#e90039] text-sm font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
                     {product.collection.toLowerCase().includes('профиль') ? '2,7м' : (product.format || 'Размер не указан')}
                   </div>
                   
                   {/* Line 2: Area per package - only for panels */}
                   {!product.collection.toLowerCase().includes('профиль') && product.collection !== 'Клей' && (
-                    <div className="text-white hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                    <div className="text-gray-900 hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
                       {product.areaPerPackage ? `${product.areaPerPackage} м²/уп` : 'Нет данных о площади'}
                     </div>
                   )}
                   
                   {/* Line 3: Price per package */}
-                  <div className="text-white hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                  <div className="text-gray-900 hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
                     {(() => {
                       if (product.collection.toLowerCase().includes('профиль')) {
                         // For profiles: price * 30 pieces per package
