@@ -181,20 +181,17 @@ export class DatabaseStorage implements IStorage {
     console.log('Storage: Creating gallery project with data:', insertGalleryProject);
     const [galleryProject] = await db
       .insert(galleryProjects)
-      .values({
-        ...insertGalleryProject,
-        images: insertGalleryProject.images || [],
-        materialsUsed: insertGalleryProject.materialsUsed || []
-      })
+      .values(insertGalleryProject as any)
       .returning();
     console.log('Storage: Created gallery project:', galleryProject);
     return galleryProject;
   }
 
   async updateGalleryProject(id: string, updates: Partial<InsertGalleryProject>): Promise<GalleryProject> {
+    const updateData: any = { ...updates, updatedAt: new Date() };
     const [galleryProject] = await db
       .update(galleryProjects)
-      .set({ ...updates, updatedAt: new Date() })
+      .set(updateData)
       .where(eq(galleryProjects.id, id))
       .returning();
     return galleryProject;
@@ -217,15 +214,16 @@ export class DatabaseStorage implements IStorage {
   async createDealerLocation(insertDealerLocation: InsertDealerLocation): Promise<DealerLocation> {
     const [dealerLocation] = await db
       .insert(dealerLocations)
-      .values(insertDealerLocation)
+      .values(insertDealerLocation as any)
       .returning();
     return dealerLocation;
   }
 
   async updateDealerLocation(id: string, updates: Partial<InsertDealerLocation>): Promise<DealerLocation> {
+    const updateData: any = { ...updates, updatedAt: new Date() };
     const [dealerLocation] = await db
       .update(dealerLocations)
-      .set({ ...updates, updatedAt: new Date() })
+      .set(updateData)
       .where(eq(dealerLocations.id, id))
       .returning();
     return dealerLocation;
@@ -253,15 +251,16 @@ export class DatabaseStorage implements IStorage {
   async createCatalogProduct(insertCatalogProduct: InsertCatalogProduct): Promise<CatalogProduct> {
     const [catalogProduct] = await db
       .insert(catalogProducts)
-      .values(insertCatalogProduct)
+      .values(insertCatalogProduct as any)
       .returning();
     return catalogProduct;
   }
 
   async updateCatalogProduct(id: string, updates: Partial<InsertCatalogProduct>): Promise<CatalogProduct> {
+    const updateData: any = { ...updates, updatedAt: new Date() };
     const [catalogProduct] = await db
       .update(catalogProducts)
-      .set({ ...updates, updatedAt: new Date() })
+      .set(updateData)
       .where(eq(catalogProducts.id, id))
       .returning();
     return catalogProduct;
