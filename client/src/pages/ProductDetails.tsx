@@ -384,7 +384,15 @@ export default function ProductDetails() {
                 <div className="text-right">
                   {/* Line 1: Size */}
                   <div className="text-gray-600 hover:text-[#e90039] text-sm font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                    {product.collection.toLowerCase().includes('профиль') ? '2,7м' : (product.format || 'Размер не указан')}
+                    {(() => {
+                      if (product.collection.toLowerCase().includes('профиль')) {
+                        return '2,7м';
+                      } else if (product.collection === 'Клей') {
+                        return '900 гр / 600 мл';
+                      } else {
+                        return product.format || 'Размер не указан';
+                      }
+                    })()}
                   </div>
                   
                   {/* Line 2: Pieces per package for profiles, area per package for panels */}

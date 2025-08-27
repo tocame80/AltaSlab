@@ -197,7 +197,7 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
                   if (product.collection.toLowerCase().includes('профиль')) {
                     return '2,7м';
                   } else if (product.collection === 'Клей') {
-                    return product.format || 'Клей';
+                    return '900 гр / 600 мл';
                   } else {
                     // For panels: show format + area per package
                     return product.areaPerPackage ? `${product.format} ${product.areaPerPackage}м²/уп` : product.format;
