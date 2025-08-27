@@ -1183,7 +1183,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         const existingImgs: ExistingImage[] = data.images.map((fileName: string) => ({
           productId,
           fileName,
-          url: `/src/assets/products/${folderName}/${fileName}`
+          url: `/api/admin/static-images/${folderName}/${fileName}`
         }));
         setExistingImages(existingImgs);
       }
@@ -1424,7 +1424,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         const updatedImages = data.files.map((fileName: string, index: number) => ({
           productId,
           fileName,
-          url: `/src/assets/products/${folderName}/${fileName}`
+          url: `/api/admin/static-images/${folderName}/${fileName}`
         }));
         setExistingImages(updatedImages);
         toast({

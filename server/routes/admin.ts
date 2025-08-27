@@ -478,4 +478,50 @@ router.get('/gallery-images', async (req, res) => {
   }
 });
 
+// Serve static product images  
+router.get('/static-images/:folder/:filename', async (req, res) => {
+  try {
+    const { folder, filename } = req.params;
+    
+    // Validate folder and filename to prevent path traversal
+    const allowedFolders = ['concrete', 'fabric', 'matte', 'marble', 'accessories'];
+    if (!allowedFolders.includes(folder)) {
+      return res.status(400).json({ error: 'Invalid folder' });
+    }
+    
+    if (!/^[a-zA-Z0-9\-\.]+$/.test(filename)) {
+      return res.status(400).json({ error: 'Invalid filename' });
+    }
+
+    const filePath = path.join(process.cwd(), 'client', 'src', 'assets', 'products', folder, filename);
+    
+    try {
+      await fs.access(filePath);
+      
+      // Set appropriate content type based on file extension
+      const ext = path.extname(filename).toLowerCase();
+      const contentType = {
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg', 
+        '.png': 'image/png',
+        '.gif': 'image/gif',
+        '.webp': 'image/webp'
+      }[ext] || 'image/jpeg';
+      
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+      
+      const fileBuffer = await fs.readFile(filePath);
+      res.send(fileBuffer);
+      
+    } catch (error) {
+      res.status(404).json({ error: 'Image not found' });
+    }
+
+  } catch (error) {
+    console.error('Error serving image:', error);
+    res.status(500).json({ error: 'Failed to serve image' });
+  }
+});
+
 export default router;
