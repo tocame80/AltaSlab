@@ -411,7 +411,6 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         value="all"
                         checked={accessoryFilter === '' || accessoryFilter === 'all'}
                         onChange={(e) => {
-                          console.log('Все комплектующие clicked');
                           setAccessoryFilter('all');
                           setFilters(prev => ({ 
                             ...prev, 
@@ -431,7 +430,6 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         value="Профили"
                         checked={accessoryFilter === 'Профили'}
                         onChange={(e) => {
-                          console.log('Профили clicked');
                           setAccessoryFilter('Профили');
                           setFilters(prev => ({ 
                             ...prev, 
@@ -451,7 +449,6 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         value="Клей"
                         checked={accessoryFilter === 'Клей'}
                         onChange={(e) => {
-                          console.log('Клей clicked');
                           setAccessoryFilter('Клей');
                           setFilters(prev => ({ 
                             ...prev, 
