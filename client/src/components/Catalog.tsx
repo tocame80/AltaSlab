@@ -484,9 +484,10 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
 
 
-              {/* Colors Filter - Show for panel collections and profiles */}
-              {((filters.collection && filters.collection !== 'Клей') || 
-                (activeCollection !== 'accessories' && activeCollection !== 'favorites' && !accessoryFilter)) && (
+              {/* Colors Filter - Show only when panel collection is selected */}
+              {((filters.collection && filters.collection !== '' && filters.collection !== 'Клей') ||
+                (activeCollection === 'concrete' || activeCollection === 'fabric' || activeCollection === 'matte' || activeCollection === 'marble')) && 
+                !accessoryFilter && (
                 <div className="mb-6">
                   <h4 className="font-semibold text-[#2f378b] mb-3">Цвета</h4>
                   <div className="space-y-2">
@@ -518,14 +519,14 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 </div>
               )}
 
-              {/* Size/Characteristics Filter - Show for panels and accessories */}
-              {((filters.collection && activeCollection !== 'favorites') || 
-                (activeCollection !== 'accessories' && activeCollection !== 'favorites' && !accessoryFilter) ||
+              {/* Size/Characteristics Filter - Show for selected panel collections or accessories */}
+              {(((filters.collection && filters.collection !== '') ||
+                (activeCollection === 'concrete' || activeCollection === 'fabric' || activeCollection === 'matte' || activeCollection === 'marble') ||
                 activeCollection === 'accessories' || 
-                accessoryFilter) && (
+                accessoryFilter) && activeCollection !== 'favorites') && (
                 <div className="mb-6">
                   <h4 className="font-semibold text-[#2f378b] mb-3">
-                    {(filters.collection === 'Профили' || filters.collection === 'Клей' || activeCollection === 'accessories') ? 'Характеристики' : 'Размеры панелей'}
+                    {(accessoryFilter === 'Профили' || accessoryFilter === 'Клей' || activeCollection === 'accessories') ? 'Характеристики' : 'Размеры панелей'}
                   </h4>
                   <div className="space-y-2">
                     <label className="flex items-center cursor-pointer">
@@ -538,7 +539,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         className="mr-2"
                       />
                       <span className="text-secondary text-sm">
-                        {(filters.collection === 'Профили' || filters.collection === 'Клей' || activeCollection === 'accessories') ? 'Все характеристики' : 'Все размеры'}
+                        {(accessoryFilter === 'Профили' || accessoryFilter === 'Клей' || activeCollection === 'accessories') ? 'Все характеристики' : 'Все размеры'}
                       </span>
                     </label>
                     {availableSizes
