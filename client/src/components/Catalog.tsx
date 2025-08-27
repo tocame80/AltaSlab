@@ -379,7 +379,8 @@ export default function Catalog({ activeCollection }: CatalogProps) {
               <h3 className="hidden lg:block text-lg font-bold text-[#2f378b] mb-4">Фильтры</h3>
               
               {/* Show different filters based on active collection */}
-              {activeCollection !== 'accessories' && (
+              {/* Panel Collections Filter - show when not in accessories mode AND when accessories are not selected in 'all' mode */}
+              {(activeCollection !== 'accessories') && !(activeCollection === 'all' && accessoryFilter && accessoryFilter !== '') && (
                 <>
                   {/* Panel Collections Filter */}
                   <div className="mb-6">
@@ -398,12 +399,16 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                             name="panel-collection"
                             value={collection.key}
                             checked={filters.collection === collection.key}
-                            onChange={(e) => setFilters(prev => ({ 
-                              ...prev, 
-                              collection: e.target.value,
-                              color: '', // Reset color when collection changes
-                              size: '' // Reset size when collection changes
-                            }))}
+                            onChange={(e) => {
+                              setFilters(prev => ({ 
+                                ...prev, 
+                                collection: e.target.value,
+                                color: '', // Reset color when collection changes
+                                size: '' // Reset size when collection changes
+                              }));
+                              // Clear accessory filter when selecting panels
+                              setAccessoryFilter('');
+                            }}
                             className="mr-2"
                           />
                           <span className="text-secondary text-sm">{collection.label}</span>
@@ -414,7 +419,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 </>
               )}
 
-              {/* Accessories Filter - Show when accessories or all is selected */}
+              {/* Accessories Filter - Show when accessories or all is selected AND no panels are selected */}
               {(activeCollection === 'accessories' || activeCollection === 'all') && (
                 <div className="mb-6">
                   <h4 className="font-semibold text-[#2f378b] mb-3">Комплектующие</h4>
@@ -426,10 +431,11 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         value="all"
                         checked={accessoryFilter === '' || accessoryFilter === 'all'}
                         onChange={(e) => {
+                          console.log('Все комплектующие clicked');
                           setAccessoryFilter('all');
                           setFilters(prev => ({ 
                             ...prev, 
-                            collection: '',
+                            collection: '', // Clear panel collection filter
                             color: '', 
                             size: '' 
                           }));
@@ -445,10 +451,11 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         value="Профили"
                         checked={accessoryFilter === 'Профили'}
                         onChange={(e) => {
+                          console.log('Профили clicked');
                           setAccessoryFilter('Профили');
                           setFilters(prev => ({ 
                             ...prev, 
-                            collection: e.target.value,
+                            collection: '', // Clear panel collection filter, let accessoryFilter handle it
                             color: '',
                             size: ''
                           }));
@@ -464,10 +471,11 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         value="Клей"
                         checked={accessoryFilter === 'Клей'}
                         onChange={(e) => {
+                          console.log('Клей clicked');
                           setAccessoryFilter('Клей');
                           setFilters(prev => ({ 
                             ...prev, 
-                            collection: e.target.value,
+                            collection: '', // Clear panel collection filter, let accessoryFilter handle it
                             color: '',
                             size: ''
                           }));
