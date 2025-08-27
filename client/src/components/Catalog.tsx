@@ -377,7 +377,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         <label key={collection.key} className="flex items-center cursor-pointer">
                           <input
                             type="radio"
-                            name="collection"
+                            name="panel-collection"
                             value={collection.key}
                             checked={filters.collection === collection.key}
                             onChange={(e) => setFilters(prev => ({ 
@@ -396,8 +396,8 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 </>
               )}
 
-              {/* Accessories Filter - Show only when accessories, all, or favorites is selected */}
-              {(activeCollection === 'accessories' || activeCollection === 'all' || activeCollection === 'favorites') && (
+              {/* Accessories Filter - Show only when accessories is selected */}
+              {activeCollection === 'accessories' && (
                 <div className="mb-6">
                   <h4 className="font-semibold text-[#2f378b] mb-3">Комплектующие</h4>
                   <div className="space-y-2">
