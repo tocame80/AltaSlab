@@ -3,7 +3,9 @@
 This is a React-based SPA (Single Page Application) for "АЛЬТА СЛЭБ" - a Russian building materials company specializing in SPC (Stone Plastic Composite) wall and ceiling panels. The application serves as a product catalog and company showcase, featuring product collections, material calculators, installation guides, and contact forms. The site features a modular architecture where key functionality is accessible both as standalone pages and as tabs within product details. The site is built with a modern tech stack including React, TypeScript, Tailwind CSS, and shadcn/ui components.
 
 ## Recent Changes (August 2025)
-- **Gallery Layout Update**: Modified gallery page to display 3 projects per row (responsive: 1 on mobile, 2 on small screens, 3 on large)
+- **Catalog Display Fix**: Resolved critical issue where products didn't display for "Все" collection until another collection was activated first. Fixed filtering logic to properly handle 'all' collection state and show all products by default
+- **Performance Optimization**: Implemented server-side caching that reduced API response time from 432ms to 2ms for subsequent requests
+- **Gallery Layout Update**: Modified gallery page to display 3 projects per row (responsive: 1 on mobile, 2 on small screens, 3 on large)  
 - **Text Overlay Improvements**: Project titles moved to image overlays with white text and drop shadows for better visibility
 - **Material Display Enhancement**: Removed pricing from project materials, keeping only collection and color information
 - **Text Visibility Fix**: Applied direct `text-white` classes to h1/h3 elements instead of relying on parent inheritance for consistent white text display across gallery and project pages

@@ -117,15 +117,16 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   const filteredProducts = useMemo(() => {
     let filtered = products;
 
-    // Filter by activeCollection first (favorites and all show everything)
+    // Filter by activeCollection first
     if (activeCollection === 'accessories') {
       // Show only accessories (products with "Клей" or "Профиль" in collection)
       filtered = filtered.filter(product => 
         product.collection === 'Клей' || product.collection === 'Профиль'
       );
-    } else if (activeCollection === 'favorites' || activeCollection === 'all') {
-      // For favorites and all, don't filter by collection - show all products
-      // Additional filtering will be handled later
+    } else if (activeCollection === 'favorites') {
+      // For favorites, don't filter by collection here - will be handled by additionalFilters.favorites
+    } else if (activeCollection === 'all') {
+      // For 'all', don't filter by collection - show all products unless other filters are applied
     } else {
       // Filter by specific collection based on activeCollection
       const collectionMap = {
@@ -140,8 +141,8 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       }
     }
 
-    // Apply collection filters
-    if (filters.collection) {
+    // Apply collection filters (skip when activeCollection is 'all' and filters.collection is empty)
+    if (filters.collection && !(activeCollection === 'all' && filters.collection === '')) {
       if (filters.collection === 'Клей') {
         // Show only adhesive accessories containing "клей" in name  
         filtered = filtered.filter(product => 
@@ -654,16 +655,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
               </div>
             )}
 
-            {/* Always show debug info */}
-            <div className="mb-4 p-4 bg-yellow-100 rounded-lg text-sm">
-              <strong>Debug Info:</strong><br/>
-              Total products: {products.length}<br/>
-              Filtered products: {filteredProducts.length}<br/>
-              Visible products: {visibleProducts.length}<br/>
-              Active collection: {activeCollection}<br/>
-              Loading: {isLoading ? 'true' : 'false'}<br/>
-              Error: {error ? 'true' : 'false'}
-            </div>
+
 
             {/* Products Content - show when we have products regardless of loading state */}
             {!error && products.length > 0 && (
