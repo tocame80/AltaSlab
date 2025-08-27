@@ -121,30 +121,18 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
   const filteredProducts = useMemo(() => {
     let filtered = products;
-    
 
-
-    // Filter by activeCollection first
+    // Step 1: Filter by activeCollection first
     if (activeCollection === 'accessories') {
-      // Show only accessories (products with "Клей" or any "Профиль" in collection name)
+      // Show only accessories
       filtered = filtered.filter(product => 
         product.collection === 'Клей' || 
         product.collection.toLowerCase().includes('профиль')
       );
     } else if (activeCollection === 'favorites') {
       // For favorites, don't filter by collection here - will be handled by additionalFilters.favorites
-    } else if (activeCollection === 'all') {
-      // For 'all', check if accessories are selected
-      if (accessoryFilter && accessoryFilter !== '') {
-        // When accessories are selected, show only accessories
-        filtered = filtered.filter(product => 
-          product.collection === 'Клей' || 
-          product.collection.toLowerCase().includes('профиль')
-        );
-      }
-      // If no accessory filter, show all products (panels + accessories)
-    } else {
-      // Filter by specific collection based on activeCollection
+    } else if (activeCollection !== 'all') {
+      // Filter by specific panel collection based on activeCollection
       const collectionMap = {
         'concrete': 'Магия бетона',
         'fabric': 'Тканевая Роскошь',
@@ -157,37 +145,30 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       }
     }
 
-    // Apply specific accessory filtering when in accessories section or specific accessory is selected
-    if (activeCollection === 'accessories' || (activeCollection === 'all' && accessoryFilter === 'Профили')) {
-      if (accessoryFilter === 'Профили') {
-        // Show only profile accessories by collection name containing "профиль"
+    // Step 2: Apply accessory filter (only for 'all' or 'accessories' sections)
+    if ((activeCollection === 'all' || activeCollection === 'accessories') && accessoryFilter) {
+      if (accessoryFilter === 'all') {
+        // Show only accessories
+        filtered = filtered.filter(product => 
+          product.collection === 'Клей' || 
+          product.collection.toLowerCase().includes('профиль')
+        );
+      } else if (accessoryFilter === 'Профили') {
+        // Show only profiles
         filtered = filtered.filter(product => 
           product.collection.toLowerCase().includes('профиль')
         );
-      }
-    } else if (activeCollection === 'all' && accessoryFilter === 'Клей') {
-      // Show only adhesive accessories by collection name
-      filtered = filtered.filter(product => 
-        product.collection === 'Клей'
-      );
-    }
-    
-    // Apply panel collection filters
-    if (filters.collection && filters.collection.trim() !== '' && !(activeCollection === 'all' && filters.collection.trim() === '')) {
-      if (filters.collection === 'Клей') {
-        // Show only adhesive accessories by collection name
+      } else if (accessoryFilter === 'Клей') {
+        // Show only adhesive
         filtered = filtered.filter(product => 
           product.collection === 'Клей'
         );
-      } else if (filters.collection === 'Профили') {
-        // Show only profile accessories by collection name containing "профиль"
-        filtered = filtered.filter(product => 
-          product.collection.toLowerCase().includes('профиль')
-        );
-      } else {
-        // Filter by exact collection name
-        filtered = filtered.filter(product => product.collection === filters.collection);
       }
+    }
+    
+    // Step 3: Apply panel collection filters (only if no accessory filter is active)
+    if (filters.collection && filters.collection.trim() !== '' && !accessoryFilter) {
+      filtered = filtered.filter(product => product.collection === filters.collection);
     }
     
     if (filters.color) {
@@ -390,9 +371,8 @@ export default function Catalog({ activeCollection }: CatalogProps) {
               <div className="mb-6">
                 <button
                   onClick={() => {
-                    // Reset to default state - show all panels, no accessories selected
                     setFilters({ collection: '', color: '', size: '' });
-                    setAccessoryFilter(''); // This ensures panels are shown by default
+                    setAccessoryFilter('');
                     setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
                     setSearchQuery('');
                     setSortBy('default');
@@ -403,133 +383,120 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 </button>
               </div>
 
-              {/* Panel Collections Filter - Always show unless pure accessories mode */}
-              <div className="mb-6">
-                <h4 className="font-semibold text-[#2f378b] mb-3">Коллекции панелей</h4>
-                    <div className="space-y-2">
-                      {[
-                        { key: '', label: 'Все коллекции' },
-                        { key: 'Магия бетона', label: 'Магия бетона' },
-                        { key: 'Тканевая Роскошь', label: 'Тканевая роскошь' },
-                        { key: 'Матовая эстетика', label: 'Матовая эстетика' },
-                        { key: 'Мраморная феерия', label: 'Мраморная феерия' }
-                      ].map(collection => (
-                        <label key={collection.key} className="flex items-center cursor-pointer">
-                          <input
-                            type="radio"
-                            name="panel-collection"
-                            value={collection.key}
-                            checked={filters.collection === collection.key}
-                            onChange={(e) => {
-                              if (e.target.value === '') {
-                                // "Все коллекции" selected - reset to show all panels by default
-                                setFilters(prev => ({ 
-                                  ...prev, 
-                                  collection: '',
-                                  color: '', 
-                                  size: '' 
-                                }));
-                                setAccessoryFilter(''); // Clear accessories to show panels by default
-                              } else {
-                                // Specific collection selected
-                                setFilters(prev => ({ 
-                                  ...prev, 
-                                  collection: e.target.value,
-                                  color: '', // Reset color when collection changes
-                                  size: '' // Reset size when collection changes
-                                }));
-                                // Clear accessory filter when selecting panels
-                                setAccessoryFilter('');
-                              }
-                            }}
-                            className="mr-2"
-                          />
-                          <span className="text-secondary text-sm">{collection.label}</span>
-                        </label>
-                      ))}
-                    </div>
-              </div>
-
-              {/* Accessories Filter - Show when accessories or all is selected */}
-              <div className="mb-6">
-                <h4 className="font-semibold text-[#2f378b] mb-3">Комплектующие</h4>
-                <div className="space-y-2">
-                  <label className="flex items-center cursor-pointer">
-                    <input
-                      type="radio"
-                      name="accessories"
-                      value=""
-                      checked={accessoryFilter === ''}
-                      onChange={(e) => {
-                        setAccessoryFilter('');
-                        // Keep current panel filters when deselecting accessories
-                      }}
-                      className="mr-2"
-                    />
-                    <span className="text-secondary text-sm">Не выбраны</span>
-                  </label>
-                  <label className="flex items-center cursor-pointer">
-                    <input
-                      type="radio"
-                      name="accessories"
-                      value="all"
-                      checked={accessoryFilter === 'all'}
-                      onChange={(e) => {
-                        console.log('Все комплектующие clicked');
-                        setAccessoryFilter('all');
-                        setFilters(prev => ({ 
-                          ...prev, 
-                          collection: '', // Clear panel collection filter
-                          color: '', 
-                          size: '' 
-                        }));
-                      }}
-                      className="mr-2"
-                    />
-                    <span className="text-secondary text-sm">Все комплектующие</span>
-                  </label>
-                  <label className="flex items-center cursor-pointer">
-                    <input
-                      type="radio"
-                      name="accessories"
-                      value="Профили"
-                      checked={accessoryFilter === 'Профили'}
-                      onChange={(e) => {
-                        console.log('Профили clicked');
-                        setAccessoryFilter('Профили');
-                        setFilters(prev => ({ 
-                          ...prev, 
-                          collection: '', // Clear panel collection filter, let accessoryFilter handle it
-                          color: '',
-                          size: ''
-                        }));
-                      }}
-                      className="mr-2"
-                    />
-                    <span className="text-secondary text-sm">Профили</span>
-                  </label>
-                  <label className="flex items-center cursor-pointer">
-                    <input
-                      type="radio"
-                      name="accessories"
-                      value="Клей"
-                      checked={accessoryFilter === 'Клей'}
-                      onChange={(e) => {
-                        console.log('Клей clicked');
-                        setAccessoryFilter('Клей');
-                        setFilters(prev => ({ 
-                          ...prev, 
-                          collection: '', // Clear panel collection filter
-                          color: '',
-                          size: ''
-                        }));
-                      }}
-                      className="mr-2"
-                    />
-                    <span className="text-secondary text-sm">Клей</span>
-                  </label>
+              {/* Panel Collections Filter - Show only when not in pure accessories mode */}
+              {activeCollection !== 'accessories' && !accessoryFilter && (
+                <div className="mb-6">
+                  <h4 className="font-semibold text-[#2f378b] mb-3">Коллекции панелей</h4>
+                  <div className="space-y-2">
+                    {[
+                      { key: '', label: 'Все коллекции' },
+                      { key: 'Магия бетона', label: 'Магия бетона' },
+                      { key: 'Тканевая Роскошь', label: 'Тканевая роскошь' },
+                      { key: 'Матовая эстетика', label: 'Матовая эстетика' },
+                      { key: 'Мраморная феерия', label: 'Мраморная феерия' }
+                    ].map(collection => (
+                      <label key={collection.key} className="flex items-center cursor-pointer">
+                        <input
+                          type="radio"
+                          name="panel-collection"
+                          value={collection.key}
+                          checked={filters.collection === collection.key}
+                          onChange={(e) => {
+                            setFilters(prev => ({ 
+                              ...prev, 
+                              collection: e.target.value,
+                              color: '', 
+                              size: '' 
+                            }));
+                          }}
+                          className="mr-2"
+                        />
+                        <span className="text-secondary text-sm">{collection.label}</span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* Accessories Filter - Show when in 'all' or 'accessories' sections */}
+              {(activeCollection === 'all' || activeCollection === 'accessories') && (
+                <div className="mb-6">
+                  <h4 className="font-semibold text-[#2f378b] mb-3">Комплектующие</h4>
+                  <div className="space-y-2">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="accessories"
+                        value=""
+                        checked={accessoryFilter === ''}
+                        onChange={() => {
+                          setAccessoryFilter('');
+                          setFilters(prev => ({ ...prev, color: '', size: '' }));
+                        }}
+                        className="mr-2"
+                      />
+                      <span className="text-secondary text-sm">Панели</span>
+                    </label>
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="accessories"
+                        value="all"
+                        checked={accessoryFilter === 'all'}
+                        onChange={() => {
+                          setAccessoryFilter('all');
+                          setFilters(prev => ({ 
+                            ...prev, 
+                            collection: '',
+                            color: '', 
+                            size: '' 
+                          }));
+                        }}
+                        className="mr-2"
+                      />
+                      <span className="text-secondary text-sm">Все комплектующие</span>
+                    </label>
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="accessories"
+                        value="Профили"
+                        checked={accessoryFilter === 'Профили'}
+                        onChange={() => {
+                          setAccessoryFilter('Профили');
+                          setFilters(prev => ({ 
+                            ...prev, 
+                            collection: '',
+                            color: '',
+                            size: ''
+                          }));
+                        }}
+                        className="mr-2"
+                      />
+                      <span className="text-secondary text-sm">Профили</span>
+                    </label>
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="accessories"
+                        value="Клей"
+                        checked={accessoryFilter === 'Клей'}
+                        onChange={() => {
+                          setAccessoryFilter('Клей');
+                          setFilters(prev => ({ 
+                            ...prev, 
+                            collection: '',
+                            color: '',
+                            size: ''
+                          }));
+                        }}
+                        className="mr-2"
+                      />
+                      <span className="text-secondary text-sm">Клей</span>
+                    </label>
+                  </div>
+                </div>
+              )}
 
 
 
