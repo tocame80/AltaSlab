@@ -134,7 +134,15 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     } else if (activeCollection === 'favorites') {
       // For favorites, don't filter by collection here - will be handled by additionalFilters.favorites
     } else if (activeCollection === 'all') {
-      // For 'all', don't filter by collection - show all products unless other filters are applied
+      // For 'all', check if accessories are selected
+      if (accessoryFilter && accessoryFilter !== '') {
+        // When accessories are selected, show only accessories
+        filtered = filtered.filter(product => 
+          product.collection === 'Клей' || 
+          product.collection.toLowerCase().includes('профиль')
+        );
+      }
+      // If no accessory filter, show all products (panels + accessories)
     } else {
       // Filter by specific collection based on activeCollection
       const collectionMap = {
@@ -149,29 +157,23 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       }
     }
 
-    // Apply collection filters only when explicitly set and not in 'all' mode with empty filter
-    // Also consider accessoryFilter for accessories section
-    if (activeCollection === 'accessories' || (activeCollection === 'all' && (accessoryFilter === 'Профили' || accessoryFilter === 'Клей' || accessoryFilter === 'all'))) {
-      // For accessories, use accessoryFilter instead of filters.collection
-      if (accessoryFilter === 'Клей') {
-        // Show only adhesive accessories by collection name
-        filtered = filtered.filter(product => 
-          product.collection === 'Клей'
-        );
-      } else if (accessoryFilter === 'Профили') {
+    // Apply specific accessory filtering when in accessories section or specific accessory is selected
+    if (activeCollection === 'accessories' || (activeCollection === 'all' && accessoryFilter === 'Профили')) {
+      if (accessoryFilter === 'Профили') {
         // Show only profile accessories by collection name containing "профиль"
         filtered = filtered.filter(product => 
           product.collection.toLowerCase().includes('профиль')
         );
-      } else if (accessoryFilter === 'all') {
-        // Show all accessories (profiles and adhesives)
-        filtered = filtered.filter(product => 
-          product.collection === 'Клей' || 
-          product.collection.toLowerCase().includes('профиль')
-        );
       }
-      // If accessoryFilter is empty, let other logic handle it
-    } else if (filters.collection && filters.collection.trim() !== '' && !(activeCollection === 'all' && filters.collection.trim() === '')) {
+    } else if (activeCollection === 'all' && accessoryFilter === 'Клей') {
+      // Show only adhesive accessories by collection name
+      filtered = filtered.filter(product => 
+        product.collection === 'Клей'
+      );
+    }
+    
+    // Apply panel collection filters
+    if (filters.collection && filters.collection.trim() !== '' && !(activeCollection === 'all' && filters.collection.trim() === '')) {
       if (filters.collection === 'Клей') {
         // Show only adhesive accessories by collection name
         filtered = filtered.filter(product => 
