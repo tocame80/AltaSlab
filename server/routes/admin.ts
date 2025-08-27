@@ -22,8 +22,8 @@ const isProductImageFileGlobal = (filename: string, productId: string): boolean 
   return false;
 };
 
-const findProductImagesGlobal = async (dir: string, productId: string): Promise<string[]> => {
-  const results: string[] = [];
+const findProductImagesGlobal = async (dir: string, productId: string): Promise<{ fileName: string, fullPath: string }[]> => {
+  const results: { fileName: string, fullPath: string }[] = [];
   
   try {
     const items = await fs.readdir(dir, { withFileTypes: true });
@@ -38,7 +38,10 @@ const findProductImagesGlobal = async (dir: string, productId: string): Promise<
       } else if (item.isFile()) {
         // Check if file matches product pattern
         if (isProductImageFileGlobal(item.name, productId)) {
-          results.push(item.name);
+          results.push({
+            fileName: item.name,
+            fullPath: fullPath
+          });
         }
       }
     }
@@ -46,24 +49,24 @@ const findProductImagesGlobal = async (dir: string, productId: string): Promise<
     // Directory access error, skip
   }
   
-  return results.sort(); // Sort to ensure consistent order
+  return results.sort((a, b) => a.fileName.localeCompare(b.fileName)); // Sort by filename
 };
 
 // Function to rename files to preserve order
-const renameFilesToOrder = async (folderPath: string, productId: string, orderedFileNames: string[]) => {
+const renameFilesToOrder = async (folderPath: string, productId: string, orderedImages: { fileName: string, fullPath: string }[]) => {
   try {
     // Create temporary names to avoid conflicts
     const tempRenames = [];
     
-    for (let i = 0; i < orderedFileNames.length; i++) {
-      const currentName = orderedFileNames[i];
-      const extension = path.extname(currentName);
+    for (let i = 0; i < orderedImages.length; i++) {
+      const image = orderedImages[i];
+      const extension = path.extname(image.fileName);
       const tempName = `${productId}_temp_${i}${extension}`;
       const newName = `${productId}-${i + 1}${extension}`;
       
-      const currentPath = path.join(folderPath, currentName);
-      const tempPath = path.join(folderPath, tempName);
-      const newPath = path.join(folderPath, newName);
+      const currentPath = image.fullPath;
+      const tempPath = path.join(path.dirname(currentPath), tempName);
+      const newPath = path.join(path.dirname(currentPath), newName);
       
       // First rename to temp to avoid conflicts
       await fs.rename(currentPath, tempPath);
@@ -154,8 +157,9 @@ router.get('/product-images/:productId', async (req, res) => {
     };
 
     try {
-      // Search for images recursively in subfolders
-      const productImages = await findProductImages(folderPath, productId);
+      // Search for images recursively in subfolders using global function
+      const imageResults = await findProductImagesGlobal(folderPath, productId);
+      const productImages = imageResults.map(img => img.fileName);
       console.log(`API: Found ${productImages.length} images for product ${productId} in ${folderPath}`);
       console.log(`API: Images:`, productImages);
       
@@ -270,12 +274,13 @@ router.put('/set-main-image', async (req, res) => {
     const folderPath = path.join(process.cwd(), 'client', 'src', 'assets', 'products', folder);
     const allImages = await findProductImagesGlobal(folderPath, productId);
     
-    if (!allImages.includes(fileName)) {
+    const targetImage = allImages.find(img => img.fileName === fileName);
+    if (!targetImage) {
       return res.status(404).json({ error: 'Image not found' });
     }
 
     // Move the selected image to first position
-    const reorderedImages = [fileName, ...allImages.filter((img: string) => img !== fileName)];
+    const reorderedImages = [targetImage, ...allImages.filter(img => img.fileName !== fileName)];
 
     // Physically rename files to preserve order
     await renameFilesToOrder(folderPath, productId, reorderedImages);
@@ -286,7 +291,7 @@ router.put('/set-main-image', async (req, res) => {
     res.json({ 
       success: true, 
       message: `Set ${fileName} as main image for product ${productId}`,
-      files: updatedImages 
+      files: updatedImages.map(img => img.fileName)
     });
 
   } catch (error) {
@@ -308,7 +313,7 @@ router.put('/move-image-up', async (req, res) => {
     const folderPath = path.join(process.cwd(), 'client', 'src', 'assets', 'products', folder);
     const allImages = await findProductImagesGlobal(folderPath, productId);
     
-    const currentIndex = allImages.indexOf(fileName);
+    const currentIndex = allImages.findIndex(img => img.fileName === fileName);
     if (currentIndex <= 0) {
       return res.status(400).json({ error: 'Image is already first or not found' });
     }
@@ -327,7 +332,7 @@ router.put('/move-image-up', async (req, res) => {
     res.json({ 
       success: true, 
       message: `Moved ${fileName} up for product ${productId}`,
-      files: updatedImages 
+      files: updatedImages.map(img => img.fileName)
     });
 
   } catch (error) {
@@ -349,7 +354,7 @@ router.put('/move-image-down', async (req, res) => {
     const folderPath = path.join(process.cwd(), 'client', 'src', 'assets', 'products', folder);
     const allImages = await findProductImagesGlobal(folderPath, productId);
     
-    const currentIndex = allImages.indexOf(fileName);
+    const currentIndex = allImages.findIndex(img => img.fileName === fileName);
     if (currentIndex < 0 || currentIndex >= allImages.length - 1) {
       return res.status(400).json({ error: 'Image is already last or not found' });
     }
@@ -368,7 +373,7 @@ router.put('/move-image-down', async (req, res) => {
     res.json({ 
       success: true, 
       message: `Moved ${fileName} down for product ${productId}`,
-      files: updatedImages 
+      files: updatedImages.map(img => img.fileName)
     });
 
   } catch (error) {
