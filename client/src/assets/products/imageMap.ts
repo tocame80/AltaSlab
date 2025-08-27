@@ -121,7 +121,6 @@ export const getProductMainImage = (productId: string, collection: string = '', 
       };
       
       const folderName = collectionFolderMap[collection];
-      console.log(`🔍 Profile lookup: collection="${collection}", color="${color}", folderName="${folderName}"`);
       
       if (folderName && color) {
         // Look for image matching the color
@@ -129,8 +128,6 @@ export const getProductMainImage = (productId: string, collection: string = '', 
           path.includes(folderName) && 
           path.toLowerCase().includes(color.toLowerCase())
         );
-        
-        console.log(`🖼️ Profile image search: found key="${colorKey}" for ${folderName}/${color}`);
         
         if (colorKey && profileImages[colorKey]) {
           return profileImages[colorKey].default;
@@ -145,7 +142,6 @@ export const getProductMainImage = (productId: string, collection: string = '', 
         );
         
         if (productIdMatch && profileImages[productIdMatch]) {
-          console.log(`🖼️ Profile image found by productId: ${productIdMatch}`);
           return profileImages[productIdMatch].default;
         }
       }

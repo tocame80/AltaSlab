@@ -90,7 +90,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     } else if (activeCollection === 'all') {
       // Explicitly reset all filters for 'all' collection
       setFilters({ collection: '', color: '', size: '' });
-      setAccessoryFilter('');
+      setAccessoryFilter('all');
       setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
       setSearchQuery(''); // Also clear search
       setVisibleRows(8); // Show more items for "all" collection (16 products)
@@ -100,7 +100,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       setVisibleRows(4); // Standard amount for specific collections
     } else if (activeCollection === 'accessories') {
       setFilters({ collection: '', color: '', size: '' }); // Don't filter - let filteredProducts handle it
-      setAccessoryFilter('');
+      setAccessoryFilter('all');
       setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
       setVisibleRows(4);
     } else {
@@ -408,10 +408,10 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                       <input
                         type="radio"
                         name="accessories"
-                        value=""
-                        checked={accessoryFilter === ''}
+                        value="all"
+                        checked={accessoryFilter === '' || accessoryFilter === 'all'}
                         onChange={(e) => {
-                          setAccessoryFilter('');
+                          setAccessoryFilter('all');
                           setFilters(prev => ({ 
                             ...prev, 
                             collection: '',
