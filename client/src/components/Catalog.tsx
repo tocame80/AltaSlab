@@ -85,15 +85,19 @@ export default function Catalog({ activeCollection }: CatalogProps) {
         discount: false,
         inStock: false
       }));
+      setVisibleRows(6); // Show more items for favorites
     } else if (activeCollection === 'all') {
       setFilters({ collection: '', color: '', size: '' });
       setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
+      setVisibleRows(8); // Show more items for "all" collection (16 products)
     } else if (activeCollection === 'concrete') {
       setFilters({ collection: 'Магия бетона', color: '', size: '' });
       setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
+      setVisibleRows(4); // Standard amount for specific collections
     } else if (activeCollection === 'accessories') {
       setFilters({ collection: 'Клей', color: '', size: '' });
       setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
+      setVisibleRows(4);
     } else {
       // For other collections (fabric, matte, marble)
       const collectionMap = {
@@ -105,6 +109,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       if (collectionName) {
         setFilters({ collection: collectionName, color: '', size: '' });
         setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
+        setVisibleRows(4);
       }
     }
   }, [activeCollection]);
@@ -210,8 +215,10 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     // Mobile: show 5 items (2.5 rows), Desktop: show as calculated
     const isMobile = window.innerWidth < 768;
     const totalItemsToShow = isMobile ? 5 : visibleRows * ITEMS_PER_ROW;
-    return filteredProducts.slice(0, totalItemsToShow);
-  }, [filteredProducts, visibleRows]);
+    const visible = filteredProducts.slice(0, totalItemsToShow);
+    
+    return visible;
+  }, [filteredProducts, visibleRows, activeCollection]);
 
   const hasMoreItems = visibleProducts.length < filteredProducts.length;
 
@@ -685,7 +692,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
             )}
 
             {/* No Results */}
-            {filteredProducts.length === 0 && (
+            {!isLoading && !error && filteredProducts.length === 0 && (
               <div className="text-center py-12">
                 <p className="text-muted text-lg">
                   По выбранным фильтрам товары не найдены. Попробуйте изменить критерии поиска.

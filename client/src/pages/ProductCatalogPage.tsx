@@ -1,6 +1,13 @@
-import { ProductCatalog } from '@/components/ProductCatalog';
+import { useState } from 'react';
+import CollectionsNav from '@/components/CollectionsNav';
+import Catalog from '@/components/Catalog';
+import { Collection } from '@/types';
+import { useFavoritesContext } from '@/contexts/FavoritesContext';
 
 export function ProductCatalogPage() {
+  const [activeCollection, setActiveCollection] = useState<Collection>('all');
+  const { favoriteCount } = useFavoritesContext();
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
@@ -14,7 +21,12 @@ export function ProductCatalogPage() {
           </p>
         </div>
         
-        <ProductCatalog />
+        <CollectionsNav 
+          activeCollection={activeCollection} 
+          onCollectionChange={setActiveCollection}
+          favoriteCount={favoriteCount}
+        />
+        <Catalog activeCollection={activeCollection} />
       </div>
     </div>
   );
