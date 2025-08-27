@@ -247,10 +247,10 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     // For active collection (when no specific collection filter is set)
     if (activeCollection && activeCollection !== 'all' && activeCollection !== 'favorites' && activeCollection !== 'accessories') {
       const collectionMap = {
-        'concrete': 'МАГИЯ БЕТОНА',
-        'fabric': 'ТКАНЕВАЯ РОСКОШЬ',
-        'matte': 'МАТОВАЯ ЭСТЕТИКА', 
-        'marble': 'МРАМОРНАЯ ФЕЕРИЯ'
+        'concrete': 'Магия бетона',
+        'fabric': 'Тканевая Роскошь',
+        'matte': 'Матовая эстетика', 
+        'marble': 'Мраморная феерия'
       };
       const targetCollection = collectionMap[activeCollection as keyof typeof collectionMap];
       if (targetCollection) {
