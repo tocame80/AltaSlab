@@ -123,9 +123,10 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
     // Filter by activeCollection first
     if (activeCollection === 'accessories') {
-      // Show only accessories (products with "Клей" or "Профиль" in collection)
+      // Show only accessories (products with "Клей" or any "Профиль" in collection name)
       filtered = filtered.filter(product => 
-        product.collection === 'Клей' || product.collection === 'Профиль'
+        product.collection === 'Клей' || 
+        product.collection.toLowerCase().includes('профиль')
       );
     } else if (activeCollection === 'favorites') {
       // For favorites, don't filter by collection here - will be handled by additionalFilters.favorites
@@ -153,9 +154,9 @@ export default function Catalog({ activeCollection }: CatalogProps) {
           product.name.toLowerCase().includes('клей')
         );
       } else if (filters.collection === 'Профили') {
-        // Show only profile accessories containing "профиль" in name
+        // Show only profile accessories by collection name containing "профиль"
         filtered = filtered.filter(product => 
-          product.name.toLowerCase().includes('профиль')
+          product.collection.toLowerCase().includes('профиль')
         );
       } else {
         // Filter by exact collection name
