@@ -596,44 +596,46 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                     </label>
                   </div>
                   
-                  {/* Colors Filter for Profiles - Show when profiles are selected */}
-                  {accessoryFilter === 'Профили' && (
-                    <div className="mt-4 pl-4 border-l-2 border-gray-200">
-                      <h5 className="font-medium text-[#2f378b] mb-2 text-sm">Цвета профилей</h5>
-                      <div className="space-y-2">
-                        <label className="flex items-center cursor-pointer">
-                          <input
-                            type="radio"
-                            name="profile-color"
-                            value=""
-                            checked={filters.color === ''}
-                            onChange={(e) => setFilters(prev => ({ ...prev, color: e.target.value }))}
-                            className="mr-2 accent-[#e90039]"
-                          />
-                          <span className="text-secondary text-xs">Все цвета</span>
-                        </label>
-                        {availableColors.map(color => (
-                          <label key={color} className="flex items-center cursor-pointer group">
-                            <input
-                              type="radio"
-                              name="profile-color"
-                              value={color}
-                              checked={filters.color === color}
-                              onChange={(e) => {
-                                setFilters(prev => ({ ...prev, color: e.target.value }));
-                                // Close mobile filters after selection on mobile
-                                if (window.innerWidth < 1024) {
-                                  setTimeout(() => setShowMobileFilters(false), 300);
-                                }
-                              }}
-                              className="mr-2 accent-[#e90039]"
-                            />
-                            <span className="text-secondary text-xs group-hover:text-[#2f378b] transition-colors">{color}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+
+                </div>
+              )}
+
+              {/* Colors Filter for Profiles - Show as separate section when profiles are selected */}
+              {accessoryFilter === 'Профили' && (
+                <div className="mb-6">
+                  <h4 className="font-semibold text-[#2f378b] mb-3">Цвета профилей</h4>
+                  <div className="space-y-2">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="profile-color"
+                        value=""
+                        checked={filters.color === ''}
+                        onChange={(e) => setFilters(prev => ({ ...prev, color: e.target.value }))}
+                        className="mr-2 accent-[#e90039]"
+                      />
+                      <span className="text-secondary text-sm">Все цвета</span>
+                    </label>
+                    {availableColors.map(color => (
+                      <label key={color} className="flex items-center cursor-pointer group">
+                        <input
+                          type="radio"
+                          name="profile-color"
+                          value={color}
+                          checked={filters.color === color}
+                          onChange={(e) => {
+                            setFilters(prev => ({ ...prev, color: e.target.value }));
+                            // Close mobile filters after selection on mobile
+                            if (window.innerWidth < 1024) {
+                              setTimeout(() => setShowMobileFilters(false), 300);
+                            }
+                          }}
+                          className="mr-2 accent-[#e90039]"
+                        />
+                        <span className="text-secondary text-sm group-hover:text-[#2f378b] transition-colors">{color}</span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
               )}
 
