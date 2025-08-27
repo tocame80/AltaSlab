@@ -2394,14 +2394,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     Импортируйте данные каталога из файла для массового обновления товаров.
                   </p>
                   
-                  <div className="mb-4 p-3 bg-blue-50 rounded-lg">
-                    <h5 className="font-medium text-blue-900 mb-1">Шаблон файла содержит:</h5>
-                    <ul className="text-sm text-blue-800 space-y-1">
-                      <li>• Правильные названия колонок</li>
-                      <li>• Примеры заполнения данных</li>
-                      <li>• Допустимые значения полей</li>
-                    </ul>
-                  </div>
+                  
                   
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-[#E95D22] transition-colors">
                     <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
@@ -2426,18 +2419,11 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     className="hidden"
                   />
                   
-                  <div className="mt-4 flex gap-3">
-                    <button 
-                      onClick={downloadTemplate}
-                      className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm"
-                      data-testid="button-download-template"
-                    >
-                      Скачать шаблон
-                    </button>
+                  <div className="mt-4">
                     <button 
                       onClick={triggerFileSelect}
                       disabled={isImporting}
-                      className={`flex-1 px-4 py-2 rounded-lg transition-colors text-sm ${
+                      className={`w-full px-4 py-2 rounded-lg transition-colors text-sm ${
                         isImporting 
                           ? 'bg-gray-400 cursor-not-allowed' 
                           : 'bg-[#E95D22] hover:bg-[#d54a1a]'
