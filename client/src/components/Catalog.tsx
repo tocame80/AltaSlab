@@ -406,7 +406,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         type="radio"
                         name="accessories"
                         value=""
-                        checked={filters.collection === '' && activeCollection === 'accessories'}
+                        checked={false}
                         onChange={(e) => setFilters(prev => ({ 
                           ...prev, 
                           collection: '',
