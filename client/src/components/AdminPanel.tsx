@@ -448,14 +448,14 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   });
 
   // Fetch local gallery images from admin API
-  const { data: localGalleryResponse, isLoading: galleryImagesLoading } = useQuery({
+  const { data: localGalleryResponse, isLoading: galleryImagesLoading } = useQuery<{success: boolean, images: string[]}>({
     queryKey: ['/api/admin/gallery-images'],
     retry: 2,
     refetchOnMount: true,
   });
 
   // Convert local gallery files to display format
-  const galleryImages = React.useMemo(() => {
+  const localGalleryImages = React.useMemo(() => {
     if (!localGalleryResponse || !localGalleryResponse.success || !localGalleryResponse.images) return [];
     
     return (localGalleryResponse.images as string[]).map((fileName: string, index: number) => ({
@@ -2532,14 +2532,14 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
               {/* Existing Gallery Images */}
               {galleryImagesLoading ? (
                 <div className="p-8 text-center text-gray-500">Загрузка изображений галереи...</div>
-              ) : galleryImages.length > 0 ? (
+              ) : localGalleryImages.length > 0 ? (
                 <div>
                   <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
                     <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                    Загруженные изображения галереи ({galleryImages.length})
+                    Загруженные изображения галереи ({localGalleryImages.length})
                   </h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 max-h-80 overflow-y-auto p-4 bg-gray-50 rounded-lg">
-                    {galleryImages.map((galleryImage) => (
+                    {localGalleryImages.map((galleryImage) => (
                       <div key={galleryImage.id} className="relative group">
                         <div className="aspect-square rounded-lg overflow-hidden border-2 border-gray-200 bg-gray-100">
                           <img
@@ -2724,7 +2724,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     <form
                       onSubmit={galleryForm.handleSubmit(async (data) => {
                         // Validate that we have at least one image
-                        if (galleryImageFiles.length === 0 && galleryImages.length === 0) {
+                        if (galleryImageFiles.length === 0 && localGalleryImages.length === 0) {
                           toast({
                             title: 'Ошибка',
                             description: 'Добавьте хотя бы одно изображение',
@@ -2763,7 +2763,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             return;
                           }
                         } else {
-                          imageUrls = galleryImages; // Use existing URLs if no files uploaded
+                          imageUrls = localGalleryImages.map(img => img.imageUrl); // Use existing URLs if no files uploaded
                         }
                         
                         const formData = {
@@ -2915,7 +2915,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           </div>
                         )}
 
-                        {galleryImagePreviews.length === 0 && galleryImages.length === 0 && (
+                        {galleryImagePreviews.length === 0 && localGalleryImages.length === 0 && (
                           <p className="text-red-600 text-sm mt-1">Добавьте хотя бы одно изображение</p>
                         )}
                       </div>
