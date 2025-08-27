@@ -188,17 +188,24 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
           {/* Additional Info Overlay - Bottom Right - Three Lines */}
           <div className="absolute bottom-0 right-0 p-2 lg:p-3 transition-all duration-300">
             <div className="text-right">
-              {/* Line 1: Size */}
+              {/* Line 1: Size info - Combined format for panels, length for profiles */}
               <div className="text-gray-600 hover:text-[#e90039] text-[10px] lg:text-xs font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                {product.collection.toLowerCase().includes('профиль') ? '2,7м' : product.format}
+                {(() => {
+                  if (product.collection.toLowerCase().includes('профиль')) {
+                    return '2,7м';
+                  } else if (product.collection === 'Клей') {
+                    return product.format || 'Клей';
+                  } else {
+                    // For panels: show format + area per package
+                    return product.areaPerPackage ? `${product.format} ${product.areaPerPackage}м²/уп` : product.format;
+                  }
+                })()}
               </div>
               
-              {/* Line 2: Package info - only for panels, skip for profiles/glue */}
-              {!product.collection.toLowerCase().includes('профиль') && product.collection !== 'Клей' && (
-                <div className="text-gray-900 hover:text-[#e90039] text-xs lg:text-sm font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                  {product.areaPerPackage} м²
-                </div>
-              )}
+              {/* Line 2: Additional info - empty for now as combined above */}
+              <div className="text-xs lg:text-sm font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer text-transparent">
+                .
+              </div>
               
               {/* Line 3: Price */}
               <div className="text-gray-900 hover:text-[#e90039] text-xs lg:text-sm font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
