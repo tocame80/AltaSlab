@@ -25,7 +25,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     color: '',
     size: '',
   });
-  const [accessoryFilter, setAccessoryFilter] = useState('all');
+  const [accessoryFilter, setAccessoryFilter] = useState('');
   const [additionalFilters, setAdditionalFilters] = useState({
     novelties: false,
     favorites: false,
@@ -90,7 +90,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     } else if (activeCollection === 'all') {
       // Explicitly reset all filters for 'all' collection
       setFilters({ collection: '', color: '', size: '' });
-      setAccessoryFilter('all');
+      setAccessoryFilter(''); // Empty by default to show panels
       setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
       setSearchQuery(''); // Also clear search
       setVisibleRows(8); // Show more items for "all" collection (16 products)
@@ -380,7 +380,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
               
               {/* Show different filters based on active collection */}
               {/* Panel Collections Filter - show when not in pure accessories mode AND when specific accessories are not selected */}
-              {(activeCollection !== 'accessories') && !(accessoryFilter === 'Профили' || accessoryFilter === 'Клей' || accessoryFilter === 'all') && (
+              {(activeCollection !== 'accessories') && !(accessoryFilter === 'Профили' || accessoryFilter === 'Клей') && (
                 <>
                   {/* Panel Collections Filter */}
                   <div className="mb-6">
@@ -429,7 +429,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         type="radio"
                         name="accessories"
                         value="all"
-                        checked={accessoryFilter === '' || accessoryFilter === 'all'}
+                        checked={accessoryFilter === 'all'}
                         onChange={(e) => {
                           console.log('Все комплектующие clicked');
                           setAccessoryFilter('all');
