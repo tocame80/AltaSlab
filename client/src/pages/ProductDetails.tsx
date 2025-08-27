@@ -345,7 +345,7 @@ export default function ProductDetails() {
                 className="w-full h-full object-cover"
               />
               
-              {/* Product Info Overlay - Bottom Left - Three Lines */}
+              {/* Product Info Overlay - Bottom Left - Collection, Color, Price per m² */}
               <div className="absolute bottom-0 left-0 p-4 transition-all duration-300">
                 <div>
                   {/* Line 1: Collection */}
@@ -358,20 +358,16 @@ export default function ProductDetails() {
                     {product.color}
                   </div>
                   
-                  {/* Line 3: Price per m² */}
-                  {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && product.areaPerPackage ? (
+                  {/* Line 3: Price per m² (recalculation for panels only) */}
+                  {!product.collection.toLowerCase().includes('профиль') && product.collection !== 'Клей' && product.areaPerPackage && (
                     <div className="text-white hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
                       {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽/м²
-                    </div>
-                  ) : (
-                    <div className="text-white hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                      {Math.round(product.price).toLocaleString('ru-RU')} ₽/{product.unit || 'упак'}
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Additional Info Overlay - Bottom Right - Three Lines (like in catalog) */}
+              {/* Additional Info Overlay - Bottom Right - Size, Area, Price per package */}
               <div className="absolute bottom-0 right-0 p-4 transition-all duration-300">
                 <div className="text-right">
                   {/* Line 1: Size */}
@@ -379,14 +375,14 @@ export default function ProductDetails() {
                     {product.collection.toLowerCase().includes('профиль') ? '2,7м' : (product.format || 'Размер не указан')}
                   </div>
                   
-                  {/* Line 2: Area/Quantity per package - only for panels, skip for profiles/glue */}
+                  {/* Line 2: Area per package - only for panels */}
                   {!product.collection.toLowerCase().includes('профиль') && product.collection !== 'Клей' && (
                     <div className="text-white hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                      {product.areaPerPackage ? `${product.areaPerPackage} м²` : 'Нет данных о площади'}
+                      {product.areaPerPackage ? `${product.areaPerPackage} м²/уп` : 'Нет данных о площади'}
                     </div>
                   )}
                   
-                  {/* Line 3: Price */}
+                  {/* Line 3: Price per package */}
                   <div className="text-white hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
                     {(() => {
                       if (product.collection.toLowerCase().includes('профиль')) {
