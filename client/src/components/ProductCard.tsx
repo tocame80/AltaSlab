@@ -172,8 +172,8 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
                 {product.color}
               </div>
               
-              {/* Line 3: Price per m² */}
-              {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && product.areaPerPackage && (
+              {/* Line 3: Price per m² - only for panels */}
+              {!product.collection.toLowerCase().includes('профиль') && product.collection !== 'Клей' && product.areaPerPackage && (
                 <div className="text-gray-900 hover:text-[#e90039] text-xs lg:text-sm font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
                   {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽/м²
                 </div>
@@ -186,20 +186,31 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
             <div className="text-right">
               {/* Line 1: Size */}
               <div className="text-gray-600 hover:text-[#e90039] text-[10px] lg:text-xs font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                {product.format}
+                {product.collection.toLowerCase().includes('профиль') ? '2,7м' : product.format}
               </div>
               
-              {/* Line 2: Area/Quantity per package */}
-              <div className="text-gray-900 hover:text-[#e90039] text-xs lg:text-sm font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                {product.collection !== 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' 
-                  ? `${product.areaPerPackage} м²` 
-                  : `${product.piecesPerPackage} шт`
-                }
-              </div>
+              {/* Line 2: Package info - only for panels, skip for profiles/glue */}
+              {!product.collection.toLowerCase().includes('профиль') && product.collection !== 'Клей' && (
+                <div className="text-gray-900 hover:text-[#e90039] text-xs lg:text-sm font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                  {product.areaPerPackage} м²
+                </div>
+              )}
               
-              {/* Line 3: Price per package */}
+              {/* Line 3: Price */}
               <div className="text-gray-900 hover:text-[#e90039] text-xs lg:text-sm font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                {product.price.toLocaleString('ru-RU')} ₽ {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' ? 'за шт.' : 'за упак.'}
+                {(() => {
+                  if (product.collection.toLowerCase().includes('профиль')) {
+                    // For profiles: price * 30 pieces per package
+                    const packagePrice = product.price * 30;
+                    return `${packagePrice.toLocaleString('ru-RU')} ₽ за упак.`;
+                  } else if (product.collection === 'Клей') {
+                    // For glue: show per unit
+                    return `${product.price.toLocaleString('ru-RU')} ₽ за шт.`;
+                  } else {
+                    // For panels: show per package
+                    return `${product.price.toLocaleString('ru-RU')} ₽ за упак.`;
+                  }
+                })()}
               </div>
             </div>
           </div>

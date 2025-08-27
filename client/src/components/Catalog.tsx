@@ -97,7 +97,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
       setVisibleRows(4); // Standard amount for specific collections
     } else if (activeCollection === 'accessories') {
-      setFilters({ collection: 'Клей', color: '', size: '' });
+      setFilters({ collection: '', color: '', size: '' }); // Don't filter - let filteredProducts handle it
       setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
       setVisibleRows(4);
     } else {
