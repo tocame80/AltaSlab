@@ -2664,8 +2664,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     
                     <form
                       onSubmit={galleryForm.handleSubmit(async (data) => {
-                        // Validate that we have at least one image
-                        if (galleryImageFiles.length === 0) {
+                        // Validate that we have at least one image (existing or new)
+                        const totalImages = galleryImages.length + galleryImageFiles.length;
+                        if (totalImages === 0) {
                           toast({
                             title: 'Ошибка',
                             description: 'Добавьте хотя бы одно изображение',
@@ -2673,9 +2674,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           });
                           return;
                         }
-                        let imageUrls = [];
                         
-                        // If there are files to upload, upload them first
+                        let newImageUrls = [];
+                        
+                        // If there are new files to upload, upload them first
                         if (galleryImageFiles.length > 0) {
                           const uploadData = new FormData();
                           galleryImageFiles.forEach((file, index) => {
@@ -2693,7 +2695,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             }
 
                             const uploadResult = await uploadResponse.json();
-                            imageUrls = uploadResult.files.map((f: any) => f.url);
+                            newImageUrls = uploadResult.files.map((f: any) => f.url);
                           } catch (error) {
                             console.error('Upload error:', error);
                             toast({
@@ -2705,9 +2707,12 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           }
                         }
                         
+                        // Combine existing images with new uploaded images
+                        const allImages = [...galleryImages, ...newImageUrls];
+                        
                         const formData = {
                           ...data,
-                          images: imageUrls,
+                          images: allImages,
                           materialsUsed: selectedMaterials,
                         };
                         
@@ -2781,6 +2786,66 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           Изображения проекта *
                         </label>
                         
+                        {/* Existing Images (when editing) */}
+                        {editingGalleryProject && galleryImages.length > 0 && (
+                          <div className="mb-4">
+                            <h4 className="font-medium text-gray-700 mb-3">
+                              Существующие изображения: {galleryImages.length}
+                            </h4>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                              {galleryImages.map((imageUrl, index) => (
+                                <div key={index} className="relative group">
+                                  <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
+                                    <img
+                                      src={imageUrl}
+                                      alt={`Существующее изображение ${index + 1}`}
+                                      className="w-full h-full object-cover"
+                                      onError={(e) => {
+                                        e.currentTarget.style.display = 'none';
+                                        const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
+                                        if (nextElement) {
+                                          nextElement.style.display = 'flex';
+                                        }
+                                      }}
+                                    />
+                                    <div className="hidden w-full h-full bg-gray-200 items-center justify-center text-xs text-gray-500">
+                                      Ошибка загрузки
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Overlay with actions */}
+                                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
+                                    <button
+                                      type="button"
+                                      onClick={() => window.open(imageUrl, '_blank')}
+                                      className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full transition-colors"
+                                      title="Открыть в новой вкладке"
+                                    >
+                                      <Eye size={14} />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const updatedImages = galleryImages.filter((_, i) => i !== index);
+                                        setGalleryImages(updatedImages);
+                                      }}
+                                      className="bg-red-600 text-white p-2 rounded-full hover:bg-red-700 transition-colors"
+                                      title="Удалить из проекта"
+                                    >
+                                      <Trash2 size={14} />
+                                    </button>
+                                  </div>
+                                  
+                                  {/* Label for existing image */}
+                                  <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded">
+                                    Сохранено
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
                         {/* Drag & Drop Upload Area */}
                         <div
                           onDrop={handleGalleryImageDrop}
@@ -2797,7 +2862,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         >
                           <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
                           <p className="text-lg font-medium text-gray-700 mb-2">
-                            Перетащите изображения сюда
+                            {editingGalleryProject ? 'Добавить новые изображения' : 'Перетащите изображения сюда'}
                           </p>
                           <p className="text-sm text-gray-500 mb-4">
                             или нажмите для выбора файлов
@@ -2819,20 +2884,22 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           </label>
                         </div>
 
-                        {/* Image Previews */}
+                        {/* New Image Previews */}
                         {galleryImagePreviews.length > 0 && (
                           <div className="mt-4">
                             <h4 className="font-medium text-gray-700 mb-3">
-                              Загружено изображений: {galleryImagePreviews.length}
+                              Новые изображения: {galleryImagePreviews.length}
                             </h4>
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                               {galleryImagePreviews.map((preview, index) => (
                                 <div key={index} className="relative group">
-                                  <img
-                                    src={preview}
-                                    alt={`Preview ${index + 1}`}
-                                    className="w-full h-24 object-cover rounded-lg border border-gray-200"
-                                  />
+                                  <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
+                                    <img
+                                      src={preview}
+                                      alt={`Новое изображение ${index + 1}`}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </div>
                                   <div className="absolute top-2 right-2 flex gap-1">
                                     <button
                                       type="button"
@@ -2848,13 +2915,17 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                       {(galleryImageFiles[index].size / (1024 * 1024)).toFixed(1)} MB
                                     </div>
                                   )}
+                                  {/* Label for new image */}
+                                  <div className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded">
+                                    Новое
+                                  </div>
                                 </div>
                               ))}
                             </div>
                           </div>
                         )}
 
-                        {galleryImagePreviews.length === 0 && (
+                        {galleryImagePreviews.length === 0 && galleryImages.length === 0 && (
                           <p className="text-red-600 text-sm mt-1">Добавьте хотя бы одно изображение</p>
                         )}
                       </div>
