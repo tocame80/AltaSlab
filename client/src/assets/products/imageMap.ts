@@ -7,12 +7,10 @@ import placeholderImage from './placeholder.jpg';
 
 // Static imports for known products (kept for immediate availability)
 
-// Import product 8934 images from МагияБетонаЗАКАТ collection
-import product8934_1 from './concrete/МагияБетонаЗАКАТ/PNG/8934 (1).png';
-import product8934_2 from './concrete/МагияБетонаЗАКАТ/PNG/8934 (2.1).png';
-import product8934_3 from './concrete/МагияБетонаЗАКАТ/PNG/8934 (2.2).png';
-import product8934_4 from './concrete/МагияБетонаЗАКАТ/PNG/8934 (2.3).png';
-import product8934_5 from './concrete/МагияБетонаЗАКАТ/PNG/8934 (коллаж).png';
+// Import product 8934 images from МагияБетонаЗАКАТ collection - only existing files
+import product8934_1 from './concrete/МагияБетонаЗАКАТ/PNG/8934 (2.2).png';
+import product8934_2 from './concrete/МагияБетонаЗАКАТ/PNG/8934 (2.3).png';
+import product8934_3 from './concrete/МагияБетонаЗАКАТ/PNG/8934 (коллаж).png';
 
 
 
@@ -78,7 +76,7 @@ initializeImageMap();
 
 // Static fallback mappings for products with special paths  
 const staticImageMap: Record<string, string[]> = {
-  '8934': [product8934_1, product8934_2, product8934_3, product8934_4, product8934_5],
+  '8934': [product8934_1, product8934_2, product8934_3],
 };
 
 // Helper function to get product gallery
