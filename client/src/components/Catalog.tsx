@@ -100,7 +100,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       setVisibleRows(4); // Standard amount for specific collections
     } else if (activeCollection === 'accessories') {
       setFilters({ collection: '', color: '', size: '' }); // Don't filter - let filteredProducts handle it
-      setAccessoryFilter('all');
+      setAccessoryFilter('all'); // Show all accessories by default
       setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
       setVisibleRows(4);
     } else {
@@ -151,7 +151,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
     // Apply collection filters only when explicitly set and not in 'all' mode with empty filter
     // Also consider accessoryFilter for accessories section
-    if (activeCollection === 'accessories' || (activeCollection === 'all' && (accessoryFilter === 'Профили' || accessoryFilter === 'Клей'))) {
+    if (activeCollection === 'accessories' || (activeCollection === 'all' && (accessoryFilter === 'Профили' || accessoryFilter === 'Клей' || accessoryFilter === 'all'))) {
       // For accessories, use accessoryFilter instead of filters.collection
       if (accessoryFilter === 'Клей') {
         // Show only adhesive accessories by collection name
@@ -163,8 +163,14 @@ export default function Catalog({ activeCollection }: CatalogProps) {
         filtered = filtered.filter(product => 
           product.collection.toLowerCase().includes('профиль')
         );
+      } else if (accessoryFilter === 'all') {
+        // Show all accessories (profiles and adhesives)
+        filtered = filtered.filter(product => 
+          product.collection === 'Клей' || 
+          product.collection.toLowerCase().includes('профиль')
+        );
       }
-      // If accessoryFilter is 'all' or empty, don't apply additional filtering - show all accessories
+      // If accessoryFilter is empty, let other logic handle it
     } else if (filters.collection && filters.collection.trim() !== '' && !(activeCollection === 'all' && filters.collection.trim() === '')) {
       if (filters.collection === 'Клей') {
         // Show only adhesive accessories by collection name
