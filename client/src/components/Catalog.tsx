@@ -390,8 +390,9 @@ export default function Catalog({ activeCollection }: CatalogProps) {
               <div className="mb-6">
                 <button
                   onClick={() => {
+                    // Reset to default state - show all panels, no accessories selected
                     setFilters({ collection: '', color: '', size: '' });
-                    setAccessoryFilter('');
+                    setAccessoryFilter(''); // This ensures panels are shown by default
                     setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
                     setSearchQuery('');
                     setSortBy('default');
