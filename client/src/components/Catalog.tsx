@@ -13,13 +13,13 @@ interface CatalogProps {
 export default function Catalog({ activeCollection }: CatalogProps) {
   const { favorites, toggleFavorite, isFavorite } = useFavoritesContext();
   const isNavSticky = useStickyNav();
-  
+
   // Load products from API database
   const { data: products = [], isLoading, error } = useQuery<Product[]>({
     queryKey: ['/api/catalog-products'],
     staleTime: 30000, // Cache for 30 seconds
   });
-  
+
   const [filters, setFilters] = useState({
     collection: '',
     color: '',
@@ -36,11 +36,11 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   const [sortBy, setSortBy] = useState('default');
   const [showSearch, setShowSearch] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  
+
   const [visibleRows, setVisibleRows] = useState(4); // Increased initial load
   const ITEMS_PER_ROW = 2; // 2 items per row
   const ROWS_TO_LOAD = 3; // Load 3 more rows at a time
-  
+
   // Listen for search events from header
   useEffect(() => {
     const handleSearch = (event: any) => {
@@ -67,7 +67,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
     window.addEventListener('search-products', handleSearch);
     window.addEventListener('show-catalog-search', handleShowSearch);
-    
+
     return () => {
       window.removeEventListener('search-products', handleSearch);
       window.removeEventListener('show-catalog-search', handleShowSearch);
@@ -165,12 +165,12 @@ export default function Catalog({ activeCollection }: CatalogProps) {
         );
       }
     }
-    
+
     // Step 3: Apply panel collection filters (only if no accessory filter is active)
     if (filters.collection && filters.collection.trim() !== '' && !accessoryFilter) {
       filtered = filtered.filter(product => product.collection === filters.collection);
     }
-    
+
     if (filters.color) {
       filtered = filtered.filter(product => 
         product.color.toLowerCase().includes(filters.color.toLowerCase())
@@ -231,7 +231,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     const isMobile = window.innerWidth < 768;
     const totalItemsToShow = isMobile ? 5 : visibleRows * ITEMS_PER_ROW;
     const visible = filteredProducts.slice(0, totalItemsToShow);
-    
+
     return visible;
   }, [filteredProducts, visibleRows, activeCollection]);
 
@@ -241,7 +241,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   const selectedCollectionProducts = useMemo(() => {
     // If no collection filter is set, use the active collection
     let targetCollection = filters.collection;
-    
+
     // If no specific collection filter but we have an active collection, map it
     if (!targetCollection && activeCollection !== 'all' && activeCollection !== 'favorites' && activeCollection !== 'accessories') {
       const collectionMap = {
@@ -252,10 +252,10 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       };
       targetCollection = collectionMap[activeCollection as keyof typeof collectionMap] || '';
     }
-    
+
     // If still no target collection, return empty array (no colors to show)
     if (!targetCollection) return [];
-    
+
     if (targetCollection === 'Профили') {
       // Show only profile accessories by collection name containing "профиль"
       return products.filter(product => 
@@ -316,7 +316,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
         <div className="mb-6 lg:mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
             <h2 className="text-2xl lg:text-4xl font-bold text-[#2f378b]">{getCollectionTitle()}</h2>
-            
+
             {/* Search Bar - Always visible */}
             <div className="flex items-center gap-2 w-full lg:flex-1 lg:max-w-lg">
               <div className="relative flex-1">
@@ -368,7 +368,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
           {/* Left Sidebar Filters */}
           <div className={`w-full lg:w-80 lg:flex-shrink-0 ${showMobileFilters ? 'block' : 'hidden lg:block'}`}>
             <div className="bg-white p-4 lg:p-6 rounded-lg shadow-sm lg:sticky lg:top-32 relative pt-[20px] pb-[20px] pl-[20px] pr-[20px] ml-[50px] mr-[50px] mt-[50px] mb-[50px] text-left">
-              
+
               {/* Mobile Close Button */}
               <div className="lg:hidden flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold text-[#2f378b]">Фильтры</h3>
@@ -381,7 +381,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 </button>
               </div>
               <h3 className="hidden lg:block text-lg font-bold text-[#2f378b] mb-4">Фильтры</h3>
-              
+
               {/* Reset Filters Button */}
               <div className="mb-6">
                 <button
@@ -438,39 +438,6 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 <div className="mb-6">
                   <h4 className="font-semibold text-[#2f378b] mb-3">Комплектующие</h4>
                   <div className="space-y-2">
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        name="accessories"
-                        value=""
-                        checked={accessoryFilter === ''}
-                        onChange={() => {
-                          setAccessoryFilter('');
-                          setFilters(prev => ({ ...prev, color: '', size: '' }));
-                        }}
-                        className="mr-2"
-                      />
-                      <span className="text-secondary text-sm">Панели</span>
-                    </label>
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        name="accessories"
-                        value="all"
-                        checked={accessoryFilter === 'all'}
-                        onChange={() => {
-                          setAccessoryFilter('all');
-                          setFilters(prev => ({ 
-                            ...prev, 
-                            collection: '',
-                            color: '', 
-                            size: '' 
-                          }));
-                        }}
-                        className="mr-2"
-                      />
-                      <span className="text-secondary text-sm">Все комплектующие</span>
-                    </label>
                     <label className="flex items-center cursor-pointer">
                       <input
                         type="radio"
