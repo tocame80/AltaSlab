@@ -163,6 +163,18 @@ export default function ProductDetails() {
   };
 
   const getCollectionDisplayName = () => {
+    if (!product) return 'Общий каталог';
+    
+    // For profiles, show specific profile type from product name
+    if (product.collection.toLowerCase().includes('профиль')) {
+      const name = product.name.toLowerCase();
+      if (name.includes('под рассеивателем')) return 'Профиль под рассеивателем';
+      if (name.includes('соединительный')) return 'Профиль соединительный';
+      if (name.includes('торцевой')) return 'Профиль торцевой';
+      if (name.includes('угловой')) return 'Профиль угловой';
+      return 'Профиль';
+    }
+    
     return product.collection || 'Общий каталог';
   };
 
@@ -375,11 +387,17 @@ export default function ProductDetails() {
                     {product.collection.toLowerCase().includes('профиль') ? '2,7м' : (product.format || 'Размер не указан')}
                   </div>
                   
-                  {/* Line 2: Area per package - only for panels */}
-                  {!product.collection.toLowerCase().includes('профиль') && product.collection !== 'Клей' && (
+                  {/* Line 2: Pieces per package for profiles, area per package for panels */}
+                  {product.collection.toLowerCase().includes('профиль') ? (
                     <div className="text-gray-900 hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                      {product.areaPerPackage ? `${product.areaPerPackage} м²/уп` : 'Нет данных о площади'}
+                      30 шт/уп
                     </div>
+                  ) : (
+                    product.collection !== 'Клей' && (
+                      <div className="text-gray-900 hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                        {product.areaPerPackage ? `${product.areaPerPackage} м²/уп` : 'Нет данных о площади'}
+                      </div>
+                    )
                   )}
                   
                   {/* Line 3: Price per package */}
