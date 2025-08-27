@@ -1415,14 +1415,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        // Update the state with reordered files
-        const updatedImages = data.files.map((fileName: string) => ({
-          productId,
-          fileName,
-          url: `/api/admin/static-images/${folderName}/${encodeURIComponent(fileName)}`
-        }));
-        setExistingImages(updatedImages);
+        // Reload images from server to get updated file names after rename
+        await loadExistingImages(productId);
         toast({
           title: 'Успешно',
           description: 'Главное изображение изменено!',
@@ -1464,14 +1458,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        // Update the state with reordered files
-        const updatedImages = data.files.map((fileName: string) => ({
-          productId,
-          fileName,
-          url: `/api/admin/static-images/${folderName}/${encodeURIComponent(fileName)}`
-        }));
-        setExistingImages(updatedImages);
+        // Reload images from server to get updated file names after rename
+        await loadExistingImages(productId);
         toast({
           title: 'Успешно',
           description: 'Изображение перемещено вверх!',
@@ -1513,14 +1501,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        // Update the state with reordered files
-        const updatedImages = data.files.map((fileName: string) => ({
-          productId,
-          fileName,
-          url: `/api/admin/static-images/${folderName}/${encodeURIComponent(fileName)}`
-        }));
-        setExistingImages(updatedImages);
+        // Reload images from server to get updated file names after rename
+        await loadExistingImages(productId);
         toast({
           title: 'Успешно',
           description: 'Изображение перемещено вниз!',
