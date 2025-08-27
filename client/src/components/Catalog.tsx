@@ -494,14 +494,53 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 </div>
               )}
 
-              {/* Size/Characteristics Filter - Show for selected panel collections or accessories */}
+              {/* Colors Filter for Profiles */}
+              {accessoryFilter === 'Профили' && (
+                <div className="mb-6">
+                  <h4 className="font-semibold text-[#2f378b] mb-3">Цвета профилей</h4>
+                  <div className="space-y-2">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="profile-color"
+                        value=""
+                        checked={filters.color === ''}
+                        onChange={(e) => setFilters(prev => ({ ...prev, color: e.target.value }))}
+                        className="mr-2"
+                      />
+                      <span className="text-secondary text-sm">Все цвета</span>
+                    </label>
+                    {availableColors.map(color => (
+                      <label key={color} className="flex items-center cursor-pointer group">
+                        <input
+                          type="radio"
+                          name="profile-color"
+                          value={color}
+                          checked={filters.color === color}
+                          onChange={(e) => {
+                            setFilters(prev => ({ ...prev, color: e.target.value }));
+                            // Close mobile filters after selection on mobile
+                            if (window.innerWidth < 1024) {
+                              setTimeout(() => setShowMobileFilters(false), 300);
+                            }
+                          }}
+                          className="mr-2 accent-[#e90039]"
+                        />
+                        <span className="text-secondary text-sm group-hover:text-[#2f378b] transition-colors">{color}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Size/Characteristics Filter - Show for selected panel collections or other accessories */}
               {(((filters.collection && filters.collection !== '') ||
                 (activeCollection === 'concrete' || activeCollection === 'fabric' || activeCollection === 'matte' || activeCollection === 'marble') ||
-                activeCollection === 'accessories' || 
-                accessoryFilter) && activeCollection !== 'favorites') && (
+                (activeCollection === 'accessories' && accessoryFilter !== 'Профили') || 
+                (accessoryFilter && accessoryFilter !== 'Профили')) && activeCollection !== 'favorites') && (
                 <div className="mb-6">
                   <h4 className="font-semibold text-[#2f378b] mb-3">
-                    {(accessoryFilter === 'Профили' || accessoryFilter === 'Клей' || activeCollection === 'accessories') ? 'Характеристики' : 'Размеры панелей'}
+                    {(accessoryFilter === 'Клей' || (activeCollection === 'accessories' && accessoryFilter !== 'Профили')) ? 'Характеристики' : 'Размеры панелей'}
                   </h4>
                   <div className="space-y-2">
                     <label className="flex items-center cursor-pointer">
@@ -514,7 +553,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         className="mr-2"
                       />
                       <span className="text-secondary text-sm">
-                        {(accessoryFilter === 'Профили' || accessoryFilter === 'Клей' || activeCollection === 'accessories') ? 'Все характеристики' : 'Все размеры'}
+                        {(accessoryFilter === 'Клей' || (activeCollection === 'accessories' && accessoryFilter !== 'Профили')) ? 'Все характеристики' : 'Все размеры'}
                       </span>
                     </label>
                     {availableSizes
