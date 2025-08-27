@@ -87,14 +87,14 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
 
   const getPanelSize = () => {
     // Only show size badges for panels (not accessories)
-    if (product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ') {
+    if (product.collection.toLowerCase().includes('профиль') || product.collection === 'Клей') {
       return null;
     }
     
     // Determine size based on format
-    if (product.format === '300×600×2,4мм') {
+    if (product.format === '300х600х2,4мм' || product.format === '300×600×2,4мм') {
       return 'M';
-    } else if (product.format === '600×1200×2,4мм') {
+    } else if (product.format === '600х1200х2,4мм' || product.format === '600×1200×2,4мм') {
       return 'XL';
     }
     
