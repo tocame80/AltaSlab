@@ -64,6 +64,16 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
 
 
   const getCollectionDisplayName = () => {
+    // For profiles, show specific profile type from product name
+    if (product.collection.toLowerCase().includes('профиль')) {
+      const name = product.name.toLowerCase();
+      if (name.includes('под рассеивателем')) return 'Профиль под рассеивателем';
+      if (name.includes('соединительный')) return 'Профиль соединительный';
+      if (name.includes('торцевой')) return 'Профиль торцевой';
+      if (name.includes('угловой')) return 'Профиль угловой';
+      return 'Профиль';
+    }
+    
     if (product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ') {
       return product.name.toLowerCase().includes('профиль') ? 'ПРОФИЛИ' : 'КЛЕЙ';
     }
@@ -195,7 +205,14 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
                 })()}
               </div>
               
-              {/* Line 2: Price per package */}
+              {/* Line 2: Pieces per package - only for profiles */}
+              {product.collection.toLowerCase().includes('профиль') && (
+                <div className="text-gray-900 hover:text-[#e90039] text-xs lg:text-sm font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                  30 шт/уп
+                </div>
+              )}
+              
+              {/* Line 3 (for profiles) / Line 2 (for panels): Price per package */}
               <div className="text-gray-900 hover:text-[#e90039] text-xs lg:text-sm font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
                 {(() => {
                   if (product.collection.toLowerCase().includes('профиль')) {
