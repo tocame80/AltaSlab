@@ -447,26 +447,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     queryKey: ['/api/gallery-projects'],
   });
 
-  // Fetch local gallery images from admin API
-  const { data: localGalleryResponse, isLoading: galleryImagesLoading } = useQuery<{success: boolean, images: string[]}>({
-    queryKey: ['/api/admin/gallery-images'],
-    retry: 2,
-    refetchOnMount: true,
-  });
 
-  // Convert local gallery files to display format
-  const localGalleryImages = React.useMemo(() => {
-    if (!localGalleryResponse || !localGalleryResponse.success || !localGalleryResponse.images) return [];
-    
-    return (localGalleryResponse.images as string[]).map((fileName: string, index: number) => ({
-      id: `local-gallery-${index}`,
-      fileName: fileName,
-      imageUrl: `/src/assets/gallery/${fileName}`,
-      sortOrder: index,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }));
-  }, [localGalleryResponse]);
 
   const createGalleryProjectMutation = useMutation({
     mutationFn: async (data: GalleryProjectFormData) => {
@@ -2522,84 +2503,15 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
               <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <h3 className="font-semibold text-blue-800 mb-2">Инструкция:</h3>
                 <ul className="text-sm text-blue-700 space-y-1">
-                  <li>• Добавляйте URL изображений проектов через запятую</li>
+                  <li>• Загружайте изображения для каждого проекта отдельно</li>
                   <li>• Выбирайте материалы из каталога для отображения в проекте</li>
                   <li>• Укажите тип применения: интерьер, экстерьер, коммерческий, жилой</li>
                   <li>• Заполните дополнительную информацию: локация, площадь, год</li>
+                  <li>• Каждый проект будет иметь свою галерею изображений</li>
                 </ul>
               </div>
 
-              {/* Existing Gallery Images */}
-              {galleryImagesLoading ? (
-                <div className="p-8 text-center text-gray-500">Загрузка изображений галереи...</div>
-              ) : localGalleryImages.length > 0 ? (
-                <div>
-                  <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
-                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                    Загруженные изображения галереи ({localGalleryImages.length})
-                  </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 max-h-80 overflow-y-auto p-4 bg-gray-50 rounded-lg">
-                    {localGalleryImages.map((galleryImage) => (
-                      <div key={galleryImage.id} className="relative group">
-                        <div className="aspect-square rounded-lg overflow-hidden border-2 border-gray-200 bg-gray-100">
-                          <img
-                            src={galleryImage.imageUrl}
-                            alt={galleryImage.fileName}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                              const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
-                              if (nextElement) {
-                                nextElement.style.display = 'flex';
-                              }
-                            }}
-                          />
-                          <div className="hidden w-full h-full bg-gray-200 items-center justify-center text-xs text-gray-500">
-                            Ошибка загрузки
-                          </div>
-                        </div>
-                        
-                        {/* Overlay with controls */}
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => window.open(galleryImage.imageUrl, '_blank')}
-                              className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full transition-colors"
-                              title="Открыть в новой вкладке"
-                            >
-                              <Eye size={16} />
-                            </button>
-                            <button
-                              onClick={() => {
-                                if (confirm('Удалить это изображение галереи?')) {
-                                  // Implement delete functionality here
-                                }
-                              }}
-                              className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition-colors"
-                              title="Удалить"
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          </div>
-                        </div>
 
-                        {/* Image info */}
-                        <div className="mt-2 text-center">
-                          <p className="text-xs font-medium text-gray-900 truncate">
-                            {galleryImage.fileName}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="p-8 text-center text-gray-400 border-2 border-dashed border-gray-200 rounded-lg">
-                  <Image className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-                  <p className="text-lg font-medium mb-2">Нет изображений в галерее</p>
-                  <p className="text-sm">Загрузите изображения через форму создания проекта</p>
-                </div>
-              )}
 
               {/* Existing Gallery Projects */}
               {galleryProjectsLoading ? (
@@ -2610,24 +2522,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                   <div className="grid gap-4">
                     {galleryProjects.map((project) => (
                       <div key={project.id} className="border border-gray-200 rounded-lg p-4">
-                        <div className="flex items-start justify-between">
-                          <div className="flex gap-4">
-                            {/* Project Image */}
-                            {project.images && project.images.length > 0 && (
-                              <div className="w-24 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                                <img
-                                  src={project.images[0]}
-                                  alt={project.title}
-                                  className="w-full h-full object-cover"
-                                  onError={(e) => {
-                                    e.currentTarget.style.display = 'none';
-                                  }}
-                                />
-                              </div>
-                            )}
-                            
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex-1">
                             {/* Project Info */}
-                            <div className="flex-1">
+                            <div>
                               <h5 className="font-semibold text-gray-900 mb-2">{project.title}</h5>
                               <p className="text-sm text-gray-600 mb-2 line-clamp-2">{project.description}</p>
                               <div className="flex gap-4 text-sm text-gray-500">
@@ -2683,6 +2581,49 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             </button>
                           </div>
                         </div>
+                        
+                        {/* Project Gallery */}
+                        {project.images && project.images.length > 0 && (
+                          <div className="border-t border-gray-200 pt-4">
+                            <h6 className="text-sm font-medium text-gray-700 mb-3">
+                              Галерея проекта ({project.images.length} фото)
+                            </h6>
+                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
+                              {project.images.map((imageUrl, index) => (
+                                <div key={index} className="relative group">
+                                  <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
+                                    <img
+                                      src={imageUrl}
+                                      alt={`${project.title} - изображение ${index + 1}`}
+                                      className="w-full h-full object-cover"
+                                      onError={(e) => {
+                                        e.currentTarget.style.display = 'none';
+                                        const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
+                                        if (nextElement) {
+                                          nextElement.style.display = 'flex';
+                                        }
+                                      }}
+                                    />
+                                    <div className="hidden w-full h-full bg-gray-200 items-center justify-center text-xs text-gray-500">
+                                      Ошибка
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Overlay with preview button */}
+                                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                                    <button
+                                      onClick={() => window.open(imageUrl, '_blank')}
+                                      className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full transition-colors"
+                                      title="Открыть в новой вкладке"
+                                    >
+                                      <Eye size={14} />
+                                    </button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -2724,7 +2665,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     <form
                       onSubmit={galleryForm.handleSubmit(async (data) => {
                         // Validate that we have at least one image
-                        if (galleryImageFiles.length === 0 && localGalleryImages.length === 0) {
+                        if (galleryImageFiles.length === 0) {
                           toast({
                             title: 'Ошибка',
                             description: 'Добавьте хотя бы одно изображение',
@@ -2762,8 +2703,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             });
                             return;
                           }
-                        } else {
-                          imageUrls = localGalleryImages.map(img => img.imageUrl); // Use existing URLs if no files uploaded
                         }
                         
                         const formData = {
@@ -2915,7 +2854,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           </div>
                         )}
 
-                        {galleryImagePreviews.length === 0 && localGalleryImages.length === 0 && (
+                        {galleryImagePreviews.length === 0 && (
                           <p className="text-red-600 text-sm mt-1">Добавьте хотя бы одно изображение</p>
                         )}
                       </div>
