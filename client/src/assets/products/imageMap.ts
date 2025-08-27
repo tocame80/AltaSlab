@@ -109,15 +109,20 @@ export const getProductMainImage = (productId: string, collection: string = '', 
     try {
       const profileImages = import.meta.glob('./accessories/**/*.{png,jpg,jpeg,webp}', { eager: true }) as Record<string, { default: string }>;
       
-      // Map profile collection names to folder names
+      // Map profile collection names to folder names - expanded mapping
       const collectionFolderMap: Record<string, string> = {
         'Профиль под рассеивателем': 'ПрофильПодРассеивателем',
         'Профиль соединительный': 'ПрофильСоединительный', 
         'Профиль торцевой': 'ПрофильТорцевой',
-        'Профиль угловой': 'ПрофильУгловойУниверсальный'
+        'Профиль угловой': 'ПрофильУгловойУниверсальный',
+        // Additional mappings for potential variations
+        'Профиль угловой универсальный': 'ПрофильУгловойУниверсальный',
+        'Профили': 'ПрофильПодРассеивателем' // Default fallback for generic "Профили"
       };
       
       const folderName = collectionFolderMap[collection];
+      console.log(`🔍 Profile lookup: collection="${collection}", color="${color}", folderName="${folderName}"`);
+      
       if (folderName && color) {
         // Look for image matching the color
         const colorKey = Object.keys(profileImages).find(path => 
@@ -125,10 +130,26 @@ export const getProductMainImage = (productId: string, collection: string = '', 
           path.toLowerCase().includes(color.toLowerCase())
         );
         
+        console.log(`🖼️ Profile image search: found key="${colorKey}" for ${folderName}/${color}`);
+        
         if (colorKey && profileImages[colorKey]) {
           return profileImages[colorKey].default;
         }
       }
+      
+      // If no specific mapping found, try to match by product ID in filename
+      if (color) {
+        const productIdMatch = Object.keys(profileImages).find(path => 
+          path.includes(productId) && 
+          path.toLowerCase().includes(color.toLowerCase())
+        );
+        
+        if (productIdMatch && profileImages[productIdMatch]) {
+          console.log(`🖼️ Profile image found by productId: ${productIdMatch}`);
+          return profileImages[productIdMatch].default;
+        }
+      }
+      
     } catch (error) {
       console.warn('Failed to load profile image:', error);
     }
