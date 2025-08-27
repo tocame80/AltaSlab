@@ -367,7 +367,7 @@ export default function ProductDetails() {
                   
                   {/* Line 2: Color */}
                   <div className="text-gray-900 hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                    {product.color}
+                    {product.collection === 'Клей' && product.color === 'Стандарт' ? 'Альта Стик' : product.color}
                   </div>
                   
                   {/* Line 3: Price per m² (recalculation for panels only) */}
