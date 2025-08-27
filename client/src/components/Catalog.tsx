@@ -379,8 +379,8 @@ export default function Catalog({ activeCollection }: CatalogProps) {
               <h3 className="hidden lg:block text-lg font-bold text-[#2f378b] mb-4">Фильтры</h3>
               
               {/* Show different filters based on active collection */}
-              {/* Panel Collections Filter - show when not in accessories mode AND when accessories are not selected in 'all' mode */}
-              {(activeCollection !== 'accessories') && !(activeCollection === 'all' && accessoryFilter && accessoryFilter !== '') && (
+              {/* Panel Collections Filter - show when not in pure accessories mode AND when specific accessories are not selected */}
+              {(activeCollection !== 'accessories') && !(accessoryFilter === 'Профили' || accessoryFilter === 'Клей' || accessoryFilter === 'all') && (
                 <>
                   {/* Panel Collections Filter */}
                   <div className="mb-6">
