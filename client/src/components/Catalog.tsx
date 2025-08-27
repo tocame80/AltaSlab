@@ -141,7 +141,9 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       };
       const collectionName = collectionMap[activeCollection as keyof typeof collectionMap];
       if (collectionName) {
-        filtered = filtered.filter(product => product.collection === collectionName);
+        filtered = filtered.filter(product => 
+          product.collection.toLowerCase() === collectionName.toLowerCase()
+        );
       }
     }
 
@@ -168,7 +170,9 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
     // Step 3: Apply panel collection filters (only if no accessory filter is active)
     if (filters.collection && filters.collection.trim() !== '' && !accessoryFilter) {
-      filtered = filtered.filter(product => product.collection === filters.collection);
+      filtered = filtered.filter(product => 
+        product.collection.toLowerCase() === filters.collection.toLowerCase()
+      );
     }
 
     if (filters.color) {
@@ -241,7 +245,9 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   const selectedCollectionProducts = useMemo(() => {
     // For panel collection filter - use the selected panel collection
     if (filters.collection && filters.collection !== '') {
-      return products.filter(product => product.collection === filters.collection);
+      return products.filter(product => 
+        product.collection.toLowerCase() === filters.collection.toLowerCase()
+      );
     }
 
     // For active collection (when no specific collection filter is set)
@@ -254,7 +260,9 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       };
       const targetCollection = collectionMap[activeCollection as keyof typeof collectionMap];
       if (targetCollection) {
-        return products.filter(product => product.collection === targetCollection);
+        return products.filter(product => 
+          product.collection.toLowerCase() === targetCollection.toLowerCase()
+        );
       }
     }
 
