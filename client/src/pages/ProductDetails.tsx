@@ -384,8 +384,9 @@ export default function ProductDetails() {
                   <div className="text-white hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
                     {(() => {
                       if (product.collection.toLowerCase().includes('профиль')) {
-                        // For profiles: show price per piece
-                        return `${product.price.toLocaleString('ru-RU')} ₽ за шт.`;
+                        // For profiles: price * 30 pieces per package
+                        const packagePrice = product.price * 30;
+                        return `${packagePrice.toLocaleString('ru-RU')} ₽ за упак.`;
                       } else if (product.collection === 'Клей') {
                         // For glue: show per unit
                         return `${product.price.toLocaleString('ru-RU')} ₽ за шт.`;
