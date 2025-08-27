@@ -183,7 +183,7 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
               
               {/* Line 2: Color */}
               <div className="text-gray-900 hover:text-[#e90039] text-xs lg:text-sm font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                {product.color}
+                {product.collection === 'Клей' && product.color === 'Стандарт' ? 'Альта Стик' : product.color}
               </div>
             </div>
           </div>
