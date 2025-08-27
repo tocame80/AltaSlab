@@ -87,8 +87,10 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       }));
       setVisibleRows(6); // Show more items for favorites
     } else if (activeCollection === 'all') {
+      // Explicitly reset all filters for 'all' collection
       setFilters({ collection: '', color: '', size: '' });
       setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
+      setSearchQuery(''); // Also clear search
       setVisibleRows(8); // Show more items for "all" collection (16 products)
     } else if (activeCollection === 'concrete') {
       setFilters({ collection: 'Магия бетона', color: '', size: '' });
@@ -116,6 +118,8 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
   const filteredProducts = useMemo(() => {
     let filtered = products;
+    
+
 
     // Filter by activeCollection first
     if (activeCollection === 'accessories') {
@@ -141,8 +145,8 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       }
     }
 
-    // Apply collection filters (skip when activeCollection is 'all' and filters.collection is empty)
-    if (filters.collection && !(activeCollection === 'all' && filters.collection === '')) {
+    // Apply collection filters only when explicitly set and not in 'all' mode with empty filter
+    if (filters.collection && filters.collection.trim() !== '' && !(activeCollection === 'all' && filters.collection.trim() === '')) {
       if (filters.collection === 'Клей') {
         // Show only adhesive accessories containing "клей" in name  
         filtered = filtered.filter(product => 
@@ -208,8 +212,10 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       filtered.sort((a, b) => a.design.localeCompare(b.design));
     }
 
+
+
     return filtered;
-  }, [activeCollection, filters, additionalFilters, sortBy, searchQuery]);
+  }, [products, activeCollection, filters, additionalFilters, sortBy, searchQuery]);
 
   // Get visible products based on pagination
   const visibleProducts = useMemo(() => {
