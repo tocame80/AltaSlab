@@ -33,12 +33,55 @@ router.get('/product-images/:productId', async (req, res) => {
 
     const folderPath = path.join(process.cwd(), 'client', 'src', 'assets', 'products', folder as string);
     
+    // Helper functions for finding product images
+    const isProductImageFile = (filename: string, productId: string): boolean => {
+      const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(filename);
+      if (!isImage) return false;
+      
+      // Pattern 1: 8934-1.png, 8934-2.png
+      if (filename.startsWith(`${productId}-`)) return true;
+      
+      // Pattern 2: 8934 (2.2).png, 8934 (коллаж).png  
+      if (filename.startsWith(`${productId} (`)) return true;
+      
+      // Pattern 3: 8934.jpg
+      if (filename === `${productId}.jpg` || filename === `${productId}.png`) return true;
+      
+      return false;
+    };
+    
+    const findProductImages = async (dir: string, productId: string): Promise<string[]> => {
+      const results: string[] = [];
+      
+      try {
+        const items = await fs.readdir(dir, { withFileTypes: true });
+        
+        for (const item of items) {
+          const fullPath = path.join(dir, item.name);
+          
+          if (item.isDirectory()) {
+            // Recursively search subdirectories
+            const subImages = await findProductImages(fullPath, productId);
+            results.push(...subImages);
+          } else if (item.isFile()) {
+            // Check if file matches product pattern
+            if (isProductImageFile(item.name, productId)) {
+              results.push(item.name);
+            }
+          }
+        }
+      } catch (error) {
+        // Directory access error, skip
+      }
+      
+      return results;
+    };
+
     try {
-      const files = await fs.readdir(folderPath);
-      const productImages = files.filter(file => 
-        file.startsWith(`${productId}-`) && 
-        /\.(jpg|jpeg|png|gif|webp)$/i.test(file)
-      );
+      // Search for images recursively in subfolders
+      const productImages = await findProductImages(folderPath, productId);
+      console.log(`API: Found ${productImages.length} images for product ${productId} in ${folderPath}`);
+      console.log(`API: Images:`, productImages);
       
       res.json({ 
         success: true, 
@@ -478,26 +521,26 @@ router.get('/gallery-images', async (req, res) => {
   }
 });
 
-// Serve static product images  
+// Serve static product images from any subdirectory
 router.get('/static-images/:folder/:filename', async (req, res) => {
   try {
     const { folder, filename } = req.params;
     
-    // Validate folder and filename to prevent path traversal
+    // Validate folder 
     const allowedFolders = ['concrete', 'fabric', 'matte', 'marble', 'accessories'];
     if (!allowedFolders.includes(folder)) {
       return res.status(400).json({ error: 'Invalid folder' });
     }
-    
-    if (!/^[a-zA-Z0-9\-\.]+$/.test(filename)) {
-      return res.status(400).json({ error: 'Invalid filename' });
-    }
 
-    const filePath = path.join(process.cwd(), 'client', 'src', 'assets', 'products', folder, filename);
+    // Find the file recursively in subfolders
+    const baseDir = path.join(process.cwd(), 'client', 'src', 'assets', 'products', folder);
+    const filePath = await findFileRecursively(baseDir, filename);
+    
+    if (!filePath) {
+      return res.status(404).json({ error: 'Image not found' });
+    }
     
     try {
-      await fs.access(filePath);
-      
       // Set appropriate content type based on file extension
       const ext = path.extname(filename).toLowerCase();
       const contentType = {
@@ -523,5 +566,27 @@ router.get('/static-images/:folder/:filename', async (req, res) => {
     res.status(500).json({ error: 'Failed to serve image' });
   }
 });
+
+// Helper function to find file in subdirectories
+async function findFileRecursively(dir: string, targetFilename: string): Promise<string | null> {
+  try {
+    const items = await fs.readdir(dir, { withFileTypes: true });
+    
+    for (const item of items) {
+      const fullPath = path.join(dir, item.name);
+      
+      if (item.isDirectory()) {
+        const found = await findFileRecursively(fullPath, targetFilename);
+        if (found) return found;
+      } else if (item.isFile() && item.name === targetFilename) {
+        return fullPath;
+      }
+    }
+  } catch (error) {
+    // Directory access error
+  }
+  
+  return null;
+}
 
 export default router;
