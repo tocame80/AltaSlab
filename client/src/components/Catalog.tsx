@@ -371,7 +371,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
           <div className={`w-full lg:w-80 lg:flex-shrink-0 ${showMobileFilters ? 'block' : 'hidden lg:block'}`}>
             <div className="bg-white p-4 lg:p-6 rounded-lg shadow-sm lg:sticky lg:top-32 relative pt-[20px] pb-[20px] pl-[20px] pr-[20px] ml-[50px] mr-[50px] mt-[50px] mb-[50px] text-left">
 
-              {/* Mobile Close Button */}
+              {/* Mobile Header with Close Button */}
               <div className="lg:hidden flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold text-[#2f378b]">Фильтры</h3>
                 <button
@@ -382,10 +382,26 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <h3 className="hidden lg:block text-lg font-bold text-[#2f378b] mb-4">Фильтры</h3>
 
-              {/* Reset Filters Button */}
-              <div className="mb-6">
+              {/* Desktop Header with Reset Button */}
+              <div className="hidden lg:flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-[#2f378b]">Фильтры</h3>
+                <button
+                  onClick={() => {
+                    setFilters({ collection: '', color: '', size: '' });
+                    setAccessoryFilter('');
+                    setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
+                    setSearchQuery('');
+                    setSortBy('default');
+                  }}
+                  className="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors font-medium text-xs"
+                >
+                  Сбросить
+                </button>
+              </div>
+
+              {/* Mobile Reset Button */}
+              <div className="lg:hidden mb-6">
                 <button
                   onClick={() => {
                     setFilters({ collection: '', color: '', size: '' });
