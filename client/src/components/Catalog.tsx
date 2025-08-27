@@ -150,7 +150,22 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     }
 
     // Apply collection filters only when explicitly set and not in 'all' mode with empty filter
-    if (filters.collection && filters.collection.trim() !== '' && !(activeCollection === 'all' && filters.collection.trim() === '')) {
+    // Also consider accessoryFilter for accessories section
+    if (activeCollection === 'accessories' || (activeCollection === 'all' && (accessoryFilter === 'Профили' || accessoryFilter === 'Клей'))) {
+      // For accessories, use accessoryFilter instead of filters.collection
+      if (accessoryFilter === 'Клей') {
+        // Show only adhesive accessories by collection name
+        filtered = filtered.filter(product => 
+          product.collection === 'Клей'
+        );
+      } else if (accessoryFilter === 'Профили') {
+        // Show only profile accessories by collection name containing "профиль"
+        filtered = filtered.filter(product => 
+          product.collection.toLowerCase().includes('профиль')
+        );
+      }
+      // If accessoryFilter is 'all' or empty, don't apply additional filtering - show all accessories
+    } else if (filters.collection && filters.collection.trim() !== '' && !(activeCollection === 'all' && filters.collection.trim() === '')) {
       if (filters.collection === 'Клей') {
         // Show only adhesive accessories by collection name
         filtered = filtered.filter(product => 
@@ -219,7 +234,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
 
     return filtered;
-  }, [products, activeCollection, filters, additionalFilters, sortBy, searchQuery]);
+  }, [products, activeCollection, filters, additionalFilters, sortBy, searchQuery, accessoryFilter]);
 
   // Get visible products based on pagination
   const visibleProducts = useMemo(() => {
