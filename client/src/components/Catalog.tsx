@@ -239,37 +239,39 @@ export default function Catalog({ activeCollection }: CatalogProps) {
 
   // Get colors and sizes for selected collection
   const selectedCollectionProducts = useMemo(() => {
-    // If no collection filter is set, use the active collection
-    let targetCollection = filters.collection;
-
-    // If no specific collection filter but we have an active collection, map it
-    if (!targetCollection && activeCollection !== 'all' && activeCollection !== 'favorites' && activeCollection !== 'accessories') {
-      const collectionMap = {
-        'concrete': 'Магия бетона',
-        'fabric': 'Тканевая Роскошь',
-        'matte': 'Матовая эстетика', 
-        'marble': 'Мраморная феерия'
-      };
-      targetCollection = collectionMap[activeCollection as keyof typeof collectionMap] || '';
+    // For panel collection filter - use the selected panel collection
+    if (filters.collection && filters.collection !== '') {
+      return products.filter(product => product.collection === filters.collection);
     }
 
-    // If still no target collection, return empty array (no colors to show)
-    if (!targetCollection) return [];
+    // For active collection (when no specific collection filter is set)
+    if (activeCollection && activeCollection !== 'all' && activeCollection !== 'favorites' && activeCollection !== 'accessories') {
+      const collectionMap = {
+        'concrete': 'МАГИЯ БЕТОНА',
+        'fabric': 'ТКАНЕВАЯ РОСКОШЬ',
+        'matte': 'МАТОВАЯ ЭСТЕТИКА', 
+        'marble': 'МРАМОРНАЯ ФЕЕРИЯ'
+      };
+      const targetCollection = collectionMap[activeCollection as keyof typeof collectionMap];
+      if (targetCollection) {
+        return products.filter(product => product.collection === targetCollection);
+      }
+    }
 
-    if (targetCollection === 'Профили') {
-      // Show only profile accessories by collection name containing "профиль"
+    // For accessory filters
+    if (accessoryFilter === 'Профили') {
       return products.filter(product => 
         product.collection.toLowerCase().includes('профиль')
       );
-    } else if (targetCollection === 'Клей') {
-      // Show only adhesive accessories by collection name
+    } else if (accessoryFilter === 'Клей') {
       return products.filter(product => 
         product.collection === 'Клей'
       );
-    } else {
-      return products.filter(product => product.collection === targetCollection);
     }
-  }, [filters.collection, activeCollection, products]);
+
+    // Return empty array if no specific collection is selected
+    return [];
+  }, [filters.collection, activeCollection, accessoryFilter, products]);
 
   // Reset pagination when filters change
   useEffect(() => {
