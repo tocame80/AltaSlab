@@ -1339,11 +1339,18 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       });
 
       if (response.ok) {
-        // Remove from state
-        setExistingImages(prev => prev.filter(img => img !== image));
-        alert('Изображение удалено!');
+        // Refresh existing images list
+        await loadExistingImages(image.productId);
+        toast({
+          title: 'Успешно',
+          description: 'Изображение удалено!',
+        });
       } else {
-        alert('Ошибка при удалении изображения');
+        toast({
+          title: 'Ошибка',
+          description: 'Не удалось удалить изображение',
+          variant: 'destructive',
+        });
       }
     } catch (error) {
       console.error('Error deleting image:', error);
@@ -1489,9 +1496,16 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         }
       }
 
-      alert('Изображения успешно сохранены! Перезагрузите страницу для обновления.');
+      // Refresh existing images for the current product
+      if (selectedProduct) {
+        await loadExistingImages(selectedProduct);
+      }
+      
+      toast({
+        title: 'Успешно',
+        description: 'Изображения успешно сохранены!',
+      });
       setUploadedImages([]);
-      onClose();
     } catch (error) {
       console.error('Error saving images:', error);
       alert('Ошибка при сохранении изображений');
