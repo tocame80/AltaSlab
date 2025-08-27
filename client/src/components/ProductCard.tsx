@@ -64,6 +64,16 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
 
 
   const getCollectionDisplayName = () => {
+    // For profiles, show specific profile type from product name
+    if (product.collection.toLowerCase().includes('профиль')) {
+      const name = product.name.toLowerCase();
+      if (name.includes('под рассеивателем')) return 'Профиль под рассеивателем';
+      if (name.includes('соединительный')) return 'Профиль соединительный';
+      if (name.includes('торцевой')) return 'Профиль торцевой';
+      if (name.includes('угловой')) return 'Профиль угловой';
+      return 'Профиль';
+    }
+    
     if (product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ') {
       return product.name.toLowerCase().includes('профиль') ? 'ПРОФИЛИ' : 'КЛЕЙ';
     }
