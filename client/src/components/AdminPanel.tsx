@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit, Play, Database, Download, Image, RotateCw, HardDrive } from 'lucide-react';
+import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit, Play, Database, Download, Image, RotateCw, HardDrive, ArrowUp, ArrowDown, Star } from 'lucide-react';
 import { products } from '../data/products';
 import * as XLSX from 'xlsx';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -1353,6 +1353,96 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     }
   };
 
+  const moveImageUp = async (index: number) => {
+    if (index === 0 || existingImages.length <= 1) return;
+
+    const productId = existingImages[0].productId;
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    const reorderedImages = [...existingImages];
+    [reorderedImages[index - 1], reorderedImages[index]] = [reorderedImages[index], reorderedImages[index - 1]];
+    
+    await reorderImages(productId, product.collection, reorderedImages);
+  };
+
+  const moveImageDown = async (index: number) => {
+    if (index >= existingImages.length - 1) return;
+
+    const productId = existingImages[0].productId;
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    const reorderedImages = [...existingImages];
+    [reorderedImages[index], reorderedImages[index + 1]] = [reorderedImages[index + 1], reorderedImages[index]];
+    
+    await reorderImages(productId, product.collection, reorderedImages);
+  };
+
+  const makeMainImage = async (index: number) => {
+    if (index === 0) return; // Already main
+
+    const productId = existingImages[0].productId;
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    const reorderedImages = [...existingImages];
+    const mainImage = reorderedImages.splice(index, 1)[0];
+    reorderedImages.unshift(mainImage);
+    
+    await reorderImages(productId, product.collection, reorderedImages);
+  };
+
+  const reorderImages = async (productId: string, collection: string, reorderedImages: ExistingImage[]) => {
+    try {
+      setIsLoading(true);
+      const folderName = getFolderName(collection);
+      const fileNames = reorderedImages.map(img => img.fileName);
+
+      const response = await fetch('/api/admin/reorder-images', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId,
+          folder: folderName,
+          fileNames
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Update the state with new file names
+        const updatedImages = data.files.map((fileName: string, index: number) => ({
+          productId,
+          fileName,
+          url: `/src/assets/products/${folderName}/${fileName}`
+        }));
+        setExistingImages(updatedImages);
+        toast({
+          title: 'Успешно',
+          description: 'Порядок изображений изменен',
+        });
+      } else {
+        toast({
+          title: 'Ошибка',
+          description: 'Не удалось изменить порядок изображений',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Error reordering images:', error);
+      toast({
+        title: 'Ошибка',
+        description: 'Произошла ошибка при изменении порядка',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const saveImages = async () => {
     if (uploadedImages.length === 0) {
       alert('Нет изображений для сохранения');
@@ -1519,14 +1609,26 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
             <div className="p-6 space-y-6">
           {/* Instructions */}
           <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <h3 className="font-semibold text-blue-800 mb-2">Инструкция по загрузке:</h3>
-            <ol className="text-sm text-blue-700 space-y-1">
-              <li>1. Выберите товар из списка</li>
-              <li>2. Загрузите изображения (JPG, PNG)</li>
-              <li>3. Изображения будут автоматически переименованы в формат: КОД-НОМЕР.расширение</li>
-              <li>4. Нажмите "Сохранить" для применения изменений</li>
-              <li>5. Перезагрузите страницу для обновления каталога</li>
-            </ol>
+            <h3 className="font-semibold text-blue-800 mb-2">Инструкция по управлению изображениями:</h3>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <h4 className="font-semibold text-blue-800 mb-1">Загрузка новых изображений:</h4>
+                <ol className="text-sm text-blue-700 space-y-1">
+                  <li>1. Выберите товар из списка</li>
+                  <li>2. Загрузите изображения (JPG, PNG)</li>
+                  <li>3. Нажмите "Сохранить" для применения изменений</li>
+                </ol>
+              </div>
+              <div>
+                <h4 className="font-semibold text-blue-800 mb-1">Смена главного фото:</h4>
+                <ol className="text-sm text-blue-700 space-y-1">
+                  <li>1. Наведите на фото в блоке "Существующие"</li>
+                  <li>2. Используйте кнопки: ⭐ = Сделать главным</li>
+                  <li>3. ↑/↓ = Переместить вверх/вниз</li>
+                  <li>4. 🗑️ = Удалить изображение</li>
+                </ol>
+              </div>
+            </div>
           </div>
 
           {/* Product Selection */}
@@ -1595,10 +1697,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                 <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                 Существующие изображения ({existingImages.length})
               </h3>
-              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 max-h-60 overflow-y-auto">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-60 overflow-y-auto">
                 {existingImages.map((img, index) => (
                   <div key={index} className="relative group">
-                    <div className="aspect-square rounded-lg overflow-hidden border border-gray-200">
+                    <div className="aspect-square rounded-lg overflow-hidden border-2 border-gray-200">
                       <img
                         src={img.url}
                         alt={img.fileName}
@@ -1609,18 +1711,70 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         }}
                       />
                     </div>
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                      <button
-                        onClick={() => removeExistingImage(img)}
-                        className="text-white hover:text-red-400 transition-colors"
-                        disabled={isLoading}
-                      >
-                        <Trash2 size={20} />
-                      </button>
+                    
+                    {/* Control buttons overlay */}
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                      <div className="flex flex-col gap-1">
+                        {/* Top row buttons */}
+                        <div className="flex gap-1 justify-center">
+                          <button
+                            onClick={() => moveImageUp(index)}
+                            className={`text-white transition-colors p-1.5 bg-black/30 rounded hover:bg-black/50 ${
+                              index === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:text-blue-400'
+                            }`}
+                            disabled={isLoading || index === 0}
+                            title="Переместить вверх"
+                          >
+                            <ArrowUp size={14} />
+                          </button>
+                          <button
+                            onClick={() => moveImageDown(index)}
+                            className={`text-white transition-colors p-1.5 bg-black/30 rounded hover:bg-black/50 ${
+                              index >= existingImages.length - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:text-blue-400'
+                            }`}
+                            disabled={isLoading || index >= existingImages.length - 1}
+                            title="Переместить вниз"
+                          >
+                            <ArrowDown size={14} />
+                          </button>
+                        </div>
+                        
+                        {/* Bottom row buttons */}
+                        <div className="flex gap-1 justify-center">
+                          <button
+                            onClick={() => makeMainImage(index)}
+                            className={`text-white transition-colors p-1.5 bg-black/30 rounded hover:bg-black/50 ${
+                              index === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:text-yellow-400'
+                            }`}
+                            disabled={isLoading || index === 0}
+                            title="Сделать главным"
+                          >
+                            <Star size={14} />
+                          </button>
+                          <button
+                            onClick={() => removeExistingImage(img)}
+                            className="text-white hover:text-red-400 transition-colors p-1.5 bg-black/30 rounded hover:bg-black/50"
+                            disabled={isLoading}
+                            title="Удалить"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                    <div className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded">
-                      Сохранен
+
+                    {/* Status badge */}
+                    <div className={`absolute top-2 left-2 text-white text-xs px-2 py-1 rounded ${
+                      index === 0 ? 'bg-yellow-500' : 'bg-green-500'
+                    }`}>
+                      {index === 0 ? 'Главное' : 'Сохранен'}
                     </div>
+                    
+                    {/* Position indicator */}
+                    <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
+                      {index + 1}
+                    </div>
+                    
                     <p className="text-xs text-gray-600 mt-1 truncate" title={img.fileName}>
                       {img.fileName}
                     </p>

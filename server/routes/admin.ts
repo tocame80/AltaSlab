@@ -138,6 +138,68 @@ router.post('/upload-images', upload.any(), async (req, res) => {
   }
 });
 
+// Reorder product images
+router.put('/reorder-images', async (req, res) => {
+  try {
+    const { productId, folder, fileNames } = req.body;
+    
+    if (!productId || !folder || !Array.isArray(fileNames)) {
+      return res.status(400).json({ error: 'Missing required fields or invalid data' });
+    }
+
+    const folderPath = path.join(process.cwd(), 'client', 'src', 'assets', 'products', folder);
+    
+    // Verify all files exist
+    for (const fileName of fileNames) {
+      const filePath = path.join(folderPath, fileName);
+      try {
+        await fs.access(filePath);
+      } catch {
+        return res.status(404).json({ error: `File not found: ${fileName}` });
+      }
+    }
+
+    // Create temporary names to avoid conflicts during renaming
+    const tempFileNames = [];
+    for (let i = 0; i < fileNames.length; i++) {
+      const originalFile = fileNames[i];
+      const extension = path.extname(originalFile);
+      const tempFileName = `${productId}-temp-${i + 1}${extension}`;
+      tempFileNames.push(tempFileName);
+      
+      const oldPath = path.join(folderPath, originalFile);
+      const tempPath = path.join(folderPath, tempFileName);
+      await fs.rename(oldPath, tempPath);
+    }
+
+    // Now rename temp files to final names in new order
+    const newFileNames = [];
+    for (let i = 0; i < tempFileNames.length; i++) {
+      const tempFile = tempFileNames[i];
+      const extension = path.extname(tempFile);
+      const newFileName = `${productId}-${i + 1}${extension}`;
+      newFileNames.push(newFileName);
+      
+      const tempPath = path.join(folderPath, tempFile);
+      const newPath = path.join(folderPath, newFileName);
+      await fs.rename(tempPath, newPath);
+    }
+
+    // Update imageMap.ts file
+    await updateImageMap(productId, newFileNames, folder);
+
+    res.json({ 
+      success: true, 
+      message: `Reordered ${newFileNames.length} images for product ${productId}`,
+      files: newFileNames 
+    });
+
+  } catch (error) {
+    console.error('Error reordering images:', error);
+    res.status(500).json({ error: 'Failed to reorder images' });
+  }
+});
+
 // Function to remove image from imageMap.ts
 async function removeImageFromMap(productId: string, fileName: string, folder: string) {
   const imageMapPath = path.join(process.cwd(), 'client', 'src', 'assets', 'products', 'imageMap.ts');
