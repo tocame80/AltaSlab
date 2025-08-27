@@ -25,6 +25,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     color: '',
     size: '',
   });
+  const [accessoryFilter, setAccessoryFilter] = useState('');
   const [additionalFilters, setAdditionalFilters] = useState({
     novelties: false,
     favorites: false,
@@ -89,6 +90,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
     } else if (activeCollection === 'all') {
       // Explicitly reset all filters for 'all' collection
       setFilters({ collection: '', color: '', size: '' });
+      setAccessoryFilter('');
       setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
       setSearchQuery(''); // Also clear search
       setVisibleRows(8); // Show more items for "all" collection (16 products)
@@ -98,6 +100,7 @@ export default function Catalog({ activeCollection }: CatalogProps) {
       setVisibleRows(4); // Standard amount for specific collections
     } else if (activeCollection === 'accessories') {
       setFilters({ collection: '', color: '', size: '' }); // Don't filter - let filteredProducts handle it
+      setAccessoryFilter('');
       setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
       setVisibleRows(4);
     } else {
@@ -406,13 +409,16 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         type="radio"
                         name="accessories"
                         value=""
-                        checked={false}
-                        onChange={(e) => setFilters(prev => ({ 
-                          ...prev, 
-                          collection: '',
-                          color: '', 
-                          size: '' 
-                        }))}
+                        checked={accessoryFilter === ''}
+                        onChange={(e) => {
+                          setAccessoryFilter('');
+                          setFilters(prev => ({ 
+                            ...prev, 
+                            collection: '',
+                            color: '', 
+                            size: '' 
+                          }));
+                        }}
                         className="mr-2"
                       />
                       <span className="text-secondary text-sm">Все комплектующие</span>
@@ -422,13 +428,16 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         type="radio"
                         name="accessories"
                         value="Профили"
-                        checked={filters.collection === 'Профили'}
-                        onChange={(e) => setFilters(prev => ({ 
-                          ...prev, 
-                          collection: e.target.value,
-                          color: '',
-                          size: ''
-                        }))}
+                        checked={accessoryFilter === 'Профили'}
+                        onChange={(e) => {
+                          setAccessoryFilter('Профили');
+                          setFilters(prev => ({ 
+                            ...prev, 
+                            collection: e.target.value,
+                            color: '',
+                            size: ''
+                          }));
+                        }}
                         className="mr-2"
                       />
                       <span className="text-secondary text-sm">Профили</span>
@@ -438,13 +447,16 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                         type="radio"
                         name="accessories"
                         value="Клей"
-                        checked={filters.collection === 'Клей'}
-                        onChange={(e) => setFilters(prev => ({ 
-                          ...prev, 
-                          collection: e.target.value,
-                          color: '',
-                          size: ''
-                        }))}
+                        checked={accessoryFilter === 'Клей'}
+                        onChange={(e) => {
+                          setAccessoryFilter('Клей');
+                          setFilters(prev => ({ 
+                            ...prev, 
+                            collection: e.target.value,
+                            color: '',
+                            size: ''
+                          }));
+                        }}
                         className="mr-2"
                       />
                       <span className="text-secondary text-sm">Клей</span>
