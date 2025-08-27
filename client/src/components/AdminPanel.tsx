@@ -447,6 +447,27 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     queryKey: ['/api/gallery-projects'],
   });
 
+  // Fetch local gallery images from admin API
+  const { data: localGalleryResponse, isLoading: galleryImagesLoading } = useQuery({
+    queryKey: ['/api/admin/gallery-images'],
+    retry: 2,
+    refetchOnMount: true,
+  });
+
+  // Convert local gallery files to display format
+  const galleryImages = React.useMemo(() => {
+    if (!localGalleryResponse || !localGalleryResponse.success || !localGalleryResponse.images) return [];
+    
+    return (localGalleryResponse.images as string[]).map((fileName: string, index: number) => ({
+      id: `local-gallery-${index}`,
+      fileName: fileName,
+      imageUrl: `/src/assets/gallery/${fileName}`,
+      sortOrder: index,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+  }, [localGalleryResponse]);
+
   const createGalleryProjectMutation = useMutation({
     mutationFn: async (data: GalleryProjectFormData) => {
       console.log('Mutation: Sending POST request with data:', data);
@@ -2507,6 +2528,78 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                   <li>• Заполните дополнительную информацию: локация, площадь, год</li>
                 </ul>
               </div>
+
+              {/* Existing Gallery Images */}
+              {galleryImagesLoading ? (
+                <div className="p-8 text-center text-gray-500">Загрузка изображений галереи...</div>
+              ) : galleryImages.length > 0 ? (
+                <div>
+                  <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    Загруженные изображения галереи ({galleryImages.length})
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 max-h-80 overflow-y-auto p-4 bg-gray-50 rounded-lg">
+                    {galleryImages.map((galleryImage) => (
+                      <div key={galleryImage.id} className="relative group">
+                        <div className="aspect-square rounded-lg overflow-hidden border-2 border-gray-200 bg-gray-100">
+                          <img
+                            src={galleryImage.imageUrl}
+                            alt={galleryImage.fileName}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
+                              if (nextElement) {
+                                nextElement.style.display = 'flex';
+                              }
+                            }}
+                          />
+                          <div className="hidden w-full h-full bg-gray-200 items-center justify-center text-xs text-gray-500">
+                            Ошибка загрузки
+                          </div>
+                        </div>
+                        
+                        {/* Overlay with controls */}
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => window.open(galleryImage.imageUrl, '_blank')}
+                              className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full transition-colors"
+                              title="Открыть в новой вкладке"
+                            >
+                              <Eye size={16} />
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (confirm('Удалить это изображение галереи?')) {
+                                  // Implement delete functionality here
+                                }
+                              }}
+                              className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition-colors"
+                              title="Удалить"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Image info */}
+                        <div className="mt-2 text-center">
+                          <p className="text-xs font-medium text-gray-900 truncate">
+                            {galleryImage.fileName}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="p-8 text-center text-gray-400 border-2 border-dashed border-gray-200 rounded-lg">
+                  <Image className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                  <p className="text-lg font-medium mb-2">Нет изображений в галерее</p>
+                  <p className="text-sm">Загрузите изображения через форму создания проекта</p>
+                </div>
+              )}
 
               {/* Existing Gallery Projects */}
               {galleryProjectsLoading ? (

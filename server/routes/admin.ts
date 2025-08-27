@@ -381,4 +381,39 @@ router.post('/upload-gallery-images', upload.any(), async (req, res) => {
   }
 });
 
+// Get gallery images
+router.get('/gallery-images', async (req, res) => {
+  try {
+    const galleryPath = path.join(process.cwd(), 'client', 'src', 'assets', 'gallery');
+    
+    // Check if gallery folder exists
+    try {
+      await fs.access(galleryPath);
+    } catch {
+      return res.json({ success: true, images: [] });
+    }
+
+    // Read gallery directory
+    const files = await fs.readdir(galleryPath);
+    
+    // Filter image files
+    const imageFiles = files.filter(file => {
+      const ext = path.extname(file).toLowerCase();
+      return ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(ext);
+    });
+
+    res.json({ 
+      success: true, 
+      images: imageFiles.sort() 
+    });
+
+  } catch (error) {
+    console.error('Error reading gallery images:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to read gallery images' 
+    });
+  }
+});
+
 export default router;
