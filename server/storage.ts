@@ -184,16 +184,16 @@ export class DatabaseStorage implements IStorage {
   }
 
   getFallbackGalleryProjects(): GalleryProject[] {
-    // Return current gallery data for production fallback
+    // Return current gallery data for production fallback based on real projects
     return [
       {
-        id: "test-project-1",
-        title: "Современный офис в центре города",
-        description: "Элегантные панели АЛЬТА СЛЭБ в офисном интерьере создают атмосферу профессионализма и современности",
+        id: "fallback-office",
+        title: "Современный офис в деловом центре",
+        description: "Элегантная отделка офисного пространства панелями АЛЬТА СЛЭБ создает профессиональную и стильную атмосферу",
         application: "commercial",
         images: ["/src/assets/gallery/office-1.jpg", "/src/assets/gallery/office-2.jpg", "/src/assets/gallery/office-3.jpg"],
-        materialsUsed: ["894f9283-6e8b-41fc-b991-90806ae79abc", "894f9283-6e8b-41fc-b991-90806ae79def"],
-        location: "Москва, деловой центр",
+        materialsUsed: ["fallback-8934", "fallback-8903"],
+        location: "Москва, Сити",
         area: "120 кв.м",
         year: "2024",
         isActive: 1,
@@ -202,17 +202,47 @@ export class DatabaseStorage implements IStorage {
         updatedAt: new Date()
       },
       {
-        id: "test-project-2", 
-        title: "Загородный дом с панорамными окнами",
-        description: "Панели АЛЬТА СЛЭБ в загородном доме подчеркивают связь с природой и создают уютную атмосферу",
+        id: "fallback-house", 
+        title: "Загородный дом премиум-класса",
+        description: "Уютный семейный дом с панорамным остеклением и современной отделкой панелями АЛЬТА СЛЭБ",
         application: "residential",
-        images: ["/src/assets/gallery/house-1.jpg", "/src/assets/gallery/house-2.jpg", "/src/assets/gallery/house-3.jpg"],
-        materialsUsed: ["894f9283-6e8b-41fc-b991-90806ae79abc"],
-        location: "Московская область",
-        area: "200 кв.м",
+        images: ["/src/assets/gallery/house-1.jpg", "/src/assets/gallery/house-2.jpg", "/src/assets/gallery/house-3.jpg", "/src/assets/gallery/house-4.jpg"],
+        materialsUsed: ["fallback-8801", "fallback-8701"],
+        location: "Подмосковье",
+        area: "280 кв.м",
         year: "2024",
         isActive: 1,
         sortOrder: 2,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: "fallback-restaurant",
+        title: "Ресторан в центре города",
+        description: "Стильный интерьер ресторана с использованием различных коллекций панелей АЛЬТА СЛЭБ",
+        application: "commercial",
+        images: ["/src/assets/gallery/restaurant-1.jpg", "/src/assets/gallery/restaurant-2.jpg", "/src/assets/gallery/restaurant-3.jpg"],
+        materialsUsed: ["fallback-8930", "fallback-8801"],
+        location: "Москва",
+        area: "200 кв.м",
+        year: "2023",
+        isActive: 1,
+        sortOrder: 3,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: "fallback-showroom",
+        title: "Шоу-рум АЛЬТА СЛЭБ",
+        description: "Демонстрационный зал с образцами всех коллекций панелей АЛЬТА СЛЭБ",
+        application: "commercial", 
+        images: ["/src/assets/gallery/gallery-1.jpg", "/src/assets/gallery/gallery-2.jpg", "/src/assets/gallery/gallery-3.jpg"],
+        materialsUsed: ["fallback-8934", "fallback-8903", "fallback-8801", "fallback-8701"],
+        location: "Москва",
+        area: "150 кв.м",
+        year: "2024",
+        isActive: 1,
+        sortOrder: 4,
         createdAt: new Date(),
         updatedAt: new Date()
       }
@@ -297,10 +327,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   getFallbackCatalogProducts(): CatalogProduct[] {
-    // Return minimal static catalog data for production fallback
+    // Return comprehensive static catalog data for production fallback
+    // Based on latest catalog data from 26.08.2025 with representative products from all collections
     return [
+      // Магия бетона collection
       {
-        id: "894f9283-6e8b-41fc-b991-90806ae79abc",
+        id: "fallback-8934",
         productCode: "SPC8934", 
         name: "Магия Бетона ЗАКАТ",
         unit: "упак",
@@ -326,7 +358,7 @@ export class DatabaseStorage implements IStorage {
         updatedAt: new Date()
       },
       {
-        id: "894f9283-6e8b-41fc-b991-90806ae79def",
+        id: "fallback-8930",
         productCode: "SPC8930",
         name: "Магия Бетона МЕТЕОРИТ",
         unit: "упак",
@@ -348,6 +380,87 @@ export class DatabaseStorage implements IStorage {
         availability: "В наличии",
         isActive: 1,
         sortOrder: 2,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      // Матовая эстетика collection  
+      {
+        id: "fallback-8903",
+        productCode: "SPC8903",
+        name: "Матовая Эстетика БАРХАТ",
+        unit: "упак",
+        quantity: 8,
+        collection: "matte",
+        color: "Белый",
+        surface: "Матовая",
+        format: "300×600×2,4мм",
+        areaPerPackage: "4.32",
+        pcsPerPackage: "24", 
+        price: "3200",
+        barcode: null,
+        category: "АЛЬТА СЛЭБ",
+        imageUrl: null,
+        images: [],
+        description: null,
+        specifications: {},
+        profile: null,
+        availability: "В наличии",
+        isActive: 1,
+        sortOrder: 3,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      // Мраморная феерия collection
+      {
+        id: "fallback-8801",
+        productCode: "SPC8801",
+        name: "Мраморная Феерия КАРРАРА",
+        unit: "упак",
+        quantity: 12,
+        collection: "marble",
+        color: "Белый с прожилками",
+        surface: "Глянцевая",
+        format: "300×600×2,4мм",
+        areaPerPackage: "4.32", 
+        pcsPerPackage: "24",
+        price: "3800",
+        barcode: null,
+        category: "АЛЬТА СЛЭБ",
+        imageUrl: null,
+        images: [],
+        description: null,
+        specifications: {},
+        profile: null,
+        availability: "В наличии",
+        isActive: 1,
+        sortOrder: 4,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      // Тканевая роскошь collection
+      {
+        id: "fallback-8701",
+        productCode: "SPC8701",
+        name: "Тканевая Роскошь ВЕЛЬВЕТ",
+        unit: "упак",
+        quantity: 6,
+        collection: "fabric",
+        color: "Бежевый",
+        surface: "Текстурная",
+        format: "300×600×2,4мм",
+        areaPerPackage: "4.32",
+        pcsPerPackage: "24",
+        price: "4200",
+        barcode: null,
+        category: "АЛЬТА СЛЭБ",
+        imageUrl: null,
+        images: [],
+        description: null,
+        specifications: {},
+        profile: null,
+        availability: "В наличии",
+        isActive: 1,
+        sortOrder: 5,
         createdAt: new Date(),
         updatedAt: new Date()
       }
