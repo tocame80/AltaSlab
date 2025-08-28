@@ -36,7 +36,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         catalog: fallbackProducts,
         gallery: fallbackProjects
       });
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ error: 'Failed to get fallback data', details: error.message });
     }
   });
