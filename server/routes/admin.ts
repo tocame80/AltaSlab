@@ -444,6 +444,65 @@ router.put('/reorder-images', async (req, res) => {
   }
 });
 
+// Rename image file
+router.put('/rename-image', async (req, res) => {
+  try {
+    const { productId, folder, oldFileName, newFileName } = req.body;
+    
+    if (!productId || !folder || !oldFileName || !newFileName) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const folderPath = path.join(process.cwd(), 'client', 'src', 'assets', 'products', folder);
+    const oldFilePath = path.join(folderPath, oldFileName);
+    const newFilePath = path.join(folderPath, newFileName);
+    
+    // Check if old file exists
+    try {
+      await fs.access(oldFilePath);
+    } catch {
+      return res.status(404).json({ error: 'Original file not found' });
+    }
+
+    // Check if new filename already exists
+    try {
+      await fs.access(newFilePath);
+      return res.status(409).json({ error: 'File with new name already exists' });
+    } catch {
+      // Good, new filename doesn't exist
+    }
+
+    // Rename the file
+    await fs.rename(oldFilePath, newFilePath);
+
+    // Get all current images for this product and update with new name
+    const allImages = await findProductImagesGlobal(folderPath, productId);
+    const updatedFileNames = allImages.map(img => 
+      img.fileName === oldFileName ? newFileName : img.fileName
+    );
+
+    // Update imageMap.ts with new filename
+    await updateImageMap(productId, updatedFileNames, folder);
+
+    // Clear catalog cache so changes are reflected immediately
+    if (req.app.locals.clearCatalogCache) {
+      req.app.locals.clearCatalogCache();
+    }
+
+    res.json({ 
+      success: true, 
+      message: `Renamed ${oldFileName} to ${newFileName}`,
+      oldFileName,
+      newFileName,
+      files: updatedFileNames
+    });
+
+  } catch (error) {
+    console.error('Error renaming image:', error);
+    res.status(500).json({ error: 'Failed to rename image' });
+  }
+});
+
 // Function to remove image from imageMap.ts
 async function removeImageFromMap(productId: string, fileName: string, folder: string) {
   const imageMapPath = path.join(process.cwd(), 'client', 'src', 'assets', 'products', 'imageMap.ts');

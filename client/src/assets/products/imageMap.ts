@@ -85,19 +85,31 @@ const resolveStaticImages = (paths: string[]): string[] => {
   const imageImports = import.meta.glob('./**/*.{png,jpg,jpeg,webp}', { eager: true }) as Record<string, { default: string }>;
   
   return paths.map(path => {
-    // Find matching import
-    const matchingKey = Object.keys(imageImports).find(key => key === path);
-    if (matchingKey && imageImports[matchingKey]) {
-      return imageImports[matchingKey].default;
+    // First try exact match
+    if (imageImports[path] && imageImports[path].default) {
+      return imageImports[path].default;
     }
-    // If not found, return path as-is (might be handled elsewhere)
-    return path;
-  }).filter(url => url); // Remove empty/undefined URLs
+    
+    // If exact match fails, try to find by filename
+    const fileName = path.split('/').pop();
+    if (fileName) {
+      const matchingKey = Object.keys(imageImports).find(key => {
+        const keyFileName = key.split('/').pop();
+        return keyFileName === fileName;
+      });
+      if (matchingKey && imageImports[matchingKey]) {
+        return imageImports[matchingKey].default;
+      }
+    }
+    
+    console.warn(`Could not resolve static image path: ${path}`);
+    return null;
+  }).filter((url): url is string => url !== null); // Remove null values
 };
 
 // Static fallback mappings for products with special paths  
 const staticImageMap: Record<string, string[]> = {
-  // Admin-set image orders will be populated here dynamically
+  // Admin-set image orders will be populated here dynamically  '8934': ["./concrete/8934 (2.3).png","./concrete/8934 (1).png","./concrete/8934 (2.1).png","./concrete/8934 (2.2).png","./concrete/8934 (коллаж).png"], // Admin-set order for product 8934
 };
 
 // Helper function to get product gallery
