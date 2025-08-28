@@ -138,126 +138,92 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
     }
   }, [activeCollection]);
 
+  // Memoize preprocessed products for better performance
+  const preprocessedProducts = useMemo(() => {
+    return products.map(product => ({
+      ...product,
+      collectionLower: product.collection?.toLowerCase() || '',
+      colorLower: product.color?.toLowerCase() || '',
+      designLower: product.design?.toLowerCase() || '',
+      nameLower: product.name?.toLowerCase() || '',
+      formatLower: product.format?.toLowerCase() || '',
+      isProfile: product.collection?.toLowerCase().includes('профиль') || false,
+      isGlue: product.collection === 'Клей'
+    }));
+  }, [products]);
+
   const filteredProducts = useMemo(() => {
-    let filtered = products;
-
-    // Step 1: Filter by activeCollection first
-    if (activeCollection === 'accessories') {
-      // Show only accessories
-      filtered = filtered.filter(product => 
-        product.collection === 'Клей' || 
-        product.collection?.toLowerCase().includes('профиль')
-      );
-    } else if (activeCollection === 'favorites') {
-      // For favorites, don't filter by collection here - will be handled by additionalFilters.favorites
-    } else if (activeCollection !== 'all') {
-      // Filter by specific panel collection based on activeCollection
-      const collectionMap = {
-        'concrete': 'Магия бетона',
-        'fabric': 'Тканевая Роскошь',
-        'matte': 'Матовая эстетика', 
-        'marble': 'Мраморная феерия'
-      };
-      const collectionName = collectionMap[activeCollection as keyof typeof collectionMap];
-      if (collectionName) {
-        filtered = filtered.filter(product => 
-          product.collection?.toLowerCase() === collectionName.toLowerCase()
-        );
+    // Single pass filter for better performance
+    return preprocessedProducts.filter(product => {
+      // Step 1: Collection filter
+      if (activeCollection === 'accessories') {
+        if (!product.isGlue && !product.isProfile) return false;
+      } else if (activeCollection === 'favorites') {
+        // Will be handled in additional filters
+      } else if (activeCollection !== 'all') {
+        const collectionMap = {
+          'concrete': 'магия бетона',
+          'fabric': 'тканевая роскошь',
+          'matte': 'матовая эстетика', 
+          'marble': 'мраморная феерия'
+        };
+        const targetCollection = collectionMap[activeCollection as keyof typeof collectionMap];
+        if (targetCollection && product.collectionLower !== targetCollection) return false;
       }
-    }
 
-    // Step 2: Apply accessory filter (only for 'all' or 'accessories' sections)
-    if ((activeCollection === 'all' || activeCollection === 'accessories') && accessoryFilter) {
-      if (accessoryFilter === 'all') {
-        // Show only accessories
-        filtered = filtered.filter(product => 
-          product.collection === 'Клей' || 
-          product.collection?.toLowerCase().includes('профиль')
-        );
-      } else if (accessoryFilter === 'Профили') {
-        // Show only profiles
-        filtered = filtered.filter(product => 
-          product.collection?.toLowerCase().includes('профиль')
-        );
-      } else if (accessoryFilter === 'Клей') {
-        // Show only adhesive
-        filtered = filtered.filter(product => 
-          product.collection === 'Клей'
-        );
+      // Step 2: Accessory filter
+      if ((activeCollection === 'all' || activeCollection === 'accessories') && accessoryFilter) {
+        if (accessoryFilter === 'all') {
+          if (!product.isGlue && !product.isProfile) return false;
+        } else if (accessoryFilter === 'Профили') {
+          if (!product.isProfile) return false;
+        } else if (accessoryFilter === 'Клей') {
+          if (!product.isGlue) return false;
+        }
       }
-    }
 
-    // Step 3: Apply panel collection filters (only if no accessory filter is active)
-    if (filters.collection && filters.collection.trim() !== '' && !accessoryFilter) {
-      filtered = filtered.filter(product => 
-        product.collection?.toLowerCase() === filters.collection.toLowerCase()
-      );
-    }
+      // Step 3: Panel collection filter
+      if (filters.collection && filters.collection.trim() !== '' && !accessoryFilter) {
+        if (product.collectionLower !== filters.collection.toLowerCase()) return false;
+      }
 
-    if (filters.color) {
-      filtered = filtered.filter(product => 
-        product.color?.toLowerCase().includes(filters.color.toLowerCase())
-      );
-    }
-    if (filters.size) {
-      filtered = filtered.filter(product => product.format === filters.size);
-    }
+      // Step 4: Other filters
+      if (filters.color && !product.colorLower.includes(filters.color.toLowerCase())) return false;
+      if (filters.size && product.format !== filters.size) return false;
 
-    // Apply additional filters
-    if (additionalFilters.novelties) {
-      filtered = filtered.filter(product => product.isPremium);
-    }
-    if (additionalFilters.favorites) {
-      // Show only favorite products when favorites filter is active
-      filtered = filtered.filter(product => favorites.has(product.id));
-    }
-    if (additionalFilters.discount) {
-      // For demo purposes, show premium items as discounted
-      filtered = filtered.filter(product => product.isPremium);
-    }
-    if (additionalFilters.inStock) {
-      // For demo purposes, all products are in stock
-      // In a real app, this would filter by stock status
-    }
+      // Step 5: Additional filters
+      if (additionalFilters.novelties && !product.isPremium) return false;
+      if (additionalFilters.favorites && !favorites.has(product.id)) return false;
+      if (additionalFilters.discount && !product.isPremium) return false;
 
-    // Apply search filter
-    if (searchQuery) {
-      filtered = filtered.filter(product => {
+      // Step 6: Search filter
+      if (searchQuery) {
         const searchLower = searchQuery.toLowerCase();
-        return (
-          product.name?.toLowerCase().includes(searchLower) ||
-          product.color?.toLowerCase().includes(searchLower) ||
-          product.design?.toLowerCase().includes(searchLower) ||
-          product.collection?.toLowerCase().includes(searchLower) ||
-          product.format?.toLowerCase().includes(searchLower)
-        );
-      });
-    }
+        if (
+          !product.nameLower.includes(searchLower) &&
+          !product.colorLower.includes(searchLower) &&
+          !product.designLower.includes(searchLower) &&
+          !product.collectionLower.includes(searchLower) &&
+          !product.formatLower.includes(searchLower)
+        ) return false;
+      }
 
-    // Sort products based on sortBy option
-    if (sortBy === 'price-asc') {
-      filtered.sort((a, b) => a.price - b.price);
-    } else if (sortBy === 'price-desc') {
-      filtered.sort((a, b) => b.price - a.price);
-    } else if (sortBy === 'name') {
-      filtered.sort((a, b) => (a.color || a.design || '').localeCompare(b.color || b.design || ''));
-    }
-    // sortBy === 'default' keeps original order
+      return true;
+    }).sort((a, b) => {
+      // Inline sorting for better performance
+      if (sortBy === 'price-asc') return a.price - b.price;
+      if (sortBy === 'price-desc') return b.price - a.price;
+      if (sortBy === 'name') return (a.color || a.design || '').localeCompare(b.color || b.design || '');
+      return 0; // default order
+    });
+  }, [preprocessedProducts, activeCollection, filters, additionalFilters, sortBy, searchQuery, accessoryFilter, favorites]);
 
-
-
-    return filtered;
-  }, [products, activeCollection, filters, additionalFilters, sortBy, searchQuery, accessoryFilter]);
-
-  // Get visible products based on pagination
+  // Get visible products based on pagination - optimized for performance
   const visibleProducts = useMemo(() => {
-    // Mobile: show 5 items (2.5 rows), Desktop: show as calculated
     const isMobile = window.innerWidth < 768;
     const totalItemsToShow = isMobile ? 5 : visibleRows * ITEMS_PER_ROW;
-    const visible = filteredProducts.slice(0, totalItemsToShow);
-
-    return visible;
-  }, [filteredProducts, visibleRows, activeCollection]);
+    return filteredProducts.slice(0, totalItemsToShow);
+  }, [filteredProducts, visibleRows]);
 
   const hasMoreItems = visibleProducts.length < filteredProducts.length;
 
@@ -311,11 +277,20 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
   };
 
   const availableColors = useMemo(() => {
-    return Array.from(new Set(selectedCollectionProducts.map(p => p.color || p.design).filter(color => color && color !== '')));
+    const colors = new Set<string>();
+    selectedCollectionProducts.forEach(p => {
+      const color = p.color || p.design;
+      if (color && color !== '') colors.add(color);
+    });
+    return Array.from(colors);
   }, [selectedCollectionProducts]);
 
   const availableSizes = useMemo(() => {
-    return Array.from(new Set(selectedCollectionProducts.map(p => p.format).filter(format => format && format !== '')));
+    const sizes = new Set<string>();
+    selectedCollectionProducts.forEach(p => {
+      if (p.format && p.format !== '') sizes.add(p.format);
+    });
+    return Array.from(sizes);
   }, [selectedCollectionProducts]);
 
   const getCollectionTitle = () => {
