@@ -41,28 +41,34 @@ export default function OptimizedThumbnail({
       const cachedUrl = getCachedImage(cacheKey);
 
       if (cachedUrl) {
+        console.log('OptimizedThumbnail: Using cached thumbnail for', src);
         setThumbnailUrl(cachedUrl);
         setIsLoading(false);
         onLoad?.();
         return;
       }
 
+      console.log('OptimizedThumbnail: Generating thumbnail for', src, 'size:', size);
       setIsLoading(true);
       setHasError(false);
 
       try {
         const thumbnail = await addToQueue(src, size, quality);
         if (isMounted) {
+          console.log('OptimizedThumbnail: Thumbnail generated successfully, size:', thumbnail.length);
           setCachedImage(cacheKey, thumbnail, size * size * 0.5); // Estimate size
           setThumbnailUrl(thumbnail);
           setIsLoading(false);
           onLoad?.();
         }
       } catch (error) {
+        console.warn('OptimizedThumbnail failed to generate thumbnail:', error);
+        // Fallback to original image if thumbnail generation fails
         if (isMounted) {
-          setHasError(true);
+          console.log('OptimizedThumbnail: Falling back to original image');
+          setThumbnailUrl(src);
           setIsLoading(false);
-          onError?.();
+          onLoad?.();
         }
       }
     };
