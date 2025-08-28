@@ -1888,6 +1888,13 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     >
                       <Trash2 size={14} />
                     </button>
+                    
+                    {/* File name at bottom */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-xs p-1.5 rounded-b-lg">
+                      <p className="truncate font-medium" title={img.fileName}>
+                        {img.fileName}
+                      </p>
+                    </div>
 
                   </div>
                 ))}
