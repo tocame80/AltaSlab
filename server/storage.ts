@@ -184,20 +184,35 @@ export class DatabaseStorage implements IStorage {
   }
 
   getFallbackGalleryProjects(): GalleryProject[] {
-    // Return minimal static gallery data for production fallback
+    // Return current gallery data for production fallback
     return [
       {
-        id: "fallback-project-1",
-        title: "Современная квартира",
-        description: "Стильный интерьер с панелями АЛЬТА СЛЭБ",
-        application: "interior",
-        images: ["/assets/gallery/gallery-1.jpg", "/assets/gallery/gallery-2.jpg"],
-        materialsUsed: ["8934", "8930"],
-        location: "Москва",
-        area: "85 кв.м",
+        id: "test-project-1",
+        title: "Современный офис в центре города",
+        description: "Элегантные панели АЛЬТА СЛЭБ в офисном интерьере создают атмосферу профессионализма и современности",
+        application: "commercial",
+        images: ["/src/assets/gallery/office-1.jpg", "/src/assets/gallery/office-2.jpg", "/src/assets/gallery/office-3.jpg"],
+        materialsUsed: ["894f9283-6e8b-41fc-b991-90806ae79abc", "894f9283-6e8b-41fc-b991-90806ae79def"],
+        location: "Москва, деловой центр",
+        area: "120 кв.м",
         year: "2024",
         isActive: 1,
         sortOrder: 1,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: "test-project-2", 
+        title: "Загородный дом с панорамными окнами",
+        description: "Панели АЛЬТА СЛЭБ в загородном доме подчеркивают связь с природой и создают уютную атмосферу",
+        application: "residential",
+        images: ["/src/assets/gallery/house-1.jpg", "/src/assets/gallery/house-2.jpg", "/src/assets/gallery/house-3.jpg"],
+        materialsUsed: ["894f9283-6e8b-41fc-b991-90806ae79abc"],
+        location: "Московская область",
+        area: "200 кв.м",
+        year: "2024",
+        isActive: 1,
+        sortOrder: 2,
         createdAt: new Date(),
         updatedAt: new Date()
       }
@@ -285,8 +300,8 @@ export class DatabaseStorage implements IStorage {
     // Return minimal static catalog data for production fallback
     return [
       {
-        id: "8934",
-        productCode: "8934", 
+        id: "894f9283-6e8b-41fc-b991-90806ae79abc",
+        productCode: "SPC8934", 
         name: "Магия Бетона ЗАКАТ",
         unit: "упак",
         quantity: 10,
@@ -311,8 +326,8 @@ export class DatabaseStorage implements IStorage {
         updatedAt: new Date()
       },
       {
-        id: "8930",
-        productCode: "8930",
+        id: "894f9283-6e8b-41fc-b991-90806ae79def",
+        productCode: "SPC8930",
         name: "Магия Бетона МЕТЕОРИТ",
         unit: "упак",
         quantity: 15,

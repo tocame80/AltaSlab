@@ -319,7 +319,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Filter out collection headers (AUTO_ entries) - internal system information
       const realProducts = catalogProducts.filter(product => 
-        product.productCode && product.productCode.startsWith('SPC')
+        product.productCode && (product.productCode.startsWith('SPC') || product.productCode.startsWith('8') || product.productCode.startsWith('SS'))
       );
       
       console.log('API: After filtering AUTO_ headers:', realProducts.length, 'real products with LOCAL images');
