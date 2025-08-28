@@ -398,11 +398,14 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
                 <h3 className="text-lg font-bold text-[#2f378b]">Фильтры</h3>
                 <button
                   onClick={() => {
+                    console.log('🔄 Desktop Reset: Clearing all filters...');
                     setFilters({ collection: '', color: '', size: '' });
                     setAccessoryFilter('');
                     setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
                     setSearchQuery('');
                     setSortBy('default');
+                    // Reset navigator to "all" state
+                    onResetFilters?.();
                   }}
                   className="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors font-medium text-xs"
                 >
@@ -414,11 +417,14 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
               <div className="lg:hidden mb-6">
                 <button
                   onClick={() => {
+                    console.log('🔄 Mobile Reset: Clearing all filters...');
                     setFilters({ collection: '', color: '', size: '' });
                     setAccessoryFilter('');
                     setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
                     setSearchQuery('');
                     setSortBy('default');
+                    // Reset navigator to "all" state
+                    onResetFilters?.();
                   }}
                   className="w-full px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors font-medium text-sm"
                 >
@@ -707,22 +713,17 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
               <div className="mt-6">
                 <button 
                   onClick={() => {
-                    console.log('🔄 Resetting all filters...');
-                    alert('Кнопка сброса работает!');
                     setFilters({ collection: '', color: '', size: '' });
                     setAccessoryFilter('');
                     setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
                     setSearchQuery('');
                     setSortBy('default');
                     // Reset navigator to "all" state
-                    console.log('🔄 Calling onResetFilters...', onResetFilters);
                     onResetFilters?.();
-                    console.log('🔄 Reset complete');
                   }}
-                  className="w-full bg-red-100 hover:bg-red-200 text-red-700 py-2 px-4 rounded-lg font-medium transition-colors"
-                  style={{ zIndex: 9999, position: 'relative' }}
+                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors"
                 >
-                  🔄 Сбросить все фильтры
+                  Сбросить все фильтры
                 </button>
               </div>
 
@@ -846,22 +847,17 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
                 </p>
                 <button 
                   onClick={() => {
-                    console.log('🔄 Resetting filters (no results case)...');
-                    alert('Кнопка сброса "нет результатов" работает!');
                     setFilters({ collection: '', color: '', size: '' });
                     setAccessoryFilter('');
                     setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
                     setSearchQuery('');
                     setSortBy('default');
                     // Reset navigator to "all" state
-                    console.log('🔄 Calling onResetFilters...', onResetFilters);
                     onResetFilters?.();
-                    console.log('🔄 Reset complete');
                   }}
-                  className="mt-4 bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
-                  style={{ zIndex: 9999, position: 'relative' }}
+                  className="mt-4 btn-primary px-6 py-2 rounded-lg font-medium"
                 >
-                  🔄 Сбросить фильтры
+                  Сбросить фильтры
                 </button>
               </div>
             )}
