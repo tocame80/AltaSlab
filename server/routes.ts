@@ -3,16 +3,82 @@ import express from "express";
 import path from "path";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertCertificateSchema, insertVideoInstructionSchema, insertHeroImageSchema, insertGalleryProjectSchema, insertDealerLocationSchema, insertCatalogProductSchema } from "@shared/schema";
+import { insertCertificateSchema, insertVideoInstructionSchema, insertHeroImageSchema, insertGalleryProjectSchema, insertDealerLocationSchema, insertCatalogProductSchema, catalogProducts, galleryProjects } from "@shared/schema";
 import adminRoutes from "./routes/admin";
 import {
   ObjectStorageService,
   ObjectNotFoundError,
 } from "./objectStorage";
+import { db } from "./db";
+import { sql } from "drizzle-orm";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Admin routes for image management
   app.use('/api/admin', adminRoutes);
+
+  // Simple test endpoint to check if API routing works
+  app.get('/api/test', (req, res) => {
+    res.json({ 
+      message: 'API is working!', 
+      environment: process.env.NODE_ENV,
+      timestamp: new Date().toISOString()
+    });
+  });
+
+  // Debug endpoint for production troubleshooting
+  app.get('/api/debug/status', async (req, res) => {
+    try {
+      const dbStatus: {
+        connected: boolean;
+        tablesExist: {
+          catalogProducts?: boolean;
+          galleryProjects?: boolean;
+        };
+        error: string | null;
+      } = {
+        connected: false,
+        tablesExist: {},
+        error: null
+      };
+      
+      try {
+        // Test basic database connection
+        const testQuery = await db.execute(sql`SELECT 1 as test`);
+        dbStatus.connected = true;
+        
+        // Test each table existence
+        try {
+          await db.select().from(catalogProducts).limit(1);
+          dbStatus.tablesExist.catalogProducts = true;
+        } catch (e: any) {
+          dbStatus.tablesExist.catalogProducts = false;
+          dbStatus.error = e.message;
+        }
+        
+        try {
+          await db.select().from(galleryProjects).limit(1);
+          dbStatus.tablesExist.galleryProjects = true;
+        } catch (e: any) {
+          dbStatus.tablesExist.galleryProjects = false;
+        }
+        
+      } catch (error: any) {
+        dbStatus.error = error.message;
+      }
+      
+      res.json({
+        environment: process.env.NODE_ENV || 'unknown',
+        databaseUrl: process.env.DATABASE_URL ? 'configured' : 'missing',
+        dbStatus,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error: any) {
+      res.status(500).json({ 
+        error: 'Debug endpoint failed',
+        message: error.message 
+      });
+    }
+  });
 
   // Certificate routes
   app.get('/api/certificates', async (req, res) => {
@@ -107,11 +173,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Gallery project routes
   app.get('/api/gallery-projects', async (req, res) => {
     try {
+      console.log('API: Fetching gallery projects...');
       const galleryProjects = await storage.getGalleryProjects();
+      console.log('API: Successfully fetched', galleryProjects.length, 'gallery projects');
       res.json(galleryProjects);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching gallery projects:', error);
-      res.status(500).json({ message: 'Failed to fetch gallery projects' });
+      console.error('Gallery projects error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+      res.status(500).json({ 
+        message: 'Failed to fetch gallery projects',
+        error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      });
     }
   });
 
@@ -260,7 +336,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('API: Generated and cached', transformedProducts.length, 'products');
       
       res.json(transformedProducts);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching catalog products:', error);
       console.error('Error details:', {
         message: error.message,

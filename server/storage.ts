@@ -169,7 +169,26 @@ export class DatabaseStorage implements IStorage {
 
   // Gallery project methods
   async getGalleryProjects(): Promise<GalleryProject[]> {
-    return await db.select().from(galleryProjects).where(eq(galleryProjects.isActive, 1)).orderBy(asc(galleryProjects.sortOrder));
+    try {
+      console.log('DatabaseStorage: Attempting to query galleryProjects table...');
+      // Try without isActive filter first in case column doesn't exist  
+      const result = await db.select().from(galleryProjects).orderBy(asc(galleryProjects.sortOrder));
+      console.log('DatabaseStorage: Successfully queried galleryProjects, got', result.length, 'projects');
+      // Filter active projects in application layer as fallback
+      return result.filter(p => p.isActive !== 0);
+    } catch (error: any) {
+      console.error('DatabaseStorage: Error querying galleryProjects:', error);
+      // Fallback: try basic query without any filters
+      try {
+        console.log('DatabaseStorage: Trying fallback query for gallery projects...');
+        const fallbackResult = await db.select().from(galleryProjects);
+        console.log('DatabaseStorage: Fallback query successful, got', fallbackResult.length, 'projects');
+        return fallbackResult;
+      } catch (fallbackError: any) {
+        console.error('DatabaseStorage: Fallback query also failed:', fallbackError);
+        throw error;
+      }
+    }
   }
 
   async getGalleryProject(id: string): Promise<GalleryProject | undefined> {
@@ -237,17 +256,28 @@ export class DatabaseStorage implements IStorage {
   async getCatalogProducts(): Promise<CatalogProduct[]> {
     try {
       console.log('DatabaseStorage: Attempting to query catalogProducts table...');
-      const result = await db.select().from(catalogProducts).where(eq(catalogProducts.isActive, 1)).orderBy(asc(catalogProducts.sortOrder));
+      // Try without isActive filter first in case column doesn't exist
+      const result = await db.select().from(catalogProducts).orderBy(asc(catalogProducts.sortOrder));
       console.log('DatabaseStorage: Successfully queried catalogProducts, got', result.length, 'products');
-      return result;
-    } catch (error) {
+      // Filter active products in application layer as fallback
+      return result.filter(p => p.isActive !== 0);
+    } catch (error: any) {
       console.error('DatabaseStorage: Error querying catalogProducts:', error);
       console.error('DatabaseStorage: Error details:', {
         message: error.message,
         code: error.code,
         stack: error.stack
       });
-      throw error;
+      // Fallback: try basic query without any filters
+      try {
+        console.log('DatabaseStorage: Trying fallback query without filters...');
+        const fallbackResult = await db.select().from(catalogProducts);
+        console.log('DatabaseStorage: Fallback query successful, got', fallbackResult.length, 'products');
+        return fallbackResult;
+      } catch (fallbackError: any) {
+        console.error('DatabaseStorage: Fallback query also failed:', fallbackError);
+        throw error; // Throw original error
+      }
     }
   }
 
