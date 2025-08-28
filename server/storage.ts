@@ -282,58 +282,61 @@ export class DatabaseStorage implements IStorage {
   }
 
   getFallbackCatalogProducts(): CatalogProduct[] {
-    // Return ONLY real products from actual catalog database - no synthetic data
-    // These are exact copies from the real catalog loaded from Excel 26.08.2025
+    // Return subset of real products for fallback when database is unavailable
+    // Note: Full 69-product catalog exists but using minimal set for performance
+    console.log('DatabaseStorage: Using fallback catalog with key products from all collections');
+    
     return [
+      // Магия бетона - топ товары
       {
         id: "39995108-7235-4875-822d-ca72f31af81f",
         productCode: "SPC8934",
-        name: "Панель SPC стеновая Альта Слэб Магия Бетона 300х600х2,4мм 4,32м2/уп (24шт/уп) ЗАКАТ",
+        name: "Панель SPC стеновая Альта Слэб Магия Бетона 300х600х2,4мм 4,32м2/уп (24шт/уп) Закат",
         unit: "упак",
-        quantity: 50,
+        quantity: 0,
         collection: "concrete",
-        color: "Серый",
-        surface: "Матовая",
-        format: "300×600×2,4мм",
+        color: "Закат",
+        surface: "упак",
+        format: "300х600х2,4мм",
         areaPerPackage: "4.32",
         pcsPerPackage: "24",
-        price: "2850",
-        barcode: "4627192030120",
-        category: "АЛЬТА СЛЭБ",
+        price: "4739.04",
+        barcode: "4650218304122",
+        category: "SPC панели",
         imageUrl: null,
         images: [],
         description: null,
         specifications: {},
         profile: null,
-        availability: "В наличии",
+        availability: "Склад",
         isActive: 1,
         sortOrder: 1,
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        id: "39995108-7235-4875-822d-ca72f31af820",
+        id: "6cdbec9c-6ba7-40a9-961f-3c16ec3b23ff",
         productCode: "SPC8930",
-        name: "Панель SPC стеновая Альта Слэб Магия Бетона 300х600х2,4мм 4,32м2/уп (24шт/уп) МЕТЕОРИТ (коллаж)",
-        unit: "упак", 
-        quantity: 30,
+        name: "Панель SPC стеновая Альта Слэб Магия Бетона 300х600х2,4мм 4,32м2/уп (24шт/уп) Метеорит",
+        unit: "упак",
+        quantity: 0,
         collection: "concrete",
-        color: "Темно-серый",
-        surface: "Матовая",
-        format: "300×600×2,4мм",
+        color: "Метеорит",
+        surface: "упак",
+        format: "300х600х2,4мм",
         areaPerPackage: "4.32",
         pcsPerPackage: "24",
-        price: "2850",
-        barcode: "4627192030113",
-        category: "АЛЬТА СЛЭБ",
+        price: "4739.04",
+        barcode: "4650218304184",
+        category: "SPC панели",
         imageUrl: null,
         images: [],
         description: null,
         specifications: {},
         profile: null,
-        availability: "В наличии",
+        availability: "Склад",
         isActive: 1,
-        sortOrder: 2,
+        sortOrder: 3,
         createdAt: new Date(),
         updatedAt: new Date()
       }
