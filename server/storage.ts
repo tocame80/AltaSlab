@@ -183,7 +183,7 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  private getFallbackGalleryProjects(): GalleryProject[] {
+  getFallbackGalleryProjects(): GalleryProject[] {
     // Return minimal static gallery data for production fallback
     return [
       {
@@ -281,13 +281,13 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  private getFallbackCatalogProducts(): CatalogProduct[] {
+  getFallbackCatalogProducts(): CatalogProduct[] {
     // Return minimal static catalog data for production fallback
     return [
       {
         id: "8934",
         productCode: "8934", 
-        productName: "Магия Бетона ЗАКАТ",
+        name: "Магия Бетона ЗАКАТ",
         collection: "concrete", 
         color: "Серый",
         surface: "Матовая",
@@ -312,7 +312,7 @@ export class DatabaseStorage implements IStorage {
       {
         id: "8930",
         productCode: "8930",
-        productName: "Магия Бетона МЕТЕОРИТ",
+        name: "Магия Бетона МЕТЕОРИТ",
         collection: "concrete",
         color: "Темно-серый", 
         surface: "Матовая",

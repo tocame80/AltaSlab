@@ -26,6 +26,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Test fallback data endpoint
+  app.get('/api/test-fallback', async (req, res) => {
+    try {
+      const fallbackProducts = await storage.getFallbackCatalogProducts();
+      const fallbackProjects = await storage.getFallbackGalleryProjects();
+      res.json({
+        message: 'Fallback data test',
+        catalog: fallbackProducts,
+        gallery: fallbackProjects
+      });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to get fallback data', details: error.message });
+    }
+  });
+
   // Debug endpoint for production troubleshooting
   app.get('/api/debug/status', async (req, res) => {
     try {
