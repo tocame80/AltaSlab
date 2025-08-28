@@ -174,10 +174,10 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
         if (targetCollection && product.collectionLower !== targetCollection) return false;
       }
 
-      // Step 2: Accessory filter (only when accessories section is active)
-      if (activeCollection === 'accessories' && accessoryFilter) {
+      // Step 2: Accessory filter
+      if ((activeCollection === 'all' || activeCollection === 'accessories') && accessoryFilter) {
         if (accessoryFilter === 'all') {
-          // Show all accessories - filter already applied in Step 1
+          if (!product.isGlue && !product.isProfile) return false;
         } else if (accessoryFilter === 'Профили') {
           if (!product.isProfile) return false;
         } else if (accessoryFilter === 'Клей') {
@@ -256,21 +256,14 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
     }
 
     // For accessory filters
-    if (activeCollection === 'accessories') {
-      if (accessoryFilter === 'all') {
-        return products.filter(product => 
-          product.collection === 'Клей' || 
-          product.collection?.toLowerCase().includes('профиль')
-        );
-      } else if (accessoryFilter === 'Профили') {
-        return products.filter(product => 
-          product.collection?.toLowerCase().includes('профиль')
-        );
-      } else if (accessoryFilter === 'Клей') {
-        return products.filter(product => 
-          product.collection === 'Клей'
-        );
-      }
+    if (accessoryFilter === 'Профили') {
+      return products.filter(product => 
+        product.collection?.toLowerCase().includes('профиль')
+      );
+    } else if (accessoryFilter === 'Клей') {
+      return products.filter(product => 
+        product.collection === 'Клей'
+      );
     }
 
     // For "all" collection or default, show only panels (exclude accessories)
