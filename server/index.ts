@@ -51,6 +51,21 @@ app.use('/assets/gallery', express.static(path.join(process.cwd(), 'client', 'sr
     throw err;
   });
 
+  // Custom middleware to handle API routes before Vite catches them
+  app.use('*', (req, res, next) => {
+    // If this is an API route, skip static file serving
+    if (req.originalUrl.startsWith('/api/')) {
+      const error: any = new Error(`API endpoint not found: ${req.originalUrl}`);
+      error.status = 404;
+      return res.status(404).json({ 
+        error: 'API endpoint not found',
+        path: req.originalUrl,
+        method: req.method
+      });
+    }
+    next();
+  });
+
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
