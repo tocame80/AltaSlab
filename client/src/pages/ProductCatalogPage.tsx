@@ -28,7 +28,11 @@ export function ProductCatalogPage() {
         />
         <Catalog 
           activeCollection={activeCollection} 
-          onResetFilters={() => setActiveCollection('all')}
+          onResetFilters={() => {
+            console.log('🔄 ProductCatalogPage: Resetting to "all" collection...');
+            setActiveCollection('all');
+            console.log('🔄 ProductCatalogPage: Reset complete');
+          }}
           onCollectionChange={setActiveCollection}
         />
       </div>

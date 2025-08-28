@@ -707,13 +707,16 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
               <div className="mt-6">
                 <button 
                   onClick={() => {
+                    console.log('🔄 Resetting all filters...');
                     setFilters({ collection: '', color: '', size: '' });
                     setAccessoryFilter('');
                     setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
                     setSearchQuery('');
                     setSortBy('default');
                     // Reset navigator to "all" state
+                    console.log('🔄 Calling onResetFilters...', onResetFilters);
                     onResetFilters?.();
+                    console.log('🔄 Reset complete');
                   }}
                   className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors"
                 >
@@ -841,13 +844,16 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
                 </p>
                 <button 
                   onClick={() => {
+                    console.log('🔄 Resetting filters (no results case)...');
                     setFilters({ collection: '', color: '', size: '' });
                     setAccessoryFilter('');
                     setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
                     setSearchQuery('');
                     setSortBy('default');
                     // Reset navigator to "all" state
+                    console.log('🔄 Calling onResetFilters...', onResetFilters);
                     onResetFilters?.();
+                    console.log('🔄 Reset complete');
                   }}
                   className="mt-4 btn-primary px-6 py-2 rounded-lg font-medium"
                 >
