@@ -504,7 +504,7 @@ export default function ProductDetails() {
                       src={image}
                       alt={`${getProductDisplayName()} - изображение ${index + 1}`}
                       className="w-full h-full object-cover"
-                      size={200}
+                      size={100}
                       quality={0.8}
                     />
                   </button>
