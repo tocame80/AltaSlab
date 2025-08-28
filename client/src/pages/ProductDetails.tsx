@@ -272,65 +272,6 @@ export default function ProductDetails() {
     return collections.find(col => col.dbName === product.collection);
   };
 
-  // Функция для получения всех товаров текущей коллекции в порядке каталога
-  const getCollectionProducts = () => {
-    if (!product || !allProducts.length) return [];
-    
-    // Фильтруем товары по коллекции
-    let filtered = allProducts.filter(p => p.collection === product.collection);
-    
-    // Сортируем так же, как в каталоге (по ID)
-    filtered.sort((a, b) => {
-      const aId = parseInt(a.productCode?.replace('SPC', '') || a.id);
-      const bId = parseInt(b.productCode?.replace('SPC', '') || b.id);
-      return aId - bId;
-    });
-    
-    return filtered;
-  };
-
-  // Функция для получения текущей позиции товара в коллекции
-  const getCurrentProductPosition = () => {
-    const collectionProducts = getCollectionProducts();
-    const currentIndex = collectionProducts.findIndex(p => p.id === product?.id);
-    return {
-      current: currentIndex + 1,
-      total: collectionProducts.length,
-      index: currentIndex,
-      products: collectionProducts
-    };
-  };
-
-  // Функция для навигации к предыдущему/следующему товару
-  const navigateToProduct = (direction: 'prev' | 'next') => {
-    const position = getCurrentProductPosition();
-    let targetIndex = position.index;
-    
-    if (direction === 'prev') {
-      targetIndex = position.index > 0 ? position.index - 1 : position.total - 1; // Цикличная навигация
-    } else {
-      targetIndex = position.index < position.total - 1 ? position.index + 1 : 0; // Цикличная навигация
-    }
-    
-    const targetProduct = position.products[targetIndex];
-    if (targetProduct) {
-      let productId = targetProduct.productCode;
-      if (productId?.startsWith('SPC')) {
-        productId = productId.replace('SPC', '');
-      }
-      
-      // Сохраняем информацию о позиции для синхронизации с каталогом
-      localStorage.setItem('catalog_sync_position', JSON.stringify({
-        collectionName: product?.collection,
-        productIndex: targetIndex,
-        totalProducts: position.total,
-        timestamp: Date.now()
-      }));
-      
-      setLocation(`/product/${productId || targetProduct.id}`);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -392,45 +333,6 @@ export default function ProductDetails() {
                 </button>
               ))}
             </nav>
-          </div>
-        </div>
-      )}
-
-      {/* Product Navigator - Previous/Next in Collection */}
-      {getCurrentProductPosition().total > 1 && (
-        <div className="bg-white py-4 border-t border-gray-200 shadow-sm">
-          <div className="container mx-auto px-6">
-            <div className="flex items-center justify-between">
-              {/* Previous Product */}
-              <button
-                onClick={() => navigateToProduct('prev')}
-                className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-[#e90039] hover:bg-gray-50 rounded-lg transition-all"
-                title="Предыдущий товар в коллекции"
-              >
-                <ArrowLeft size={20} />
-                <span className="text-sm font-medium">Предыдущий</span>
-              </button>
-
-              {/* Position Indicator */}
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-500">
-                  Товар {getCurrentProductPosition().current} из {getCurrentProductPosition().total}
-                </span>
-                <div className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">
-                  {getCollectionDisplayName()}
-                </div>
-              </div>
-
-              {/* Next Product */}
-              <button
-                onClick={() => navigateToProduct('next')}
-                className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-[#e90039] hover:bg-gray-50 rounded-lg transition-all"
-                title="Следующий товар в коллекции"
-              >
-                <span className="text-sm font-medium">Следующий</span>
-                <ArrowLeft size={20} className="rotate-180" />
-              </button>
-            </div>
           </div>
         </div>
       )}

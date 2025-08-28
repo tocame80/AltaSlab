@@ -9,10 +9,9 @@ interface ProductCardProps {
   isFavorite?: boolean;
   onToggleFavorite?: () => void;
   onClick?: () => void;
-  isHighlighted?: boolean;
 }
 
-export default function ProductCard({ product, isFavorite = false, onToggleFavorite, onClick, isHighlighted = false }: ProductCardProps) {
+export default function ProductCard({ product, isFavorite = false, onToggleFavorite, onClick }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -115,11 +114,7 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
 
   return (
     <div 
-      className={`group product-card bg-white rounded-xl overflow-hidden shadow-sm border cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.02] ${
-        isHighlighted 
-          ? 'border-[#e90039] shadow-lg ring-2 ring-[#e90039]/20 bg-gradient-to-br from-orange-50 to-white' 
-          : 'border-gray-100'
-      }`}
+      className="group product-card bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
       onClick={handleCardClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

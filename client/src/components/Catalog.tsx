@@ -40,7 +40,6 @@ export default function Catalog({ activeCollection }: CatalogProps) {
   const [visibleRows, setVisibleRows] = useState(4); // Increased initial load
   const ITEMS_PER_ROW = 2; // 2 items per row
   const ROWS_TO_LOAD = 3; // Load 3 more rows at a time
-  const [syncHighlightedProductId, setSyncHighlightedProductId] = useState<string | null>(null);
 
   // Listen for search events from header
   useEffect(() => {
@@ -118,59 +117,6 @@ export default function Catalog({ activeCollection }: CatalogProps) {
         setVisibleRows(4);
       }
     }
-  }, [activeCollection]);
-
-  // Listen for catalog position synchronization from ProductDetails
-  useEffect(() => {
-    const handleStorageChange = () => {
-      const syncData = localStorage.getItem('catalog_sync_position');
-      if (syncData) {
-        try {
-          const { collectionName, productIndex, totalProducts, timestamp } = JSON.parse(syncData);
-          
-          // Check if sync data is recent (less than 5 seconds old)
-          if (Date.now() - timestamp < 5000) {
-            console.log(`🔄 Syncing catalog position: ${productIndex + 1}/${totalProducts} in ${collectionName}`);
-            
-            // Find the product by collection and index
-            const collectionProducts = products
-              .filter(p => p.collection === collectionName)
-              .sort((a, b) => {
-                const aId = parseInt((a as any).productCode?.replace('SPC', '') || a.id);
-                const bId = parseInt((b as any).productCode?.replace('SPC', '') || b.id);
-                return aId - bId;
-              });
-            
-            const targetProduct = collectionProducts[productIndex];
-            if (targetProduct) {
-              setSyncHighlightedProductId(targetProduct.id);
-              console.log(`🎯 Highlighting product: ${targetProduct.design || targetProduct.color} (${targetProduct.id})`);
-              
-              // Remove highlight after 3 seconds
-              setTimeout(() => setSyncHighlightedProductId(null), 3000);
-            }
-            
-            // Clear sync data after processing
-            localStorage.removeItem('catalog_sync_position');
-          }
-        } catch (error) {
-          console.error('Error parsing catalog sync data:', error);
-          localStorage.removeItem('catalog_sync_position');
-        }
-      }
-    };
-
-    // Check for sync data on mount and when storage changes
-    handleStorageChange();
-    window.addEventListener('storage', handleStorageChange);
-    
-    // Also check periodically for same-tab updates
-    const interval = setInterval(handleStorageChange, 1000);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      clearInterval(interval);
-    };
   }, [activeCollection]);
 
   const filteredProducts = useMemo(() => {
@@ -835,7 +781,6 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                       onClick={() => {
                         window.location.href = `/product/${product.id}`;
                       }}
-                      isHighlighted={syncHighlightedProductId === product.id}
                     />
                   ))}
                 </div>
