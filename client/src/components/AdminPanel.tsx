@@ -1752,11 +1752,11 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
             <h3 className="font-semibold text-blue-800 mb-2">Инструкция по управлению изображениями:</h3>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <h4 className="font-semibold text-blue-800 mb-1">Загрузка новых изображений:</h4>
+                <h4 className="font-semibold text-blue-800 mb-1">Работа с каталогом:</h4>
                 <ol className="text-sm text-blue-700 space-y-1">
                   <li>1. Выберите товар из списка</li>
-                  <li>2. Загрузите изображения (JPG, PNG)</li>
-                  <li>3. Нажмите "Сохранить" для применения изменений</li>
+                  <li>2. Система автоматически найдет изображения в каталоге</li>
+                  <li>3. Управляйте порядком и главным изображением</li>
                 </ol>
               </div>
               <div>
@@ -1790,44 +1790,17 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
             </select>
           </div>
 
-          {/* File Upload */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Загрузить изображения:
-            </label>
-            <div
-              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                selectedProduct 
-                  ? isDragOver
-                    ? 'border-[#E95D22] bg-orange-50'
-                    : 'border-gray-300 hover:border-[#E95D22] cursor-pointer'
-                  : 'border-gray-200 bg-gray-50 cursor-not-allowed'
-              }`}
-              onClick={() => selectedProduct && fileInputRef.current?.click()}
-              onDrop={selectedProduct ? handleDrop : undefined}
-              onDragOver={selectedProduct ? handleDragOver : undefined}
-              onDragLeave={selectedProduct ? handleDragLeave : undefined}
-            >
-              <Upload className="mx-auto mb-4 text-gray-400" size={48} />
-              <p className="text-gray-600">
-                {selectedProduct 
-                  ? 'Нажмите для выбора изображений или перетащите их сюда'
-                  : 'Сначала выберите товар'
-                }
-              </p>
-              <p className="text-sm text-gray-500 mt-2">
-                Поддерживаются форматы: JPG, PNG
-              </p>
+          {/* Info about catalog images */}
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <h4 className="font-semibold text-green-800 mb-2">📁 Управление изображениями каталога</h4>
+            <p className="text-sm text-green-700 mb-2">
+              Изображения берутся из существующего каталога в папке <code>/products/concrete/</code>
+            </p>
+            <div className="text-sm text-green-600">
+              <p>• Для добавления новых изображений - поместите их в соответствующую папку каталога</p>
+              <p>• Здесь можно управлять только порядком и главным изображением</p>
+              <p>• Система автоматически найдет все изображения товара в подпапках</p>
             </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={handleFileSelect}
-              className="hidden"
-              disabled={!selectedProduct}
-            />
           </div>
 
           {/* Existing Images */}
@@ -1933,89 +1906,17 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
             </div>
           )}
 
-          {/* New Images Preview */}
-          {getProductsBySelection().length > 0 && (
-            <div>
-              <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
-                <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-                К загрузке ({getProductsBySelection().length})
-              </h3>
 
-              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-3">
-                {getProductsBySelection().map((img, index) => (
-                  <div key={index} className="relative group">
-                    <div className="aspect-square rounded-lg overflow-hidden border border-gray-200">
-                      <img
-                        src={img.preview}
-                        alt={img.fileName}
-                        className="w-full h-full object-cover transition-transform duration-300"
-                        style={{ transform: `rotate(${img.rotation}deg)` }}
-                      />
-                    </div>
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
-                      <button
-                        onClick={() => rotateImage(uploadedImages.findIndex(image => image === img))}
-                        className="text-white hover:text-blue-400 transition-colors p-1 bg-black/20 rounded"
-                        title="Повернуть"
-                      >
-                        <RotateCw size={16} />
-                      </button>
-                      <button
-                        onClick={() => downloadOriginal(img)}
-                        className="text-white hover:text-green-400 transition-colors p-1 bg-black/20 rounded"
-                        title="Скачать оригинал"
-                      >
-                        <Download size={16} />
-                      </button>
-                      <button
-                        onClick={() => toggleFavorite(uploadedImages.findIndex(image => image === img))}
-                        className={`transition-colors p-1 bg-black/20 rounded ${
-                          img.isFavorite ? 'text-yellow-400' : 'text-white hover:text-yellow-400'
-                        }`}
-                        title="Добавить в избранное"
-                      >
-                        <HardDrive size={16} />
-                      </button>
-                      <button
-                        onClick={() => removeUploadedImage(uploadedImages.findIndex(image => image === img))}
-                        className="text-white hover:text-red-400 transition-colors p-1 bg-black/20 rounded"
-                        title="Удалить"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                    <div className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
-                      Новый
-                    </div>
-                    {img.isFavorite && (
-                      <div className="absolute top-2 right-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded">
-                        ★
-                      </div>
-                    )}
-                    <div className="mt-1">
-                      <p className="text-xs text-gray-600 truncate" title={img.fileName}>
-                        {img.fileName}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        ({img.size})
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Compact Summary */}
-          {(existingImages.length > 0 || uploadedImages.length > 0) && selectedProduct && (
+          {existingImages.length > 0 && selectedProduct && (
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="flex justify-between items-center">
                 <span className="font-medium text-sm">
                   Товар: {selectedProduct} - {products.find(p => p.id === selectedProduct)?.design}
                 </span>
                 <div className="flex gap-4 text-sm text-gray-600">
-                  <span>Существующих: {existingImages.length}</span>
-                  <span>К загрузке: {uploadedImages.length}</span>
+                  <span>Найдено в каталоге: {existingImages.length} изображений</span>
                 </div>
               </div>
             </div>
