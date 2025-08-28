@@ -69,7 +69,11 @@ export default function Home() {
           </nav>
           
           <section aria-label="Каталог продукции">
-            <Catalog activeCollection={activeCollection} />
+            <Catalog 
+              activeCollection={activeCollection} 
+              onResetFilters={() => setActiveCollection('all')}
+              onCollectionChange={setActiveCollection}
+            />
           </section>
           
           <section aria-label="О материале">

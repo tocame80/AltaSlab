@@ -26,7 +26,11 @@ export function ProductCatalogPage() {
           onCollectionChange={setActiveCollection}
           favoriteCount={favoriteCount}
         />
-        <Catalog activeCollection={activeCollection} />
+        <Catalog 
+          activeCollection={activeCollection} 
+          onResetFilters={() => setActiveCollection('all')}
+          onCollectionChange={setActiveCollection}
+        />
       </div>
     </div>
   );

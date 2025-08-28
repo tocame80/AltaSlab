@@ -8,9 +8,11 @@ import { useStickyNav } from '@/hooks/useStickyNav';
 
 interface CatalogProps {
   activeCollection: Collection;
+  onResetFilters?: () => void;
+  onCollectionChange?: (collection: Collection) => void;
 }
 
-export default function Catalog({ activeCollection }: CatalogProps) {
+export default function Catalog({ activeCollection, onResetFilters, onCollectionChange }: CatalogProps) {
   const { favorites, toggleFavorite, isFavorite } = useFavoritesContext();
   const isNavSticky = useStickyNav();
 
@@ -443,12 +445,26 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                           value={collection.key}
                           checked={filters.collection === collection.key}
                           onChange={(e) => {
+                            const selectedCollection = e.target.value;
                             setFilters(prev => ({ 
                               ...prev, 
-                              collection: e.target.value,
+                              collection: selectedCollection,
                               color: '', 
                               size: '' 
                             }));
+                            
+                            // Update navigator to sync with filter selection
+                            if (selectedCollection === '') {
+                              onCollectionChange?.('all');
+                            } else if (selectedCollection === 'Магия бетона') {
+                              onCollectionChange?.('concrete');
+                            } else if (selectedCollection === 'Тканевая Роскошь') {
+                              onCollectionChange?.('fabric');
+                            } else if (selectedCollection === 'Матовая эстетика') {
+                              onCollectionChange?.('matte');
+                            } else if (selectedCollection === 'Мраморная феерия') {
+                              onCollectionChange?.('marble');
+                            }
                           }}
                           className="mr-2"
                         />
@@ -687,6 +703,24 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 </div>
               )}
 
+              {/* Reset Filters Button */}
+              <div className="mt-6">
+                <button 
+                  onClick={() => {
+                    setFilters({ collection: '', color: '', size: '' });
+                    setAccessoryFilter('');
+                    setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
+                    setSearchQuery('');
+                    setSortBy('default');
+                    // Reset navigator to "all" state
+                    onResetFilters?.();
+                  }}
+                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors"
+                >
+                  Сбросить все фильтры
+                </button>
+              </div>
+
               {/* Sorting Section */}
               <div className="mt-8 pt-6 border-t border-gray-200">
                 <h4 className="font-semibold text-[#2f378b] mb-3">Сортировка</h4>
@@ -808,8 +842,12 @@ export default function Catalog({ activeCollection }: CatalogProps) {
                 <button 
                   onClick={() => {
                     setFilters({ collection: '', color: '', size: '' });
+                    setAccessoryFilter('');
                     setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
                     setSearchQuery('');
+                    setSortBy('default');
+                    // Reset navigator to "all" state
+                    onResetFilters?.();
                   }}
                   className="mt-4 btn-primary px-6 py-2 rounded-lg font-medium"
                 >
