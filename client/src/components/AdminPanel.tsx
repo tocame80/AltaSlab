@@ -1828,78 +1828,67 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       />
                     </div>
                     
-                    {/* Control buttons overlay */}
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                      <div className="flex flex-col gap-1">
-                        {/* Top row buttons */}
-                        <div className="flex gap-1 justify-center">
-                          <button
-                            onClick={() => moveImageUp(index)}
-                            className={`text-white transition-colors p-1.5 bg-black/30 rounded hover:bg-black/50 ${
-                              index === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:text-blue-400'
-                            }`}
-                            disabled={isLoading || index === 0}
-                            title="Переместить вверх"
-                          >
-                            <ArrowUp size={14} />
-                          </button>
-                          <button
-                            onClick={() => moveImageDown(index)}
-                            className={`text-white transition-colors p-1.5 bg-black/30 rounded hover:bg-black/50 ${
-                              index >= existingImages.length - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:text-blue-400'
-                            }`}
-                            disabled={isLoading || index >= existingImages.length - 1}
-                            title="Переместить вниз"
-                          >
-                            <ArrowDown size={14} />
-                          </button>
-                        </div>
-                        
-                        {/* Bottom row buttons */}
-                        <div className="flex gap-1 justify-center">
-                          <button
-                            onClick={() => makeMainImage(index)}
-                            className={`text-white transition-colors p-1.5 bg-black/30 rounded hover:bg-black/50 ${
-                              index === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:text-yellow-400'
-                            }`}
-                            disabled={isLoading || index === 0}
-                            title="Сделать главным"
-                          >
-                            <Star size={14} />
-                          </button>
-                          <button
-                            onClick={() => removeExistingImage(img)}
-                            className="text-white hover:text-red-400 transition-colors p-1.5 bg-black/30 rounded hover:bg-black/50"
-                            disabled={isLoading}
-                            title="Удалить"
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Status badge */}
-                    <div className={`absolute top-2 left-2 text-white text-xs px-2 py-1 rounded ${
-                      index === 0 ? 'bg-yellow-500' : 'bg-green-500'
+                    {/* Corner buttons positioned directly on image */}
+                    {/* Top-left: Position indicator with star for main */}
+                    <div className={`absolute top-1 left-1 text-white text-sm font-bold px-2 py-1 rounded-full flex items-center gap-1 ${
+                      index === 0 ? 'bg-yellow-500' : 'bg-black/70'
                     }`}>
-                      {index === 0 ? 'Главное' : 'Сохранен'}
-                    </div>
-                    
-                    {/* Position indicator */}
-                    <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
                       {index + 1}
+                      {index === 0 && <Star size={12} fill="white" />}
                     </div>
                     
-                    {/* File name with better visibility */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-black/80 text-white text-xs p-2 rounded-b-lg">
-                      <p className="truncate font-medium" title={img.fileName}>
-                        {img.fileName}
-                      </p>
-                      {index === 0 && (
-                        <p className="text-yellow-300 text-xs">⭐ Главное изображение</p>
-                      )}
-                    </div>
+                    {/* Top-right: Move up */}
+                    <button
+                      onClick={() => moveImageUp(index)}
+                      className={`absolute top-1 right-1 text-white p-1.5 rounded-full transition-colors ${
+                        index === 0 
+                          ? 'bg-gray-500/50 opacity-30 cursor-not-allowed' 
+                          : 'bg-blue-500/80 hover:bg-blue-600 hover:scale-110'
+                      }`}
+                      disabled={isLoading || index === 0}
+                      title="⬆️ Переместить вверх"
+                    >
+                      <ArrowUp size={12} />
+                    </button>
+                    
+                    {/* Bottom-left: Make main / Star */}
+                    <button
+                      onClick={() => makeMainImage(index)}
+                      className={`absolute bottom-1 left-1 text-white p-1.5 rounded-full transition-colors ${
+                        index === 0 
+                          ? 'bg-gray-500/50 opacity-30 cursor-not-allowed' 
+                          : 'bg-yellow-500/80 hover:bg-yellow-600 hover:scale-110'
+                      }`}
+                      disabled={isLoading || index === 0}
+                      title="⭐ Сделать главным"
+                    >
+                      <Star size={12} />
+                    </button>
+                    
+                    {/* Bottom-right: Move down */}
+                    <button
+                      onClick={() => moveImageDown(index)}
+                      className={`absolute bottom-1 right-1 text-white p-1.5 rounded-full transition-colors ${
+                        index >= existingImages.length - 1 
+                          ? 'bg-gray-500/50 opacity-30 cursor-not-allowed' 
+                          : 'bg-blue-500/80 hover:bg-blue-600 hover:scale-110'
+                      }`}
+                      disabled={isLoading || index >= existingImages.length - 1}
+                      title="⬇️ Переместить вниз"
+                    >
+                      <ArrowDown size={12} />
+                    </button>
+                    
+                    {/* Center: Delete button (appears on hover) */}
+                    <button
+                      onClick={() => removeExistingImage(img)}
+                      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white p-2 rounded-full bg-red-500/80 hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-all hover:scale-110"
+                      disabled={isLoading}
+                      title="🗑️ Удалить изображение"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+
                   </div>
                 ))}
               </div>
