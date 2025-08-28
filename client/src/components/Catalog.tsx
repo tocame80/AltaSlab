@@ -708,6 +708,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
                 <button 
                   onClick={() => {
                     console.log('🔄 Resetting all filters...');
+                    alert('Кнопка сброса работает!');
                     setFilters({ collection: '', color: '', size: '' });
                     setAccessoryFilter('');
                     setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
@@ -719,6 +720,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
                     console.log('🔄 Reset complete');
                   }}
                   className="w-full bg-red-100 hover:bg-red-200 text-red-700 py-2 px-4 rounded-lg font-medium transition-colors"
+                  style={{ zIndex: 9999, position: 'relative' }}
                 >
                   🔄 Сбросить все фильтры
                 </button>
@@ -845,6 +847,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
                 <button 
                   onClick={() => {
                     console.log('🔄 Resetting filters (no results case)...');
+                    alert('Кнопка сброса "нет результатов" работает!');
                     setFilters({ collection: '', color: '', size: '' });
                     setAccessoryFilter('');
                     setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
@@ -856,6 +859,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
                     console.log('🔄 Reset complete');
                   }}
                   className="mt-4 bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                  style={{ zIndex: 9999, position: 'relative' }}
                 >
                   🔄 Сбросить фильтры
                 </button>
