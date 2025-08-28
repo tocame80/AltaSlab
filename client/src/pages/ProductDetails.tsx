@@ -478,26 +478,47 @@ export default function ProductDetails() {
 
           </div>
 
-          {/* Thumbnail Gallery */}
+          {/* Thumbnail Gallery with Navigation */}
           {gallery.length > 1 && (
-            <div className="flex gap-3 justify-center overflow-x-auto pb-2">
-              {gallery.map((image: string, index: number) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentImageIndex(index)}
-                  className={`flex-shrink-0 w-24 h-12 rounded-lg overflow-hidden border-2 transition-all ${
-                    index === currentImageIndex ? 'border-[#e90039]' : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <OptimizedThumbnail
-                    src={image}
-                    alt={`${getProductDisplayName()} - изображение ${index + 1}`}
-                    className="w-full h-full object-cover"
-                    size={200}
-                    quality={0.8}
-                  />
-                </button>
-              ))}
+            <div className="flex items-center justify-center gap-4">
+              {/* Previous Button */}
+              <button
+                onClick={() => setCurrentImageIndex(currentImageIndex > 0 ? currentImageIndex - 1 : gallery.length - 1)}
+                className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 hover:border-[#e90039] transition-all"
+                title="Предыдущее изображение"
+              >
+                <ArrowLeft size={16} />
+              </button>
+              
+              {/* Thumbnail Gallery */}
+              <div className="flex gap-3 justify-center overflow-x-auto pb-2">
+                {gallery.map((image: string, index: number) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentImageIndex(index)}
+                    className={`flex-shrink-0 w-24 h-12 rounded-lg overflow-hidden border-2 transition-all ${
+                      index === currentImageIndex ? 'border-[#e90039]' : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <OptimizedThumbnail
+                      src={image}
+                      alt={`${getProductDisplayName()} - изображение ${index + 1}`}
+                      className="w-full h-full object-cover"
+                      size={200}
+                      quality={0.8}
+                    />
+                  </button>
+                ))}
+              </div>
+              
+              {/* Next Button */}
+              <button
+                onClick={() => setCurrentImageIndex(currentImageIndex < gallery.length - 1 ? currentImageIndex + 1 : 0)}
+                className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 hover:border-[#e90039] transition-all"
+                title="Следующее изображение"
+              >
+                <ArrowLeft size={16} className="rotate-180" />
+              </button>
             </div>
           )}
 
