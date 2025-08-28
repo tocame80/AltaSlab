@@ -111,7 +111,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
       setAccessoryFilter(''); // Empty by default to show panels
       setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
       setSearchQuery(''); // Also clear search
-      setSortBy('default'); // Reset sorting to default when showing all collections
+      // Keep current sorting when showing all collections
       setVisibleRows(8); // Show more items for "all" collection (16 products)
     } else if (activeCollection === 'concrete') {
       setFilters({ collection: 'Магия бетона', color: '', size: '' });
@@ -234,19 +234,15 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
       });
     }
 
-    // Sort products only if a specific collection is selected (not 'all')
-    const isSpecificCollectionSelected = activeCollection !== 'all';
-    
-    if (isSpecificCollectionSelected) {
-      if (sortBy === 'price-asc') {
-        filtered.sort((a, b) => a.price - b.price);
-      } else if (sortBy === 'price-desc') {
-        filtered.sort((a, b) => b.price - a.price);
-      } else if (sortBy === 'name') {
-        filtered.sort((a, b) => (a.color || a.design || '').localeCompare(b.color || b.design || ''));
-      }
+    // Sort products based on sortBy option
+    if (sortBy === 'price-asc') {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (sortBy === 'price-desc') {
+      filtered.sort((a, b) => b.price - a.price);
+    } else if (sortBy === 'name') {
+      filtered.sort((a, b) => (a.color || a.design || '').localeCompare(b.color || b.design || ''));
     }
-    // When showing all collections (default), products remain in original order without sorting
+    // sortBy === 'default' keeps original order
 
 
 
@@ -758,48 +754,41 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
                       onChange={(e) => setSortBy(e.target.value)}
                       className="mr-2"
                     />
-                    <span className="text-secondary text-sm">
-                      {activeCollection === 'all' ? 'Все коллекции' : 'По умолчанию'}
-                    </span>
+                    <span className="text-secondary text-sm">По умолчанию</span>
                   </label>
-                  {/* Show sorting options only when specific collection is selected */}
-                  {activeCollection !== 'all' && (
-                    <>
-                      <label className="flex items-center cursor-pointer">
-                        <input
-                          type="radio"
-                          name="sort"
-                          value="price-asc"
-                          checked={sortBy === 'price-asc'}
-                          onChange={(e) => setSortBy(e.target.value)}
-                          className="mr-2"
-                        />
-                        <span className="text-secondary text-sm">По цене (возрастание)</span>
-                      </label>
-                      <label className="flex items-center cursor-pointer">
-                        <input
-                          type="radio"
-                          name="sort"
-                          value="price-desc"
-                          checked={sortBy === 'price-desc'}
-                          onChange={(e) => setSortBy(e.target.value)}
-                          className="mr-2"
-                        />
-                        <span className="text-secondary text-sm">По цене (убывание)</span>
-                      </label>
-                      <label className="flex items-center cursor-pointer">
-                        <input
-                          type="radio"
-                          name="sort"
-                          value="name"
-                          checked={sortBy === 'name'}
-                          onChange={(e) => setSortBy(e.target.value)}
-                          className="mr-2"
-                        />
-                        <span className="text-secondary text-sm">По цвету</span>
-                      </label>
-                    </>
-                  )}
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="sort"
+                      value="price-asc"
+                      checked={sortBy === 'price-asc'}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="mr-2"
+                    />
+                    <span className="text-secondary text-sm">По цене (возрастание)</span>
+                  </label>
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="sort"
+                      value="price-desc"
+                      checked={sortBy === 'price-desc'}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="mr-2"
+                    />
+                    <span className="text-secondary text-sm">По цене (убывание)</span>
+                  </label>
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="sort"
+                      value="name"
+                      checked={sortBy === 'name'}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="mr-2"
+                    />
+                    <span className="text-secondary text-sm">По цвету</span>
+                  </label>
                 </div>
               </div>
             </div>
