@@ -235,13 +235,12 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
 
     // Sort products
     if (sortBy === 'price-asc') {
-      filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
+      filtered.sort((a, b) => a.price - b.price);
     } else if (sortBy === 'price-desc') {
-      filtered.sort((a, b) => (b.price || 0) - (a.price || 0));
+      filtered.sort((a, b) => b.price - a.price);
     } else if (sortBy === 'name') {
-      filtered.sort((a, b) => (a.name || a.design || '').localeCompare(b.name || b.design || ''));
+      filtered.sort((a, b) => (a.design || '').localeCompare(b.design || ''));
     }
-    // Note: 'default' sorting means no sorting - products stay in their original order
 
 
 
@@ -743,48 +742,48 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
               {/* Sorting Section */}
               <div className="mt-8 pt-6 border-t border-gray-200">
                 <h4 className="font-semibold text-[#2f378b] mb-3">Сортировка</h4>
-                <div className="space-y-2">
-                  <label className="flex items-center cursor-pointer">
+                <div className="space-y-3">
+                  <label className="flex items-center cursor-pointer py-1">
                     <input
                       type="radio"
                       name="sort"
                       value="default"
                       checked={sortBy === 'default'}
                       onChange={(e) => setSortBy(e.target.value)}
-                      className="mr-2"
+                      className="mr-3 w-4 h-4 text-[#e90039] bg-gray-100 border-gray-300 focus:ring-[#e90039] focus:ring-2"
                     />
                     <span className="text-secondary text-sm">По умолчанию</span>
                   </label>
-                  <label className="flex items-center cursor-pointer">
+                  <label className="flex items-center cursor-pointer py-1">
                     <input
                       type="radio"
                       name="sort"
                       value="price-asc"
                       checked={sortBy === 'price-asc'}
                       onChange={(e) => setSortBy(e.target.value)}
-                      className="mr-2"
+                      className="mr-3 w-4 h-4 text-[#e90039] bg-gray-100 border-gray-300 focus:ring-[#e90039] focus:ring-2"
                     />
                     <span className="text-secondary text-sm">По цене (возрастание)</span>
                   </label>
-                  <label className="flex items-center cursor-pointer">
+                  <label className="flex items-center cursor-pointer py-1">
                     <input
                       type="radio"
                       name="sort"
                       value="price-desc"
                       checked={sortBy === 'price-desc'}
                       onChange={(e) => setSortBy(e.target.value)}
-                      className="mr-2"
+                      className="mr-3 w-4 h-4 text-[#e90039] bg-gray-100 border-gray-300 focus:ring-[#e90039] focus:ring-2"
                     />
                     <span className="text-secondary text-sm">По цене (убывание)</span>
                   </label>
-                  <label className="flex items-center cursor-pointer">
+                  <label className="flex items-center cursor-pointer py-1">
                     <input
                       type="radio"
                       name="sort"
                       value="name"
                       checked={sortBy === 'name'}
                       onChange={(e) => setSortBy(e.target.value)}
-                      className="mr-2"
+                      className="mr-3 w-4 h-4 text-[#e90039] bg-gray-100 border-gray-300 focus:ring-[#e90039] focus:ring-2"
                     />
                     <span className="text-secondary text-sm">По названию</span>
                   </label>
