@@ -1,0 +1,23 @@
+fileName: 8934 (2.2).png
+Console.js:61 Calling setMainImage with: 8934 МАГИЯ БЕТОНА 8934 (2.2).png
+Console.js:61 Admin panel ordering for product 8934:
+Console.js:61 Original filesystem order: (5) ['8934 (1).png', '8934 (2.1).png', '8934 (2.2).png', '8934 (2.3).png', '8934 (коллаж).png']
+Console.js:61 Gallery from imageMap: (5) ['/src/assets/products/concrete/%D0%9C%D0%B0%D0%B3%D…8934%20(%D0%BA%D0%BE%D0%BB%D0%BB%D0%B0%D0%B6).png', '/src/assets/products/concrete/%D0%9C%D0%B0%D0%B3%D…%D0%97%D0%90%D0%9A%D0%90%D0%A2/PNG/8934%20(1).png', '/src/assets/products/concrete/%D0%9C%D0%B0%D0%B3%D…0%97%D0%90%D0%9A%D0%90%D0%A2/PNG/8934%20(2.1).png', '/src/assets/products/concrete/%D0%9C%D0%B0%D0%B3%D…0%97%D0%90%D0%9A%D0%90%D0%A2/PNG/8934%20(2.2).png', '/src/assets/products/concrete/%D0%9C%D0%B0%D0%B3%D…0%97%D0%90%D0%9A%D0%90%D0%A2/PNG/8934%20(2.3).png']
+Console.js:61 Extracted gallery filenames: (5) ['8934 (коллаж).png', '8934 (1).png', '8934 (2.1).png', '8934 (2.2).png', '8934 (2.3).png']
+Console.js:61 Final admin panel order: (5) ['8934 (коллаж).png', '8934 (1).png', '8934 (2.1).png', '8934 (2.2).png', '8934 (2.3).png']
+Console.js:61 🖼️ Dynamic image map initialized with 6 products: (6) ['8930', '8932', '8933', '8934', '8935', '8936']
+eruda.js:2 [Violation] 'setTimeout' handler took 207ms
+[Violation] Forced reflow while executing JavaScript took 194ms
+Console.js:61 [vite] hot updated: /src/index.css?v=u2YV69kfQMMt2JAXgZrK1
+Console.js:61 [vite] hot updated: /src/pages/ProductDetails.tsx
+Console.js:61 [vite] hot updated: /src/components/AdminPanel.tsx
+Console.js:61 [vite] hot updated: /src/components/ProductCard.tsx
+Console.js:61 [vite] hot updated: /src/pages/ProjectDetails.tsx
+Console.js:61 [vite] hot updated: /src/pages/Gallery.tsx
+@react-refresh:675 [Violation] 'setTimeout' handler took 80ms
+Console.js:61 Admin panel ordering for product 8934:
+Console.js:61 Original filesystem order: (5) ['8934 (1).png', '8934 (2.1).png', '8934 (2.2).png', '8934 (2.3).png', '8934 (коллаж).png']
+Console.js:61 Gallery from imageMap: (5) ['/src/assets/products/concrete/%D0%9C%D0%B0%D0%B3%D…8934%20(%D0%BA%D0%BE%D0%BB%D0%BB%D0%B0%D0%B6).png', '/src/assets/products/concrete/%D0%9C%D0%B0%D0%B3%D…%D0%97%D0%90%D0%9A%D0%90%D0%A2/PNG/8934%20(1).png', '/src/assets/products/concrete/%D0%9C%D0%B0%D0%B3%D…0%97%D0%90%D0%9A%D0%90%D0%A2/PNG/8934%20(2.1).png', '/src/assets/products/concrete/%D0%9C%D0%B0%D0%B3%D…0%97%D0%90%D0%9A%D0%90%D0%A2/PNG/8934%20(2.2).png', '/src/assets/products/concrete/%D0%9C%D0%B0%D0%B3%D…0%97%D0%90%D0%9A%D0%90%D0%A2/PNG/8934%20(2.3).png']
+Console.js:61 Extracted gallery filenames: (5) ['8934 (коллаж).png', '8934 (1).png', '8934 (2.1).png', '8934 (2.2).png', '8934 (2.3).png']
+Console.js:61 Final admin panel order: (5) ['8934 (коллаж).png', '8934 (1).png', '8934 (2.1).png', '8934 (2.2).png', '8934 (2.3).png']
+_app-e088dca48e5e952e.js:38 [Violation] 'setTimeout' handler took 73ms

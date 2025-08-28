@@ -577,6 +577,13 @@ async function updateImageMap(productId: string, fileNames: string[], folder: st
       content = beforeMap + updatedMapContent + afterMap;
       
       await fs.writeFile(imageMapPath, content, 'utf-8');
+      
+      // Force Node.js to invalidate the module cache for imageMap.ts
+      const moduleId = path.resolve(imageMapPath);
+      if (require.cache[moduleId]) {
+        delete require.cache[moduleId];
+      }
+      
       console.log(`Updated imageMap.ts: Set custom order for product ${productId} with ${fileNames.length} images`);
     } else {
       console.error('Could not find staticImageMap in imageMap.ts');

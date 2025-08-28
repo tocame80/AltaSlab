@@ -1185,7 +1185,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         
         // Check if we have a custom order in imageMap.ts for this product
         try {
-          const { getProductGallery } = await import('../assets/products/imageMap.ts');
+          // Add cache buster to force module reload
+          const { getProductGallery } = await import(`../assets/products/imageMap.ts?v=${Date.now()}`);
           const gallery = getProductGallery(productId, product.collection);
           
           console.log(`Admin panel ordering for product ${productId}:`);
