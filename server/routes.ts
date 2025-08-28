@@ -294,6 +294,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   let cacheTimestamp = 0;
   const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
+  // Function to clear catalog cache
+  const clearCatalogCache = () => {
+    catalogCache = null;
+    cacheTimestamp = 0;
+    console.log('API: Catalog cache cleared');
+  };
+
+  // Make cache clearing function available to admin routes
+  app.locals.clearCatalogCache = clearCatalogCache;
+
   // Catalog product routes - with LOCAL images only
   app.get('/api/catalog-products', async (req, res) => {
     try {

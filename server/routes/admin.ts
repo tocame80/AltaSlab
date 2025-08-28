@@ -200,6 +200,11 @@ router.delete('/delete-image', async (req, res) => {
       // Update imageMap.ts to remove the deleted image
       await removeImageFromMap(productId, fileName, folder);
       
+      // Clear catalog cache so changes are reflected immediately
+      if (req.app.locals.clearCatalogCache) {
+        req.app.locals.clearCatalogCache();
+      }
+      
       res.json({ 
         success: true, 
         message: `Deleted ${fileName}` 
@@ -248,6 +253,11 @@ router.post('/upload-images', upload.any(), async (req, res) => {
 
     // Update imageMap.ts file
     await updateImageMap(productId, savedFiles, folder);
+
+    // Clear catalog cache so changes are reflected immediately
+    if (req.app.locals.clearCatalogCache) {
+      req.app.locals.clearCatalogCache();
+    }
 
     res.json({ 
       success: true, 
@@ -329,6 +339,11 @@ router.put('/move-image-up', async (req, res) => {
     // Get the updated file names after renaming
     const updatedImages = await findProductImagesGlobal(folderPath, productId);
 
+    // Clear catalog cache so changes are reflected immediately
+    if (req.app.locals.clearCatalogCache) {
+      req.app.locals.clearCatalogCache();
+    }
+
     res.json({ 
       success: true, 
       message: `Moved ${fileName} up for product ${productId}`,
@@ -369,6 +384,11 @@ router.put('/move-image-down', async (req, res) => {
 
     // Get the updated file names after renaming
     const updatedImages = await findProductImagesGlobal(folderPath, productId);
+
+    // Clear catalog cache so changes are reflected immediately
+    if (req.app.locals.clearCatalogCache) {
+      req.app.locals.clearCatalogCache();
+    }
 
     res.json({ 
       success: true, 
@@ -431,6 +451,11 @@ router.put('/reorder-images', async (req, res) => {
 
     // Update imageMap.ts file
     await updateImageMap(productId, newFileNames, folder);
+
+    // Clear catalog cache so changes are reflected immediately
+    if (req.app.locals.clearCatalogCache) {
+      req.app.locals.clearCatalogCache();
+    }
 
     res.json({ 
       success: true, 
