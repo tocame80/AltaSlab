@@ -1386,14 +1386,33 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   };
 
   const makeMainImage = async (index: number) => {
-    if (index === 0) return; // Already main
+    console.log('makeMainImage called with index:', index);
+    if (index === 0) {
+      console.log('Image already main, skipping');
+      return; // Already main
+    }
 
-    const productId = existingImages[0].productId;
-    const product = products.find(p => p.id === productId);
-    if (!product) return;
-
-    const fileName = existingImages[index].fileName;
+    const productId = existingImages[0]?.productId;
+    console.log('productId:', productId);
+    console.log('existingImages:', existingImages);
     
+    const product = products?.find(p => p.id === productId);
+    console.log('product found:', product);
+    
+    if (!product) {
+      console.log('Product not found, aborting');
+      return;
+    }
+
+    const fileName = existingImages[index]?.fileName;
+    console.log('fileName:', fileName);
+    
+    if (!fileName) {
+      console.log('No fileName found, aborting');
+      return;
+    }
+    
+    console.log('Calling setMainImage with:', productId, product.collection, fileName);
     await setMainImage(productId, product.collection, fileName);
   };
 
