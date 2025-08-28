@@ -1837,6 +1837,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                 <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                 Существующие изображения ({existingImages.length})
               </h3>
+              <p className="text-sm text-gray-600 mb-3">
+                💡 Первое изображение автоматически становится главным. Используйте кнопку ⭐ чтобы сделать другое изображение главным.
+              </p>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-60 overflow-y-auto">
                 {existingImages.map((img, index) => (
                   <div key={index} className="relative group">
@@ -1915,9 +1918,15 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       {index + 1}
                     </div>
                     
-                    <p className="text-xs text-gray-600 mt-1 truncate" title={img.fileName}>
-                      {img.fileName}
-                    </p>
+                    {/* File name with better visibility */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/80 text-white text-xs p-2 rounded-b-lg">
+                      <p className="truncate font-medium" title={img.fileName}>
+                        {img.fileName}
+                      </p>
+                      {index === 0 && (
+                        <p className="text-yellow-300 text-xs">⭐ Главное изображение</p>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
