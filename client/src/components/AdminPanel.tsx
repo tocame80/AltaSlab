@@ -1181,7 +1181,41 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       
       if (response.ok) {
         const data = await response.json();
-        const existingImgs: ExistingImage[] = data.images.map((fileName: string) => ({
+        let orderedFileNames = data.images;
+        
+        // Check if we have a custom order in imageMap.ts for this product
+        try {
+          const { getProductGallery } = await import('../assets/products/imageMap.ts');
+          const gallery = getProductGallery(productId, product.collection);
+          
+          if (gallery && gallery.length > 0) {
+            // Extract filenames from gallery URLs and create custom order
+            const galleryFileNames = gallery.map(url => {
+              const parts = url.split('/');
+              return decodeURIComponent(parts[parts.length - 1]);
+            });
+            
+            // Reorder data.images to match gallery order, keeping any extra images at the end
+            const reordered = [];
+            const remaining = [...data.images];
+            
+            for (const galleryFileName of galleryFileNames) {
+              const index = remaining.findIndex(fileName => fileName === galleryFileName);
+              if (index !== -1) {
+                reordered.push(remaining.splice(index, 1)[0]);
+              }
+            }
+            
+            // Add any remaining images that weren't in the gallery
+            reordered.push(...remaining);
+            orderedFileNames = reordered;
+          }
+        } catch (error) {
+          console.warn('Could not load imageMap for ordering:', error);
+          // Fall back to original order if imageMap loading fails
+        }
+        
+        const existingImgs: ExistingImage[] = orderedFileNames.map((fileName: string) => ({
           productId,
           fileName,
           // Use original filenames as they are returned by API + timestamp to force cache refresh
