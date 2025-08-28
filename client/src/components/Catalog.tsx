@@ -147,7 +147,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
       designLower: product.design?.toLowerCase() || '',
       nameLower: product.name?.toLowerCase() || '',
       formatLower: product.format?.toLowerCase() || '',
-      isProfile: product.collection?.toLowerCase().includes('профиль') || false,
+      isProfile: product.collection === 'Профиль' || false,
       isGlue: product.collection === 'Клей'
     }));
   }, [products]);
@@ -261,7 +261,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
     // For accessory filters
     if (accessoryFilter === 'Профили') {
       return products.filter(product => 
-        product.collection?.toLowerCase().includes('профиль')
+        product.collection === 'Профиль'
       );
     } else if (accessoryFilter === 'Клей') {
       return products.filter(product => 
@@ -271,7 +271,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
       // Show all accessories (profiles + glue)
       return products.filter(product => 
         product.collection === 'Клей' || 
-        product.collection?.toLowerCase().includes('профиль')
+        product.collection === 'Профиль'
       );
     }
 
@@ -279,7 +279,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
     if (activeCollection === 'all' || !accessoryFilter) {
       return products.filter(product => 
         product.collection !== 'Клей' && 
-        !product.collection?.toLowerCase().includes('профиль')
+        product.collection !== 'Профиль'
       );
     }
 
