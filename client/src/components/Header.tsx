@@ -66,11 +66,11 @@ export default function Header() {
             href="/"
             className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
           >
-            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg flex items-center justify-center bg-[#e90039]">
-              <span className="text-white font-bold text-base lg:text-lg">АС</span>
+            <div className="w-9 h-9 lg:w-11 lg:h-11 rounded-lg flex items-center justify-center bg-[#e90039]">
+              <span className="text-white font-bold text-sm lg:text-base">АС</span>
             </div>
             <div>
-              <h1 className="font-bold text-lg lg:text-xl text-[#2f378b]">АЛЬТА СЛЭБ</h1>
+              <h1 className="font-bold text-base lg:text-lg text-[#2f378b]">АЛЬТА СЛЭБ</h1>
               <p className="text-muted text-xs">SPC ПАНЕЛИ</p>
             </div>
           </Link>
