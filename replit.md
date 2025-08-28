@@ -3,23 +3,16 @@
 This is a React-based SPA (Single Page Application) for "АЛЬТА СЛЭБ" - a Russian building materials company specializing in SPC (Stone Plastic Composite) wall and ceiling panels. The application serves as a product catalog and company showcase, featuring product collections, material calculators, installation guides, and contact forms. The site features a modular architecture where key functionality is accessible both as standalone pages and as tabs within product details. The site is built with a modern tech stack including React, TypeScript, Tailwind CSS, and shadcn/ui components.
 
 ## Recent Changes (August 2025)
-- **Critical API Routing Fix**: Resolved production issue where API endpoints returned HTML instead of JSON. Added proper middleware ordering to prevent Vite from intercepting API routes in both development and production environments
-- **Database Fallback System**: Implemented comprehensive fallback methods for production stability when database is unavailable. Added static catalog and gallery data to ensure site functionality during database outages
-- **Thumbnail Optimization**: Reduced thumbnail size from 200px to 100px for 2-3x faster generation from 6000×6000px source images, improving gallery and catalog loading performance
-- **Production Error Handling**: Enhanced error logging and graceful degradation for database connectivity issues in production environment
-- **API Middleware Protection**: Added custom middleware to properly handle API routes before static file serving, ensuring consistent JSON responses
-- **Catalog Display Fix**: Resolved critical issue where products didn't display for "Все" collection until another collection was activated first. Root cause was missing `products` dependency in `filteredProducts` useMemo hook, preventing filter updates when data loaded. Fixed filtering logic to properly handle 'all' collection state and show all products by default
-- **Performance Optimization**: Implemented server-side caching that reduced API response time from 432ms to 2ms for subsequent requests
-- **Gallery Layout Update**: Modified gallery page to display 3 projects per row (responsive: 1 on mobile, 2 on small screens, 3 on large)  
-- **Text Overlay Improvements**: Project titles moved to image overlays with white text and drop shadows for better visibility
-- **Material Display Enhancement**: Removed pricing from project materials, keeping only collection and color information
-- **Text Visibility Fix**: Applied direct `text-white` classes to h1/h3 elements instead of relying on parent inheritance for consistent white text display across gallery and project pages
-- **Catalog Import/Export Enhancement**: Updated Excel import/export to support new "Каталог Slab для сайта 26.08.2025" format with "Шт в уп" and "м2 в уп" fields
-- **Admin Catalog Pagination**: Added pagination to admin catalog (5 items per page with "Show more" button) for better performance with 74 products
-- **Package Data Fix**: Corrected area_per_package and pcs_per_package field mapping - now displays correct values like "4,32м2" instead of "0,0м2" in product cards
-- **Price Display Enhancement**: Updated price display to show price per m² instead of price per package - improves price comparison across products
-- **Product Details Layout**: Updated overlay layout to match catalog format with three-line display: size (300×600×2,4мм), area per package (4.32 м²), and price per package
-- **Catalog Auto-Detection**: Enhanced Python script to automatically detect and use the latest catalog file based on modification time - ensures current data is always loaded
+- **Production Database Resolution** (28.08.2025): Fixed critical production database connectivity issues by creating new PostgreSQL database with proper environment variables. Resolved "getaddrinfo ENOTFOUND helium" errors that prevented data loading in production deployments
+- **Complete Fallback System Implementation**: Created comprehensive fallback data system for both catalog and gallery when database is unavailable. Includes proper product codes (SPC prefixes) and realistic project data to ensure site functionality during outages
+- **Full Catalog Migration**: Successfully migrated complete catalog with 74 products across 7 collections (Магия бетона, Матовая эстетика, Мраморная феерия, Тканевая Роскошь, Профиль, Клей) using latest Excel format from 26.08.2025
+- **API Routing Stabilization**: Resolved production API routing where endpoints returned HTML instead of JSON. Enhanced filtering logic to support all product code formats (SPC, SS, numeric) ensuring compatibility with existing and new data
+- **Gallery Data Structure Update**: Updated fallback gallery projects to match current project structure with proper commercial/residential applications and material usage tracking
+- **Database Schema Finalization**: Completed PostgreSQL migration with drizzle-kit, established proper relationships between catalog products and gallery projects with correct foreign key references
+- **Production Deployment Workflow**: Established reliable deployment process with database initialization, catalog loading, and fallback activation for continuous service availability
+- **Thumbnail Optimization**: Maintained 100px thumbnail generation for optimal performance while supporting both development (full catalog) and production (fallback) modes
+- **Error Handling Enhancement**: Implemented graceful degradation with detailed logging for database connectivity issues and automatic fallback activation
+- **Cache Management**: Optimized API response caching (5-minute duration) with proper cache invalidation and ETag headers for improved performance
 
 # User Preferences
 
