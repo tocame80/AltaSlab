@@ -177,8 +177,12 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
             )}
           </div>
 
-          {/* Product Info Overlay - Top Left - Collection and Color */}
-          <div className="absolute top-0 left-0 p-2 lg:p-3 transition-all duration-300">
+          {/* Product Info Overlay - Collection and Color */}
+          <div className={`absolute p-2 lg:p-3 transition-all duration-300 ${
+            product.collection === 'Клей' || product.collection.toLowerCase().includes('профиль') 
+              ? 'top-0 left-0' 
+              : 'bottom-0 left-0'
+          }`}>
             <div>
               {/* Line 1: Collection */}
               <div className="text-gray-600 hover:text-[#e90039] text-[10px] lg:text-xs font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
