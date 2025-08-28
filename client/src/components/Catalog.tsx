@@ -145,7 +145,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
       // Show only accessories
       filtered = filtered.filter(product => 
         product.collection === 'Клей' || 
-        product.collection.toLowerCase().includes('профиль')
+        product.collection?.toLowerCase().includes('профиль')
       );
     } else if (activeCollection === 'favorites') {
       // For favorites, don't filter by collection here - will be handled by additionalFilters.favorites
@@ -160,7 +160,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
       const collectionName = collectionMap[activeCollection as keyof typeof collectionMap];
       if (collectionName) {
         filtered = filtered.filter(product => 
-          product.collection.toLowerCase() === collectionName.toLowerCase()
+          product.collection?.toLowerCase() === collectionName.toLowerCase()
         );
       }
     }
@@ -171,12 +171,12 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
         // Show only accessories
         filtered = filtered.filter(product => 
           product.collection === 'Клей' || 
-          product.collection.toLowerCase().includes('профиль')
+          product.collection?.toLowerCase().includes('профиль')
         );
       } else if (accessoryFilter === 'Профили') {
         // Show only profiles
         filtered = filtered.filter(product => 
-          product.collection.toLowerCase().includes('профиль')
+          product.collection?.toLowerCase().includes('профиль')
         );
       } else if (accessoryFilter === 'Клей') {
         // Show only adhesive
@@ -189,13 +189,13 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
     // Step 3: Apply panel collection filters (only if no accessory filter is active)
     if (filters.collection && filters.collection.trim() !== '' && !accessoryFilter) {
       filtered = filtered.filter(product => 
-        product.collection.toLowerCase() === filters.collection.toLowerCase()
+        product.collection?.toLowerCase() === filters.collection.toLowerCase()
       );
     }
 
     if (filters.color) {
       filtered = filtered.filter(product => 
-        product.color.toLowerCase().includes(filters.color.toLowerCase())
+        product.color?.toLowerCase().includes(filters.color.toLowerCase())
       );
     }
     if (filters.size) {
@@ -224,11 +224,11 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
       filtered = filtered.filter(product => {
         const searchLower = searchQuery.toLowerCase();
         return (
-          product.name.toLowerCase().includes(searchLower) ||
-          product.color.toLowerCase().includes(searchLower) ||
-          product.design.toLowerCase().includes(searchLower) ||
-          product.collection.toLowerCase().includes(searchLower) ||
-          product.format.toLowerCase().includes(searchLower)
+          product.name?.toLowerCase().includes(searchLower) ||
+          product.color?.toLowerCase().includes(searchLower) ||
+          product.design?.toLowerCase().includes(searchLower) ||
+          product.collection?.toLowerCase().includes(searchLower) ||
+          product.format?.toLowerCase().includes(searchLower)
         );
       });
     }
@@ -239,7 +239,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
     } else if (sortBy === 'price-desc') {
       filtered.sort((a, b) => b.price - a.price);
     } else if (sortBy === 'name') {
-      filtered.sort((a, b) => a.design.localeCompare(b.design));
+      filtered.sort((a, b) => (a.design || '').localeCompare(b.design || ''));
     }
 
 
@@ -264,7 +264,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
     // For panel collection filter - use the selected panel collection
     if (filters.collection && filters.collection !== '') {
       return products.filter(product => 
-        product.collection.toLowerCase() === filters.collection.toLowerCase()
+        product.collection?.toLowerCase() === filters.collection.toLowerCase()
       );
     }
 
@@ -279,7 +279,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
       const targetCollection = collectionMap[activeCollection as keyof typeof collectionMap];
       if (targetCollection) {
         return products.filter(product => 
-          product.collection.toLowerCase() === targetCollection.toLowerCase()
+          product.collection?.toLowerCase() === targetCollection.toLowerCase()
         );
       }
     }
@@ -287,7 +287,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
     // For accessory filters
     if (accessoryFilter === 'Профили') {
       return products.filter(product => 
-        product.collection.toLowerCase().includes('профиль')
+        product.collection?.toLowerCase().includes('профиль')
       );
     } else if (accessoryFilter === 'Клей') {
       return products.filter(product => 
