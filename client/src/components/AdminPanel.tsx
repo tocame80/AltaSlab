@@ -111,8 +111,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [isImporting, setIsImporting] = useState(false);
   const [catalogPage, setCatalogPage] = useState(0);
   const catalogItemsPerPage = 5;
-  const [renamingImage, setRenamingImage] = useState<{index: number, fileName: string} | null>(null);
-  const [newImageName, setNewImageName] = useState('');
+
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const catalogFileInputRef = useRef<HTMLInputElement>(null);
@@ -1387,61 +1386,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     await moveImageDownAPI(productId, product.collection, fileName);
   };
 
-  const renameImage = async () => {
-    if (!selectedProduct || !renamingImage || !newImageName.trim()) return;
 
-    setIsLoading(true);
-    try {
-      const product = products.find(p => p.id === selectedProduct);
-      if (!product) return;
-
-      const response = await fetch('/api/admin/rename-image', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          productId: selectedProduct,
-          folder: getFolderName(product.collection),
-          oldFileName: renamingImage.fileName,
-          newFileName: newImageName.trim()
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to rename image');
-      }
-
-      const result = await response.json();
-
-      // Refresh the images list
-      await queryClient.invalidateQueries({ 
-        queryKey: ['product-images', selectedProduct] 
-      });
-
-      // Refresh catalog cache
-      await queryClient.invalidateQueries({ 
-        queryKey: ['/api/catalog-products'] 
-      });
-
-      toast({
-        title: "Успешно!",
-        description: `Изображение переименовано: ${renamingImage.fileName} → ${newImageName}`,
-      });
-
-      // Reset state
-      setRenamingImage(null);
-      setNewImageName('');
-    } catch (error) {
-      console.error('Rename image error:', error);
-      toast({
-        title: "Ошибка",
-        description: `Не удалось переименовать изображение: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}`,
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const makeMainImage = async (index: number) => {
     console.log('makeMainImage called with index:', index);
@@ -1962,24 +1907,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     </button>
                     
                     {/* File name at bottom */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-xs p-1.5 rounded-b-lg flex items-center justify-between">
-                      <p className="truncate font-medium flex-1" title={img.fileName}>
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-xs p-1.5 rounded-b-lg">
+                      <p className="truncate font-medium" title={img.fileName}>
                         {img.fileName}
                       </p>
-                      <button
-                        onClick={() => {
-                          setRenamingImage({ index, fileName: img.fileName });
-                          setNewImageName(img.fileName.split('.')[0]); // Filename without extension
-                        }}
-                        className="ml-1 p-1 rounded bg-blue-500/80 hover:bg-blue-600 transition-colors"
-                        disabled={isLoading}
-                        title="✏️ Переименовать"
-                      >
-                        <svg width={10} height={10} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                          <path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                        </svg>
-                      </button>
                     </div>
 
                   </div>
@@ -1988,58 +1919,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
             </div>
           )}
 
-          {/* Rename Image Modal */}
-          {renamingImage && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
-                <h3 className="text-lg font-semibold mb-4">
-                  Переименовать изображение
-                </h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  Старое название: <span className="font-medium">{renamingImage.fileName}</span>
-                </p>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Новое название (без расширения):
-                    </label>
-                    <input
-                      type="text"
-                      value={newImageName}
-                      onChange={(e) => setNewImageName(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Введите новое название"
-                      autoFocus
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          renameImage();
-                        }
-                      }}
-                    />
-                  </div>
-                  <div className="flex justify-end gap-3">
-                    <button
-                      onClick={() => {
-                        setRenamingImage(null);
-                        setNewImageName('');
-                      }}
-                      className="px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 hover:border-gray-400 rounded-lg transition-colors"
-                      disabled={isLoading}
-                    >
-                      Отмена
-                    </button>
-                    <button
-                      onClick={renameImage}
-                      className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition-colors disabled:bg-gray-400"
-                      disabled={isLoading || !newImageName.trim()}
-                    >
-                      {isLoading ? 'Переименование...' : 'Переименовать'}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+
 
           {/* Compact Summary */}
           {existingImages.length > 0 && selectedProduct && (
