@@ -1884,19 +1884,17 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       </button>
                     </div>
                     
-                    {/* Bottom-left: Make main / Star */}
-                    <button
-                      onClick={() => makeMainImage(index)}
-                      className={`absolute bottom-1 left-1 text-white p-1.5 rounded-full transition-colors ${
-                        index === 0 
-                          ? 'bg-gray-500/50 opacity-30 cursor-not-allowed' 
-                          : 'bg-yellow-500/80 hover:bg-yellow-600 hover:scale-110'
-                      }`}
-                      disabled={isLoading || index === 0}
-                      title="⭐ Сделать главным"
-                    >
-                      <Star size={12} />
-                    </button>
+                    {/* Bottom-left: Make main / Star - только для НЕ главных изображений */}
+                    {index !== 0 && (
+                      <button
+                        onClick={() => makeMainImage(index)}
+                        className="absolute bottom-1 left-1 text-white p-2 rounded-full bg-yellow-500/90 hover:bg-yellow-600 hover:scale-125 transition-all shadow-lg border-2 border-white/50"
+                        disabled={isLoading}
+                        title="⭐ Сделать главным"
+                      >
+                        <Star size={14} fill="white" />
+                      </button>
+                    )}
                     
                     {/* Center: Delete button (appears on hover) */}
                     <button
