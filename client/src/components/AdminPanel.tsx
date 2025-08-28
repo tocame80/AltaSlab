@@ -1856,8 +1856,19 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       {index === 0 && <Star size={12} fill="white" />}
                     </div>
                     
-                    {/* Top-right: Move left and right controls */}
+                    {/* Top-right: Move left and right controls + Star button */}
                     <div className="absolute top-1 right-1 flex gap-1">
+                      {/* Star button - только для НЕ главных изображений */}
+                      {index !== 0 && (
+                        <button
+                          onClick={() => makeMainImage(index)}
+                          className="text-white p-1.5 rounded-full bg-yellow-500/90 hover:bg-yellow-600 hover:scale-125 transition-all shadow-lg border-2 border-white/30"
+                          disabled={isLoading}
+                          title="⭐ Сделать главным"
+                        >
+                          <Star size={14} fill="white" />
+                        </button>
+                      )}
                       <button
                         onClick={() => moveImageUp(index)}
                         className={`text-white p-1.5 rounded-full transition-colors ${
@@ -1884,17 +1895,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       </button>
                     </div>
                     
-                    {/* Bottom-left: Make main / Star - только для НЕ главных изображений */}
-                    {index !== 0 && (
-                      <button
-                        onClick={() => makeMainImage(index)}
-                        className="absolute bottom-1 left-1 text-white p-2 rounded-full bg-yellow-500/90 hover:bg-yellow-600 hover:scale-125 transition-all shadow-lg border-2 border-white/50"
-                        disabled={isLoading}
-                        title="⭐ Сделать главным"
-                      >
-                        <Star size={14} fill="white" />
-                      </button>
-                    )}
+
                     
                     {/* Center: Delete button (appears on hover) */}
                     <button
