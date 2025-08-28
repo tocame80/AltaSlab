@@ -235,12 +235,13 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
 
     // Sort products
     if (sortBy === 'price-asc') {
-      filtered.sort((a, b) => a.price - b.price);
+      filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
     } else if (sortBy === 'price-desc') {
-      filtered.sort((a, b) => b.price - a.price);
+      filtered.sort((a, b) => (b.price || 0) - (a.price || 0));
     } else if (sortBy === 'name') {
-      filtered.sort((a, b) => (a.design || '').localeCompare(b.design || ''));
+      filtered.sort((a, b) => (a.name || a.design || '').localeCompare(b.name || b.design || ''));
     }
+    // Note: 'default' sorting means no sorting - products stay in their original order
 
 
 
