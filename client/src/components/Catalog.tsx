@@ -160,7 +160,10 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
         if (!product.isGlue && !product.isProfile) return false;
       } else if (activeCollection === 'favorites') {
         // Will be handled in additional filters
-      } else if (activeCollection !== 'all') {
+      } else if (activeCollection === 'all') {
+        // For "all" collection, show only panels (exclude accessories)
+        if (product.isGlue || product.isProfile) return false;
+      } else {
         const collectionMap = {
           'concrete': 'магия бетона',
           'fabric': 'тканевая роскошь',
@@ -260,6 +263,14 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
     } else if (accessoryFilter === 'Клей') {
       return products.filter(product => 
         product.collection === 'Клей'
+      );
+    }
+
+    // For "all" collection or default, show only panels (exclude accessories)
+    if (activeCollection === 'all' || !accessoryFilter) {
+      return products.filter(product => 
+        product.collection !== 'Клей' && 
+        !product.collection?.toLowerCase().includes('профиль')
       );
     }
 
