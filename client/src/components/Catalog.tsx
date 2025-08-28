@@ -156,7 +156,10 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
     // Single pass filter for better performance
     const result = preprocessedProducts.filter(product => {
       // Step 1: Collection filter
-      if (activeCollection === 'accessories') {
+      // If accessoryFilter is active, show ONLY accessories regardless of activeCollection
+      if (accessoryFilter) {
+        if (!product.isGlue && !product.isProfile) return false;
+      } else if (activeCollection === 'accessories') {
         // For accessories section, show ONLY accessories
         if (!product.isGlue && !product.isProfile) return false;
       } else if (activeCollection === 'favorites') {
@@ -177,15 +180,10 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
         if (targetCollection && product.collectionLower !== targetCollection) return false;
       }
 
-      // Step 2: Accessory filter
-      if (activeCollection === 'accessories' && accessoryFilter) {
-        if (accessoryFilter === 'all') {
-          if (!product.isGlue && !product.isProfile) return false;
-        } else if (accessoryFilter === 'Профили') {
-          if (!product.isProfile) return false;
-        } else if (accessoryFilter === 'Клей') {
-          if (!product.isGlue) return false;
-        }
+      // Step 2: Specific accessory type filter (when accessoryFilter is active)
+      if (accessoryFilter && accessoryFilter !== 'all') {
+        if (accessoryFilter === 'Профили' && !product.isProfile) return false;
+        if (accessoryFilter === 'Клей' && !product.isGlue) return false;
       }
 
       // Step 3: Panel collection filter
@@ -223,14 +221,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
       return 0; // default order
     });
 
-    // Debug logging for accessories and general state
-    console.log('📋 Catalog Debug:', {
-      activeCollection,
-      accessoryFilter,
-      totalProducts: preprocessedProducts.length,
-      filteredCount: result.length,
-      accessories: preprocessedProducts.filter(p => p.isGlue || p.isProfile).length
-    });
+
 
     return result;
   }, [preprocessedProducts, activeCollection, filters, additionalFilters, sortBy, searchQuery, accessoryFilter, favorites]);
