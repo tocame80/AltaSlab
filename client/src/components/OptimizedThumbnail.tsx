@@ -37,7 +37,7 @@ export default function OptimizedThumbnail({
     const loadThumbnail = async () => {
       if (!src) return;
 
-      const cacheKey = getCacheKey(src, size, quality);
+      const cacheKey = getCacheKey(src, size, quality) + '_v2'; // Force cache invalidation for white background
       const cachedUrl = getCachedImage(cacheKey);
 
       if (cachedUrl) {
@@ -102,12 +102,15 @@ export default function OptimizedThumbnail({
   }
 
   return (
-    <img
-      ref={imageRef}
-      src={thumbnailUrl}
-      alt={alt}
-      className={className}
-      loading="lazy"
-    />
+    <div className={`bg-white ${className}`}>
+      <img
+        ref={imageRef}
+        src={thumbnailUrl}
+        alt={alt}
+        className="w-full h-full object-cover"
+        loading="lazy"
+        style={{ backgroundColor: 'white' }}
+      />
+    </div>
   );
 }

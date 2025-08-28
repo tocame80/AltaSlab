@@ -51,6 +51,10 @@ export function useBatchImageProcessor({ batchSize = 3, delay = 16 }: BatchProce
           canvas.width = width;
           canvas.height = height;
 
+          // Fill with white background before drawing image
+          ctx.fillStyle = 'white';
+          ctx.fillRect(0, 0, width, height);
+
           // Progressive downsampling for very large images
           if (img.width > size * 8 || img.height > size * 8) {
             const intermediateCanvas = document.createElement('canvas');
@@ -65,6 +69,10 @@ export function useBatchImageProcessor({ batchSize = 3, delay = 16 }: BatchProce
               intermediateCanvas.height = intermediateHeight;
               intermediateCtx.imageSmoothingEnabled = true;
               intermediateCtx.imageSmoothingQuality = 'high';
+              
+              // Fill intermediate canvas with white background
+              intermediateCtx.fillStyle = 'white';
+              intermediateCtx.fillRect(0, 0, intermediateWidth, intermediateHeight);
               
               intermediateCtx.drawImage(img, 0, 0, intermediateWidth, intermediateHeight);
               ctx.drawImage(intermediateCanvas, 0, 0, width, height);
