@@ -154,7 +154,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
 
   const filteredProducts = useMemo(() => {
     // Single pass filter for better performance
-    return preprocessedProducts.filter(product => {
+    const result = preprocessedProducts.filter(product => {
       // Step 1: Collection filter
       if (activeCollection === 'accessories') {
         // For accessories section, show ONLY accessories
@@ -222,6 +222,25 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
       if (sortBy === 'name') return (a.color || a.design || '').localeCompare(b.color || b.design || '');
       return 0; // default order
     });
+
+    // Debug logging for accessories
+    if (activeCollection === 'accessories') {
+      const accessoryItems = preprocessedProducts.filter(p => p.isGlue || p.isProfile);
+      console.log('🔍 Accessories Debug:', {
+        totalProducts: preprocessedProducts.length,
+        accessoryFilter,
+        filteredCount: result.length,
+        accessories: accessoryItems.length,
+        sampleAccessories: accessoryItems.slice(0, 3).map(p => ({
+          name: p.name,
+          collection: p.collection,
+          isProfile: p.isProfile,
+          isGlue: p.isGlue
+        }))
+      });
+    }
+
+    return result;
   }, [preprocessedProducts, activeCollection, filters, additionalFilters, sortBy, searchQuery, accessoryFilter, favorites]);
 
   // Get visible products based on pagination - optimized for performance
