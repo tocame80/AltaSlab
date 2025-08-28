@@ -41,8 +41,9 @@ export default function Hero() {
           >
             <img 
               src={image.imageUrl}
-              alt={image.title || `Hero image ${index + 1}`}
+              alt={image.title || `Панели SPC АЛЬТА СЛЭБ - современные решения для отделки`}
               className="w-full h-full object-cover object-center"
+              loading={index === 0 ? "eager" : "lazy"}
               onLoad={() => console.log(`Hero image loaded: ${image.title}`)}
               onError={(e) => {
                 console.error(`Hero image load error: ${image.imageUrl}`);

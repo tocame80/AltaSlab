@@ -14,6 +14,7 @@ import VideoInstructions from '@/components/VideoInstructions';
 import AboutCompany from '@/components/AboutCompany';
 import Contacts from '@/components/Contacts';
 import Footer from '@/components/Footer';
+import SEOHead from '@/components/SEOHead';
 import { useState, useEffect } from 'react';
 import { Collection } from '@/types';
 import { ChevronUp } from 'lucide-react';
@@ -45,36 +46,89 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      <Hero />
-      <CollectionsNav 
-        activeCollection={activeCollection} 
-        onCollectionChange={setActiveCollection}
-        favoriteCount={favoriteCount}
+    <>
+      <SEOHead 
+        title="АЛЬТА СЛЭБ - Панели SPC стеновые и потолочные | Купить в России"
+        description="Премиум панели SPC АЛЬТА СЛЭБ для стен и потолков. Водостойкие, экологичные, простой монтаж. Коллекции бетон, ткань, мрамор. Доставка по России."
+        keywords="SPC панели, стеновые панели, потолочные панели, АЛЬТА СЛЭБ, водостойкие панели, ремонт, отделка"
+        canonicalUrl="https://altaslab.ru/"
       />
-      <Catalog activeCollection={activeCollection} />
-      <AboutMaterial />
-      <Advantages />
-      <Applications />
-      <Installation />
-      <Accessories />
-      <Calculator />
-      <Certificates />
-      <FAQ />
-      <VideoInstructions />
-      <AboutCompany />
-      <Contacts />
-      <Footer />
       
-      {/* Back to Top Button */}
-      <button
-        onClick={scrollToTop}
-        className={`back-to-top ${isVisible ? '' : 'hidden'}`}
-        aria-label="Вернуться наверх"
-      >
-        <ChevronUp size={20} />
-      </button>
-    </div>
+      <div className="min-h-screen bg-white">
+        <Header />
+        
+        <main role="main">
+          <Hero />
+          
+          <nav aria-label="Коллекции продуктов">
+            <CollectionsNav 
+              activeCollection={activeCollection} 
+              onCollectionChange={setActiveCollection}
+              favoriteCount={favoriteCount}
+            />
+          </nav>
+          
+          <section aria-label="Каталог продукции">
+            <Catalog activeCollection={activeCollection} />
+          </section>
+          
+          <section aria-label="О материале">
+            <AboutMaterial />
+          </section>
+          
+          <section aria-label="Преимущества">
+            <Advantages />
+          </section>
+          
+          <section aria-label="Применение">
+            <Applications />
+          </section>
+          
+          <section aria-label="Монтаж">
+            <Installation />
+          </section>
+          
+          <section aria-label="Аксессуары">
+            <Accessories />
+          </section>
+          
+          <section aria-label="Калькулятор материалов">
+            <Calculator />
+          </section>
+          
+          <section aria-label="Сертификаты">
+            <Certificates />
+          </section>
+          
+          <section aria-label="Часто задаваемые вопросы">
+            <FAQ />
+          </section>
+          
+          <section aria-label="Видеоинструкции">
+            <VideoInstructions />
+          </section>
+          
+          <section aria-label="О компании">
+            <AboutCompany />
+          </section>
+          
+          <section aria-label="Контакты">
+            <Contacts />
+          </section>
+        </main>
+        
+        <Footer />
+        
+        {/* Back to Top Button */}
+        <button
+          onClick={scrollToTop}
+          className={`back-to-top ${isVisible ? '' : 'hidden'}`}
+          aria-label="Вернуться наверх"
+          type="button"
+        >
+          <ChevronUp size={20} />
+        </button>
+      </div>
+    </>
   );
 }
