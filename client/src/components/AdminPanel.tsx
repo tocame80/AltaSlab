@@ -1659,8 +1659,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-6xl h-[95vh] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2">
+      <div className="bg-white rounded-xl shadow-2xl w-full h-full max-w-[98vw] max-h-[98vh] flex flex-col overflow-hidden">
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b border-gray-200 bg-gradient-to-r from-[#E95D22] to-[#D84315]">
           <h2 className="text-2xl font-bold text-white">Админ-панель</h2>
@@ -1744,9 +1744,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto p-2">
           {activeTab === 'images' && (
-            <div className="p-6 space-y-6">
+            <div className="p-4 space-y-4">
           {/* Instructions */}
           <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
             <h3 className="font-semibold text-blue-800 mb-2">Инструкция по управлению изображениями:</h3>
@@ -1840,7 +1840,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
               <p className="text-sm text-gray-600 mb-3">
                 💡 Первое изображение автоматически становится главным. Используйте кнопку ⭐ чтобы сделать другое изображение главным.
               </p>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-60 overflow-y-auto">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
                 {existingImages.map((img, index) => (
                   <div key={index} className="relative group">
                     <div className="aspect-square rounded-lg overflow-hidden border-2 border-gray-200">
@@ -1941,7 +1941,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                 К загрузке ({getProductsBySelection().length})
               </h3>
 
-              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 max-h-60 overflow-y-auto">
+              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-3">
                 {getProductsBySelection().map((img, index) => (
                   <div key={index} className="relative group">
                     <div className="aspect-square rounded-lg overflow-hidden border border-gray-200">
@@ -2024,7 +2024,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
           )}
 
           {activeTab === 'certificates' && (
-            <div className="p-6 space-y-6">
+            <div className="p-4 space-y-4">
               {/* Certificates Header */}
               <div className="flex justify-between items-center">
                 <h3 className="text-xl font-semibold text-gray-900">Управление сертификатами</h3>
@@ -2240,7 +2240,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
 
           {/* Videos Tab */}
           {activeTab === 'videos' && (
-            <div className="p-6">
+            <div className="p-4">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-semibold text-gray-900">Управление видеоинструкциями</h3>
                 <button
