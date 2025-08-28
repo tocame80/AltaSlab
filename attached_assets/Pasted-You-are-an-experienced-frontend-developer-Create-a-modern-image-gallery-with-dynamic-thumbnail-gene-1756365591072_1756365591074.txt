@@ -1,0 +1,63 @@
+You are an experienced frontend developer. Create a modern image gallery with dynamic thumbnail generation on the client side.
+
+TECHNICAL SPECIFICATION:
+
+DATA STRUCTURE:
+- All images are in a single folder (e.g., /images/)
+- Original files are large (e.g., 6000x6000px)
+- Need to dynamically create thumbnails of different sizes WITHOUT server processing
+
+FUNCTIONAL REQUIREMENTS:
+
+1. CATALOG WITH MINI-THUMBNAILS:
+- Grid of responsive image cards
+- Dynamic generation of ~250x250px thumbnails from originals
+- Lazy loading (Intersection Observer)
+- Smooth hover animations
+- In-memory caching of processed images
+
+2. CONTROL ELEMENTS:
+- "View" button (magnifier icon) - opens modal with ~2000x2000px preview
+- "Download" button (download icon) - downloads original file
+- File information (name, size)
+
+3. PREVIEW MODAL WINDOW:
+- Medium-sized preview for detailed viewing (~2000x2000px)
+- Dynamic resizing to fit user's screen
+- Original download button
+- Close via ESC, background click, or close button
+
+4. TECHNICAL IMPLEMENTATION:
+- HTML5 Canvas for image resizing
+- CSS Grid for responsive layout
+- Vanilla JavaScript (no frameworks)
+- Modern Web APIs (Intersection Observer, FileReader)
+- Progressive enhancement (fallbacks for older browsers)
+
+5. OPTIMIZATION:
+- Smart memory management (cache limits)
+- Smooth CSS animations and transitions
+- Canvas optimization for quality resizing
+- Mobile device responsiveness
+
+6. UX/UI REQUIREMENTS:
+- Modern minimalist design
+- Loading indicators
+- User action notifications
+- Smooth micro-animations
+- Touch gesture support
+
+CODE STRUCTURE:
+1. HTML markup with semantic tags
+2. CSS using modern features (Grid, Flexbox, custom properties)
+3. JavaScript gallery manager class
+4. Methods for dynamically adding images
+5. Error handling and edge cases
+
+ADDITIONAL FEATURES:
+- Support for different image formats
+- Keyboard shortcuts for navigation
+- Preloading of neighboring images
+- EXIF data display (if available)
+
+Create fully functional code with detailed comments and usage examples.

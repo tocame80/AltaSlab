@@ -13,6 +13,7 @@ import FAQPage from "@/pages/FAQPage";
 import VideoPage from "@/pages/VideoPage";
 import Contact from "@/pages/Contact";
 import Gallery from "@/pages/Gallery";
+import ImageGalleryDemo from "@/pages/ImageGalleryDemo";
 import WhereToBuy from "@/pages/WhereToBuy";
 import NotFound from "@/pages/not-found";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
@@ -25,6 +26,7 @@ function Router() {
       <Route path="/product/:id" component={ProductDetails} />
       <Route path="/project/:id" component={ProjectDetails} />
       <Route path="/gallery" component={Gallery} />
+      <Route path="/gallery-demo" component={ImageGalleryDemo} />
       <Route path="/where-to-buy" component={WhereToBuy} />
       <Route path="/calculator" component={Calculator} />
       <Route path="/certificates" component={CertificatesPage} />
