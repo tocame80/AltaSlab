@@ -1188,12 +1188,18 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
           const { getProductGallery } = await import('../assets/products/imageMap.ts');
           const gallery = getProductGallery(productId, product.collection);
           
+          console.log(`Admin panel ordering for product ${productId}:`);
+          console.log('Original filesystem order:', data.images);
+          console.log('Gallery from imageMap:', gallery);
+          
           if (gallery && gallery.length > 0) {
             // Extract filenames from gallery URLs and create custom order
             const galleryFileNames = gallery.map(url => {
               const parts = url.split('/');
               return decodeURIComponent(parts[parts.length - 1]);
             });
+            
+            console.log('Extracted gallery filenames:', galleryFileNames);
             
             // Reorder data.images to match gallery order, keeping any extra images at the end
             const reordered = [];
@@ -1209,6 +1215,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
             // Add any remaining images that weren't in the gallery
             reordered.push(...remaining);
             orderedFileNames = reordered;
+            
+            console.log('Final admin panel order:', orderedFileNames);
           }
         } catch (error) {
           console.warn('Could not load imageMap for ordering:', error);
