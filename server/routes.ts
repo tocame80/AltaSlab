@@ -205,6 +205,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Catalog product routes - with LOCAL images only
   app.get('/api/catalog-products', async (req, res) => {
     try {
+      console.log('API: /catalog-products request started');
+      
       // Check if cache is valid
       const now = Date.now();
       if (catalogCache && (now - cacheTimestamp) < CACHE_DURATION) {
@@ -219,6 +221,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'ETag': `catalog-${now}`
       });
       
+      console.log('API: Attempting to fetch products from storage...');
       const catalogProducts = await storage.getCatalogProducts();
       console.log('API: Got', catalogProducts.length, 'products from storage');
       
@@ -259,7 +262,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(transformedProducts);
     } catch (error) {
       console.error('Error fetching catalog products:', error);
-      res.status(500).json({ message: 'Failed to fetch catalog products' });
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+      res.status(500).json({ 
+        message: 'Failed to fetch catalog products',
+        error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      });
     }
   });
 

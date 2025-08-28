@@ -235,7 +235,20 @@ export class DatabaseStorage implements IStorage {
 
   // Catalog product methods
   async getCatalogProducts(): Promise<CatalogProduct[]> {
-    return await db.select().from(catalogProducts).where(eq(catalogProducts.isActive, 1)).orderBy(asc(catalogProducts.sortOrder));
+    try {
+      console.log('DatabaseStorage: Attempting to query catalogProducts table...');
+      const result = await db.select().from(catalogProducts).where(eq(catalogProducts.isActive, 1)).orderBy(asc(catalogProducts.sortOrder));
+      console.log('DatabaseStorage: Successfully queried catalogProducts, got', result.length, 'products');
+      return result;
+    } catch (error) {
+      console.error('DatabaseStorage: Error querying catalogProducts:', error);
+      console.error('DatabaseStorage: Error details:', {
+        message: error.message,
+        code: error.code,
+        stack: error.stack
+      });
+      throw error;
+    }
   }
 
   async getCatalogProduct(id: string): Promise<CatalogProduct | undefined> {
