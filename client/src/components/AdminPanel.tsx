@@ -1434,12 +1434,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       });
 
       if (response.ok) {
-        // Reload images from server to get updated file names after rename
-        await loadExistingImages(productId);
-        toast({
-          title: 'Успешно',
-          description: 'Главное изображение изменено!',
-        });
+        // Force page reload to update catalog with new main image
+        window.location.reload();
       } else {
         toast({
           title: 'Ошибка',

@@ -300,6 +300,11 @@ router.put('/set-main-image', async (req, res) => {
       req.app.locals.clearCatalogCache();
     }
 
+    // Force imageMap reload by clearing browser cache
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
     res.json({ 
       success: true, 
       message: `Set ${fileName} as main image for product ${productId}`,

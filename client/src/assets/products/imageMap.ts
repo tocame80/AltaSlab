@@ -14,6 +14,13 @@ import placeholderImage from './placeholder.jpg';
 let dynamicImageMap: Record<string, string[]> | null = null;
 let imageMapInitialized = false;
 
+// Function to reset the image map (for admin updates)
+export const resetImageMap = () => {
+  console.log('🔄 Resetting image map cache...');
+  dynamicImageMap = null;
+  imageMapInitialized = false;
+};
+
 // Initialize the dynamic image map
 const initializeImageMap = () => {
   if (imageMapInitialized) return;
