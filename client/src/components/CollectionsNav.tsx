@@ -9,6 +9,8 @@ interface CollectionsNavProps {
 
 export default function CollectionsNav({ activeCollection, onCollectionChange, favoriteCount = 0 }: CollectionsNavProps) {
   const isSticky = useStickyNav();
+  
+  console.log('🧭 Navigator state:', { activeCollection });
   const collections = [
     { key: 'all' as Collection, label: 'ВСЁ', mobileLabel: 'ВСЁ' },
     { key: 'concrete' as Collection, label: 'МАГИЯ БЕТОНА', mobileLabel: 'БЕТОН' },
@@ -27,7 +29,10 @@ export default function CollectionsNav({ activeCollection, onCollectionChange, f
             {collections.map((collection) => (
               <button
                 key={collection.key}
-                onClick={() => onCollectionChange(collection.key)}
+                onClick={() => {
+                  console.log('🧭 Navigator: Changing to collection:', collection.key);
+                  onCollectionChange(collection.key);
+                }}
                 className={`collection-link whitespace-nowrap ${
                   activeCollection === collection.key ? 'active' : ''
                 }`}
