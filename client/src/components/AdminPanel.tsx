@@ -1192,7 +1192,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
           
           if (gallery && gallery.length > 0) {
             // Extract filenames from gallery URLs and create custom order
-            const galleryFileNames = gallery.map(url => {
+            const galleryFileNames = gallery.map((url: string) => {
               const parts = url.split('/');
               return decodeURIComponent(parts[parts.length - 1]);
             });
