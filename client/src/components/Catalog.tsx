@@ -175,7 +175,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
       }
 
       // Step 2: Accessory filter
-      if ((activeCollection === 'all' || activeCollection === 'accessories') && accessoryFilter) {
+      if (activeCollection === 'accessories' && accessoryFilter) {
         if (accessoryFilter === 'all') {
           if (!product.isGlue && !product.isProfile) return false;
         } else if (accessoryFilter === 'Профили') {
@@ -644,15 +644,15 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
                 </div>
               )}
 
-              {/* Colors Filter for Profiles - Show as separate section when profiles are selected */}
-              {accessoryFilter === 'Профили' && (
+              {/* Colors Filter for Accessories - Show when any accessories are selected */}
+              {(accessoryFilter === 'Профили' || accessoryFilter === 'all') && (
                 <div className="mb-6">
-                  <h4 className="font-semibold text-[#2f378b] mb-3">Цвета профилей</h4>
+                  <h4 className="font-semibold text-[#2f378b] mb-3">Цвета</h4>
                   <div className="space-y-2">
                     <label className="flex items-center cursor-pointer">
                       <input
                         type="radio"
-                        name="profile-color"
+                        name="accessory-color"
                         value=""
                         checked={filters.color === ''}
                         onChange={(e) => setFilters(prev => ({ ...prev, color: e.target.value }))}
@@ -660,11 +660,12 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
                       />
                       <span className="text-secondary text-sm">Все цвета</span>
                     </label>
-                    {availableColors.map(color => (
+                    {/* Static accessory colors */}
+                    {['Бронза', 'Серебро', 'Шампань'].map(color => (
                       <label key={color} className="flex items-center cursor-pointer group">
                         <input
                           type="radio"
-                          name="profile-color"
+                          name="accessory-color"
                           value={color}
                           checked={filters.color === color}
                           onChange={(e) => {
