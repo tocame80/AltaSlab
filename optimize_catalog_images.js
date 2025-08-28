@@ -12,12 +12,24 @@ const PRODUCTS_DIR = 'client/src/assets/products';
 const TEMP_DIR = path.join(PRODUCTS_DIR, 'temp');
 const IMAGE_MAP_PATH = path.join(PRODUCTS_DIR, 'imageMap.ts');
 
-// Коллекции и их русские названия
+// Коллекции и их точные названия папок из вашего каталога
 const COLLECTIONS = {
-  'concrete': ['МагияБетона', 'Магия Бетона', 'Бетон'],
-  'matte': ['МатоваяЭстетика', 'Матовая', 'Матовая эстетика'], 
-  'marble': ['МраморнаяФеерия', 'Мраморная', 'Мрамор'],
-  'fabric': ['ТканеваяРоскошь', 'Ткань', 'Тканевая']
+  'concrete': {
+    keywords: ['МагияБетона'],
+    designs: ['АЗИМУТ', 'ЗАКАТ', 'КОМЕТА', 'МЕТЕОРИТ', 'ПОЛНОЛУНИЕ', 'РАССВЕТ']
+  },
+  'matte': {
+    keywords: ['МатоваяЭстетика'],
+    designs: ['РЕЙДЖК', 'КОТ', 'ТАУП', 'ЭКРЮ']
+  },
+  'marble': {
+    keywords: ['МраморнаяФеерия'],
+    designs: ['ВЕЗУВИЙ', 'КИЛИМАНДЖАРО', 'КРАКАТАУ', 'МИСТИ', 'ОРИСАБА', 'РЕЙНИР', 'САНГАЙ', 'ФУДЗИЯМА', 'ЭЛЬБРУС', 'ЭТНА']
+  },
+  'fabric': {
+    keywords: ['ТканеваяРоскошь'],
+    designs: ['АТЛАС', 'БАТИСТ', 'ВУАЛЬ', 'ДЕНИМ', 'КОРЖЕТ', 'ЛЁН', 'САТИН', 'ШИФОН']
+  }
 };
 
 async function processUploadedImages() {
@@ -100,24 +112,26 @@ async function processUploadedImages() {
   }
 }
 
-function detectCollection(filename) {
-  const lowerName = filename.toLowerCase();
-  
-  for (const [collection, keywords] of Object.entries(COLLECTIONS)) {
-    for (const keyword of keywords) {
-      if (lowerName.includes(keyword.toLowerCase())) {
-        return collection;
+function detectCollection(folderName) {
+  // Определяем коллекцию по названию папки
+  for (const [collection, config] of Object.entries(COLLECTIONS)) {
+    for (const keyword of config.keywords) {
+      if (folderName.includes(keyword)) {
+        return { collection, design: extractDesign(folderName, config.designs) };
       }
     }
   }
   
-  // По умолчанию определяем по номеру товара
-  if (filename.match(/^89\d{2}/)) return 'concrete';
-  if (filename.match(/^90\d{2}/)) return 'matte';
-  if (filename.match(/^91\d{2}/)) return 'marble';
-  if (filename.match(/^92\d{2}/)) return 'fabric';
-  
-  return 'concrete'; // По умолчанию
+  return { collection: 'concrete', design: 'UNKNOWN' };
+}
+
+function extractDesign(folderName, designs) {
+  for (const design of designs) {
+    if (folderName.includes(design)) {
+      return design;
+    }
+  }
+  return 'UNKNOWN';
 }
 
 function extractProductId(filename) {
