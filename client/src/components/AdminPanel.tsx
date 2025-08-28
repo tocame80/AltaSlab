@@ -1437,8 +1437,20 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       });
 
       if (response.ok) {
-        // Force page reload to update catalog with new main image
-        window.location.reload();
+        // Refresh admin panel data and catalog cache
+        queryClient.invalidateQueries({ queryKey: ['/api/catalog-products'] });
+        queryClient.invalidateQueries({ queryKey: ['/api/admin/product-images', productId] });
+        
+        // Refetch current product images to update admin panel display
+        if (selectedProduct) {
+          const productIdFromSelected = selectedProduct.split(' - ')[0];
+          await loadExistingImages(productIdFromSelected);
+        }
+
+        toast({
+          title: 'Успешно',
+          description: `Установлено главное изображение: ${fileName}`,
+        });
       } else {
         toast({
           title: 'Ошибка',
