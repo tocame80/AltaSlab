@@ -77,9 +77,27 @@ const initializeImageMap = () => {
 // Initialize image map immediately
 initializeImageMap();
 
+// Static image mappings for products with custom ordering (set by admin)
+// These take priority over dynamic discovery to respect admin-set main images
+
+// Function to resolve static image paths to URLs
+const resolveStaticImages = (paths: string[]): string[] => {
+  const imageImports = import.meta.glob('./**/*.{png,jpg,jpeg,webp}', { eager: true }) as Record<string, { default: string }>;
+  
+  return paths.map(path => {
+    // Find matching import
+    const matchingKey = Object.keys(imageImports).find(key => key === path);
+    if (matchingKey && imageImports[matchingKey]) {
+      return imageImports[matchingKey].default;
+    }
+    // If not found, return path as-is (might be handled elsewhere)
+    return path;
+  }).filter(url => url); // Remove empty/undefined URLs
+};
+
 // Static fallback mappings for products with special paths  
 const staticImageMap: Record<string, string[]> = {
-  // Note: Relying on dynamic image loading instead of static imports
+  // Admin-set image orders will be populated here dynamically
 };
 
 // Helper function to get product gallery
@@ -89,12 +107,16 @@ export const getProductGallery = (productId: string, collection: string = ''): s
     initializeImageMap();
   }
   
-  // First check static mappings (guaranteed to work)
-  if (staticImageMap[productId]) {
-    return staticImageMap[productId];
+  // First check static mappings (set by admin - these have custom ordering)
+  if (staticImageMap[productId] && staticImageMap[productId].length > 0) {
+    // Resolve the static paths to actual URLs
+    const resolvedImages = resolveStaticImages(staticImageMap[productId]);
+    if (resolvedImages.length > 0) {
+      return resolvedImages;
+    }
   }
   
-  // Then check dynamic images
+  // Then check dynamic images (auto-discovered, sorted alphabetically)
   if (dynamicImageMap && dynamicImageMap[productId] && dynamicImageMap[productId].length > 0) {
     return dynamicImageMap[productId];
   }
@@ -157,12 +179,16 @@ export const getProductMainImage = (productId: string, collection: string = '', 
     initializeImageMap();
   }
   
-  // First check static mappings (guaranteed to work)
+  // First check static mappings (set by admin - these have custom ordering)
   if (staticImageMap[productId] && staticImageMap[productId].length > 0) {
-    return staticImageMap[productId][0]; // Return first image
+    // Resolve the static paths to actual URLs
+    const resolvedImages = resolveStaticImages(staticImageMap[productId]);
+    if (resolvedImages.length > 0) {
+      return resolvedImages[0]; // Return first image (main image set by admin)
+    }
   }
   
-  // Then check dynamic images
+  // Then check dynamic images (auto-discovered, sorted alphabetically)  
   if (dynamicImageMap && dynamicImageMap[productId] && dynamicImageMap[productId].length > 0) {
     return dynamicImageMap[productId][0]; // Return first image
   }

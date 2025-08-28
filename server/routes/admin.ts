@@ -491,39 +491,37 @@ async function updateImageMap(productId: string, fileNames: string[], folder: st
     // Read current imageMap content
     let content = await fs.readFile(imageMapPath, 'utf-8');
 
-    // Add import statements
-    const imports = fileNames.map((fileName, index) => {
-      const varName = `product${productId}_${index + 1}`;
-      return `import ${varName} from './${folder}/${fileName}';`;
-    }).join('\n');
-
-    // Find where to insert imports (after existing imports)
-    const importInsertPoint = content.indexOf('// Map collection names');
-    if (importInsertPoint > -1) {
-      content = content.slice(0, importInsertPoint) + 
-                imports + '\n\n// Map collection names' + 
-                content.slice(importInsertPoint + '// Map collection names'.length);
-    }
-
-    // Update specificImageMap
-    const varNames = fileNames.map((_, index) => `product${productId}_${index + 1}`);
-    const arrayContent = `[${varNames.join(', ')}]`;
+    // Create image paths relative to the imageMap.ts file
+    const imagePaths = fileNames.map(fileName => `./${folder}/${fileName}`);
     
-    // Check if product already exists in specificImageMap
-    const productMapRegex = new RegExp(`'${productId}':\\s*\\[[^\\]]*\\]`);
-    if (productMapRegex.test(content)) {
-      // Replace existing entry
-      content = content.replace(productMapRegex, `'${productId}': ${arrayContent}`);
+    // Find the staticImageMap declaration
+    const staticMapStart = content.indexOf('const staticImageMap: Record<string, string[]> = {');
+    const staticMapEnd = content.indexOf('};', staticMapStart);
+    
+    if (staticMapStart > -1 && staticMapEnd > -1) {
+      const beforeMap = content.slice(0, staticMapStart);
+      const afterMap = content.slice(staticMapEnd + 2);
+      
+      // Extract existing entries (if any)
+      const mapContent = content.slice(staticMapStart, staticMapEnd + 2);
+      
+      // Check if product already exists
+      const productMapRegex = new RegExp(`\\s*'${productId}':\\s*\\[[^\\]]*\\],?.*?\\n`, 'g');
+      let updatedMapContent = mapContent.replace(productMapRegex, '');
+      
+      // Add the new/updated entry
+      const newEntry = `  '${productId}': ${JSON.stringify(imagePaths)}, // Admin-set order for product ${productId}\n`;
+      
+      // Insert before the closing brace
+      updatedMapContent = updatedMapContent.replace('};', `${newEntry}};`);
+      
+      content = beforeMap + updatedMapContent + afterMap;
+      
+      await fs.writeFile(imageMapPath, content, 'utf-8');
+      console.log(`Updated imageMap.ts: Set custom order for product ${productId} with ${fileNames.length} images`);
     } else {
-      // Add new entry
-      const mapInsertPoint = content.indexOf('};', content.indexOf('specificImageMap'));
-      if (mapInsertPoint > -1) {
-        const newEntry = `  '${productId}': ${arrayContent}, // ${productId} - has ${fileNames.length} photos\n`;
-        content = content.slice(0, mapInsertPoint) + newEntry + content.slice(mapInsertPoint);
-      }
+      console.error('Could not find staticImageMap in imageMap.ts');
     }
-
-    await fs.writeFile(imageMapPath, content, 'utf-8');
   } catch (error) {
     console.error('Error updating imageMap:', error);
   }
