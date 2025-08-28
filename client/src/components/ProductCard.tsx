@@ -122,7 +122,7 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
       {/* Header Section */}
       <div className="relative overflow-hidden">
         {/* Image Gallery */}
-        <div className="relative w-full aspect-[3/2] lg:aspect-[2/1]">
+        <div className="relative w-full aspect-[3/2] lg:aspect-[2/1] bg-white">
           <OptimizedThumbnail
             src={currentImage}
             alt={`${product.design} - ${product.collection}`}
@@ -158,7 +158,7 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
             )}
           </div>
 
-          {/* Image Overlay - only for darkening effect on hover */}
+          {/* Image Overlay - only for darkening effect on hover when image is loaded */}
           <div className={`absolute inset-0 bg-black/20 transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'} pointer-events-none`}>
           </div>
 
