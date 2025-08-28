@@ -19,7 +19,6 @@ export const resetImageMap = () => {
   console.log('🔄 Resetting image map cache...');
   dynamicImageMap = null;
   imageMapInitialized = false;
-  '8934': [product8934_1, product8934_2, product8934_3, product8934_4, product8934_5], // 8934 - has 5 photos
 };
 
 // Initialize the dynamic image map
