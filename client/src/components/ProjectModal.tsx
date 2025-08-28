@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, X, MapPin, Calendar, Maximize2 } from 'lucid
 import { products } from '@/data/products';
 import ProductCard from '@/components/ProductCard';
 import { useFavoritesContext } from '@/contexts/FavoritesContext';
+import OptimizedThumbnail from '@/components/OptimizedThumbnail';
 
 interface GalleryProject {
   id: string;
@@ -67,10 +68,12 @@ export default function ProjectModal({ project, isOpen, onClose }: ProjectModalP
           <div className="aspect-[16/9] bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
             {gallery.length > 0 ? (
               <>
-                <img
+                <OptimizedThumbnail
                   src={gallery[currentImageIndex]}
                   alt={project.title}
                   className="w-full h-full object-cover"
+                  size={800}
+                  quality={0.9}
                 />
                 
                 {/* Navigation Arrows */}

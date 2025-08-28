@@ -55,7 +55,9 @@ export default function OptimizedThumbnail({
       try {
         const thumbnail = await addToQueue(src, size, quality);
         if (isMounted) {
-          console.log('OptimizedThumbnail: Thumbnail generated successfully, size:', thumbnail.length);
+          console.log('OptimizedThumbnail: Thumbnail generated successfully, size:', thumbnail.length, 'for target size:', size);
+          console.log('OptimizedThumbnail: Original src:', src);
+          console.log('OptimizedThumbnail: Generated thumbnail starts with:', thumbnail.substring(0, 50));
           setCachedImage(cacheKey, thumbnail, size * size * 0.5); // Estimate size
           setThumbnailUrl(thumbnail);
           setIsLoading(false);
@@ -63,12 +65,12 @@ export default function OptimizedThumbnail({
         }
       } catch (error) {
         console.warn('OptimizedThumbnail failed to generate thumbnail:', error);
-        // Fallback to original image if thumbnail generation fails
+        // Don't fallback to original image - show error state instead
         if (isMounted) {
-          console.log('OptimizedThumbnail: Falling back to original image');
-          setThumbnailUrl(src);
+          console.log('OptimizedThumbnail: Setting error state, NOT falling back to original');
+          setHasError(true);
           setIsLoading(false);
-          onLoad?.();
+          onError?.();
         }
       }
     };

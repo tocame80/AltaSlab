@@ -352,10 +352,12 @@ export default function ProductDetails() {
           {/* Main Image */}
           <div className="group relative bg-white rounded-xl overflow-hidden shadow-sm mb-6">
             <div className="aspect-[2/1] relative">
-              <img
+              <OptimizedThumbnail
                 src={gallery[currentImageIndex]}
                 alt={getProductDisplayName()}
                 className="w-full h-full object-cover"
+                size={800}
+                quality={0.9}
               />
               
               {/* Product Info Overlay - Bottom Left - Collection, Color, Price per m² */}
@@ -1177,10 +1179,12 @@ export default function ProductDetails() {
               <X size={24} />
             </button>
             
-            <img
+            <OptimizedThumbnail
               src={gallery[currentImageIndex]}
               alt={getProductDisplayName()}
               className="max-w-full max-h-full object-contain"
+              size={1200}
+              quality={0.95}
             />
             
             {/* Navigation arrows */}
@@ -1221,10 +1225,12 @@ export default function ProductDetails() {
               <X size={20} />
             </button>
             
-            <img
+            <OptimizedThumbnail
               src={gallery[currentImageIndex]}
               alt={getProductDisplayName()}
               className="w-full h-full object-contain rounded-lg"
+              size={1200}
+              quality={0.95}
             />
             
             {/* Image actions */}
