@@ -76,6 +76,33 @@ export default function ProjectModal({ project, isOpen, onClose }: ProjectModalP
                   quality={0.9}
                 />
                 
+                {/* Navigation arrows */}
+                {gallery.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => navigateImage('prev')}
+                      className="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all shadow-lg"
+                      data-testid="button-prev-image"
+                    >
+                      <ChevronLeft size={20} />
+                    </button>
+                    <button
+                      onClick={() => navigateImage('next')}
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all shadow-lg"
+                      data-testid="button-next-image"
+                    >
+                      <ChevronRight size={20} />
+                    </button>
+                  </>
+                )}
+                
+                {/* Image counter */}
+                {gallery.length > 1 && (
+                  <div className="absolute bottom-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm">
+                    {currentImageIndex + 1} / {gallery.length}
+                  </div>
+                )}
+                
                 {/* Navigation Arrows */}
                 {gallery.length > 1 && (
                   <>

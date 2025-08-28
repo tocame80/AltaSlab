@@ -1233,6 +1233,31 @@ export default function ProductDetails() {
               quality={0.95}
             />
             
+            {/* Navigation arrows */}
+            {gallery.length > 1 && (
+              <>
+                <button
+                  onClick={() => setCurrentImageIndex(currentImageIndex > 0 ? currentImageIndex - 1 : gallery.length - 1)}
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all text-white"
+                >
+                  <ArrowLeft size={24} />
+                </button>
+                <button
+                  onClick={() => setCurrentImageIndex(currentImageIndex < gallery.length - 1 ? currentImageIndex + 1 : 0)}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all text-white"
+                >
+                  <ArrowLeft size={24} className="rotate-180" />
+                </button>
+              </>
+            )}
+            
+            {/* Image counter */}
+            {gallery.length > 1 && (
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full">
+                {currentImageIndex + 1} из {gallery.length}
+              </div>
+            )}
+            
             {/* Image actions */}
             <div className="absolute bottom-4 right-4 flex gap-2">
               <button 
