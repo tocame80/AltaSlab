@@ -178,17 +178,30 @@ export class DatabaseStorage implements IStorage {
       return result.filter(p => p.isActive !== 0);
     } catch (error: any) {
       console.error('DatabaseStorage: Error querying galleryProjects:', error);
-      // Fallback: try basic query without any filters
-      try {
-        console.log('DatabaseStorage: Trying fallback query for gallery projects...');
-        const fallbackResult = await db.select().from(galleryProjects);
-        console.log('DatabaseStorage: Fallback query successful, got', fallbackResult.length, 'projects');
-        return fallbackResult;
-      } catch (fallbackError: any) {
-        console.error('DatabaseStorage: Fallback query also failed:', fallbackError);
-        throw error;
-      }
+      console.log('DatabaseStorage: Using static fallback data for gallery projects');
+      return this.getFallbackGalleryProjects();
     }
+  }
+
+  private getFallbackGalleryProjects(): GalleryProject[] {
+    // Return minimal static gallery data for production fallback
+    return [
+      {
+        id: "fallback-project-1",
+        title: "Современная квартира",
+        description: "Стильный интерьер с панелями АЛЬТА СЛЭБ",
+        application: "interior",
+        images: ["/assets/gallery/gallery-1.jpg", "/assets/gallery/gallery-2.jpg"],
+        materialsUsed: ["8934", "8930"],
+        location: "Москва",
+        area: "85 кв.м",
+        year: "2024",
+        isActive: 1,
+        sortOrder: 1,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    ];
   }
 
   async getGalleryProject(id: string): Promise<GalleryProject | undefined> {
@@ -263,22 +276,65 @@ export class DatabaseStorage implements IStorage {
       return result.filter(p => p.isActive !== 0);
     } catch (error: any) {
       console.error('DatabaseStorage: Error querying catalogProducts:', error);
-      console.error('DatabaseStorage: Error details:', {
-        message: error.message,
-        code: error.code,
-        stack: error.stack
-      });
-      // Fallback: try basic query without any filters
-      try {
-        console.log('DatabaseStorage: Trying fallback query without filters...');
-        const fallbackResult = await db.select().from(catalogProducts);
-        console.log('DatabaseStorage: Fallback query successful, got', fallbackResult.length, 'products');
-        return fallbackResult;
-      } catch (fallbackError: any) {
-        console.error('DatabaseStorage: Fallback query also failed:', fallbackError);
-        throw error; // Throw original error
-      }
+      console.log('DatabaseStorage: Using static fallback data for catalog products');
+      return this.getFallbackCatalogProducts();
     }
+  }
+
+  private getFallbackCatalogProducts(): CatalogProduct[] {
+    // Return minimal static catalog data for production fallback
+    return [
+      {
+        id: "8934",
+        productCode: "8934", 
+        productName: "Магия Бетона ЗАКАТ",
+        collection: "concrete", 
+        color: "Серый",
+        surface: "Матовая",
+        size: "300×600×2,4мм",
+        areaPerPackage: "4.32",
+        pcsPerPackage: "24",
+        price: "2850",
+        barcode: null,
+        category: "АЛЬТА СЛЭБ",
+        format: "300×600×2,4мм",
+        imageUrl: null,
+        images: [],
+        description: null,
+        specifications: {},
+        profile: null,
+        availability: "В наличии",
+        isActive: 1,
+        sortOrder: 1,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: "8930",
+        productCode: "8930",
+        productName: "Магия Бетона МЕТЕОРИТ",
+        collection: "concrete",
+        color: "Темно-серый", 
+        surface: "Матовая",
+        size: "300×600×2,4мм",
+        areaPerPackage: "4.32",
+        pcsPerPackage: "24",
+        price: "2850",
+        barcode: null,
+        category: "АЛЬТА СЛЭБ",
+        format: "300×600×2,4мм",
+        imageUrl: null,
+        images: [],
+        description: null,
+        specifications: {},
+        profile: null,
+        availability: "В наличии",
+        isActive: 1,
+        sortOrder: 2,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    ];
   }
 
   async getCatalogProduct(id: string): Promise<CatalogProduct | undefined> {

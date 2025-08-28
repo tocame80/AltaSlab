@@ -21,7 +21,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ 
       message: 'API is working!', 
       environment: process.env.NODE_ENV,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      databaseUrl: process.env.DATABASE_URL ? 'Present' : 'Missing'
     });
   });
 
