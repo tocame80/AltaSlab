@@ -118,7 +118,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
       setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
       setVisibleRows(4); // Standard amount for specific collections
     } else if (activeCollection === 'accessories') {
-      setFilters({ collection: '', color: '', size: '' }); // Don't filter - let filteredProducts handle it
+      setFilters({ collection: '', color: '', size: '' }); // Reset panel filters
       setAccessoryFilter('all'); // Show all accessories by default
       setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
       setVisibleRows(4);
@@ -190,8 +190,8 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
         if (product.collectionLower !== filters.collection.toLowerCase()) return false;
       }
 
-      // Step 4: Other filters
-      if (filters.color && !product.colorLower.includes(filters.color.toLowerCase())) return false;
+      // Step 4: Other filters (work for both panels and accessories)
+      if (filters.color && !product.colorLower.includes(filters.color.toLowerCase()) && !product.designLower.includes(filters.color.toLowerCase())) return false;
       if (filters.size && product.format !== filters.size) return false;
 
       // Step 5: Additional filters
@@ -263,6 +263,12 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
     } else if (accessoryFilter === 'Клей') {
       return products.filter(product => 
         product.collection === 'Клей'
+      );
+    } else if (accessoryFilter === 'all') {
+      // Show all accessories (profiles + glue)
+      return products.filter(product => 
+        product.collection === 'Клей' || 
+        product.collection?.toLowerCase().includes('профиль')
       );
     }
 
