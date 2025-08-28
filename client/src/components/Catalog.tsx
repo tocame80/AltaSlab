@@ -157,6 +157,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
     return preprocessedProducts.filter(product => {
       // Step 1: Collection filter
       if (activeCollection === 'accessories') {
+        // For accessories section, show ONLY accessories
         if (!product.isGlue && !product.isProfile) return false;
       } else if (activeCollection === 'favorites') {
         // Will be handled in additional filters
@@ -164,6 +165,8 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
         // For "all" collection, show only panels (exclude accessories)
         if (product.isGlue || product.isProfile) return false;
       } else {
+        // For specific panel collections, exclude accessories
+        if (product.isGlue || product.isProfile) return false;
         const collectionMap = {
           'concrete': 'магия бетона',
           'fabric': 'тканевая роскошь',
