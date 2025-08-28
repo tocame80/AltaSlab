@@ -1,5 +1,5 @@
 import { Product } from '@/types';
-import { Heart, Download, Calculator, ShoppingCart, Truck } from 'lucide-react';
+import { Heart, Download, Calculator, ShoppingCart, Truck, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import { getProductMainImage, getProductGallery } from '@/assets/products/imageMap';
 import OptimizedThumbnail from '@/components/OptimizedThumbnail';
@@ -131,8 +131,41 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
             quality={0.85}
           />
           
+          {/* Navigation arrows - только если больше одного изображения */}
+          {gallery.length > 1 && (
+            <>
+              <button
+                onClick={(e) => handleImageNavigation(e, 'prev')}
+                className={`absolute left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white shadow-lg ${
+                  isHovered ? 'opacity-100' : 'opacity-0'
+                }`}
+                data-testid="button-prev-card-image"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button
+                onClick={(e) => handleImageNavigation(e, 'next')}
+                className={`absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center transition-all hover:bg-white shadow-lg ${
+                  isHovered ? 'opacity-100' : 'opacity-0'
+                }`}
+                data-testid="button-next-card-image"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </>
+          )}
+          
+          {/* Image counter - показываем только если больше одного изображения */}
+          {gallery.length > 1 && (
+            <div className={`absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs transition-opacity ${
+              isHovered ? 'opacity-100' : 'opacity-0'
+            }`}>
+              {currentImageIndex + 1} / {gallery.length}
+            </div>
+          )}
+          
           {/* Favorite button */}
-          <div className="absolute top-2 right-2 lg:top-3 lg:right-3">
+          <div className="absolute top-2 right-2 lg:top-3 lg:right-3 z-10">
             {isFavorite ? (
               // Always visible when favorited
               <button
