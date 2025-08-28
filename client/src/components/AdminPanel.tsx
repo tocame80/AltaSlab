@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit, Play, Database, Download, Image, RotateCw, HardDrive, ArrowUp, ArrowDown, Star } from 'lucide-react';
+import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit, Play, Database, Download, Image, RotateCw, HardDrive, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Star } from 'lucide-react';
 import { products } from '../data/products';
 import * as XLSX from 'xlsx';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -1837,19 +1837,33 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       {index === 0 && <Star size={12} fill="white" />}
                     </div>
                     
-                    {/* Top-right: Move up */}
-                    <button
-                      onClick={() => moveImageUp(index)}
-                      className={`absolute top-1 right-1 text-white p-1.5 rounded-full transition-colors ${
-                        index === 0 
-                          ? 'bg-gray-500/50 opacity-30 cursor-not-allowed' 
-                          : 'bg-blue-500/80 hover:bg-blue-600 hover:scale-110'
-                      }`}
-                      disabled={isLoading || index === 0}
-                      title="⬆️ Переместить вверх"
-                    >
-                      <ArrowUp size={12} />
-                    </button>
+                    {/* Top-right: Move left and right controls */}
+                    <div className="absolute top-1 right-1 flex gap-1">
+                      <button
+                        onClick={() => moveImageUp(index)}
+                        className={`text-white p-1.5 rounded-full transition-colors ${
+                          index === 0 
+                            ? 'bg-gray-500/50 opacity-30 cursor-not-allowed' 
+                            : 'bg-blue-500/80 hover:bg-blue-600 hover:scale-110'
+                        }`}
+                        disabled={isLoading || index === 0}
+                        title="◀️ Переместить влево"
+                      >
+                        <ArrowLeft size={12} />
+                      </button>
+                      <button
+                        onClick={() => moveImageDown(index)}
+                        className={`text-white p-1.5 rounded-full transition-colors ${
+                          index >= existingImages.length - 1 
+                            ? 'bg-gray-500/50 opacity-30 cursor-not-allowed' 
+                            : 'bg-blue-500/80 hover:bg-blue-600 hover:scale-110'
+                        }`}
+                        disabled={isLoading || index >= existingImages.length - 1}
+                        title="▶️ Переместить вправо"
+                      >
+                        <ArrowRight size={12} />
+                      </button>
+                    </div>
                     
                     {/* Bottom-left: Make main / Star */}
                     <button
@@ -1863,20 +1877,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       title="⭐ Сделать главным"
                     >
                       <Star size={12} />
-                    </button>
-                    
-                    {/* Bottom-right: Move down */}
-                    <button
-                      onClick={() => moveImageDown(index)}
-                      className={`absolute bottom-1 right-1 text-white p-1.5 rounded-full transition-colors ${
-                        index >= existingImages.length - 1 
-                          ? 'bg-gray-500/50 opacity-30 cursor-not-allowed' 
-                          : 'bg-blue-500/80 hover:bg-blue-600 hover:scale-110'
-                      }`}
-                      disabled={isLoading || index >= existingImages.length - 1}
-                      title="⬇️ Переместить вниз"
-                    >
-                      <ArrowDown size={12} />
                     </button>
                     
                     {/* Center: Delete button (appears on hover) */}

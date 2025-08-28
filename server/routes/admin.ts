@@ -292,16 +292,18 @@ router.put('/set-main-image', async (req, res) => {
     // Move the selected image to first position
     const reorderedImages = [targetImage, ...allImages.filter(img => img.fileName !== fileName)];
 
-    // Physically rename files to preserve order
-    await renameFilesToOrder(folderPath, productId, reorderedImages);
+    // Update imageMap.ts with new order (no physical file renaming)
+    await updateImageMap(productId, reorderedImages.map(img => img.fileName), folder);
 
-    // Get the updated file names after renaming
-    const updatedImages = await findProductImagesGlobal(folderPath, productId);
+    // Clear catalog cache so changes are reflected immediately
+    if (req.app.locals.clearCatalogCache) {
+      req.app.locals.clearCatalogCache();
+    }
 
     res.json({ 
       success: true, 
       message: `Set ${fileName} as main image for product ${productId}`,
-      files: updatedImages.map(img => img.fileName)
+      files: reorderedImages.map(img => img.fileName)
     });
 
   } catch (error) {
@@ -333,11 +335,8 @@ router.put('/move-image-up', async (req, res) => {
     [reorderedImages[currentIndex - 1], reorderedImages[currentIndex]] = 
     [reorderedImages[currentIndex], reorderedImages[currentIndex - 1]];
 
-    // Physically rename files to preserve order
-    await renameFilesToOrder(folderPath, productId, reorderedImages);
-
-    // Get the updated file names after renaming
-    const updatedImages = await findProductImagesGlobal(folderPath, productId);
+    // Update imageMap.ts with new order (no physical file renaming)
+    await updateImageMap(productId, reorderedImages.map(img => img.fileName), folder);
 
     // Clear catalog cache so changes are reflected immediately
     if (req.app.locals.clearCatalogCache) {
@@ -347,7 +346,7 @@ router.put('/move-image-up', async (req, res) => {
     res.json({ 
       success: true, 
       message: `Moved ${fileName} up for product ${productId}`,
-      files: updatedImages.map(img => img.fileName)
+      files: reorderedImages.map(img => img.fileName)
     });
 
   } catch (error) {
@@ -379,11 +378,8 @@ router.put('/move-image-down', async (req, res) => {
     [reorderedImages[currentIndex + 1], reorderedImages[currentIndex]] = 
     [reorderedImages[currentIndex], reorderedImages[currentIndex + 1]];
 
-    // Physically rename files to preserve order
-    await renameFilesToOrder(folderPath, productId, reorderedImages);
-
-    // Get the updated file names after renaming
-    const updatedImages = await findProductImagesGlobal(folderPath, productId);
+    // Update imageMap.ts with new order (no physical file renaming)
+    await updateImageMap(productId, reorderedImages.map(img => img.fileName), folder);
 
     // Clear catalog cache so changes are reflected immediately
     if (req.app.locals.clearCatalogCache) {
@@ -393,7 +389,7 @@ router.put('/move-image-down', async (req, res) => {
     res.json({ 
       success: true, 
       message: `Moved ${fileName} down for product ${productId}`,
-      files: updatedImages.map(img => img.fileName)
+      files: reorderedImages.map(img => img.fileName)
     });
 
   } catch (error) {
@@ -423,34 +419,8 @@ router.put('/reorder-images', async (req, res) => {
       }
     }
 
-    // Create temporary names to avoid conflicts during renaming
-    const tempFileNames = [];
-    for (let i = 0; i < fileNames.length; i++) {
-      const originalFile = fileNames[i];
-      const extension = path.extname(originalFile);
-      const tempFileName = `${productId}-temp-${i + 1}${extension}`;
-      tempFileNames.push(tempFileName);
-      
-      const oldPath = path.join(folderPath, originalFile);
-      const tempPath = path.join(folderPath, tempFileName);
-      await fs.rename(oldPath, tempPath);
-    }
-
-    // Now rename temp files to final names in new order
-    const newFileNames = [];
-    for (let i = 0; i < tempFileNames.length; i++) {
-      const tempFile = tempFileNames[i];
-      const extension = path.extname(tempFile);
-      const newFileName = `${productId}-${i + 1}${extension}`;
-      newFileNames.push(newFileName);
-      
-      const tempPath = path.join(folderPath, tempFile);
-      const newPath = path.join(folderPath, newFileName);
-      await fs.rename(tempPath, newPath);
-    }
-
-    // Update imageMap.ts file
-    await updateImageMap(productId, newFileNames, folder);
+    // Update imageMap.ts with new order (no physical file renaming)
+    await updateImageMap(productId, fileNames, folder);
 
     // Clear catalog cache so changes are reflected immediately
     if (req.app.locals.clearCatalogCache) {
@@ -459,8 +429,8 @@ router.put('/reorder-images', async (req, res) => {
 
     res.json({ 
       success: true, 
-      message: `Reordered ${newFileNames.length} images for product ${productId}`,
-      files: newFileNames 
+      message: `Reordered ${fileNames.length} images for product ${productId}`,
+      files: fileNames 
     });
 
   } catch (error) {
