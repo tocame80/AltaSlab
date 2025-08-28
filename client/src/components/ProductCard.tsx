@@ -177,8 +177,8 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
             )}
           </div>
 
-          {/* Product Info Overlay - Bottom Left - Collection and Color */}
-          <div className="absolute bottom-0 left-0 p-2 lg:p-3 transition-all duration-300">
+          {/* Product Info Overlay - Top Left - Collection and Color */}
+          <div className="absolute top-0 left-0 p-2 lg:p-3 transition-all duration-300">
             <div>
               {/* Line 1: Collection */}
               <div className="text-gray-600 hover:text-[#e90039] text-[10px] lg:text-xs font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
