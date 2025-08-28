@@ -71,11 +71,7 @@ export default function Home() {
           <section aria-label="Каталог продукции">
             <Catalog 
               activeCollection={activeCollection} 
-              onResetFilters={() => {
-                console.log('🔄 Home: Resetting to "all" collection...');
-                setActiveCollection('all');
-                console.log('🔄 Home: Reset complete');
-              }}
+              onResetFilters={() => setActiveCollection('all')}
               onCollectionChange={setActiveCollection}
             />
           </section>

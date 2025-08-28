@@ -43,6 +43,22 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
   const ITEMS_PER_ROW = 2; // 2 items per row
   const ROWS_TO_LOAD = 3; // Load 3 more rows at a time
 
+  // Check if there are any active filters
+  const hasActiveFilters = () => {
+    return (
+      filters.collection !== '' ||
+      filters.color !== '' ||
+      filters.size !== '' ||
+      accessoryFilter !== '' ||
+      additionalFilters.novelties ||
+      additionalFilters.favorites ||
+      additionalFilters.discount ||
+      additionalFilters.inStock ||
+      searchQuery !== '' ||
+      sortBy !== 'default'
+    );
+  };
+
   // Listen for search events from header
   useEffect(() => {
     const handleSearch = (event: any) => {
@@ -398,16 +414,22 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
                 <h3 className="text-lg font-bold text-[#2f378b]">Фильтры</h3>
                 <button
                   onClick={() => {
-                    console.log('🔄 Desktop Reset: Clearing all filters...');
-                    setFilters({ collection: '', color: '', size: '' });
-                    setAccessoryFilter('');
-                    setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
-                    setSearchQuery('');
-                    setSortBy('default');
-                    // Reset navigator to "all" state
-                    onResetFilters?.();
+                    if (hasActiveFilters()) {
+                      setFilters({ collection: '', color: '', size: '' });
+                      setAccessoryFilter('');
+                      setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
+                      setSearchQuery('');
+                      setSortBy('default');
+                      // Reset navigator to "all" state
+                      onResetFilters?.();
+                    }
                   }}
-                  className="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors font-medium text-xs"
+                  disabled={!hasActiveFilters()}
+                  className={`px-3 py-1 rounded-lg transition-colors font-medium text-xs ${
+                    hasActiveFilters()
+                      ? 'bg-red-100 hover:bg-red-200 text-red-700 cursor-pointer'
+                      : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  }`}
                 >
                   Сбросить
                 </button>
@@ -417,16 +439,22 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
               <div className="lg:hidden mb-6">
                 <button
                   onClick={() => {
-                    console.log('🔄 Mobile Reset: Clearing all filters...');
-                    setFilters({ collection: '', color: '', size: '' });
-                    setAccessoryFilter('');
-                    setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
-                    setSearchQuery('');
-                    setSortBy('default');
-                    // Reset navigator to "all" state
-                    onResetFilters?.();
+                    if (hasActiveFilters()) {
+                      setFilters({ collection: '', color: '', size: '' });
+                      setAccessoryFilter('');
+                      setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
+                      setSearchQuery('');
+                      setSortBy('default');
+                      // Reset navigator to "all" state
+                      onResetFilters?.();
+                    }
                   }}
-                  className="w-full px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors font-medium text-sm"
+                  disabled={!hasActiveFilters()}
+                  className={`w-full px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
+                    hasActiveFilters()
+                      ? 'bg-red-100 hover:bg-red-200 text-red-700 cursor-pointer'
+                      : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  }`}
                 >
                   Сбросить все фильтры
                 </button>
@@ -709,23 +737,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
                 </div>
               )}
 
-              {/* Reset Filters Button */}
-              <div className="mt-6">
-                <button 
-                  onClick={() => {
-                    setFilters({ collection: '', color: '', size: '' });
-                    setAccessoryFilter('');
-                    setAdditionalFilters({ favorites: false, novelties: false, discount: false, inStock: false });
-                    setSearchQuery('');
-                    setSortBy('default');
-                    // Reset navigator to "all" state
-                    onResetFilters?.();
-                  }}
-                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors"
-                >
-                  Сбросить все фильтры
-                </button>
-              </div>
+
 
               {/* Sorting Section */}
               <div className="mt-8 pt-6 border-t border-gray-200">
