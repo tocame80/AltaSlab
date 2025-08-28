@@ -109,7 +109,7 @@ const resolveStaticImages = (paths: string[]): string[] => {
 
 // Static fallback mappings for products with special paths  
 const staticImageMap: Record<string, string[]> = {
-  // Admin-set image orders will be populated here dynamically  '8934': ["./concrete/8934 (2.2).png","./concrete/8934 (1).png","./concrete/8934 (2.1).png","./concrete/8934 (2.3).png","./concrete/8934 (коллаж).png"], // Admin-set order for product 8934
+  // Admin-set image orders will be populated here dynamically  '8934': ["./concrete/8934 (2.3).png","./concrete/8934 (1).png","./concrete/8934 (2.1).png","./concrete/8934 (2.2).png","./concrete/8934 (коллаж).png"], // Admin-set order for product 8934
 };
 
 // Helper function to get product gallery

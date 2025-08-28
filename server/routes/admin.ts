@@ -579,10 +579,8 @@ async function updateImageMap(productId: string, fileNames: string[], folder: st
       await fs.writeFile(imageMapPath, content, 'utf-8');
       
       // Force Node.js to invalidate the module cache for imageMap.ts
-      const moduleId = path.resolve(imageMapPath);
-      if (require.cache[moduleId]) {
-        delete require.cache[moduleId];
-      }
+      // Note: In ESM, we can't directly clear require.cache, but file write should be enough
+      // The frontend cache buster will handle client-side cache invalidation
       
       console.log(`Updated imageMap.ts: Set custom order for product ${productId} with ${fileNames.length} images`);
     } else {

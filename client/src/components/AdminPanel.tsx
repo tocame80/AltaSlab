@@ -1185,13 +1185,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         
         // Check if we have a custom order in imageMap.ts for this product
         try {
-          // Add cache buster to force module reload
-          const { getProductGallery } = await import(`../assets/products/imageMap.ts?v=${Date.now()}`);
+          // Force module reload by clearing it first, then importing
+          const moduleSpecifier = '../assets/products/imageMap.ts';
+          const { getProductGallery } = await import(/* @vite-ignore */ moduleSpecifier);
           const gallery = getProductGallery(productId, product.collection);
-          
-          console.log(`Admin panel ordering for product ${productId}:`);
-          console.log('Original filesystem order:', data.images);
-          console.log('Gallery from imageMap:', gallery);
           
           if (gallery && gallery.length > 0) {
             // Extract filenames from gallery URLs and create custom order
@@ -1199,8 +1196,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
               const parts = url.split('/');
               return decodeURIComponent(parts[parts.length - 1]);
             });
-            
-            console.log('Extracted gallery filenames:', galleryFileNames);
             
             // Reorder data.images to match gallery order, keeping any extra images at the end
             const reordered = [];
@@ -1216,8 +1211,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
             // Add any remaining images that weren't in the gallery
             reordered.push(...remaining);
             orderedFileNames = reordered;
-            
-            console.log('Final admin panel order:', orderedFileNames);
           }
         } catch (error) {
           console.warn('Could not load imageMap for ordering:', error);

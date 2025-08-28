@@ -1,0 +1,76 @@
+Calling setMainImage with: 8934 МАГИЯ БЕТОНА 8934 (2.3).png
+Console.js:61 Could not load imageMap for ordering: Error: Unknown variable dynamic import: ../assets/products/imageMap.ts?v=1756399769096
+    at dynamic-import-helper.js:10:9
+    at new Promise (<anonymous>)
+    at default (dynamic-import-helper.js:6:10)
+    at loadExistingImages (AdminPanel.tsx:1189:47)
+    at async setMainImage (AdminPanel.tsx:1490:11)
+    at async makeMainImage (AdminPanel.tsx:1462:5)
+Mt.forEach.n.<computed> @ Console.js:61
+loadExistingImages @ AdminPanel.tsx:1223
+await in loadExistingImages
+setMainImage @ AdminPanel.tsx:1490
+await in setMainImage
+makeMainImage @ AdminPanel.tsx:1462
+onClick @ AdminPanel.tsx:1918
+callCallback2 @ chunk-RPCDYKBN.js?v=5e9267ec:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=5e9267ec:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=5e9267ec:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=5e9267ec:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=5e9267ec:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=5e9267ec:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=5e9267ec:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=5e9267ec:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=5e9267ec:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=5e9267ec:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=5e9267ec:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=5e9267ec:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=5e9267ec:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=5e9267ec:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=5e9267ec:5449
+Console.js:61 🖼️ Dynamic image map initialized with 6 products: (6) ['8930', '8932', '8933', '8934', '8935', '8936']
+Console.js:61 [vite] hot updated: /src/index.css?v=aP6Weynsa95LW0_I5vUx2
+Console.js:61 [vite] hot updated: /src/pages/ProductDetails.tsx
+Console.js:61 [vite] hot updated: /src/components/ProductCard.tsx
+Console.js:61 [vite] hot updated: /src/pages/ProjectDetails.tsx
+Console.js:61 [vite] hot updated: /src/pages/Gallery.tsx
+Console.js:61 [vite] hot updated: /src/components/AdminPanel.tsx
+@react-refresh:675 [Violation] 'setTimeout' handler took 86ms
+Console.js:61 Could not load imageMap for ordering: Error: Unknown variable dynamic import: ../assets/products/imageMap.ts?v=1756399770720
+    at dynamic-import-helper.js:10:9
+    at new Promise (<anonymous>)
+    at default (dynamic-import-helper.js:6:10)
+    at loadExistingImages (AdminPanel.tsx:1189:47)
+Mt.forEach.n.<computed> @ Console.js:61
+loadExistingImages @ AdminPanel.tsx:1223
+await in loadExistingImages
+(anonymous) @ AdminPanel.tsx:1263
+commitHookEffectListMount @ chunk-RPCDYKBN.js?v=5e9267ec:16915
+commitPassiveMountOnFiber @ chunk-RPCDYKBN.js?v=5e9267ec:18156
+commitPassiveMountEffects_complete @ chunk-RPCDYKBN.js?v=5e9267ec:18129
+commitPassiveMountEffects_begin @ chunk-RPCDYKBN.js?v=5e9267ec:18119
+commitPassiveMountEffects @ chunk-RPCDYKBN.js?v=5e9267ec:18109
+flushPassiveEffectsImpl @ chunk-RPCDYKBN.js?v=5e9267ec:19490
+flushPassiveEffects @ chunk-RPCDYKBN.js?v=5e9267ec:19447
+commitRootImpl @ chunk-RPCDYKBN.js?v=5e9267ec:19416
+commitRoot @ chunk-RPCDYKBN.js?v=5e9267ec:19277
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=5e9267ec:18895
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=5e9267ec:9119
+flushSync @ chunk-RPCDYKBN.js?v=5e9267ec:18959
+scheduleRefresh @ chunk-RPCDYKBN.js?v=5e9267ec:20004
+(anonymous) @ @react-refresh:267
+performReactRefresh @ @react-refresh:256
+(anonymous) @ @react-refresh:677
+setTimeout
+(anonymous) @ @react-refresh:666
+validateRefreshBoundaryAndEnqueueUpdate @ @react-refresh:728
+(anonymous) @ AdminPanel.tsx:86
+(anonymous) @ client:34
+(anonymous) @ client:218
+(anonymous) @ client:193
+queueUpdate @ client:193
+await in queueUpdate
+(anonymous) @ client:642
+handleMessage @ client:640
+(anonymous) @ client:550
+_app-e088dca48e5e952e.js:38 [Violation] 'setTimeout' handler took 62ms
