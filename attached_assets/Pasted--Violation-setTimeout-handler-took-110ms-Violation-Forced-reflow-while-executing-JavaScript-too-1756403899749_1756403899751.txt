@@ -1,0 +1,24 @@
+[Violation] 'setTimeout' handler took 110ms
+[Violation] Forced reflow while executing JavaScript took 34ms
+Console.js:61 OptimizedThumbnail: Thumbnail generated successfully, size: 12487 for target size: 300
+Console.js:61 OptimizedThumbnail: Original src: /src/assets/products/placeholder.jpg
+Console.js:61 OptimizedThumbnail: Generated thumbnail starts with: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD
+Console.js:61 OptimizedThumbnail: Thumbnail generated successfully, size: 12487 for target size: 300
+Console.js:61 OptimizedThumbnail: Original src: /src/assets/products/placeholder.jpg
+Console.js:61 OptimizedThumbnail: Generated thumbnail starts with: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD
+Console.js:61 OptimizedThumbnail: Thumbnail generated successfully, size: 12487 for target size: 300
+Console.js:61 OptimizedThumbnail: Original src: /src/assets/products/placeholder.jpg
+Console.js:61 OptimizedThumbnail: Generated thumbnail starts with: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD
+Console.js:61 OptimizedThumbnail: Thumbnail generated successfully, size: 10731 for target size: 300
+Console.js:61 OptimizedThumbnail: Original src: /src/assets/products/concrete/%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F%D0%91%D0%B5%D1%82%D0%BE%D0%BD%D0%B0%D0%97%D0%90%D0%9A%D0%90%D0%A2/PNG/8934%20(%D0%BA%D0%BE%D0%BB%D0%BB%D0%B0%D0%B6).png
+Console.js:61 OptimizedThumbnail: Generated thumbnail starts with: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD
+useBatchImageProcessor.ts:25 [Violation] 'load' handler took 159ms
+Console.js:61 OptimizedThumbnail: Thumbnail generated successfully, size: 17391 for target size: 300
+Console.js:61 OptimizedThumbnail: Original src: /src/assets/products/concrete/%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F%D0%91%D0%B5%D1%82%D0%BE%D0%BD%D0%B0%D0%9C%D0%95%D0%A2%D0%95%D0%9E%D0%A0%D0%98%D0%A2/PNG/8930%20(%D0%BA%D0%BE%D0%BB%D0%BB%D0%B0%D0%B6).png
+Console.js:61 OptimizedThumbnail: Generated thumbnail starts with: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD
+useBatchImageProcessor.ts:25 [Violation] 'load' handler took 162ms
+Console.js:61 OptimizedThumbnail: Thumbnail generated successfully, size: 22475 for target size: 300
+Console.js:61 OptimizedThumbnail: Original src: /src/assets/products/concrete/%D0%9C%D0%B0%D0%B3%D0%B8%D1%8F%D0%91%D0%B5%D1%82%D0%BE%D0%BD%D0%B0%D0%9A%D0%9E%D0%9C%D0%95%D0%A2%D0%90/PNG/8936%20(%D0%BA%D0%BE%D0%BB%D0%BB%D0%B0%D0%B6).png
+Console.js:61 OptimizedThumbnail: Generated thumbnail starts with: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD
+_app-e088dca48e5e952e.js:38 [Violation] 'setTimeout' handler took 139ms
+_app-e088dca48e5e952e.js:38 [Violation] 'setTimeout' handler took 57ms
