@@ -243,7 +243,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
       } else if (sortBy === 'price-desc') {
         filtered.sort((a, b) => b.price - a.price);
       } else if (sortBy === 'name') {
-        filtered.sort((a, b) => (a.design || '').localeCompare(b.design || ''));
+        filtered.sort((a, b) => (a.color || a.design || '').localeCompare(b.color || b.design || ''));
       }
     }
     // When showing all collections (default), products remain in original order without sorting
@@ -796,7 +796,7 @@ export default function Catalog({ activeCollection, onResetFilters, onCollection
                           onChange={(e) => setSortBy(e.target.value)}
                           className="mr-2"
                         />
-                        <span className="text-secondary text-sm">По названию</span>
+                        <span className="text-secondary text-sm">По цвету</span>
                       </label>
                     </>
                   )}
