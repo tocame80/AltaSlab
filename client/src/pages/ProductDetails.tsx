@@ -6,6 +6,7 @@ import { Collection } from '@/types';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import { getProductMainImage, getProductGallery } from '@/assets/products/imageMap';
+import OptimizedThumbnail from '@/components/OptimizedThumbnail';
 
 interface Product {
   id: string;
@@ -486,10 +487,12 @@ export default function ProductDetails() {
                     index === currentImageIndex ? 'border-[#e90039]' : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
-                  <img
+                  <OptimizedThumbnail
                     src={image}
                     alt={`${getProductDisplayName()} - изображение ${index + 1}`}
                     className="w-full h-full object-cover"
+                    size={200}
+                    quality={0.8}
                   />
                 </button>
               ))}

@@ -2,6 +2,7 @@ import { Product } from '@/types';
 import { Heart, Download, Calculator, ShoppingCart, Truck } from 'lucide-react';
 import { useState } from 'react';
 import { getProductMainImage, getProductGallery } from '@/assets/products/imageMap';
+import OptimizedThumbnail from '@/components/OptimizedThumbnail';
 
 interface ProductCardProps {
   product: Product;
@@ -122,11 +123,12 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
       <div className="relative overflow-hidden">
         {/* Image Gallery */}
         <div className="relative w-full aspect-[3/2] lg:aspect-[2/1]">
-          <img 
+          <OptimizedThumbnail
             src={currentImage}
             alt={`${product.design} - ${product.collection}`}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            loading="lazy"
+            size={300}
+            quality={0.85}
           />
           
           {/* Favorite button */}
