@@ -13,6 +13,9 @@ import { db } from "./db";
 import { sql } from "drizzle-orm";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Make storage available to all routes
+  app.locals.storage = storage;
+  
   // Admin routes for image management
   app.use('/api/admin', adminRoutes);
 
