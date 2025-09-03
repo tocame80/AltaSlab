@@ -355,7 +355,7 @@ export default function ProductDetails() {
               <OptimizedThumbnail
                 src={gallery[currentImageIndex]}
                 alt={getProductDisplayName()}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-fill"
                 size={800}
                 quality={0.9}
               />
