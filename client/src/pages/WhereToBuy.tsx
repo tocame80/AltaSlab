@@ -30,6 +30,7 @@ export default function WhereToBuy() {
   const [selectedType, setSelectedType] = useState<string>('');
   const [selectedRegion, setSelectedRegion] = useState<string>('');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [highlightedDealer, setHighlightedDealer] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapInstance, setMapInstance] = useState<any>(null);
@@ -133,6 +134,7 @@ export default function WhereToBuy() {
 
       const addPlacemarks = async () => {
         const placemarks: any[] = [];
+        console.log(`Импортируем точки продаж:`, filteredDealers.length);
 
         for (const dealer of filteredDealers) {
           let coordinates: [number, number] | null = null;
@@ -172,14 +174,20 @@ export default function WhereToBuy() {
                 balloonContentFooter: dealer.dealerType
               },
               {
-                preset: 'islands#redDotIcon'
+                preset: highlightedDealer === dealer.id ? 'islands#blueDotIcon' : 'islands#redDotIcon'
               }
             );
+            
+            // Store dealer id in placemark for highlighting
+            placemark.dealerId = dealer.id;
+            
             placemarks.push(placemark);
             mapInstance.geoObjects.add(placemark);
           }
         }
 
+        console.log(`Создано маркеров на карте: ${placemarks.length}`);
+        
         // Fit map to show all placemarks
         if (placemarks.length > 0) {
           const group = new window.ymaps.GeoObjectCollection({}, {});
@@ -208,6 +216,37 @@ export default function WhereToBuy() {
         ? prev.filter(s => s !== service)
         : [...prev, service]
     );
+  };
+
+  const handleShowOnMap = (dealerId: string) => {
+    setHighlightedDealer(dealerId);
+    
+    // Find the dealer coordinates
+    const dealer = filteredDealers.find(d => d.id === dealerId);
+    if (dealer && mapInstance) {
+      let coordinates: [number, number] | null = null;
+      
+      if (dealer.latitude && dealer.longitude && 
+          parseFloat(dealer.latitude) !== 0 && parseFloat(dealer.longitude) !== 0) {
+        coordinates = [parseFloat(dealer.latitude), parseFloat(dealer.longitude)];
+      }
+      
+      if (coordinates) {
+        mapInstance.setCenter(coordinates, 15);
+        
+        // Open balloon for this dealer
+        mapInstance.geoObjects.each((obj: any) => {
+          if (obj.dealerId === dealerId) {
+            obj.balloon.open();
+          }
+        });
+      }
+    }
+    
+    // Remove highlight after 3 seconds
+    setTimeout(() => {
+      setHighlightedDealer(null);
+    }, 3000);
   };
 
   if (isLoading) {
@@ -392,6 +431,16 @@ export default function WhereToBuy() {
                       )}
                     </div>
 
+                    {/* Show on Map Button */}
+                    <button
+                      onClick={() => handleShowOnMap(dealer.id)}
+                      className="mt-3 w-full bg-[#e90039] text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-[#d1003a] transition-colors flex items-center justify-center gap-2"
+                      data-testid={`button-show-on-map-${dealer.id}`}
+                    >
+                      <MapPin className="w-4 h-4" />
+                      Показать на карте
+                    </button>
+                    
                     {/* Services */}
                     {dealer.services.length > 0 && (
                       <div className="mt-3">
