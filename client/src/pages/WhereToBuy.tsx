@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Phone, Mail, Globe, MapPin, Clock, Filter, Search } from 'lucide-react';
+import { Phone, Mail, Globe, MapPin, Clock, Filter, Search, X, Check } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
@@ -69,6 +69,9 @@ export default function WhereToBuy() {
   const [selectedRegion, setSelectedRegion] = useState<string>('');
   const [highlightedDealer, setHighlightedDealer] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [showRegionModal, setShowRegionModal] = useState<boolean>(false);
+  const [detectedRegion, setDetectedRegion] = useState<string>('');
+  const [ipDetectionDone, setIpDetectionDone] = useState<boolean>(false);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapInstance, setMapInstance] = useState<any>(null);
   
@@ -98,6 +101,67 @@ export default function WhereToBuy() {
   const { data: dealerLocations = [], isLoading } = useQuery<DealerLocation[]>({
     queryKey: ['/api/dealer-locations'],
   });
+
+  // Function to detect user's region by IP
+  const detectUserRegion = async () => {
+    try {
+      const response = await fetch('https://ip-api.com/json/');
+      const data = await response.json();
+      
+      if (data.status === 'success' && data.country === 'Russia') {
+        let region = '';
+        
+        // Map API response to our geographical regions
+        if (data.regionName === 'Moscow' || data.city === 'Moscow') {
+          region = 'Москва';
+        } else if (data.regionName === 'Moscow Oblast' || data.regionName.includes('Moscow')) {
+          region = 'Московская область';
+        } else if (data.regionName === 'St.-Petersburg' || data.city === 'Saint Petersburg') {
+          region = 'Санкт-Петербург';
+        } else if (data.regionName === 'Leningrad Oblast' || data.regionName.includes('Leningrad')) {
+          region = 'Ленинградская область';
+        } else if (data.regionName.includes('Krasnodar')) {
+          region = 'Краснодарский край';
+        } else if (data.regionName.includes('Rostov')) {
+          region = 'Ростовская область';
+        } else if (data.regionName.includes('Sverdlovsk')) {
+          region = 'Свердловская область';
+        } else if (data.regionName.includes('Novosibirsk')) {
+          region = 'Новосибирская область';
+        } else if (data.regionName.includes('Tatarstan')) {
+          region = 'Республика Татарстан';
+        } else {
+          region = 'Другие регионы';
+        }
+        
+        setDetectedRegion(region);
+        
+        // Check if we have dealers in this region
+        const hasDealerasInRegion = enhancedDealers.some(dealer => 
+          dealer.geographicalRegion === region
+        );
+        
+        if (hasDealerasInRegion) {
+          setShowRegionModal(true);
+        }
+      }
+    } catch (error) {
+      console.warn('Не удалось определить регион по IP:', error);
+    } finally {
+      setIpDetectionDone(true);
+    }
+  };
+
+  // Check localStorage for region preference
+  useEffect(() => {
+    const savedRegion = localStorage.getItem('selectedRegion');
+    if (savedRegion) {
+      setSelectedRegion(savedRegion);
+      setIpDetectionDone(true);
+    } else if (!ipDetectionDone) {
+      detectUserRegion();
+    }
+  }, [ipDetectionDone]);
 
   // Enhance dealers with geographical regions
   const enhancedDealers = useMemo(() => {
@@ -144,6 +208,25 @@ export default function WhereToBuy() {
 
     return filtered;
   }, [enhancedDealers, selectedCity, selectedRegion, searchQuery]);
+
+  // Handle region confirmation
+  const handleRegionConfirm = (confirmed: boolean) => {
+    if (confirmed && detectedRegion) {
+      setSelectedRegion(detectedRegion);
+      localStorage.setItem('selectedRegion', detectedRegion);
+    }
+    setShowRegionModal(false);
+  };
+
+  // Handle region change (clear localStorage when user manually changes)
+  const handleRegionChange = (value: string) => {
+    setSelectedRegion(value);
+    if (value) {
+      localStorage.setItem('selectedRegion', value);
+    } else {
+      localStorage.removeItem('selectedRegion');
+    }
+  };
 
   // Load Yandex Maps
   useEffect(() => {
@@ -486,7 +569,7 @@ export default function WhereToBuy() {
             {/* Region Filter */}
             <select
               value={selectedRegion}
-              onChange={(e) => setSelectedRegion(e.target.value)}
+              onChange={(e) => handleRegionChange(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
               data-testid="select-region"
             >
@@ -621,6 +704,54 @@ export default function WhereToBuy() {
         </div>
       </div>
       </div>
+      
+      {/* Region Confirmation Modal */}
+      {showRegionModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-[#2f378b]">
+                Подтверждение региона
+              </h3>
+              <button
+                onClick={() => handleRegionConfirm(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="mb-6">
+              <p className="text-secondary mb-4">
+                Мы определили ваш регион как:
+              </p>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                <p className="font-medium text-blue-800">{detectedRegion}</p>
+              </div>
+              <p className="text-secondary">
+                Это ваш регион? Мы покажем дилеров в этой области.
+              </p>
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={() => handleRegionConfirm(true)}
+                className="flex-1 bg-[#e90039] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#d1003a] transition-colors flex items-center justify-center gap-2"
+              >
+                <Check className="w-4 h-4" />
+                Да, это мой регион
+              </button>
+              <button
+                onClick={() => handleRegionConfirm(false)}
+                className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+              >
+                Нет, выберу сам
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <Footer />
     </div>
   );
