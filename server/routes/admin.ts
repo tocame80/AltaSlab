@@ -1063,10 +1063,18 @@ router.post('/salepoints/import', uploadExcel.any(), async (req, res) => {
       const existingLocations = await storage.getDealerLocations();
       console.log(`Clearing ${existingLocations.length} existing dealer locations...`);
       
-      for (const location of existingLocations) {
-        await storage.deleteDealerLocation(location.id);
+      // Use bulk delete for better reliability
+      const deletedCount = await storage.clearAllDealerLocations();
+      console.log(`Successfully cleared ${deletedCount} dealer locations`);
+      
+      // Verify clearing was successful
+      const remainingLocations = await storage.getDealerLocations();
+      console.log(`Remaining locations after clearing: ${remainingLocations.length}`);
+      
+      if (remainingLocations.length > 0) {
+        console.warn(`Warning: ${remainingLocations.length} locations were not cleared properly`);
       }
-      console.log('Existing data cleared successfully');
+      
     } catch (error) {
       console.error('Error clearing existing data:', error);
       // Continue with import even if clearing fails

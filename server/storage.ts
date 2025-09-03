@@ -42,6 +42,7 @@ export interface IStorage {
   createDealerLocation(dealerLocation: InsertDealerLocation): Promise<DealerLocation>;
   updateDealerLocation(id: string, dealerLocation: Partial<InsertDealerLocation>): Promise<DealerLocation>;
   deleteDealerLocation(id: string): Promise<void>;
+  clearAllDealerLocations(): Promise<number>;
   
   // Catalog product methods
   getCatalogProducts(): Promise<CatalogProduct[]>;
@@ -263,6 +264,11 @@ export class DatabaseStorage implements IStorage {
 
   async deleteDealerLocation(id: string): Promise<void> {
     await db.delete(dealerLocations).where(eq(dealerLocations.id, id));
+  }
+
+  async clearAllDealerLocations(): Promise<number> {
+    const result = await db.delete(dealerLocations);
+    return result.rowCount || 0;
   }
 
   // Catalog product methods
