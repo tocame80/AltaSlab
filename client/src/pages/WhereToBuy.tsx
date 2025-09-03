@@ -135,8 +135,10 @@ export default function WhereToBuy() {
 
       const addPlacemarks = async () => {
         const placemarks: any[] = [];
+        const geocodingPromises: Promise<void>[] = [];
         console.log(`Импортируем точки продаж:`, filteredDealers.length);
 
+        // First pass: add all dealers with existing coordinates
         for (const dealer of filteredDealers) {
           let coordinates: [number, number] | null = null;
 
@@ -151,27 +153,56 @@ export default function WhereToBuy() {
               coordinates = geocodedCoordinates[cacheKey];
               console.log(`Используем кешированные координаты для ${dealer.name}: ${coordinates}`);
             } else {
-              // Try to geocode the address
-              try {
-                const fullAddress = `${dealer.city}, ${dealer.address}`;
-                const geocodeResult = await window.ymaps.geocode(fullAddress);
-                const firstGeoObject = geocodeResult.geoObjects.get(0);
-                if (firstGeoObject) {
-                  coordinates = firstGeoObject.geometry.getCoordinates();
-                  console.log(`Геокодирование успешно для ${dealer.name}: ${coordinates}`);
-                  
-                  // Cache the coordinates
-                  setGeocodedCoordinates(prev => ({
-                    ...prev,
-                    [cacheKey]: coordinates!
-                  }));
+              // Queue geocoding for later
+              const geocodingPromise = (async () => {
+                try {
+                  const fullAddress = `${dealer.city}, ${dealer.address}`;
+                  const geocodeResult = await window.ymaps.geocode(fullAddress);
+                  const firstGeoObject = geocodeResult.geoObjects.get(0);
+                  if (firstGeoObject) {
+                    const newCoordinates = firstGeoObject.geometry.getCoordinates();
+                    console.log(`Геокодирование успешно для ${dealer.name}: ${newCoordinates}`);
+                    
+                    // Update coordinates cache
+                    setGeocodedCoordinates(prev => ({
+                      ...prev,
+                      [cacheKey]: newCoordinates
+                    }));
+
+                    // Add placemark immediately after geocoding
+                    const placemark = new window.ymaps.Placemark(
+                      newCoordinates,
+                      {
+                        balloonContentHeader: dealer.name,
+                        balloonContentBody: `
+                          <div>
+                            <p><strong>Адрес:</strong> ${dealer.address}</p>
+                            <p><strong>Город:</strong> ${dealer.city}</p>
+                            ${dealer.phone ? `<p><strong>Телефон:</strong> ${dealer.phone}</p>` : ''}
+                            ${dealer.workingHours ? `<p><strong>Часы работы:</strong> ${dealer.workingHours}</p>` : ''}
+                          </div>
+                        `,
+                        balloonContentFooter: dealer.dealerType
+                      },
+                      {
+                        preset: highlightedDealer === dealer.id ? 'islands#blueDotIcon' : 'islands#redDotIcon'
+                      }
+                    );
+                    
+                    placemark.dealerId = dealer.id;
+                    mapInstance.geoObjects.add(placemark);
+                  }
+                } catch (error) {
+                  console.warn(`Не удалось геокодировать адрес для ${dealer.name}:`, error);
                 }
-              } catch (error) {
-                console.warn(`Не удалось геокодировать адрес для ${dealer.name}:`, error);
-              }
+              })();
+              
+              geocodingPromises.push(geocodingPromise);
+              continue; // Skip adding placemark in this iteration
             }
           }
 
+          // Add placemark for dealers with known coordinates
           if (coordinates) {
             const placemark = new window.ymaps.Placemark(
               coordinates,
@@ -192,9 +223,7 @@ export default function WhereToBuy() {
               }
             );
             
-            // Store dealer id in placemark for highlighting
             placemark.dealerId = dealer.id;
-            
             placemarks.push(placemark);
             mapInstance.geoObjects.add(placemark);
           }
@@ -202,7 +231,7 @@ export default function WhereToBuy() {
 
         console.log(`Создано маркеров на карте: ${placemarks.length}`);
         
-        // Fit map to show all placemarks
+        // Fit map to show existing placemarks
         if (placemarks.length > 0) {
           const group = new window.ymaps.GeoObjectCollection({}, {});
           placemarks.forEach(placemark => group.add(placemark));
@@ -218,11 +247,38 @@ export default function WhereToBuy() {
             mapInstance.setCenter([55.76, 37.64], 5);
           }
         }
+
+        // Wait for any pending geocoding operations
+        if (geocodingPromises.length > 0) {
+          Promise.all(geocodingPromises).then(() => {
+            // Adjust bounds again after geocoding completes
+            setTimeout(() => {
+              const allPlacemarks: any[] = [];
+              mapInstance.geoObjects.each((obj: any) => {
+                allPlacemarks.push(obj);
+              });
+              
+              if (allPlacemarks.length > 0) {
+                const group = new window.ymaps.GeoObjectCollection({}, {});
+                allPlacemarks.forEach(placemark => group.add(placemark));
+                
+                try {
+                  const bounds = group.getBounds();
+                  if (bounds && bounds.length > 0) {
+                    mapInstance.setBounds(bounds, { checkZoomRange: true, zoomMargin: 20 });
+                  }
+                } catch (error) {
+                  console.warn('Could not adjust bounds after geocoding:', error);
+                }
+              }
+            }, 100);
+          });
+        }
       };
 
       addPlacemarks();
     }
-  }, [mapInstance, filteredDealers, geocodedCoordinates]);
+  }, [mapInstance, filteredDealers, highlightedDealer]);
 
   const handleServiceToggle = (service: string) => {
     setSelectedServices(prev =>
