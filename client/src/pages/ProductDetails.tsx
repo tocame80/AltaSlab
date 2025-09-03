@@ -351,11 +351,11 @@ export default function ProductDetails() {
         <div className="mb-12">
           {/* Main Image */}
           <div className="group relative bg-white rounded-xl overflow-hidden shadow-sm mb-6">
-            <div className="aspect-[2/1] relative">
+            <div className="relative min-h-[400px]">
               <OptimizedThumbnail
                 src={gallery[currentImageIndex]}
                 alt={getProductDisplayName()}
-                className="w-full h-full object-fill"
+                className="w-full h-full object-cover object-center"
                 size={800}
                 quality={0.9}
               />
