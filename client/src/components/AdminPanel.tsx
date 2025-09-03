@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
+import OptimizedThumbnail from './OptimizedThumbnail';
 
 interface AdminPanelProps {
   isOpen: boolean;
@@ -1883,14 +1884,12 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                 {existingImages.map((img, index) => (
                   <div key={index} className="relative group">
                     <div className="aspect-square rounded-lg overflow-hidden border-2 border-gray-200">
-                      <img
+                      <OptimizedThumbnail
                         src={img.url}
                         alt={img.fileName}
                         className="w-full h-full object-cover"
-                        onError={(e) => {
-                          // Fallback if image fails to load
-                          (e.target as HTMLImageElement).src = '/api/placeholder/150x150';
-                        }}
+                        size={150}
+                        quality={0.8}
                       />
                     </div>
                     
