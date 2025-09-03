@@ -72,6 +72,7 @@ export default function WhereToBuy() {
   const [showRegionModal, setShowRegionModal] = useState<boolean>(false);
   const [testModal, setTestModal] = useState<boolean>(false);
   const [detectedRegion, setDetectedRegion] = useState<string>('');
+  const [forceUpdate, setForceUpdate] = useState<number>(0);
   const [ipDetectionDone, setIpDetectionDone] = useState<boolean>(false);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapInstance, setMapInstance] = useState<any>(null);
@@ -120,11 +121,8 @@ export default function WhereToBuy() {
         const city = (data.city || '').toLowerCase();
         
         if (city === 'moscow' || location.includes('moscow')) {
-          if (location === 'moscow') {
-            region = 'Москва';
-          } else {
-            region = 'Московская область';
-          }
+          // Both Moscow and Moscow Oblast use the same dealers
+          region = 'Московская область';
         } else if (city === 'saint petersburg' || city === 'st petersburg' || location.includes('saint petersburg')) {
           region = 'Санкт-Петербург';
         } else if (location.includes('leningrad')) {
