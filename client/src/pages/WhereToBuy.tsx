@@ -133,17 +133,35 @@ export default function WhereToBuy() {
 
   // Initialize map
   useEffect(() => {
-    if (mapLoaded && dealerLocations.length > 0 && !mapInstance && window.ymaps && window.ymaps.Map) {
-      try {
-        const map = new window.ymaps.Map('yandex-map', {
-          center: [55.753994, 37.622093], // Moscow coordinates
-          zoom: 10,
-          controls: ['zoomControl', 'searchControl', 'typeSelector', 'fullscreenControl']
-        });
+    if (mapLoaded && dealerLocations.length > 0 && !mapInstance) {
+      // Double-check that ymaps is fully loaded
+      if (window.ymaps && window.ymaps.Map && typeof window.ymaps.Map === 'function') {
+        try {
+          const mapElement = document.getElementById('yandex-map');
+          if (mapElement) {
+            const map = new window.ymaps.Map('yandex-map', {
+              center: [55.753994, 37.622093], // Moscow coordinates
+              zoom: 10,
+              controls: ['zoomControl', 'searchControl', 'typeSelector', 'fullscreenControl']
+            });
 
-        setMapInstance(map);
-      } catch (error) {
-        console.error('Ошибка создания карты:', error);
+            setMapInstance(map);
+          }
+        } catch (error) {
+          console.error('Ошибка создания карты:', error);
+          // Reset map loaded state to try again
+          setMapLoaded(false);
+        }
+      } else {
+        console.warn('Yandex Maps API not fully loaded, retrying...');
+        // Try to reload after a short delay
+        setTimeout(() => {
+          if (window.ymaps && window.ymaps.ready) {
+            window.ymaps.ready(() => {
+              setMapLoaded(true);
+            });
+          }
+        }, 1000);
       }
     }
   }, [mapLoaded, dealerLocations, mapInstance]);
