@@ -319,22 +319,38 @@ export default function WhereToBuy() {
       // Clear all placemarks from map first
       mapInstance.geoObjects.removeAll();
       
-      // Add only visible placemarks
-      let visibleCount = 0;
+      // Add only visible placemarks and collect them for bounds calculation
+      const visiblePlacemarks: any[] = [];
       placemarksRef.current.forEach(placemark => {
         const isVisible = filteredDealerIds.has(placemark.dealerId);
         if (isVisible) {
           try {
             mapInstance.geoObjects.add(placemark);
-            visibleCount++;
+            visiblePlacemarks.push(placemark);
           } catch (error) {
             console.error(`Ошибка добавления маркера ${placemark.dealerId}:`, error);
           }
         }
       });
       
-
-      // Don't adjust bounds automatically to avoid moving map when user is navigating
+      // Automatically adjust map bounds to show all visible dealers
+      if (visiblePlacemarks.length > 0) {
+        try {
+          const group = new window.ymaps.GeoObjectCollection({}, {});
+          visiblePlacemarks.forEach(placemark => group.add(placemark));
+          
+          const bounds = group.getBounds();
+          if (bounds && bounds.length > 0) {
+            // Add some padding around the bounds
+            mapInstance.setBounds(bounds, { 
+              checkZoomRange: true, 
+              zoomMargin: [50, 50, 50, 50] // Top, Right, Bottom, Left padding
+            });
+          }
+        } catch (error) {
+          console.warn('Не удалось адаптировать границы карты:', error);
+        }
+      }
     }
   }, [filteredDealerIds, mapInstance, filteredDealers.length]);
 
