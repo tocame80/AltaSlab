@@ -5,7 +5,7 @@ import { FavoritesContext } from '@/contexts/FavoritesContext';
 import { Collection } from '@/types';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
-import { getProductMainImage, getProductGallery, getHDImageUrl, isLargeImage } from '@/assets/products/imageMap';
+import { getProductMainImage, getProductGallery, getOptimizedGallery, getHDImageUrl, isLargeImage } from '@/assets/products/imageMap';
 import OptimizedThumbnail from '@/components/OptimizedThumbnail';
 
 interface Product {
@@ -64,12 +64,12 @@ export default function ProductDetails() {
     
     // Check if API returned USE_IMAGEMAP signal
     if (product.image?.startsWith('USE_IMAGEMAP:') || (product as any).gallery?.[0]?.startsWith('USE_IMAGEMAP:')) {
-      // Use imageMap functions for local images
-      return getProductGallery(productId, product.collection);
+      // Use optimized imageMap functions for local images (excludes very large files)
+      return getOptimizedGallery(productId, product.collection);
     }
     
-    // Fallback - also use imageMap by default
-    return getProductGallery(productId, product.collection);
+    // Fallback - also use optimized imageMap by default
+    return getOptimizedGallery(productId, product.collection);
   }, [product]);
 
   useEffect(() => {
@@ -460,22 +460,6 @@ export default function ProductDetails() {
                 title="Скачать оригинал"
               >
                 <Save size={16} />
-              </button>
-              <button 
-                onClick={() => {
-                  const hdUrl = getHDImageUrl(gallery[currentImageIndex]);
-                  const link = document.createElement('a');
-                  link.href = hdUrl;
-                  link.download = `${getProductDisplayName()}-HD.${hdUrl.split('.').pop()}`;
-                  link.target = '_blank';
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
-                }}
-                className="w-10 h-10 bg-orange-500/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-orange-600 text-white transition-all"
-                title="Скачать HD (для дизайнеров)"
-              >
-                <span className="text-xs font-bold">HD</span>
               </button>
               <button
                 onClick={() => toggleFavorite(product.id)}

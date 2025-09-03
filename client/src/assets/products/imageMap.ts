@@ -226,3 +226,15 @@ export const isLargeImage = (imageSrc: string): boolean => {
   return imageSrc.includes('(1).') || imageSrc.includes('(2.1).') || imageSrc.includes('(2.2).');
 };
 
+// Function to filter out extremely large images from gallery for performance
+export const getOptimizedGallery = (productId: string, collection: string = ''): string[] => {
+  const allImages = getProductGallery(productId, collection);
+  
+  // Move large images to the end and limit to first few for initial load
+  const smallImages = allImages.filter(img => !isLargeImage(img));
+  const largeImages = allImages.filter(img => isLargeImage(img));
+  
+  // Return small images first, then large ones (limited to avoid performance issues)
+  return [...smallImages, ...largeImages.slice(0, 2)];
+};
+

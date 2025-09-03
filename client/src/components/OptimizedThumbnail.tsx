@@ -27,7 +27,7 @@ export default function OptimizedThumbnail({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const { getCachedImage, setCachedImage, getCacheKey } = useImageCache();
-  const { addToQueue } = useBatchImageProcessor({ batchSize: 1, delay: 100 });
+  const { addToQueue } = useBatchImageProcessor({ batchSize: 1, delay: 200 });
 
 
 
