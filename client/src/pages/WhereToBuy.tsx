@@ -35,9 +35,27 @@ export default function WhereToBuy() {
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapInstance, setMapInstance] = useState<any>(null);
   
-  // Use useRef to persist coordinates between re-renders
-  const geocodedCoordinatesRef = useRef<Record<string, [number, number]>>({});
+  // Use localStorage to persist coordinates between sessions
+  const getStoredCoordinates = (): Record<string, [number, number]> => {
+    try {
+      const stored = localStorage.getItem('yandex-maps-coordinates');
+      return stored ? JSON.parse(stored) : {};
+    } catch {
+      return {};
+    }
+  };
+
+  const storeCoordinates = (coords: Record<string, [number, number]>) => {
+    try {
+      localStorage.setItem('yandex-maps-coordinates', JSON.stringify(coords));
+    } catch {
+      // Ignore storage errors
+    }
+  };
+
+  const [storedCoordinates, setStoredCoordinates] = useState<Record<string, [number, number]>>(getStoredCoordinates);
   const placemarksRef = useRef<any[]>([]);
+  const isInitializedRef = useRef(false);
 
   // Fetch dealer locations
   const { data: dealerLocations = [], isLoading } = useQuery<DealerLocation[]>({
@@ -130,17 +148,17 @@ export default function WhereToBuy() {
     }
   }, [mapLoaded, filteredDealers, mapInstance]);
 
-  // Update map markers when filters change (without highlightedDealer dependency)
+  // Initialize map markers only once and update visibility based on filters
   useEffect(() => {
-    if (mapInstance && filteredDealers.length > 0) {
-      // Clear existing placemarks
-      mapInstance.geoObjects.removeAll();
-      placemarksRef.current = [];
+    if (mapInstance && dealerLocations.length > 0 && !isInitializedRef.current) {
+      isInitializedRef.current = true;
+      
+      const initializeAllPlacemarks = async () => {
+        console.log(`Инициализируем все точки продаж:`, dealerLocations.length);
+        let currentCoords = { ...storedCoordinates };
+        let needsUpdate = false;
 
-      const addPlacemarks = async () => {
-        console.log(`Импортируем точки продаж:`, filteredDealers.length);
-
-        for (const dealer of filteredDealers) {
+        for (const dealer of dealerLocations) {
           let coordinates: [number, number] | null = null;
 
           // Check if we have coordinates from database
@@ -148,12 +166,12 @@ export default function WhereToBuy() {
               parseFloat(dealer.latitude) !== 0 && parseFloat(dealer.longitude) !== 0) {
             coordinates = [parseFloat(dealer.latitude), parseFloat(dealer.longitude)];
           } else if (dealer.address && dealer.city) {
-            // Check cached coordinates first using ref
+            // Check cached coordinates first
             const cacheKey = `${dealer.city}_${dealer.address}`;
             
-            if (geocodedCoordinatesRef.current[cacheKey]) {
-              coordinates = geocodedCoordinatesRef.current[cacheKey];
-              console.log(`Используем кешированные координаты для ${dealer.name}: ${coordinates}`);
+            if (currentCoords[cacheKey]) {
+              coordinates = currentCoords[cacheKey];
+              console.log(`Используем сохраненные координаты для ${dealer.name}: ${coordinates}`);
             } else {
               // Try to geocode the address
               try {
@@ -165,8 +183,9 @@ export default function WhereToBuy() {
                   coordinates = newCoordinates;
                   console.log(`Геокодирование успешно для ${dealer.name}: ${coordinates}`);
                   
-                  // Cache the coordinates in ref
-                  geocodedCoordinatesRef.current[cacheKey] = newCoordinates;
+                  // Cache the coordinates
+                  currentCoords[cacheKey] = newCoordinates;
+                  needsUpdate = true;
                 }
               } catch (error) {
                 console.warn(`Не удалось геокодировать адрес для ${dealer.name}:`, error);
@@ -191,17 +210,24 @@ export default function WhereToBuy() {
                 balloonContentFooter: dealer.dealerType
               },
               {
-                preset: 'islands#redDotIcon' // Default color
+                preset: 'islands#redDotIcon'
               }
             );
             
             placemark.dealerId = dealer.id;
+            placemark.dealerData = dealer;
             placemarksRef.current.push(placemark);
             mapInstance.geoObjects.add(placemark);
           }
         }
 
-        console.log(`Создано маркеров на карте: ${placemarksRef.current.length}`);
+        // Update stored coordinates if needed
+        if (needsUpdate) {
+          setStoredCoordinates(currentCoords);
+          storeCoordinates(currentCoords);
+        }
+
+        console.log(`Инициализировано маркеров: ${placemarksRef.current.length}`);
         
         // Fit map to show all placemarks
         if (placemarksRef.current.length > 0) {
@@ -215,15 +241,42 @@ export default function WhereToBuy() {
             }
           } catch (error) {
             console.warn('Could not set map bounds:', error);
-            // Fallback to center of Russia
             mapInstance.setCenter([55.76, 37.64], 5);
           }
         }
       };
 
-      addPlacemarks();
+      initializeAllPlacemarks();
     }
-  }, [mapInstance, filteredDealers]);
+  }, [mapInstance, dealerLocations, storedCoordinates]);
+
+  // Update placemark visibility based on filters (without recreating them)
+  useEffect(() => {
+    if (placemarksRef.current.length > 0) {
+      const filteredIds = new Set(filteredDealers.map(d => d.id));
+      
+      placemarksRef.current.forEach(placemark => {
+        const isVisible = filteredIds.has(placemark.dealerId);
+        placemark.options.set('visible', isVisible);
+      });
+
+      // Adjust bounds to show only visible placemarks
+      const visiblePlacemarks = placemarksRef.current.filter(p => filteredIds.has(p.dealerId));
+      if (visiblePlacemarks.length > 0 && mapInstance) {
+        const group = new window.ymaps.GeoObjectCollection({}, {});
+        visiblePlacemarks.forEach(placemark => group.add(placemark));
+        
+        try {
+          const bounds = group.getBounds();
+          if (bounds && bounds.length > 0) {
+            mapInstance.setBounds(bounds, { checkZoomRange: true, zoomMargin: 20 });
+          }
+        } catch (error) {
+          console.warn('Could not adjust bounds for filtered placemarks:', error);
+        }
+      }
+    }
+  }, [filteredDealers, mapInstance]);
 
   // Update placemark colors when highlighted dealer changes (without recreating placemarks)
   useEffect(() => {
@@ -257,8 +310,8 @@ export default function WhereToBuy() {
       } else if (dealer.address && dealer.city) {
         // Check cached coordinates
         const cacheKey = `${dealer.city}_${dealer.address}`;
-        if (geocodedCoordinatesRef.current[cacheKey]) {
-          coordinates = geocodedCoordinatesRef.current[cacheKey];
+        if (storedCoordinates[cacheKey]) {
+          coordinates = storedCoordinates[cacheKey];
         }
       }
       
