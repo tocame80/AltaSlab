@@ -73,7 +73,8 @@ router.get('/thumbnail', async (req: Request, res: Response) => {
     const qualityNum = Number(quality);
 
     // Validate parameters
-    if (sizeNum < 10 || sizeNum > 1000) {
+    if (isNaN(sizeNum) || sizeNum < 10 || sizeNum > 1000) {
+      console.log(`Invalid size parameter: ${size} (parsed as ${sizeNum})`);
       return res.status(400).json({ error: 'Size must be between 10 and 1000' });
     }
 

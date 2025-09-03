@@ -18,6 +18,7 @@ import {
   Search,
   Mail,
   Play,
+  FolderDown,
 } from "lucide-react";
 import { FavoritesContext } from "@/contexts/FavoritesContext";
 import { Collection } from "@/types";
@@ -281,6 +282,27 @@ export default function ProductDetails() {
     document.body.removeChild(link);
   };
 
+  const downloadAllImages = () => {
+    const collectionName = getCollectionDisplayName();
+    const productColor = product.collection === 'Клей' && product.color === 'Стандарт' ? 'Альта Стик' : product.color;
+    const productCode = product.productCode || product.id.toString();
+    
+    gallery.forEach((imageUrl, index) => {
+      setTimeout(() => {
+        const imageFileName = imageUrl.split('/').pop() || '';
+        const fileExtension = imageFileName.split('.').pop() || 'jpg';
+        const downloadName = `${collectionName}_${productColor}_${productCode}_${index + 1}.${fileExtension}`;
+
+        const link = document.createElement("a");
+        link.href = imageUrl;
+        link.download = downloadName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }, index * 500); // Delay each download by 500ms
+    });
+  };
+
   const collections = [
     {
       key: "all" as Collection,
@@ -443,7 +465,7 @@ export default function ProductDetails() {
               <OptimizedThumbnail
                 src={gallery[currentImageIndex]}
                 alt={getProductDisplayName()}
-                className="w-full h-full object-cover object-center scale-110"
+                className="w-full h-full object-cover object-center scale-120"
                 size={800}
                 quality={0.9}
               />
@@ -559,10 +581,19 @@ export default function ProductDetails() {
               <button
                 onClick={downloadImage}
                 className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#e90039] transition-all"
-                title="Скачать оригинал"
+                title="Скачать текущее изображение"
               >
                 <Save size={16} />
               </button>
+              {gallery.length > 1 && (
+                <button
+                  onClick={downloadAllImages}
+                  className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#e90039] transition-all"
+                  title="Скачать все изображения"
+                >
+                  <FolderDown size={16} />
+                </button>
+              )}
               <button
                 onClick={() => toggleFavorite(product.id)}
                 className={`w-10 h-10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all ${
