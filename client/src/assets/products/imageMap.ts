@@ -213,3 +213,16 @@ export const getProductMainImage = (productId: string, collection: string = '', 
   return placeholderImage;
 };
 
+// Function to get HD version of image for download
+export const getHDImageUrl = (imageSrc: string): string => {
+  // For now, return the original since all current images are HD
+  // Later when you organize files, you can implement proper HD/web separation
+  return imageSrc;
+};
+
+// Function to check if image is likely large (>5MB) based on filename patterns
+export const isLargeImage = (imageSrc: string): boolean => {
+  // Files with (1), (2.1), (2.2) patterns are usually the large HD images
+  return imageSrc.includes('(1).') || imageSrc.includes('(2.1).') || imageSrc.includes('(2.2).');
+};
+

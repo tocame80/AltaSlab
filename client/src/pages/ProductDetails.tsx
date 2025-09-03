@@ -5,7 +5,7 @@ import { FavoritesContext } from '@/contexts/FavoritesContext';
 import { Collection } from '@/types';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
-import { getProductMainImage, getProductGallery } from '@/assets/products/imageMap';
+import { getProductMainImage, getProductGallery, getHDImageUrl, isLargeImage } from '@/assets/products/imageMap';
 import OptimizedThumbnail from '@/components/OptimizedThumbnail';
 
 interface Product {
@@ -461,6 +461,24 @@ export default function ProductDetails() {
               >
                 <Save size={16} />
               </button>
+              {isLargeImage(gallery[currentImageIndex]) && (
+                <button 
+                  onClick={() => {
+                    const hdUrl = getHDImageUrl(gallery[currentImageIndex]);
+                    const link = document.createElement('a');
+                    link.href = hdUrl;
+                    link.download = `${getProductDisplayName()}-HD.${hdUrl.split('.').pop()}`;
+                    link.target = '_blank';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  }}
+                  className="w-10 h-10 bg-orange-500/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-orange-600 text-white transition-all"
+                  title="Скачать HD (для дизайнеров)"
+                >
+                  <span className="text-xs font-bold">HD</span>
+                </button>
+              )}
               <button
                 onClick={() => toggleFavorite(product.id)}
                 className={`w-10 h-10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all ${
@@ -505,12 +523,15 @@ export default function ProductDetails() {
                         src={image}
                         alt={`${getProductDisplayName()} - изображение ${index + 1}`}
                         className="w-full h-full object-cover"
-                        size={100}
-                        quality={0.8}
+                        size={isLargeImage(image) ? 80 : 100}
+                        quality={isLargeImage(image) ? 0.6 : 0.8}
                       />
                     ) : (
                       <div className="w-full h-full bg-gray-100 flex items-center justify-center">
                         <div className="w-4 h-4 bg-gray-300 rounded animate-pulse"></div>
+                        {isLargeImage(image) && (
+                          <span className="absolute text-xs text-orange-600 font-bold">HD</span>
+                        )}
                       </div>
                     )}
                   </button>
