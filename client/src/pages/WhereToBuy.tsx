@@ -70,9 +70,7 @@ export default function WhereToBuy() {
   const [highlightedDealer, setHighlightedDealer] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showRegionModal, setShowRegionModal] = useState<boolean>(false);
-  const [testModal, setTestModal] = useState<boolean>(false);
   const [detectedRegion, setDetectedRegion] = useState<string>('');
-  const [forceUpdate, setForceUpdate] = useState<number>(0);
   const [ipDetectionDone, setIpDetectionDone] = useState<boolean>(false);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapInstance, setMapInstance] = useState<any>(null);
@@ -111,7 +109,6 @@ export default function WhereToBuy() {
       const response = await fetch('https://ipinfo.io/json');
       const data = await response.json();
       
-      console.log('IP API Response:', data);
       
       if (data.country === 'RU') {
         let region = '';
@@ -138,23 +135,13 @@ export default function WhereToBuy() {
         } else if (location.includes('tatarstan')) {
           region = 'Республика Татарстан';
         } else {
-          // For testing - let's assume Moscow Oblast for Russian IPs
-          region = 'Московская область';
+          region = 'Другие регионы';
         }
         
-        console.log('Detected region:', region);
         setDetectedRegion(region);
-      } else {
-        console.log('User not in Russia:', data.country);
-        // For testing - simulate Moscow Oblast detection
-        console.log('Testing: Setting region to Московская область');
-        setDetectedRegion('Московская область');
       }
     } catch (error) {
       console.warn('Не удалось определить регион по IP:', error);
-      // For testing - simulate Moscow Oblast detection  
-      console.log('Testing: Setting region to Московская область');
-      setDetectedRegion('Московская область');
     } finally {
       setIpDetectionDone(true);
     }
@@ -182,17 +169,11 @@ export default function WhereToBuy() {
   // Check if we should show modal after dealers are loaded
   useEffect(() => {
     if (detectedRegion && enhancedDealers.length > 0 && !localStorage.getItem('selectedRegion')) {
-      console.log('Checking dealers for region:', detectedRegion);
-      console.log('Available regions:', enhancedDealers.map(d => d.geographicalRegion));
-      
       const hasDealerasInRegion = enhancedDealers.some(dealer => 
         dealer.geographicalRegion === detectedRegion
       );
       
-      console.log('Has dealers in region:', hasDealerasInRegion);
-      
       if (hasDealerasInRegion) {
-        console.log('Showing region modal');
         setShowRegionModal(true);
       }
     }
