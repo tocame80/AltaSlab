@@ -876,7 +876,7 @@ async function findFileRecursively(dir: string, targetFilename: string): Promise
 // Salepoints Import/Export Routes
 router.get('/salepoints/export', async (req, res) => {
   try {
-    const XLSX = require('xlsx');
+    const XLSX = await import('xlsx');
     
     // Get storage instance from app
     const storage = req.app.locals.storage;
@@ -957,7 +957,7 @@ router.get('/salepoints/export', async (req, res) => {
 router.post('/salepoints/import', uploadExcel.any(), async (req, res) => {
   try {
     console.log('Starting salepoints import...');
-    const XLSX = require('xlsx');
+    const XLSX = await import('xlsx');
     
     // Get storage instance from app
     const storage = req.app.locals.storage;
