@@ -266,10 +266,14 @@ export default function WhereToBuy() {
     }
   }, [mapInstance, dealerLocations, storedCoordinates]);
 
+  // Memoize filtered dealer IDs to prevent unnecessary re-renders
+  const filteredDealerIds = useMemo(() => {
+    return new Set(filteredDealers.map(d => d.id));
+  }, [filteredDealers]);
+
   // Update placemark visibility based on filters (without recreating them)
   useEffect(() => {
-    if (placemarksRef.current.length > 0) {
-      const filteredIds = new Set(filteredDealers.map(d => d.id));
+    if (placemarksRef.current.length > 0 && mapInstance) {
       console.log(`Обновляем видимость маркеров. Отфильтровано дилеров: ${filteredDealers.length}, всего маркеров: ${placemarksRef.current.length}`);
       
       // Clear all placemarks from map first
@@ -278,7 +282,7 @@ export default function WhereToBuy() {
       // Add only visible placemarks
       let visibleCount = 0;
       placemarksRef.current.forEach(placemark => {
-        const isVisible = filteredIds.has(placemark.dealerId);
+        const isVisible = filteredDealerIds.has(placemark.dealerId);
         if (isVisible) {
           try {
             mapInstance.geoObjects.add(placemark);
@@ -292,23 +296,9 @@ export default function WhereToBuy() {
       console.log(`Видимых маркеров: ${visibleCount}`);
       console.log(`Объектов на карте после добавления: ${mapInstance.geoObjects.getLength()}`);
 
-      // Adjust bounds to show only visible placemarks
-      const visiblePlacemarks = placemarksRef.current.filter(p => filteredIds.has(p.dealerId));
-      if (visiblePlacemarks.length > 0 && mapInstance) {
-        const group = new window.ymaps.GeoObjectCollection({}, {});
-        visiblePlacemarks.forEach(placemark => group.add(placemark));
-        
-        try {
-          const bounds = group.getBounds();
-          if (bounds && bounds.length > 0) {
-            mapInstance.setBounds(bounds, { checkZoomRange: true, zoomMargin: 20 });
-          }
-        } catch (error) {
-          console.warn('Could not adjust bounds for filtered placemarks:', error);
-        }
-      }
+      // Don't adjust bounds automatically to avoid moving map when user is navigating
     }
-  }, [filteredDealers, mapInstance]);
+  }, [filteredDealerIds, mapInstance, filteredDealers.length]);
 
   // Update placemark colors when highlighted dealer changes (without recreating placemarks)
   useEffect(() => {
@@ -331,7 +321,7 @@ export default function WhereToBuy() {
   const handleShowOnMap = (dealerId: string) => {
     console.log(`Показать на карте дилера: ${dealerId}`);
     console.log(`Количество маркеров в placemarksRef: ${placemarksRef.current.length}`);
-    console.log(`Количество объектов на карте:`, mapInstance?.geoObjects.getLength());
+    console.log(`Количество объектов на карте ДО обновления:`, mapInstance?.geoObjects.getLength());
     
     setHighlightedDealer(dealerId);
     
