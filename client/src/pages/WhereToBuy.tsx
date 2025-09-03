@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Phone, Mail, Globe, MapPin, Clock, Filter, Search } from 'lucide-react';
 import Header from '@/components/Header';
@@ -31,10 +31,13 @@ export default function WhereToBuy() {
   const [selectedRegion, setSelectedRegion] = useState<string>('');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [highlightedDealer, setHighlightedDealer] = useState<string | null>(null);
-  const [geocodedCoordinates, setGeocodedCoordinates] = useState<Record<string, [number, number]>>({});
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapInstance, setMapInstance] = useState<any>(null);
+  
+  // Use useRef to persist coordinates between re-renders
+  const geocodedCoordinatesRef = useRef<Record<string, [number, number]>>({});
+  const placemarksRef = useRef<any[]>([]);
 
   // Fetch dealer locations
   const { data: dealerLocations = [], isLoading } = useQuery<DealerLocation[]>({
@@ -127,18 +130,16 @@ export default function WhereToBuy() {
     }
   }, [mapLoaded, filteredDealers, mapInstance]);
 
-  // Update map markers when filters change
+  // Update map markers when filters change (without highlightedDealer dependency)
   useEffect(() => {
     if (mapInstance && filteredDealers.length > 0) {
       // Clear existing placemarks
       mapInstance.geoObjects.removeAll();
+      placemarksRef.current = [];
 
       const addPlacemarks = async () => {
-        const placemarks: any[] = [];
-        const geocodingPromises: Promise<void>[] = [];
         console.log(`Импортируем точки продаж:`, filteredDealers.length);
 
-        // First pass: add all dealers with existing coordinates
         for (const dealer of filteredDealers) {
           let coordinates: [number, number] | null = null;
 
@@ -147,63 +148,33 @@ export default function WhereToBuy() {
               parseFloat(dealer.latitude) !== 0 && parseFloat(dealer.longitude) !== 0) {
             coordinates = [parseFloat(dealer.latitude), parseFloat(dealer.longitude)];
           } else if (dealer.address && dealer.city) {
-            // Check cached coordinates first
+            // Check cached coordinates first using ref
             const cacheKey = `${dealer.city}_${dealer.address}`;
             
-            if (geocodedCoordinates[cacheKey]) {
-              coordinates = geocodedCoordinates[cacheKey];
+            if (geocodedCoordinatesRef.current[cacheKey]) {
+              coordinates = geocodedCoordinatesRef.current[cacheKey];
               console.log(`Используем кешированные координаты для ${dealer.name}: ${coordinates}`);
             } else {
-              // Queue geocoding for later
-              const geocodingPromise = (async () => {
-                try {
-                  const fullAddress = `${dealer.city}, ${dealer.address}`;
-                  const geocodeResult = await window.ymaps.geocode(fullAddress);
-                  const firstGeoObject = geocodeResult.geoObjects.get(0);
-                  if (firstGeoObject) {
-                    const newCoordinates = firstGeoObject.geometry.getCoordinates();
-                    console.log(`Геокодирование успешно для ${dealer.name}: ${newCoordinates}`);
-                    
-                    // Update coordinates cache
-                    setGeocodedCoordinates(prev => ({
-                      ...prev,
-                      [cacheKey]: newCoordinates
-                    }));
-
-                    // Add placemark immediately after geocoding
-                    const placemark = new window.ymaps.Placemark(
-                      newCoordinates,
-                      {
-                        balloonContentHeader: dealer.name,
-                        balloonContentBody: `
-                          <div>
-                            <p><strong>Адрес:</strong> ${dealer.address}</p>
-                            <p><strong>Город:</strong> ${dealer.city}</p>
-                            ${dealer.phone ? `<p><strong>Телефон:</strong> ${dealer.phone}</p>` : ''}
-                            ${dealer.workingHours ? `<p><strong>Часы работы:</strong> ${dealer.workingHours}</p>` : ''}
-                          </div>
-                        `,
-                        balloonContentFooter: dealer.dealerType
-                      },
-                      {
-                        preset: highlightedDealer === dealer.id ? 'islands#blueDotIcon' : 'islands#redDotIcon'
-                      }
-                    );
-                    
-                    placemark.dealerId = dealer.id;
-                    mapInstance.geoObjects.add(placemark);
-                  }
-                } catch (error) {
-                  console.warn(`Не удалось геокодировать адрес для ${dealer.name}:`, error);
+              // Try to geocode the address
+              try {
+                const fullAddress = `${dealer.city}, ${dealer.address}`;
+                const geocodeResult = await window.ymaps.geocode(fullAddress);
+                const firstGeoObject = geocodeResult.geoObjects.get(0);
+                if (firstGeoObject) {
+                  const newCoordinates: [number, number] = firstGeoObject.geometry.getCoordinates();
+                  coordinates = newCoordinates;
+                  console.log(`Геокодирование успешно для ${dealer.name}: ${coordinates}`);
+                  
+                  // Cache the coordinates in ref
+                  geocodedCoordinatesRef.current[cacheKey] = newCoordinates;
                 }
-              })();
-              
-              geocodingPromises.push(geocodingPromise);
-              continue; // Skip adding placemark in this iteration
+              } catch (error) {
+                console.warn(`Не удалось геокодировать адрес для ${dealer.name}:`, error);
+              }
             }
           }
 
-          // Add placemark for dealers with known coordinates
+          // Add placemark for dealers with coordinates
           if (coordinates) {
             const placemark = new window.ymaps.Placemark(
               coordinates,
@@ -220,22 +191,22 @@ export default function WhereToBuy() {
                 balloonContentFooter: dealer.dealerType
               },
               {
-                preset: highlightedDealer === dealer.id ? 'islands#blueDotIcon' : 'islands#redDotIcon'
+                preset: 'islands#redDotIcon' // Default color
               }
             );
             
             placemark.dealerId = dealer.id;
-            placemarks.push(placemark);
+            placemarksRef.current.push(placemark);
             mapInstance.geoObjects.add(placemark);
           }
         }
 
-        console.log(`Создано маркеров на карте: ${placemarks.length}`);
+        console.log(`Создано маркеров на карте: ${placemarksRef.current.length}`);
         
-        // Fit map to show existing placemarks
-        if (placemarks.length > 0) {
+        // Fit map to show all placemarks
+        if (placemarksRef.current.length > 0) {
           const group = new window.ymaps.GeoObjectCollection({}, {});
-          placemarks.forEach(placemark => group.add(placemark));
+          placemarksRef.current.forEach(placemark => group.add(placemark));
           
           try {
             const bounds = group.getBounds();
@@ -248,38 +219,21 @@ export default function WhereToBuy() {
             mapInstance.setCenter([55.76, 37.64], 5);
           }
         }
-
-        // Wait for any pending geocoding operations
-        if (geocodingPromises.length > 0) {
-          Promise.all(geocodingPromises).then(() => {
-            // Adjust bounds again after geocoding completes
-            setTimeout(() => {
-              const allPlacemarks: any[] = [];
-              mapInstance.geoObjects.each((obj: any) => {
-                allPlacemarks.push(obj);
-              });
-              
-              if (allPlacemarks.length > 0) {
-                const group = new window.ymaps.GeoObjectCollection({}, {});
-                allPlacemarks.forEach(placemark => group.add(placemark));
-                
-                try {
-                  const bounds = group.getBounds();
-                  if (bounds && bounds.length > 0) {
-                    mapInstance.setBounds(bounds, { checkZoomRange: true, zoomMargin: 20 });
-                  }
-                } catch (error) {
-                  console.warn('Could not adjust bounds after geocoding:', error);
-                }
-              }
-            }, 100);
-          });
-        }
       };
 
       addPlacemarks();
     }
-  }, [mapInstance, filteredDealers, highlightedDealer]);
+  }, [mapInstance, filteredDealers]);
+
+  // Update placemark colors when highlighted dealer changes (without recreating placemarks)
+  useEffect(() => {
+    if (mapInstance && placemarksRef.current.length > 0) {
+      placemarksRef.current.forEach(placemark => {
+        const isHighlighted = placemark.dealerId === highlightedDealer;
+        placemark.options.set('preset', isHighlighted ? 'islands#blueDotIcon' : 'islands#redDotIcon');
+      });
+    }
+  }, [highlightedDealer, mapInstance]);
 
   const handleServiceToggle = (service: string) => {
     setSelectedServices(prev =>
@@ -303,8 +257,8 @@ export default function WhereToBuy() {
       } else if (dealer.address && dealer.city) {
         // Check cached coordinates
         const cacheKey = `${dealer.city}_${dealer.address}`;
-        if (geocodedCoordinates[cacheKey]) {
-          coordinates = geocodedCoordinates[cacheKey];
+        if (geocodedCoordinatesRef.current[cacheKey]) {
+          coordinates = geocodedCoordinatesRef.current[cacheKey];
         }
       }
       
