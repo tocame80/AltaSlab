@@ -500,19 +500,13 @@ export default function ProductDetails() {
                       index === currentImageIndex ? 'border-[#e90039]' : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
-                    {index < 4 || Math.abs(index - currentImageIndex) <= 2 ? (
-                      <OptimizedThumbnail
-                        src={image}
-                        alt={`${getProductDisplayName()} - изображение ${index + 1}`}
-                        className="w-full h-full object-cover"
-                        size={80}
-                        quality={0.7}
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-white flex items-center justify-center" style={{ backgroundColor: 'white' }}>
-                        <div className="w-4 h-4 bg-gray-300 rounded animate-pulse"></div>
-                      </div>
-                    )}
+                    <OptimizedThumbnail
+                      src={image}
+                      alt={`${getProductDisplayName()} - изображение ${index + 1}`}
+                      className="w-full h-full object-cover"
+                      size={80}
+                      quality={0.7}
+                    />
                   </button>
                 ))}
                 {gallery.length > 8 && (

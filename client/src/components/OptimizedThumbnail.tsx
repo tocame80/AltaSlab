@@ -45,7 +45,7 @@ export default function OptimizedThumbnail({
         return;
       }
 
-      const cacheKey = getCacheKey(src, size, quality) + '_server_v1';
+      const cacheKey = getCacheKey(src, size, quality) + '_server_v2_white';
       const cachedUrl = getCachedImage(cacheKey);
 
       if (cachedUrl) {

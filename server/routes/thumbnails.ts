@@ -133,7 +133,8 @@ router.get('/thumbnail', async (req: Request, res: Response) => {
     res.set({
       'Content-Type': 'image/jpeg',
       'Cache-Control': 'public, max-age=31536000', // 1 year cache
-      'Content-Length': thumbnailBuffer.length.toString()
+      'Content-Length': thumbnailBuffer.length.toString(),
+      'ETag': `"${cacheKey}"` // Add ETag for cache busting
     });
 
     res.send(thumbnailBuffer);
