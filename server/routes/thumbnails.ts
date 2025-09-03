@@ -92,20 +92,24 @@ router.get('/thumbnail', async (req: Request, res: Response) => {
     // Convert src to actual file path
     let filePath: string;
     
-    if (src.startsWith('/assets/')) {
+    // Decode URL-encoded characters first
+    const decodedSrc = decodeURIComponent(src);
+    
+    if (decodedSrc.startsWith('/assets/')) {
       // Handle frontend URL format like /assets/products/image.jpg
-      filePath = path.join(process.cwd(), 'client/src', src.replace(/^\//, ''));
-    } else if (src.startsWith('/src/assets/')) {
+      filePath = path.join(process.cwd(), 'client/src', decodedSrc.replace(/^\//, ''));
+    } else if (decodedSrc.startsWith('/src/assets/')) {
       // Handle webpack format
-      filePath = src.replace(/^\/src\/assets\//, '');
-      filePath = path.join(process.cwd(), 'client/src/assets', filePath);
+      const cleanPath = decodedSrc.replace(/^\/src\/assets\//, '');
+      filePath = path.join(process.cwd(), 'client/src/assets', cleanPath);
     } else {
       // Handle relative paths
-      filePath = path.join(process.cwd(), 'client/src/assets/products', src);
+      filePath = path.join(process.cwd(), 'client/src/assets/products', decodedSrc);
     }
 
     // Debug logging
     console.log(`Thumbnail request - src: ${src}`);
+    console.log(`Decoded src: ${decodedSrc}`);
     console.log(`Resolved file path: ${filePath}`);
     
     // Check if source file exists
