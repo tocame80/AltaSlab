@@ -1058,6 +1058,20 @@ router.post('/salepoints/import', uploadExcel.any(), async (req, res) => {
 
     console.log(`Importing ${salepointsToImport.length} salepoints...`);
 
+    // Clear existing data before import (replace mode)
+    try {
+      const existingLocations = await storage.getDealerLocations();
+      console.log(`Clearing ${existingLocations.length} existing dealer locations...`);
+      
+      for (const location of existingLocations) {
+        await storage.deleteDealerLocation(location.id);
+      }
+      console.log('Existing data cleared successfully');
+    } catch (error) {
+      console.error('Error clearing existing data:', error);
+      // Continue with import even if clearing fails
+    }
+
     // Import salepoints to database
     let importedCount = 0;
     const errors: string[] = [];
