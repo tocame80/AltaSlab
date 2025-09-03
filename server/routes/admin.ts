@@ -956,16 +956,21 @@ router.get('/salepoints/export', async (req, res) => {
 
 router.post('/salepoints/import', uploadExcel.any(), async (req, res) => {
   try {
+    console.log('Starting salepoints import...');
     const XLSX = require('xlsx');
     
     // Get storage instance from app
     const storage = req.app.locals.storage;
     if (!storage) {
+      console.error('Storage not available');
       return res.status(500).json({ error: 'Storage not available' });
     }
 
     const files = req.files as Express.Multer.File[];
     const data = req.body.data;
+    
+    console.log('Files received:', files?.length || 0);
+    console.log('Body data:', data ? 'present' : 'none');
     
     let salepointsToImport: any[] = [];
     
@@ -976,6 +981,10 @@ router.post('/salepoints/import', uploadExcel.any(), async (req, res) => {
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
+      
+      console.log('Excel parsed, rows count:', jsonData.length);
+      console.log('First row keys:', Object.keys(jsonData[0] || {}));
+      console.log('First row data:', jsonData[0]);
       
       if (jsonData.length === 0) {
         return res.status(400).json({ error: 'Excel file is empty or has wrong format' });
@@ -1005,7 +1014,7 @@ router.post('/salepoints/import', uploadExcel.any(), async (req, res) => {
         }
 
         // Validate required fields
-        const name = String(row['Название магазина'] || row['Название'] || '').trim();
+        const name = String(row['Название торговой точки'] || row['Название магазина'] || row['Название'] || '').trim();
         const city = String(row['Город'] || '').trim();
         const address = String(row['Адрес'] || '').trim();
         
