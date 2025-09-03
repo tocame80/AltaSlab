@@ -116,8 +116,11 @@ export default function WhereToBuy() {
   // Load Yandex Maps
   useEffect(() => {
     const loadYandexMaps = () => {
-      if (window.ymaps) {
-        setMapLoaded(true);
+      if (window.ymaps && window.ymaps.ready) {
+        window.ymaps.ready(() => {
+          console.log('Яндекс Карты готовы');
+          setMapLoaded(true);
+        });
         return;
       }
 
@@ -125,9 +128,16 @@ export default function WhereToBuy() {
       const apiKey = import.meta.env.VITE_YANDEX_MAPS_API_KEY || '';
       script.src = `https://api-maps.yandex.ru/2.1/?apikey=${apiKey}&lang=ru_RU`;
       script.onload = () => {
-        window.ymaps?.ready(() => {
-          setMapLoaded(true);
-        });
+        console.log('Скрипт Яндекс Карт загружен');
+        if (window.ymaps && window.ymaps.ready) {
+          window.ymaps.ready(() => {
+            console.log('Яндекс Карты инициализированы');
+            setMapLoaded(true);
+          });
+        }
+      };
+      script.onerror = (error) => {
+        console.error('Ошибка загрузки Яндекс Карт:', error);
       };
       document.head.appendChild(script);
     };
@@ -137,16 +147,22 @@ export default function WhereToBuy() {
 
   // Initialize map
   useEffect(() => {
-    if (mapLoaded && filteredDealers.length > 0 && !mapInstance) {
-      const map = new window.ymaps.Map('yandex-map', {
-        center: [55.753994, 37.622093], // Moscow coordinates
-        zoom: 10,
-        controls: ['zoomControl', 'searchControl', 'typeSelector', 'fullscreenControl']
-      });
+    if (mapLoaded && dealerLocations.length > 0 && !mapInstance && window.ymaps && window.ymaps.Map) {
+      console.log('Создаем экземпляр карты');
+      try {
+        const map = new window.ymaps.Map('yandex-map', {
+          center: [55.753994, 37.622093], // Moscow coordinates
+          zoom: 10,
+          controls: ['zoomControl', 'searchControl', 'typeSelector', 'fullscreenControl']
+        });
 
-      setMapInstance(map);
+        console.log('Карта создана успешно');
+        setMapInstance(map);
+      } catch (error) {
+        console.error('Ошибка создания карты:', error);
+      }
     }
-  }, [mapLoaded, filteredDealers, mapInstance]);
+  }, [mapLoaded, dealerLocations, mapInstance]);
 
   // Initialize map markers only once and update visibility based on filters
   useEffect(() => {
