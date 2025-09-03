@@ -43,8 +43,10 @@ async function generateThumbnail(
     const buffer = await sharp(inputPath)
       .resize(size, size, {
         fit: 'cover',
-        position: 'center'
+        position: 'center',
+        background: { r: 255, g: 255, b: 255, alpha: 1 } // White background
       })
+      .flatten({ background: { r: 255, g: 255, b: 255 } }) // Flatten with white background
       .jpeg({ 
         quality: Math.round(quality * 100),
         progressive: true 
