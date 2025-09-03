@@ -492,7 +492,7 @@ export default function ProductDetails() {
               
               {/* Thumbnail Gallery */}
               <div className="flex gap-3 justify-center overflow-x-auto pb-2">
-                {gallery.map((image: string, index: number) => (
+                {gallery.slice(0, 8).map((image: string, index: number) => (
                   <button
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
@@ -500,15 +500,26 @@ export default function ProductDetails() {
                       index === currentImageIndex ? 'border-[#e90039]' : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
-                    <OptimizedThumbnail
-                      src={image}
-                      alt={`${getProductDisplayName()} - изображение ${index + 1}`}
-                      className="w-full h-full object-cover"
-                      size={100}
-                      quality={0.8}
-                    />
+                    {index < 4 || Math.abs(index - currentImageIndex) <= 2 ? (
+                      <OptimizedThumbnail
+                        src={image}
+                        alt={`${getProductDisplayName()} - изображение ${index + 1}`}
+                        className="w-full h-full object-cover"
+                        size={100}
+                        quality={0.8}
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                        <div className="w-4 h-4 bg-gray-300 rounded animate-pulse"></div>
+                      </div>
+                    )}
                   </button>
                 ))}
+                {gallery.length > 8 && (
+                  <div className="flex-shrink-0 w-24 h-12 rounded-lg bg-gray-100 flex items-center justify-center text-xs text-gray-500">
+                    +{gallery.length - 8}
+                  </div>
+                )}
               </div>
               
               {/* Next Button */}

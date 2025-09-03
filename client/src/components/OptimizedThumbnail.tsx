@@ -27,7 +27,7 @@ export default function OptimizedThumbnail({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const { getCachedImage, setCachedImage, getCacheKey } = useImageCache();
-  const { addToQueue } = useBatchImageProcessor({ batchSize: 4, delay: 10 });
+  const { addToQueue } = useBatchImageProcessor({ batchSize: 2, delay: 50 });
 
 
 
@@ -41,23 +41,18 @@ export default function OptimizedThumbnail({
       const cachedUrl = getCachedImage(cacheKey);
 
       if (cachedUrl) {
-        console.log('OptimizedThumbnail: Using cached thumbnail for', src);
         setThumbnailUrl(cachedUrl);
         setIsLoading(false);
         onLoad?.();
         return;
       }
 
-      console.log('OptimizedThumbnail: Generating thumbnail for', src, 'size:', size);
       setIsLoading(true);
       setHasError(false);
 
       try {
         const thumbnail = await addToQueue(src, size, quality);
         if (isMounted) {
-          console.log('OptimizedThumbnail: Thumbnail generated successfully, size:', thumbnail.length, 'for target size:', size);
-          console.log('OptimizedThumbnail: Original src:', src);
-          console.log('OptimizedThumbnail: Generated thumbnail starts with:', thumbnail.substring(0, 50));
           setCachedImage(cacheKey, thumbnail, size * size * 0.5); // Estimate size
           setThumbnailUrl(thumbnail);
           setIsLoading(false);
@@ -67,7 +62,6 @@ export default function OptimizedThumbnail({
         console.warn('OptimizedThumbnail failed to generate thumbnail:', error);
         // Don't fallback to original image - show error state instead
         if (isMounted) {
-          console.log('OptimizedThumbnail: Setting error state, NOT falling back to original');
           setHasError(true);
           setIsLoading(false);
           onError?.();
