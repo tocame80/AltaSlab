@@ -99,7 +99,8 @@ export default function WhereToBuy() {
       }
 
       const script = document.createElement('script');
-      script.src = 'https://api-maps.yandex.ru/2.1/?apikey=&lang=ru_RU';
+      const apiKey = import.meta.env.VITE_YANDEX_MAPS_API_KEY || '';
+      script.src = `https://api-maps.yandex.ru/2.1/?apikey=${apiKey}&lang=ru_RU`;
       script.onload = () => {
         window.ymaps?.ready(() => {
           setMapLoaded(true);
