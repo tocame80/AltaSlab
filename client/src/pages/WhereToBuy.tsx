@@ -18,7 +18,45 @@ interface DealerLocation {
   dealerType: string;
   services: string[];
   workingHours?: string;
+  geographicalRegion?: string;
 }
+
+// Function to extract geographical region from address
+const extractGeographicalRegion = (address: string): string => {
+  const addressLower = address.toLowerCase();
+  
+  // Check for specific regions/oblasts
+  if (addressLower.includes('московская обл') || addressLower.includes('московская область')) {
+    return 'Московская область';
+  }
+  if (addressLower.includes('ленинградская обл') || addressLower.includes('ленинградская область')) {
+    return 'Ленинградская область';
+  }
+  if (addressLower.includes('санкт-петербург') || addressLower.includes('спб')) {
+    return 'Санкт-Петербург';
+  }
+  if (addressLower.includes('москва') || addressLower.includes('г москва')) {
+    return 'Москва';
+  }
+  if (addressLower.includes('краснодарский край')) {
+    return 'Краснодарский край';
+  }
+  if (addressLower.includes('ростовская обл') || addressLower.includes('ростовская область')) {
+    return 'Ростовская область';
+  }
+  if (addressLower.includes('свердловская обл') || addressLower.includes('свердловская область')) {
+    return 'Свердловская область';
+  }
+  if (addressLower.includes('новосибирская обл') || addressLower.includes('новосибирская область')) {
+    return 'Новосибирская область';
+  }
+  if (addressLower.includes('татарстан') || addressLower.includes('республика татарстан')) {
+    return 'Республика Татарстан';
+  }
+  
+  // If no specific region found, return "Другие регионы"
+  return 'Другие регионы';
+};
 
 declare global {
   interface Window {
@@ -27,7 +65,7 @@ declare global {
 }
 
 export default function WhereToBuy() {
-  const [selectedType, setSelectedType] = useState<string>('');
+  const [selectedCity, setSelectedCity] = useState<string>('');
   const [selectedRegion, setSelectedRegion] = useState<string>('');
   const [highlightedDealer, setHighlightedDealer] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -61,33 +99,38 @@ export default function WhereToBuy() {
     queryKey: ['/api/dealer-locations'],
   });
 
-  // Filter options
-  const dealerTypeFilters = [
-    { key: '', label: 'Все типы' },
-    { key: 'retail', label: 'Розничные' },
-    { key: 'wholesale', label: 'Оптовые' },
-    { key: 'authorized', label: 'Авторизованные' }
-  ];
-
-
-  // Get unique regions
-  const regions = useMemo(() => {
-    const uniqueRegions = Array.from(new Set(dealerLocations.map(dealer => dealer.region)));
-    return [{ key: '', label: 'Все регионы' }, ...uniqueRegions.map(region => ({ key: region, label: region }))];
+  // Enhance dealers with geographical regions
+  const enhancedDealers = useMemo(() => {
+    return dealerLocations.map(dealer => ({
+      ...dealer,
+      geographicalRegion: extractGeographicalRegion(dealer.address)
+    }));
   }, [dealerLocations]);
+
+
+  // Get unique cities
+  const cities = useMemo(() => {
+    const uniqueCities = Array.from(new Set(enhancedDealers.map(dealer => dealer.city)));
+    return [{ key: '', label: 'Все города' }, ...uniqueCities.map(city => ({ key: city, label: city }))];
+  }, [enhancedDealers]);
+
+  // Get unique geographical regions
+  const regions = useMemo(() => {
+    const uniqueRegions = Array.from(new Set(enhancedDealers.map(dealer => dealer.geographicalRegion)));
+    return [{ key: '', label: 'Все регионы' }, ...uniqueRegions.map(region => ({ key: region, label: region }))];
+  }, [enhancedDealers]);
 
   // Filter dealers
   const filteredDealers = useMemo(() => {
-    let filtered = dealerLocations;
+    let filtered = enhancedDealers;
 
-    if (selectedType) {
-      filtered = filtered.filter(dealer => dealer.dealerType === selectedType);
+    if (selectedCity) {
+      filtered = filtered.filter(dealer => dealer.city === selectedCity);
     }
 
     if (selectedRegion) {
-      filtered = filtered.filter(dealer => dealer.region === selectedRegion);
+      filtered = filtered.filter(dealer => dealer.geographicalRegion === selectedRegion);
     }
-
 
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
@@ -95,12 +138,12 @@ export default function WhereToBuy() {
         dealer.name.toLowerCase().includes(query) ||
         dealer.city.toLowerCase().includes(query) ||
         dealer.address.toLowerCase().includes(query) ||
-        dealer.region.toLowerCase().includes(query)
+        dealer.geographicalRegion.toLowerCase().includes(query)
       );
     }
 
     return filtered;
-  }, [dealerLocations, selectedType, selectedRegion, searchQuery]);
+  }, [enhancedDealers, selectedCity, selectedRegion, searchQuery]);
 
   // Load Yandex Maps
   useEffect(() => {
@@ -168,14 +211,14 @@ export default function WhereToBuy() {
 
   // Initialize map markers only once and update visibility based on filters
   useEffect(() => {
-    if (mapInstance && dealerLocations.length > 0 && !isInitializedRef.current) {
+    if (mapInstance && enhancedDealers.length > 0 && !isInitializedRef.current) {
       isInitializedRef.current = true;
       
       const initializeAllPlacemarks = async () => {
         let currentCoords = { ...storedCoordinates };
         let needsUpdate = false;
 
-        for (const dealer of dealerLocations) {
+        for (const dealer of enhancedDealers) {
           let coordinates: [number, number] | null = null;
 
           // Check if we have coordinates from database
@@ -262,7 +305,7 @@ export default function WhereToBuy() {
 
       initializeAllPlacemarks();
     }
-  }, [mapInstance, dealerLocations, storedCoordinates]);
+  }, [mapInstance, enhancedDealers, storedCoordinates]);
 
   // Memoize filtered dealer IDs to prevent unnecessary re-renders
   const filteredDealerIds = useMemo(() => {
@@ -402,16 +445,16 @@ export default function WhereToBuy() {
               <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             </div>
 
-            {/* Dealer Type Filter */}
+            {/* City Filter */}
             <select
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
+              value={selectedCity}
+              onChange={(e) => setSelectedCity(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
-              data-testid="select-dealer-type"
+              data-testid="select-city"
             >
-              {dealerTypeFilters.map(type => (
-                <option key={type.key} value={type.key}>
-                  {type.label}
+              {cities.map(city => (
+                <option key={city.key} value={city.key}>
+                  {city.label}
                 </option>
               ))}
             </select>
@@ -477,7 +520,7 @@ export default function WhereToBuy() {
                       <div className="flex items-start gap-2">
                         <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
                         <span className="text-secondary">
-                          {dealer.address}, {dealer.city}, {dealer.region}
+                          {dealer.address}, {dealer.city}, {dealer.geographicalRegion}
                         </span>
                       </div>
                       
@@ -531,15 +574,10 @@ export default function WhereToBuy() {
                       Показать на карте
                     </button>
                     
-                    {/* Dealer Type Badge */}
+                    {/* Region Badge */}
                     <div className="mt-3">
-                      <span className={`px-2 py-1 text-xs rounded font-medium ${
-                        dealer.dealerType === 'retail' ? 'bg-blue-100 text-blue-700' :
-                        dealer.dealerType === 'wholesale' ? 'bg-green-100 text-green-700' :
-                        dealer.dealerType === 'authorized' ? 'bg-purple-100 text-purple-700' :
-                        'bg-gray-100 text-gray-700'
-                      }`}>
-                        {dealerTypeFilters.find(t => t.key === dealer.dealerType)?.label || dealer.dealerType}
+                      <span className="px-2 py-1 text-xs rounded font-medium bg-blue-100 text-blue-700">
+                        {dealer.geographicalRegion}
                       </span>
                     </div>
                   </div>
@@ -548,7 +586,7 @@ export default function WhereToBuy() {
             ) : (
               <div className="bg-white p-6 rounded-lg shadow-sm text-center">
                 <p className="text-secondary">
-                  {searchQuery || selectedType || selectedRegion
+                  {searchQuery || selectedCity || selectedRegion
                     ? 'Дилеры по заданным критериям не найдены'
                     : 'Список дилеров пуст'
                   }
