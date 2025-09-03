@@ -161,7 +161,17 @@ export default function WhereToBuy() {
       if (placemarks.length > 0) {
         const group = new window.ymaps.GeoObjectCollection({}, {});
         placemarks.forEach(placemark => group.add(placemark));
-        mapInstance.setBounds(group.getBounds(), { checkZoomRange: true, zoomMargin: 20 });
+        
+        try {
+          const bounds = group.getBounds();
+          if (bounds && bounds.length > 0) {
+            mapInstance.setBounds(bounds, { checkZoomRange: true, zoomMargin: 20 });
+          }
+        } catch (error) {
+          console.warn('Could not set map bounds:', error);
+          // Fallback to center of Russia
+          mapInstance.setCenter([55.76, 37.64], 5);
+        }
       }
     }
   }, [mapInstance, filteredDealers]);

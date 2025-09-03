@@ -1241,7 +1241,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
         }
 
         return {
-          name: String(row['Название магазина'] || row['Название'] || '').trim(),
+          name: String(row['Название торговой точки'] || row['Название магазина'] || row['Название'] || '').trim(),
           address: String(row['Адрес'] || '').trim(),
           city: String(row['Город'] || '').trim(),
           region: String(row['Регион'] || row['Дистрибьютор'] || '').trim(),
@@ -1275,6 +1275,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       }
 
       const result = await response.json();
+      
+      // Инвалидируем кэш точек продаж для обновления списка
+      queryClient.invalidateQueries({ queryKey: ['/api/dealer-locations'] });
       
       toast({
         title: 'Успешно',
