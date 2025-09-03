@@ -34,6 +34,17 @@ export default function OptimizedThumbnail({
     const loadThumbnail = async () => {
       if (!src) return;
 
+      // Check if this is a placeholder image (imported module)
+      const isPlaceholder = src.includes('placeholder.jpg') || src.includes('/assets/products/placeholder.jpg');
+      
+      if (isPlaceholder) {
+        // For placeholder images, use them directly without server processing
+        setThumbnailUrl(src);
+        setIsLoading(false);
+        onLoad?.();
+        return;
+      }
+
       const cacheKey = getCacheKey(src, size, quality) + '_server_v1';
       const cachedUrl = getCachedImage(cacheKey);
 
@@ -71,7 +82,7 @@ export default function OptimizedThumbnail({
         img.src = thumbnailUrl;
         
       } catch (error) {
-        console.warn('Server thumbnail failed:', error);
+        console.warn('OptimizedThumbnail failed to generate thumbnail:', error);
         if (isMounted) {
           setHasError(true);
           setIsLoading(false);
