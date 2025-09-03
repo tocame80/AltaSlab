@@ -1,4 +1,5 @@
 import { useState, useContext, useMemo, useEffect } from "react";
+import JSZip from "jszip";
 import { useRoute, useLocation } from "wouter";
 import {
   ArrowLeft,
@@ -285,28 +286,47 @@ export default function ProductDetails() {
     document.body.removeChild(link);
   };
 
-  const downloadAllImages = () => {
+  const downloadAllImages = async () => {
     const collectionName = getCollectionDisplayName();
     const productColor =
       product.collection === "Клей" && product.color === "Стандарт"
         ? "Альта Стик"
         : product.color;
-    const productCode = product.productCode || product.id.toString();
-
-    gallery.forEach((imageUrl, index) => {
-      setTimeout(() => {
+    
+    const zip = new JSZip();
+    const archiveName = `${collectionName} - ${productColor}.zip`;
+    
+    try {
+      // Add all images to ZIP
+      for (let i = 0; i < gallery.length; i++) {
+        const imageUrl = gallery[i];
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        
         const imageFileName = imageUrl.split("/").pop() || "";
         const fileExtension = imageFileName.split(".").pop() || "jpg";
-        const downloadName = `${collectionName}_${productColor}_${productCode}_${index + 1}.${fileExtension}`;
-
-        const link = document.createElement("a");
-        link.href = imageUrl;
-        link.download = downloadName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }, index * 500); // Delay each download by 500ms
-    });
+        const fileName = `${i + 1}.${fileExtension}`;
+        
+        zip.file(fileName, blob);
+      }
+      
+      // Generate ZIP and download
+      const content = await zip.generateAsync({ type: "blob" });
+      
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(content);
+      link.download = archiveName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up object URL
+      URL.revokeObjectURL(link.href);
+      
+    } catch (error) {
+      console.error("Ошибка при создании архива:", error);
+      alert("Ошибка при скачивании изображений. Попробуйте еще раз.");
+    }
   };
 
   const collections = [
