@@ -217,7 +217,7 @@ export default function WhereToBuy() {
             placemark.dealerId = dealer.id;
             placemark.dealerData = dealer;
             placemarksRef.current.push(placemark);
-            mapInstance.geoObjects.add(placemark);
+            // Don't add to map here - will be added by visibility logic
           }
         }
 
@@ -256,11 +256,17 @@ export default function WhereToBuy() {
       const filteredIds = new Set(filteredDealers.map(d => d.id));
       console.log(`Обновляем видимость маркеров. Отфильтровано дилеров: ${filteredDealers.length}, всего маркеров: ${placemarksRef.current.length}`);
       
+      // Clear all placemarks from map first
+      mapInstance.geoObjects.removeAll();
+      
+      // Add only visible placemarks
       let visibleCount = 0;
       placemarksRef.current.forEach(placemark => {
         const isVisible = filteredIds.has(placemark.dealerId);
-        placemark.options.set('visible', isVisible);
-        if (isVisible) visibleCount++;
+        if (isVisible) {
+          mapInstance.geoObjects.add(placemark);
+          visibleCount++;
+        }
       });
       
       console.log(`Видимых маркеров: ${visibleCount}`);
