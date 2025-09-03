@@ -264,13 +264,16 @@ export default function ProductDetails() {
   const downloadImage = () => {
     const imageUrl = gallery[currentImageIndex];
     const collectionName = getCollectionDisplayName();
-    const productColor = product.collection === 'Клей' && product.color === 'Стандарт' ? 'Альта Стик' : product.color;
+    const productColor =
+      product.collection === "Клей" && product.color === "Стандарт"
+        ? "Альта Стик"
+        : product.color;
     const productCode = product.productCode || product.id.toString();
-    
+
     // Extract original file number from image URL if possible
-    const imageFileName = imageUrl.split('/').pop() || '';
-    const fileExtension = imageFileName.split('.').pop() || 'jpg';
-    
+    const imageFileName = imageUrl.split("/").pop() || "";
+    const fileExtension = imageFileName.split(".").pop() || "jpg";
+
     // Create filename: Collection_Color_ProductCode.extension
     const downloadName = `${collectionName}_${productColor}_${productCode}.${fileExtension}`;
 
@@ -284,13 +287,16 @@ export default function ProductDetails() {
 
   const downloadAllImages = () => {
     const collectionName = getCollectionDisplayName();
-    const productColor = product.collection === 'Клей' && product.color === 'Стандарт' ? 'Альта Стик' : product.color;
+    const productColor =
+      product.collection === "Клей" && product.color === "Стандарт"
+        ? "Альта Стик"
+        : product.color;
     const productCode = product.productCode || product.id.toString();
-    
+
     gallery.forEach((imageUrl, index) => {
       setTimeout(() => {
-        const imageFileName = imageUrl.split('/').pop() || '';
-        const fileExtension = imageFileName.split('.').pop() || 'jpg';
+        const imageFileName = imageUrl.split("/").pop() || "";
+        const fileExtension = imageFileName.split(".").pop() || "jpg";
         const downloadName = `${collectionName}_${productColor}_${productCode}_${index + 1}.${fileExtension}`;
 
         const link = document.createElement("a");
@@ -465,7 +471,7 @@ export default function ProductDetails() {
               <OptimizedThumbnail
                 src={gallery[currentImageIndex]}
                 alt={getProductDisplayName()}
-                className="w-full h-full object-cover object-center scale-120"
+                className="w-full h-full object-cover object-center scale-110"
                 size={800}
                 quality={0.9}
               />
@@ -1548,7 +1554,7 @@ export default function ProductDetails() {
               src={gallery[currentImageIndex]}
               alt={getProductDisplayName()}
               className="max-w-full max-h-full object-contain"
-              size={1200}
+              size={1000}
               quality={0.95}
             />
 
@@ -1606,7 +1612,7 @@ export default function ProductDetails() {
               src={gallery[currentImageIndex]}
               alt={getProductDisplayName()}
               className="w-full h-full object-contain rounded-lg"
-              size={1200}
+              size={1000}
               quality={0.95}
             />
 
