@@ -19,8 +19,8 @@ interface ThumbnailParams {
 }
 
 // Generate cache key
-function getCacheKey(src: string, size: number, quality: number): string {
-  const hash = crypto.createHash('md5').update(`${src}-${size}-${quality}`).digest('hex');
+function getCacheKey(src: string, size: number, quality: number, version: string = ''): string {
+  const hash = crypto.createHash('md5').update(`${src}-${size}-${quality}-${version}`).digest('hex');
   return `thumb-${hash}.jpg`;
 }
 
@@ -63,7 +63,7 @@ async function generateThumbnail(
 // Main thumbnail endpoint
 router.get('/thumbnail', async (req: Request, res: Response) => {
   try {
-    const { src, size = '200', quality = '0.8' } = req.query;
+    const { src, size = '200', quality = '0.8', whitebg = '' } = req.query;
     
     if (!src || typeof src !== 'string') {
       return res.status(400).json({ error: 'Missing src parameter' });
@@ -81,8 +81,8 @@ router.get('/thumbnail', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Quality must be between 0.1 and 1' });
     }
 
-    // Generate cache key
-    const cacheKey = getCacheKey(src, sizeNum, qualityNum);
+    // Generate cache key with white background version
+    const cacheKey = getCacheKey(src, sizeNum, qualityNum, whitebg ? 'whitebg' : '');
     
     // Check cache first
     const cachedPath = getCachedThumbnail(cacheKey);

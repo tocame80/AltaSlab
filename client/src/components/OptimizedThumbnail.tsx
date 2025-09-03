@@ -59,8 +59,8 @@ export default function OptimizedThumbnail({
       setHasError(false);
 
       try {
-        // Use server-side thumbnail generation
-        const thumbnailUrl = `/api/thumbnail?src=${encodeURIComponent(src)}&size=${size}&quality=${quality}`;
+        // Use server-side thumbnail generation with white background cache version
+        const thumbnailUrl = `/api/thumbnail?src=${encodeURIComponent(src)}&size=${size}&quality=${quality}&whitebg=1`;
         
         // Test if the thumbnail loads successfully
         const img = new Image();
