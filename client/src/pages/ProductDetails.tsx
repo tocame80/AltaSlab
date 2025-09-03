@@ -1657,14 +1657,14 @@ export default function ProductDetails() {
             <div className="absolute bottom-4 right-4 flex gap-2">
               <button
                 onClick={shareImage}
-                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all"
+                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#e90039] transition-all"
                 title="Поделиться"
               >
                 <Share2 size={16} />
               </button>
               <button
                 onClick={downloadImage}
-                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all"
+                className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#e90039] transition-all"
                 title="Скачать оригинал"
               >
                 <Save size={16} />
