@@ -336,15 +336,23 @@ export default function WhereToBuy() {
       // Automatically adjust map bounds to show all visible dealers
       if (visiblePlacemarks.length > 0) {
         try {
-          const group = new window.ymaps.GeoObjectCollection({}, {});
-          visiblePlacemarks.forEach(placemark => group.add(placemark));
+          // Get coordinates from placemarks instead of creating a group
+          const coordinates = visiblePlacemarks.map(placemark => 
+            placemark.geometry.getCoordinates()
+          );
           
-          const bounds = group.getBounds();
-          if (bounds && bounds.length > 0) {
-            // Add some padding around the bounds
+          if (coordinates.length > 1) {
+            // Calculate bounds from coordinates array
+            const bounds = window.ymaps.util.bounds.fromPoints(coordinates);
             mapInstance.setBounds(bounds, { 
               checkZoomRange: true, 
               zoomMargin: [50, 50, 50, 50] // Top, Right, Bottom, Left padding
+            });
+          } else if (coordinates.length === 1) {
+            // If only one point, center on it with reasonable zoom
+            mapInstance.setCenter(coordinates[0], 12, {
+              checkZoomRange: true,
+              duration: 500
             });
           }
         } catch (error) {
