@@ -852,4 +852,207 @@ async function findFileRecursively(dir: string, targetFilename: string): Promise
   return null;
 }
 
+// Salepoints Import/Export Routes
+router.get('/salepoints/export', async (req, res) => {
+  try {
+    const XLSX = require('xlsx');
+    
+    // Get storage instance from app
+    const storage = req.app.locals.storage;
+    if (!storage) {
+      return res.status(500).json({ error: 'Storage not available' });
+    }
+
+    // Fetch all dealer locations
+    const salepoints = await storage.getDealerLocations();
+    
+    if (salepoints.length === 0) {
+      return res.status(404).json({ error: 'No salepoints to export' });
+    }
+
+    // Transform data for Excel export
+    const exportData = salepoints.map((salepoint: any) => ({
+      'Название магазина': salepoint.name,
+      'Дистрибьютор': salepoint.region || '',
+      'Город': salepoint.city,
+      'Адрес': salepoint.address,
+      'Региональный менеджер': '', // Could be derived from region or added as separate field
+      'Телефон': salepoint.phone || '',
+      'Email': salepoint.email || '',
+      'Сайт': salepoint.website || '',
+      'Координаты': `${salepoint.latitude},${salepoint.longitude}`,
+      'Широта': salepoint.latitude,
+      'Долгота': salepoint.longitude,
+      'Тип точки': salepoint.dealerType,
+      'Услуги': salepoint.services ? salepoint.services.join(',') : '',
+      'Часы работы': salepoint.workingHours || '',
+      'Активен': salepoint.isActive,
+      'Порядок сортировки': salepoint.sortOrder
+    }));
+
+    // Create workbook and worksheet
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    
+    // Set column widths for better readability
+    const columnWidths = [
+      { wch: 30 }, // Название магазина
+      { wch: 20 }, // Дистрибьютор
+      { wch: 15 }, // Город
+      { wch: 40 }, // Адрес
+      { wch: 25 }, // Региональный менеджер
+      { wch: 15 }, // Телефон
+      { wch: 25 }, // Email
+      { wch: 30 }, // Сайт
+      { wch: 20 }, // Координаты
+      { wch: 12 }, // Широта
+      { wch: 12 }, // Долгота
+      { wch: 12 }, // Тип точки
+      { wch: 30 }, // Услуги
+      { wch: 20 }, // Часы работы
+      { wch: 10 }, // Активен
+      { wch: 15 }  // Порядок сортировки
+    ];
+    worksheet['!cols'] = columnWidths;
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Точки продаж');
+    
+    // Generate Excel buffer
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
+    
+    // Set response headers for file download
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="Точки_продаж_${new Date().toISOString().split('T')[0]}.xlsx"`);
+    res.setHeader('Content-Length', excelBuffer.length);
+    
+    res.send(excelBuffer);
+    
+  } catch (error) {
+    console.error('Error exporting salepoints:', error);
+    res.status(500).json({ error: 'Failed to export salepoints' });
+  }
+});
+
+router.post('/salepoints/import', upload.any(), async (req, res) => {
+  try {
+    const XLSX = require('xlsx');
+    
+    // Get storage instance from app
+    const storage = req.app.locals.storage;
+    if (!storage) {
+      return res.status(500).json({ error: 'Storage not available' });
+    }
+
+    const files = req.files as Express.Multer.File[];
+    const data = req.body.data;
+    
+    let salepointsToImport: any[] = [];
+    
+    if (files && files.length > 0) {
+      // Process Excel file
+      const file = files[0];
+      const workbook = XLSX.read(file.buffer, { type: 'buffer' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+      
+      if (jsonData.length === 0) {
+        return res.status(400).json({ error: 'Excel file is empty or has wrong format' });
+      }
+
+      // Transform Excel data to database format
+      salepointsToImport = jsonData.map((row: any, index: number) => {
+        // Parse coordinates
+        let latitude = '0';
+        let longitude = '0';
+        
+        if (row['Координаты']) {
+          const coords = String(row['Координаты']).split(',');
+          if (coords.length === 2) {
+            latitude = coords[0].trim();
+            longitude = coords[1].trim();
+          }
+        } else {
+          latitude = String(row['Широта'] || '0').trim();
+          longitude = String(row['Долгота'] || '0').trim();
+        }
+
+        // Parse services
+        let services: string[] = [];
+        if (row['Услуги']) {
+          services = String(row['Услуги']).split(',').map((s: string) => s.trim()).filter((s: string) => s);
+        }
+
+        // Validate required fields
+        const name = String(row['Название магазина'] || row['Название'] || '').trim();
+        const city = String(row['Город'] || '').trim();
+        const address = String(row['Адрес'] || '').trim();
+        
+        if (!name || !city || !address) {
+          console.warn(`Skipping row ${index + 1}: missing required fields`);
+          return null;
+        }
+
+        return {
+          name,
+          address,
+          city,
+          region: String(row['Регион'] || row['Дистрибьютор'] || '').trim(),
+          phone: String(row['Телефон'] || '').trim() || null,
+          email: String(row['Email'] || row['Э-почта'] || '').trim() || null,
+          website: String(row['Сайт'] || row['Веб-сайт'] || '').trim() || null,
+          latitude: latitude || '0',
+          longitude: longitude || '0',
+          dealerType: String(row['Тип точки'] || 'retail').trim().toLowerCase(),
+          services: services,
+          workingHours: String(row['Часы работы'] || row['График работы'] || '').trim() || null,
+          isActive: parseInt(String(row['Активен'] || '1')) || 1,
+          sortOrder: parseInt(String(row['Порядок сортировки'] || index)) || index,
+        };
+      }).filter(Boolean); // Remove null entries
+      
+    } else if (data) {
+      // Process JSON data sent from frontend
+      try {
+        salepointsToImport = JSON.parse(data);
+      } catch (error) {
+        return res.status(400).json({ error: 'Invalid JSON data format' });
+      }
+    } else {
+      return res.status(400).json({ error: 'No file or data provided' });
+    }
+
+    if (salepointsToImport.length === 0) {
+      return res.status(400).json({ error: 'No valid salepoints to import' });
+    }
+
+    console.log(`Importing ${salepointsToImport.length} salepoints...`);
+
+    // Import salepoints to database
+    let importedCount = 0;
+    const errors: string[] = [];
+
+    for (const salepointData of salepointsToImport) {
+      try {
+        await storage.createDealerLocation(salepointData);
+        importedCount++;
+      } catch (error) {
+        console.error('Error importing salepoint:', error);
+        errors.push(`Failed to import ${salepointData.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
+    }
+
+    res.json({
+      success: true,
+      imported: importedCount,
+      total: salepointsToImport.length,
+      errors: errors.length > 0 ? errors : undefined
+    });
+
+  } catch (error) {
+    console.error('Error importing salepoints:', error);
+    res.status(500).json({ error: 'Failed to import salepoints' });
+  }
+});
+
 export default router;

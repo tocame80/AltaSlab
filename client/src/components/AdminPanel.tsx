@@ -3,7 +3,7 @@ import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit, Play, Database, Dow
 import { products } from '../data/products';
 import * as XLSX from 'xlsx';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Certificate, insertCertificateSchema, VideoInstruction, insertVideoInstructionSchema, HeroImage, insertHeroImageSchema, GalleryProject, insertGalleryProjectSchema, CatalogProduct, insertCatalogProductSchema } from '@shared/schema';
+import { Certificate, insertCertificateSchema, VideoInstruction, insertVideoInstructionSchema, HeroImage, insertHeroImageSchema, GalleryProject, insertGalleryProjectSchema, CatalogProduct, insertCatalogProductSchema, DealerLocation, insertDealerLocationSchema } from '@shared/schema';
 import { apiRequest } from '@/lib/queryClient';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -32,7 +32,7 @@ interface ExistingImage {
   url: string;
 }
 
-type AdminTab = 'images' | 'certificates' | 'videos' | 'catalog' | 'hero' | 'gallery';
+type AdminTab = 'images' | 'certificates' | 'videos' | 'catalog' | 'hero' | 'gallery' | 'salepoints';
 
 const certificateFormSchema = insertCertificateSchema.extend({
   // Form validation schema with required fields
@@ -112,6 +112,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [isImporting, setIsImporting] = useState(false);
   const [catalogPage, setCatalogPage] = useState(0);
   const catalogItemsPerPage = 5;
+  const [salepointsSearchQuery, setSalepointsSearchQuery] = useState<string>('');
+  const [isSalepointsExporting, setIsSalepointsExporting] = useState(false);
+  const [isSalepointsImporting, setIsSalepointsImporting] = useState(false);
+  const salepointsFileInputRef = useRef<HTMLInputElement>(null);
 
   
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -1163,6 +1167,156 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     catalogFileInputRef.current?.click();
   };
 
+  // Salepoints Export/Import Functions
+  const exportSalepointsToExcel = async () => {
+    setIsSalepointsExporting(true);
+    try {
+      const response = await fetch('/api/admin/salepoints/export');
+      if (!response.ok) {
+        throw new Error('Ошибка при получении данных точек продаж');
+      }
+      
+      const blob = await response.blob();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Точки_продаж_${new Date().toISOString().split('T')[0]}.xlsx`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+      
+      toast({
+        title: 'Успешно',
+        description: 'Файл Excel успешно скачан',
+      });
+    } catch (error) {
+      console.error('Ошибка экспорта точек продаж:', error);
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось экспортировать данные',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSalepointsExporting(false);
+    }
+  };
+
+  const importSalepointsFromExcel = async (file: File) => {
+    setIsSalepointsImporting(true);
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+      
+      if (jsonData.length === 0) {
+        toast({
+          title: 'Ошибка',
+          description: 'Файл Excel пуст или имеет неправильный формат',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      // Transform Excel data to API format
+      const salepointsToImport = jsonData.map((row: any, index: number) => {
+        // Parse coordinates
+        let latitude = '';
+        let longitude = '';
+        
+        if (row['Координаты']) {
+          const coords = String(row['Координаты']).split(',');
+          if (coords.length === 2) {
+            latitude = coords[0].trim();
+            longitude = coords[1].trim();
+          }
+        } else {
+          latitude = String(row['Широта'] || '').trim();
+          longitude = String(row['Долгота'] || '').trim();
+        }
+
+        // Parse services
+        let services: string[] = [];
+        if (row['Услуги']) {
+          services = String(row['Услуги']).split(',').map(s => s.trim()).filter(s => s);
+        }
+
+        return {
+          name: String(row['Название магазина'] || row['Название'] || '').trim(),
+          address: String(row['Адрес'] || '').trim(),
+          city: String(row['Город'] || '').trim(),
+          region: String(row['Регион'] || row['Дистрибьютор'] || '').trim(),
+          phone: String(row['Телефон'] || '').trim() || null,
+          email: String(row['Email'] || row['Э-почта'] || '').trim() || null,
+          website: String(row['Сайт'] || row['Веб-сайт'] || '').trim() || null,
+          latitude: latitude || '0',
+          longitude: longitude || '0',
+          dealerType: String(row['Тип точки'] || 'retail').trim().toLowerCase(),
+          services: services,
+          workingHours: String(row['Часы работы'] || row['График работы'] || '').trim() || null,
+          isActive: 1,
+          sortOrder: index,
+        };
+      }).filter(salepoint => salepoint.name && salepoint.city && salepoint.address);
+
+      console.log('Импортируем точки продаж:', salepointsToImport.length);
+
+      // Send to server
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('data', JSON.stringify(salepointsToImport));
+
+      const response = await fetch('/api/admin/salepoints/import', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Ошибка сервера при импорте');
+      }
+
+      const result = await response.json();
+      
+      toast({
+        title: 'Успешно',
+        description: `Импортировано точек продаж: ${result.imported || salepointsToImport.length}`,
+      });
+
+    } catch (error) {
+      console.error('Ошибка импорта точек продаж:', error);
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось импортировать точки продаж',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSalepointsImporting(false);
+    }
+  };
+
+  const handleSalepointsFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+        importSalepointsFromExcel(file);
+      } else {
+        toast({
+          title: 'Ошибка',
+          description: 'Поддерживаются только файлы Excel (.xlsx, .xls)',
+          variant: 'destructive',
+        });
+      }
+    }
+    
+    // Reset file input
+    if (salepointsFileInputRef.current) {
+      salepointsFileInputRef.current.value = '';
+    }
+  };
+
+  const triggerSalepointsFileSelect = () => {
+    salepointsFileInputRef.current?.click();
+  };
+
   // Filter products to show only panel products (not accessories)
   const panelProducts = products.filter(product => product.category !== 'accessories');
 
@@ -1807,6 +1961,17 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
             >
               <Image size={16} />
               Галерея
+            </button>
+            <button
+              onClick={() => setActiveTab('salepoints')}
+              className={`px-6 py-3 text-sm font-medium transition-colors flex items-center gap-2 ${
+                activeTab === 'salepoints'
+                  ? 'border-b-2 border-[#E95D22] text-[#E95D22] bg-white'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <HardDrive size={16} />
+              Где купить
             </button>
           </div>
         </div>
@@ -3844,6 +4009,107 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Salepoints Tab */}
+          {activeTab === 'salepoints' && (
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-semibold text-gray-900">Управление точками продаж</h3>
+              </div>
+
+              {/* Import/Export Section */}
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Export Section */}
+                <div className="bg-gray-50 rounded-lg p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Download className="w-6 h-6 text-[#E95D22]" />
+                    <h4 className="text-lg font-semibold text-gray-900">Выгрузка точек продаж</h4>
+                  </div>
+                  
+                  <p className="text-gray-600 mb-6">
+                    Экспортируйте список точек продаж в Excel формате для редактирования или обмена данными.
+                  </p>
+                  
+                  <div className="space-y-3">
+                    <button 
+                      onClick={exportSalepointsToExcel}
+                      disabled={isSalepointsExporting}
+                      className={`w-full px-4 py-3 rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                        isSalepointsExporting 
+                          ? 'bg-gray-400 cursor-not-allowed' 
+                          : 'bg-[#E95D22] hover:bg-[#d54a1a]'
+                      } text-white`}
+                      data-testid="button-export-salepoints-excel"
+                    >
+                      <Download size={16} />
+                      {isSalepointsExporting ? 'Экспорт...' : 'Скачать Excel (.xlsx)'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Import Section */}
+                <div className="bg-gray-50 rounded-lg p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Upload className="w-6 h-6 text-green-600" />
+                    <h4 className="text-lg font-semibold text-gray-900">Загрузка точек продаж</h4>
+                  </div>
+                  
+                  <p className="text-gray-600 mb-6">
+                    Импортируйте данные о точках продаж из Excel файла. Поддерживаемые столбцы: Название магазина, Дистрибьютор, Город, Адрес, Региональный менеджер, Координаты и другие.
+                  </p>
+                  
+                  <div className="space-y-3">
+                    <button 
+                      onClick={triggerSalepointsFileSelect}
+                      disabled={isSalepointsImporting}
+                      className={`w-full px-4 py-3 rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                        isSalepointsImporting 
+                          ? 'bg-gray-400 cursor-not-allowed' 
+                          : 'bg-green-600 hover:bg-green-700'
+                      } text-white`}
+                      data-testid="button-import-salepoints-excel"
+                    >
+                      <Upload size={16} />
+                      {isSalepointsImporting ? 'Импорт...' : 'Загрузить Excel'}
+                    </button>
+                    
+                    <input
+                      ref={salepointsFileInputRef}
+                      type="file"
+                      accept=".xlsx,.xls"
+                      className="hidden"
+                      onChange={handleSalepointsFileSelect}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Info Section */}
+              <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <h4 className="font-semibold text-blue-800 mb-3">💡 Формат Excel файла для точек продаж</h4>
+                <div className="text-sm text-blue-700 space-y-2">
+                  <p><strong>Обязательные столбцы:</strong></p>
+                  <ul className="list-disc list-inside ml-4 space-y-1">
+                    <li>Название магазина - название торговой точки</li>
+                    <li>Город - город расположения</li>
+                    <li>Адрес - полный адрес магазина</li>
+                    <li>Координаты - в формате "широта,долгота" или отдельно "Широта" и "Долгота"</li>
+                  </ul>
+                  <p className="mt-3"><strong>Дополнительные столбцы:</strong></p>
+                  <ul className="list-disc list-inside ml-4 space-y-1">
+                    <li>Дистрибьютор - название дистрибьютора</li>
+                    <li>Региональный менеджер - ответственное лицо</li>
+                    <li>Телефон - контактный телефон</li>
+                    <li>Email - электронная почта</li>
+                    <li>Сайт - веб-сайт магазина</li>
+                    <li>Тип точки - retail, wholesale, authorized</li>
+                    <li>Услуги - через запятую (установка, доставка, консультация)</li>
+                    <li>Часы работы - график работы</li>
+                  </ul>
+                </div>
+              </div>
             </div>
           )}
         </div>
