@@ -142,13 +142,14 @@ export default function WhereToBuy() {
         for (const dealer of filteredDealers) {
           let coordinates: [number, number] | null = null;
 
-          // Check if we have coordinates
+          // Check if we have coordinates from database
           if (dealer.latitude && dealer.longitude && 
               parseFloat(dealer.latitude) !== 0 && parseFloat(dealer.longitude) !== 0) {
             coordinates = [parseFloat(dealer.latitude), parseFloat(dealer.longitude)];
           } else if (dealer.address && dealer.city) {
             // Check cached coordinates first
             const cacheKey = `${dealer.city}_${dealer.address}`;
+            
             if (geocodedCoordinates[cacheKey]) {
               coordinates = geocodedCoordinates[cacheKey];
               console.log(`Используем кешированные координаты для ${dealer.name}: ${coordinates}`);
