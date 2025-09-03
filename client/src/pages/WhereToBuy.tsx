@@ -31,6 +31,7 @@ export default function WhereToBuy() {
   const [selectedRegion, setSelectedRegion] = useState<string>('');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [highlightedDealer, setHighlightedDealer] = useState<string | null>(null);
+  const [geocodedCoordinates, setGeocodedCoordinates] = useState<Record<string, [number, number]>>({});
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapInstance, setMapInstance] = useState<any>(null);
@@ -144,17 +145,30 @@ export default function WhereToBuy() {
               parseFloat(dealer.latitude) !== 0 && parseFloat(dealer.longitude) !== 0) {
             coordinates = [parseFloat(dealer.latitude), parseFloat(dealer.longitude)];
           } else if (dealer.address && dealer.city) {
-            // Try to geocode the address
-            try {
-              const fullAddress = `${dealer.city}, ${dealer.address}`;
-              const geocodeResult = await window.ymaps.geocode(fullAddress);
-              const firstGeoObject = geocodeResult.geoObjects.get(0);
-              if (firstGeoObject) {
-                coordinates = firstGeoObject.geometry.getCoordinates();
-                console.log(`Геокодирование успешно для ${dealer.name}: ${coordinates}`);
+            // Check cached coordinates first
+            const cacheKey = `${dealer.city}_${dealer.address}`;
+            if (geocodedCoordinates[cacheKey]) {
+              coordinates = geocodedCoordinates[cacheKey];
+              console.log(`Используем кешированные координаты для ${dealer.name}: ${coordinates}`);
+            } else {
+              // Try to geocode the address
+              try {
+                const fullAddress = `${dealer.city}, ${dealer.address}`;
+                const geocodeResult = await window.ymaps.geocode(fullAddress);
+                const firstGeoObject = geocodeResult.geoObjects.get(0);
+                if (firstGeoObject) {
+                  coordinates = firstGeoObject.geometry.getCoordinates();
+                  console.log(`Геокодирование успешно для ${dealer.name}: ${coordinates}`);
+                  
+                  // Cache the coordinates
+                  setGeocodedCoordinates(prev => ({
+                    ...prev,
+                    [cacheKey]: coordinates!
+                  }));
+                }
+              } catch (error) {
+                console.warn(`Не удалось геокодировать адрес для ${dealer.name}:`, error);
               }
-            } catch (error) {
-              console.warn(`Не удалось геокодировать адрес для ${dealer.name}:`, error);
             }
           }
 
@@ -208,7 +222,7 @@ export default function WhereToBuy() {
 
       addPlacemarks();
     }
-  }, [mapInstance, filteredDealers]);
+  }, [mapInstance, filteredDealers, geocodedCoordinates]);
 
   const handleServiceToggle = (service: string) => {
     setSelectedServices(prev =>
@@ -229,6 +243,12 @@ export default function WhereToBuy() {
       if (dealer.latitude && dealer.longitude && 
           parseFloat(dealer.latitude) !== 0 && parseFloat(dealer.longitude) !== 0) {
         coordinates = [parseFloat(dealer.latitude), parseFloat(dealer.longitude)];
+      } else if (dealer.address && dealer.city) {
+        // Check cached coordinates
+        const cacheKey = `${dealer.city}_${dealer.address}`;
+        if (geocodedCoordinates[cacheKey]) {
+          coordinates = geocodedCoordinates[cacheKey];
+        }
       }
       
       if (coordinates) {
