@@ -130,49 +130,74 @@ export default function WhereToBuy() {
       // Clear existing placemarks
       mapInstance.geoObjects.removeAll();
 
-      const placemarks: any[] = [];
+      const addPlacemarks = async () => {
+        const placemarks: any[] = [];
 
-      filteredDealers.forEach(dealer => {
-        if (dealer.latitude && dealer.longitude) {
-          const placemark = new window.ymaps.Placemark(
-            [parseFloat(dealer.latitude), parseFloat(dealer.longitude)],
-            {
-              balloonContentHeader: dealer.name,
-              balloonContentBody: `
-                <div>
-                  <p><strong>Адрес:</strong> ${dealer.address}</p>
-                  <p><strong>Город:</strong> ${dealer.city}</p>
-                  ${dealer.phone ? `<p><strong>Телефон:</strong> ${dealer.phone}</p>` : ''}
-                  ${dealer.workingHours ? `<p><strong>Часы работы:</strong> ${dealer.workingHours}</p>` : ''}
-                </div>
-              `,
-              balloonContentFooter: dealer.dealerType
-            },
-            {
-              preset: 'islands#redDotIcon'
+        for (const dealer of filteredDealers) {
+          let coordinates: [number, number] | null = null;
+
+          // Check if we have coordinates
+          if (dealer.latitude && dealer.longitude && 
+              parseFloat(dealer.latitude) !== 0 && parseFloat(dealer.longitude) !== 0) {
+            coordinates = [parseFloat(dealer.latitude), parseFloat(dealer.longitude)];
+          } else if (dealer.address && dealer.city) {
+            // Try to geocode the address
+            try {
+              const fullAddress = `${dealer.city}, ${dealer.address}`;
+              const geocodeResult = await window.ymaps.geocode(fullAddress);
+              const firstGeoObject = geocodeResult.geoObjects.get(0);
+              if (firstGeoObject) {
+                coordinates = firstGeoObject.geometry.getCoordinates();
+                console.log(`Геокодирование успешно для ${dealer.name}: ${coordinates}`);
+              }
+            } catch (error) {
+              console.warn(`Не удалось геокодировать адрес для ${dealer.name}:`, error);
             }
-          );
-          placemarks.push(placemark);
-          mapInstance.geoObjects.add(placemark);
-        }
-      });
-
-      // Fit map to show all placemarks
-      if (placemarks.length > 0) {
-        const group = new window.ymaps.GeoObjectCollection({}, {});
-        placemarks.forEach(placemark => group.add(placemark));
-        
-        try {
-          const bounds = group.getBounds();
-          if (bounds && bounds.length > 0) {
-            mapInstance.setBounds(bounds, { checkZoomRange: true, zoomMargin: 20 });
           }
-        } catch (error) {
-          console.warn('Could not set map bounds:', error);
-          // Fallback to center of Russia
-          mapInstance.setCenter([55.76, 37.64], 5);
+
+          if (coordinates) {
+            const placemark = new window.ymaps.Placemark(
+              coordinates,
+              {
+                balloonContentHeader: dealer.name,
+                balloonContentBody: `
+                  <div>
+                    <p><strong>Адрес:</strong> ${dealer.address}</p>
+                    <p><strong>Город:</strong> ${dealer.city}</p>
+                    ${dealer.phone ? `<p><strong>Телефон:</strong> ${dealer.phone}</p>` : ''}
+                    ${dealer.workingHours ? `<p><strong>Часы работы:</strong> ${dealer.workingHours}</p>` : ''}
+                  </div>
+                `,
+                balloonContentFooter: dealer.dealerType
+              },
+              {
+                preset: 'islands#redDotIcon'
+              }
+            );
+            placemarks.push(placemark);
+            mapInstance.geoObjects.add(placemark);
+          }
         }
-      }
+
+        // Fit map to show all placemarks
+        if (placemarks.length > 0) {
+          const group = new window.ymaps.GeoObjectCollection({}, {});
+          placemarks.forEach(placemark => group.add(placemark));
+          
+          try {
+            const bounds = group.getBounds();
+            if (bounds && bounds.length > 0) {
+              mapInstance.setBounds(bounds, { checkZoomRange: true, zoomMargin: 20 });
+            }
+          } catch (error) {
+            console.warn('Could not set map bounds:', error);
+            // Fallback to center of Russia
+            mapInstance.setCenter([55.76, 37.64], 5);
+          }
+        }
+      };
+
+      addPlacemarks();
     }
   }, [mapInstance, filteredDealers]);
 
