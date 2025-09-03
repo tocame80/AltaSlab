@@ -220,21 +220,47 @@ export const getHDImageUrl = (imageSrc: string): string => {
   return imageSrc;
 };
 
-// Function to check if image is likely large (>5MB) based on filename patterns
-export const isLargeImage = (imageSrc: string): boolean => {
-  // Files with (1), (2.1), (2.2) patterns are usually the large HD images
-  return imageSrc.includes('(1).') || imageSrc.includes('(2.1).') || imageSrc.includes('(2.2).');
+// Function to check image resolution and determine if it's large
+export const checkImageSize = (imageSrc: string): Promise<{width: number, height: number, isLarge: boolean}> => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const isLarge = img.width > 4000 || img.height > 4000; // HD images are usually 6000x6000
+      resolve({ width: img.width, height: img.height, isLarge });
+    };
+    img.onerror = () => {
+      resolve({ width: 0, height: 0, isLarge: false });
+    };
+    img.src = imageSrc;
+  });
+};
+
+// Cache for image size information
+const imageSizeCache: Record<string, {width: number, height: number, isLarge: boolean}> = {};
+
+// Function to get cached image size or check it
+export const getCachedImageSize = async (imageSrc: string): Promise<{width: number, height: number, isLarge: boolean}> => {
+  if (imageSizeCache[imageSrc]) {
+    return imageSizeCache[imageSrc];
+  }
+  
+  const sizeInfo = await checkImageSize(imageSrc);
+  imageSizeCache[imageSrc] = sizeInfo;
+  return sizeInfo;
+};
+
+// Function to check if image is likely large (>5MB) based on resolution
+export const isLargeImage = async (imageSrc: string): Promise<boolean> => {
+  const sizeInfo = await getCachedImageSize(imageSrc);
+  return sizeInfo.isLarge;
 };
 
 // Function to filter out extremely large images from gallery for performance
 export const getOptimizedGallery = (productId: string, collection: string = ''): string[] => {
   const allImages = getProductGallery(productId, collection);
   
-  // Move large images to the end and limit to first few for initial load
-  const smallImages = allImages.filter(img => !isLargeImage(img));
-  const largeImages = allImages.filter(img => isLargeImage(img));
-  
-  // Return small images first, then large ones (limited to avoid performance issues)
-  return [...smallImages, ...largeImages.slice(0, 2)];
+  // For now, return first 6 images to avoid performance issues
+  // Large image detection will happen during rendering
+  return allImages.slice(0, 6);
 };
 
