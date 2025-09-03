@@ -1627,7 +1627,7 @@ export default function ProductDetails() {
                         : gallery.length - 1,
                     )
                   }
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all text-white"
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#e90039] transition-all text-gray-600"
                 >
                   <ArrowLeft size={24} />
                 </button>
@@ -1639,7 +1639,7 @@ export default function ProductDetails() {
                         : 0,
                     )
                   }
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all text-white"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#e90039] transition-all text-gray-600"
                 >
                   <ArrowLeft size={24} className="rotate-180" />
                 </button>
