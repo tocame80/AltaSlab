@@ -538,13 +538,23 @@ export default function WhereToBuy() {
               <div className="space-y-4 max-h-[500px] overflow-y-auto">
                 {filteredDealers.map(dealer => (
                   <div key={dealer.id} className="bg-white p-4 rounded-lg shadow-sm border">
-                    <h3 className="font-bold text-[#2f378b] mb-2">{dealer.name}</h3>
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className="font-bold text-[#2f378b] flex-1">{dealer.name}</h3>
+                      <button
+                        onClick={() => handleShowOnMap(dealer.id)}
+                        className="ml-2 bg-[#e90039] text-white p-1.5 rounded-md hover:bg-[#d1003a] transition-colors"
+                        title="Показать на карте"
+                        data-testid={`button-show-on-map-${dealer.id}`}
+                      >
+                        <MapPin className="w-4 h-4" />
+                      </button>
+                    </div>
                     
                     <div className="space-y-2 text-sm">
                       <div className="flex items-start gap-2">
                         <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
                         <span className="text-secondary">
-                          {dealer.address}, {dealer.city}, {dealer.geographicalRegion}
+                          {dealer.address}, {dealer.city}
                         </span>
                       </div>
                       
@@ -587,16 +597,6 @@ export default function WhereToBuy() {
                         </div>
                       )}
                     </div>
-
-                    {/* Show on Map Button */}
-                    <button
-                      onClick={() => handleShowOnMap(dealer.id)}
-                      className="mt-3 w-full bg-[#e90039] text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-[#d1003a] transition-colors flex items-center justify-center gap-2"
-                      data-testid={`button-show-on-map-${dealer.id}`}
-                    >
-                      <MapPin className="w-4 h-4" />
-                      Показать на карте
-                    </button>
                     
                     {/* Region Badge */}
                     <div className="mt-3">
