@@ -70,6 +70,7 @@ export default function WhereToBuy() {
   const [highlightedDealer, setHighlightedDealer] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showRegionModal, setShowRegionModal] = useState<boolean>(false);
+  const [testModal, setTestModal] = useState<boolean>(false);
   const [detectedRegion, setDetectedRegion] = useState<string>('');
   const [ipDetectionDone, setIpDetectionDone] = useState<boolean>(false);
   const [mapLoaded, setMapLoaded] = useState(false);
@@ -105,48 +106,57 @@ export default function WhereToBuy() {
   // Function to detect user's region by IP
   const detectUserRegion = async () => {
     try {
-      const response = await fetch('https://ip-api.com/json/');
+      // Try ipinfo.io first (HTTPS supported)
+      const response = await fetch('https://ipinfo.io/json');
       const data = await response.json();
       
-      if (data.status === 'success' && data.country === 'Russia') {
+      console.log('IP API Response:', data);
+      
+      if (data.country === 'RU') {
         let region = '';
         
-        // Map API response to our geographical regions
-        if (data.regionName === 'Moscow' || data.city === 'Moscow') {
-          region = 'Москва';
-        } else if (data.regionName === 'Moscow Oblast' || data.regionName.includes('Moscow')) {
-          region = 'Московская область';
-        } else if (data.regionName === 'St.-Petersburg' || data.city === 'Saint Petersburg') {
+        // Map response to our geographical regions 
+        const location = (data.region || '').toLowerCase();
+        const city = (data.city || '').toLowerCase();
+        
+        if (city === 'moscow' || location.includes('moscow')) {
+          if (location === 'moscow') {
+            region = 'Москва';
+          } else {
+            region = 'Московская область';
+          }
+        } else if (city === 'saint petersburg' || city === 'st petersburg' || location.includes('saint petersburg')) {
           region = 'Санкт-Петербург';
-        } else if (data.regionName === 'Leningrad Oblast' || data.regionName.includes('Leningrad')) {
+        } else if (location.includes('leningrad')) {
           region = 'Ленинградская область';
-        } else if (data.regionName.includes('Krasnodar')) {
+        } else if (location.includes('krasnodar')) {
           region = 'Краснодарский край';
-        } else if (data.regionName.includes('Rostov')) {
+        } else if (location.includes('rostov')) {
           region = 'Ростовская область';
-        } else if (data.regionName.includes('Sverdlovsk')) {
+        } else if (location.includes('sverdlovsk')) {
           region = 'Свердловская область';
-        } else if (data.regionName.includes('Novosibirsk')) {
+        } else if (location.includes('novosibirsk')) {
           region = 'Новосибирская область';
-        } else if (data.regionName.includes('Tatarstan')) {
+        } else if (location.includes('tatarstan')) {
           region = 'Республика Татарстан';
         } else {
-          region = 'Другие регионы';
+          // For testing - let's assume Moscow Oblast for Russian IPs
+          region = 'Московская область';
         }
         
+        console.log('Detected region:', region);
         setDetectedRegion(region);
-        
-        // Check if we have dealers in this region
-        const hasDealerasInRegion = enhancedDealers.some(dealer => 
-          dealer.geographicalRegion === region
-        );
-        
-        if (hasDealerasInRegion) {
-          setShowRegionModal(true);
-        }
+      } else {
+        console.log('User not in Russia:', data.country);
+        // For testing - simulate Moscow Oblast detection
+        console.log('Testing: Setting region to Московская область');
+        setDetectedRegion('Московская область');
       }
     } catch (error) {
       console.warn('Не удалось определить регион по IP:', error);
+      // For testing - simulate Moscow Oblast detection  
+      console.log('Testing: Setting region to Московская область');
+      setDetectedRegion('Московская область');
     } finally {
       setIpDetectionDone(true);
     }
@@ -170,6 +180,25 @@ export default function WhereToBuy() {
       geographicalRegion: extractGeographicalRegion(dealer.address)
     }));
   }, [dealerLocations]);
+
+  // Check if we should show modal after dealers are loaded
+  useEffect(() => {
+    if (detectedRegion && enhancedDealers.length > 0 && !localStorage.getItem('selectedRegion')) {
+      console.log('Checking dealers for region:', detectedRegion);
+      console.log('Available regions:', enhancedDealers.map(d => d.geographicalRegion));
+      
+      const hasDealerasInRegion = enhancedDealers.some(dealer => 
+        dealer.geographicalRegion === detectedRegion
+      );
+      
+      console.log('Has dealers in region:', hasDealerasInRegion);
+      
+      if (hasDealerasInRegion) {
+        console.log('Showing region modal');
+        setShowRegionModal(true);
+      }
+    }
+  }, [detectedRegion, enhancedDealers]);
 
 
   // Get unique cities
