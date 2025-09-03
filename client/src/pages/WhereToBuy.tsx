@@ -118,8 +118,7 @@ export default function WhereToBuy() {
     const loadYandexMaps = () => {
       if (window.ymaps && window.ymaps.ready) {
         window.ymaps.ready(() => {
-          console.log('Яндекс Карты готовы');
-          setMapLoaded(true);
+            setMapLoaded(true);
         });
         return;
       }
@@ -128,10 +127,8 @@ export default function WhereToBuy() {
       const apiKey = import.meta.env.VITE_YANDEX_MAPS_API_KEY || '';
       script.src = `https://api-maps.yandex.ru/2.1/?apikey=${apiKey}&lang=ru_RU`;
       script.onload = () => {
-        console.log('Скрипт Яндекс Карт загружен');
         if (window.ymaps && window.ymaps.ready) {
           window.ymaps.ready(() => {
-            console.log('Яндекс Карты инициализированы');
             setMapLoaded(true);
           });
         }
@@ -148,7 +145,6 @@ export default function WhereToBuy() {
   // Initialize map
   useEffect(() => {
     if (mapLoaded && dealerLocations.length > 0 && !mapInstance && window.ymaps && window.ymaps.Map) {
-      console.log('Создаем экземпляр карты');
       try {
         const map = new window.ymaps.Map('yandex-map', {
           center: [55.753994, 37.622093], // Moscow coordinates
@@ -156,7 +152,6 @@ export default function WhereToBuy() {
           controls: ['zoomControl', 'searchControl', 'typeSelector', 'fullscreenControl']
         });
 
-        console.log('Карта создана успешно');
         setMapInstance(map);
       } catch (error) {
         console.error('Ошибка создания карты:', error);
@@ -170,7 +165,6 @@ export default function WhereToBuy() {
       isInitializedRef.current = true;
       
       const initializeAllPlacemarks = async () => {
-        console.log(`Инициализируем все точки продаж:`, dealerLocations.length);
         let currentCoords = { ...storedCoordinates };
         let needsUpdate = false;
 
@@ -187,7 +181,6 @@ export default function WhereToBuy() {
             
             if (currentCoords[cacheKey]) {
               coordinates = currentCoords[cacheKey];
-              console.log(`Используем сохраненные координаты для ${dealer.name}: ${coordinates}`);
             } else {
               // Try to geocode the address
               try {
@@ -197,7 +190,6 @@ export default function WhereToBuy() {
                 if (firstGeoObject) {
                   const newCoordinates: [number, number] = firstGeoObject.geometry.getCoordinates();
                   coordinates = newCoordinates;
-                  console.log(`Геокодирование успешно для ${dealer.name}: ${coordinates}`);
                   
                   // Cache the coordinates
                   currentCoords[cacheKey] = newCoordinates;
@@ -243,7 +235,6 @@ export default function WhereToBuy() {
           storeCoordinates(currentCoords);
         }
 
-        console.log(`Инициализировано маркеров: ${placemarksRef.current.length}`);
         
         // Fit map to show all placemarks
         if (placemarksRef.current.length > 0) {
@@ -274,7 +265,6 @@ export default function WhereToBuy() {
   // Update placemark visibility based on filters (without recreating them)
   useEffect(() => {
     if (placemarksRef.current.length > 0 && mapInstance) {
-      console.log(`Обновляем видимость маркеров. Отфильтровано дилеров: ${filteredDealers.length}, всего маркеров: ${placemarksRef.current.length}`);
       
       // Clear all placemarks from map first
       mapInstance.geoObjects.removeAll();
@@ -293,8 +283,6 @@ export default function WhereToBuy() {
         }
       });
       
-      console.log(`Видимых маркеров: ${visibleCount}`);
-      console.log(`Объектов на карте после добавления: ${mapInstance.geoObjects.getLength()}`);
 
       // Don't adjust bounds automatically to avoid moving map when user is navigating
     }
@@ -319,9 +307,6 @@ export default function WhereToBuy() {
   };
 
   const handleShowOnMap = (dealerId: string) => {
-    console.log(`Показать на карте дилера: ${dealerId}`);
-    console.log(`Количество маркеров в placemarksRef: ${placemarksRef.current.length}`);
-    console.log(`Количество объектов на карте ДО обновления:`, mapInstance?.geoObjects.getLength());
     
     setHighlightedDealer(dealerId);
     
@@ -342,7 +327,6 @@ export default function WhereToBuy() {
       }
       
       if (coordinates) {
-        console.log(`Перемещаем карту к координатам: ${coordinates}`);
         
         // Don't change zoom level dramatically, just center
         mapInstance.setCenter(coordinates, 12, {
@@ -354,7 +338,6 @@ export default function WhereToBuy() {
         let foundPlacemark = false;
         placemarksRef.current.forEach(placemark => {
           if (placemark.dealerId === dealerId) {
-            console.log(`Найден маркер для дилера ${dealerId}`);
             foundPlacemark = true;
           }
         });
