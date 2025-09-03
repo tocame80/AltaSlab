@@ -29,7 +29,6 @@ declare global {
 export default function WhereToBuy() {
   const [selectedType, setSelectedType] = useState<string>('');
   const [selectedRegion, setSelectedRegion] = useState<string>('');
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [highlightedDealer, setHighlightedDealer] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [mapLoaded, setMapLoaded] = useState(false);
@@ -70,12 +69,6 @@ export default function WhereToBuy() {
     { key: 'authorized', label: 'Авторизованные' }
   ];
 
-  const serviceOptions = ['installation', 'delivery', 'consultation'];
-  const serviceLabels = {
-    installation: 'Монтаж',
-    delivery: 'Доставка',
-    consultation: 'Консультация'
-  };
 
   // Get unique regions
   const regions = useMemo(() => {
@@ -95,23 +88,19 @@ export default function WhereToBuy() {
       filtered = filtered.filter(dealer => dealer.region === selectedRegion);
     }
 
-    if (selectedServices.length > 0) {
-      filtered = filtered.filter(dealer =>
-        selectedServices.some(service => dealer.services.includes(service))
-      );
-    }
 
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(dealer =>
         dealer.name.toLowerCase().includes(query) ||
         dealer.city.toLowerCase().includes(query) ||
-        dealer.address.toLowerCase().includes(query)
+        dealer.address.toLowerCase().includes(query) ||
+        dealer.region.toLowerCase().includes(query)
       );
     }
 
     return filtered;
-  }, [dealerLocations, selectedType, selectedRegion, selectedServices, searchQuery]);
+  }, [dealerLocations, selectedType, selectedRegion, searchQuery]);
 
   // Load Yandex Maps
   useEffect(() => {
@@ -298,13 +287,6 @@ export default function WhereToBuy() {
     }
   }, [highlightedDealer, mapInstance]);
 
-  const handleServiceToggle = (service: string) => {
-    setSelectedServices(prev =>
-      prev.includes(service)
-        ? prev.filter(s => s !== service)
-        : [...prev, service]
-    );
-  };
 
   const handleShowOnMap = (dealerId: string) => {
     
@@ -387,7 +369,7 @@ export default function WhereToBuy() {
 
         {/* Filters */}
         <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             
             {/* Search */}
             <div className="relative">
@@ -395,7 +377,7 @@ export default function WhereToBuy() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Поиск по названию или городу..."
+                placeholder="Поиск по названию, адресу, городу или региону..."
                 className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
                 data-testid="input-search-dealers"
               />
@@ -430,23 +412,6 @@ export default function WhereToBuy() {
               ))}
             </select>
 
-            {/* Services Filter */}
-            <div className="flex flex-wrap gap-2">
-              {serviceOptions.map(service => (
-                <button
-                  key={service}
-                  onClick={() => handleServiceToggle(service)}
-                  className={`px-3 py-1 text-sm rounded-lg font-medium transition-colors ${
-                    selectedServices.includes(service)
-                      ? 'bg-[#e90039] text-white'
-                      : 'bg-gray-100 text-secondary hover:bg-gray-200'
-                  }`}
-                  data-testid={`button-service-${service}`}
-                >
-                  {serviceLabels[service as keyof typeof serviceLabels]}
-                </button>
-              ))}
-            </div>
           </div>
         </div>
 
@@ -548,23 +513,6 @@ export default function WhereToBuy() {
                       Показать на карте
                     </button>
                     
-                    {/* Services */}
-                    {dealer.services.length > 0 && (
-                      <div className="mt-3">
-                        <p className="text-xs font-medium text-gray-600 mb-1">Услуги:</p>
-                        <div className="flex flex-wrap gap-1">
-                          {dealer.services.map(service => (
-                            <span
-                              key={service}
-                              className="px-2 py-1 bg-gray-100 text-xs rounded text-secondary"
-                            >
-                              {serviceLabels[service as keyof typeof serviceLabels] || service}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    
                     {/* Dealer Type Badge */}
                     <div className="mt-3">
                       <span className={`px-2 py-1 text-xs rounded font-medium ${
@@ -582,7 +530,7 @@ export default function WhereToBuy() {
             ) : (
               <div className="bg-white p-6 rounded-lg shadow-sm text-center">
                 <p className="text-secondary">
-                  {searchQuery || selectedType || selectedRegion || selectedServices.length > 0
+                  {searchQuery || selectedType || selectedRegion
                     ? 'Дилеры по заданным критериям не найдены'
                     : 'Список дилеров пуст'
                   }
