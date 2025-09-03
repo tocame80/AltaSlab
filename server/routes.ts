@@ -5,6 +5,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertCertificateSchema, insertVideoInstructionSchema, insertHeroImageSchema, insertGalleryProjectSchema, insertDealerLocationSchema, insertCatalogProductSchema, catalogProducts, galleryProjects } from "@shared/schema";
 import adminRoutes from "./routes/admin";
+import thumbnailRoutes from "./routes/thumbnails";
 import {
   ObjectStorageService,
   ObjectNotFoundError,
@@ -18,6 +19,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Admin routes for image management
   app.use('/api/admin', adminRoutes);
+  
+  // Thumbnail generation routes
+  app.use('/api', thumbnailRoutes);
 
   // Simple test endpoint to check if API routing works
   app.get('/api/test', (req, res) => {

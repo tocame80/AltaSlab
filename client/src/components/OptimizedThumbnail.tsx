@@ -1,7 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useImageCache } from '@/hooks/useImageCache';
-import { useBatchImageProcessor } from '@/hooks/useBatchImageProcessor';
-import { getCachedImageSize } from '@/assets/products/imageMap';
 
 interface OptimizedThumbnailProps {
   src: string;
@@ -25,11 +23,8 @@ export default function OptimizedThumbnail({
   const [thumbnailUrl, setThumbnailUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const [isLargeImage, setIsLargeImage] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const { getCachedImage, setCachedImage, getCacheKey } = useImageCache();
-  const { addToQueue } = useBatchImageProcessor({ batchSize: 1, delay: 200 });
 
 
 
@@ -39,39 +34,44 @@ export default function OptimizedThumbnail({
     const loadThumbnail = async () => {
       if (!src) return;
 
-      // First, check image size to determine optimal processing parameters
+      const cacheKey = getCacheKey(src, size, quality) + '_server_v1';
+      const cachedUrl = getCachedImage(cacheKey);
+
+      if (cachedUrl) {
+        setThumbnailUrl(cachedUrl);
+        setIsLoading(false);
+        onLoad?.();
+        return;
+      }
+
+      setIsLoading(true);
+      setHasError(false);
+
       try {
-        const sizeInfo = await getCachedImageSize(src);
-        if (isMounted) {
-          setIsLargeImage(sizeInfo.isLarge);
-        }
+        // Use server-side thumbnail generation
+        const thumbnailUrl = `/api/thumbnail?src=${encodeURIComponent(src)}&size=${size}&quality=${quality}`;
         
-        // Adjust parameters for large images
-        const actualSize = sizeInfo.isLarge ? Math.min(size, 60) : size;
-        const actualQuality = sizeInfo.isLarge ? 0.5 : quality;
+        // Test if the thumbnail loads successfully
+        const img = new Image();
+        img.onload = () => {
+          if (isMounted) {
+            setCachedImage(cacheKey, thumbnailUrl, size * size * 0.1); // Server thumbnails are much smaller
+            setThumbnailUrl(thumbnailUrl);
+            setIsLoading(false);
+            onLoad?.();
+          }
+        };
+        img.onerror = () => {
+          if (isMounted) {
+            setHasError(true);
+            setIsLoading(false);
+            onError?.();
+          }
+        };
+        img.src = thumbnailUrl;
         
-        const cacheKey = getCacheKey(src, actualSize, actualQuality) + '_v3';
-        const cachedUrl = getCachedImage(cacheKey);
-
-        if (cachedUrl) {
-          setThumbnailUrl(cachedUrl);
-          setIsLoading(false);
-          onLoad?.();
-          return;
-        }
-
-        setIsLoading(true);
-        setHasError(false);
-
-        const thumbnail = await addToQueue(src, actualSize, actualQuality);
-        if (isMounted) {
-          setCachedImage(cacheKey, thumbnail, actualSize * actualSize * 0.5);
-          setThumbnailUrl(thumbnail);
-          setIsLoading(false);
-          onLoad?.();
-        }
       } catch (error) {
-        console.warn('OptimizedThumbnail failed to generate thumbnail:', error);
+        console.warn('Server thumbnail failed:', error);
         if (isMounted) {
           setHasError(true);
           setIsLoading(false);
@@ -109,7 +109,7 @@ export default function OptimizedThumbnail({
   }
 
   return (
-    <div className={`bg-white relative ${className}`}>
+    <div className={`bg-white ${className}`}>
       <img
         ref={imageRef}
         src={thumbnailUrl}
@@ -118,11 +118,6 @@ export default function OptimizedThumbnail({
         loading="lazy"
         style={{ backgroundColor: 'white' }}
       />
-      {isLargeImage && (
-        <div className="absolute top-1 right-1 bg-orange-500 text-white text-xs px-1 rounded">
-          HD
-        </div>
-      )}
     </div>
   );
 }

@@ -61,9 +61,9 @@ async function generateThumbnail(
 // Main thumbnail endpoint
 router.get('/thumbnail', async (req: Request, res: Response) => {
   try {
-    const { src, size = 200, quality = 0.8 } = req.query as ThumbnailParams;
-
-    if (!src) {
+    const { src, size = '200', quality = '0.8' } = req.query;
+    
+    if (!src || typeof src !== 'string') {
       return res.status(400).json({ error: 'Missing src parameter' });
     }
 
@@ -90,13 +90,28 @@ router.get('/thumbnail', async (req: Request, res: Response) => {
     }
 
     // Convert src to actual file path
-    // Remove URL prefixes and convert to file system path
-    let filePath = src.replace(/^\/src\/assets\//, '');
-    filePath = path.join(process.cwd(), 'client/src/assets', filePath);
+    let filePath: string;
+    
+    if (src.startsWith('/assets/')) {
+      // Handle frontend URL format like /assets/products/image.jpg
+      filePath = path.join(process.cwd(), 'client/src', src.replace(/^\//, ''));
+    } else if (src.startsWith('/src/assets/')) {
+      // Handle webpack format
+      filePath = src.replace(/^\/src\/assets\//, '');
+      filePath = path.join(process.cwd(), 'client/src/assets', filePath);
+    } else {
+      // Handle relative paths
+      filePath = path.join(process.cwd(), 'client/src/assets/products', src);
+    }
 
+    // Debug logging
+    console.log(`Thumbnail request - src: ${src}`);
+    console.log(`Resolved file path: ${filePath}`);
+    
     // Check if source file exists
     if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ error: 'Source image not found' });
+      console.log(`File not found: ${filePath}`);
+      return res.status(404).json({ error: 'Source image not found', path: filePath });
     }
 
     console.log(`Generating thumbnail for: ${filePath} (${sizeNum}x${sizeNum}, quality: ${qualityNum})`);
