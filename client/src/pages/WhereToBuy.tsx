@@ -264,12 +264,17 @@ export default function WhereToBuy() {
       placemarksRef.current.forEach(placemark => {
         const isVisible = filteredIds.has(placemark.dealerId);
         if (isVisible) {
-          mapInstance.geoObjects.add(placemark);
-          visibleCount++;
+          try {
+            mapInstance.geoObjects.add(placemark);
+            visibleCount++;
+          } catch (error) {
+            console.error(`Ошибка добавления маркера ${placemark.dealerId}:`, error);
+          }
         }
       });
       
       console.log(`Видимых маркеров: ${visibleCount}`);
+      console.log(`Объектов на карте после добавления: ${mapInstance.geoObjects.getLength()}`);
 
       // Adjust bounds to show only visible placemarks
       const visiblePlacemarks = placemarksRef.current.filter(p => filteredIds.has(p.dealerId));
@@ -339,12 +344,11 @@ export default function WhereToBuy() {
           duration: 1000
         });
         
-        // Find and open balloon for this dealer
+        // Find and highlight the marker (don't try to open balloon due to cross-origin issues)
         let foundPlacemark = false;
         placemarksRef.current.forEach(placemark => {
           if (placemark.dealerId === dealerId) {
-            console.log(`Найден маркер для дилера ${dealerId}, открываем balloon`);
-            placemark.balloon.open();
+            console.log(`Найден маркер для дилера ${dealerId}`);
             foundPlacemark = true;
           }
         });
