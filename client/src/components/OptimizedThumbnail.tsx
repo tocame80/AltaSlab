@@ -100,7 +100,7 @@ export default function OptimizedThumbnail({
 
   if (hasError) {
     return (
-      <div className={`bg-white flex items-center justify-center ${className}`}>
+      <div className={`bg-white flex items-center justify-center ${className}`} style={{ backgroundColor: 'white' }}>
         <div className="text-center text-gray-400 p-2">
           <svg className="w-6 h-6 mx-auto mb-1" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
@@ -113,14 +113,14 @@ export default function OptimizedThumbnail({
 
   if (isLoading) {
     return (
-      <div className={`bg-white flex items-center justify-center ${className}`}>
+      <div className={`bg-white flex items-center justify-center ${className}`} style={{ backgroundColor: 'white' }}>
         <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-[#e90039]"></div>
       </div>
     );
   }
 
   return (
-    <div className={`bg-white ${className}`}>
+    <div className={`bg-white ${className}`} style={{ backgroundColor: 'white' }}>
       <img
         ref={imageRef}
         src={thumbnailUrl}
