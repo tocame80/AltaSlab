@@ -100,6 +100,27 @@ const upload = multer({
   }
 });
 
+// Configure multer for Excel file uploads
+const uploadExcel = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedMimes = [
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/octet-stream'
+    ];
+    
+    if (allowedMimes.includes(file.mimetype) || file.originalname.endsWith('.xlsx') || file.originalname.endsWith('.xls')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only Excel files (.xlsx, .xls) are allowed'));
+    }
+  }
+});
+
 // Get existing images for a product
 router.get('/product-images/:productId', async (req, res) => {
   try {
@@ -933,7 +954,7 @@ router.get('/salepoints/export', async (req, res) => {
   }
 });
 
-router.post('/salepoints/import', upload.any(), async (req, res) => {
+router.post('/salepoints/import', uploadExcel.any(), async (req, res) => {
   try {
     const XLSX = require('xlsx');
     
