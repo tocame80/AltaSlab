@@ -254,11 +254,16 @@ export default function WhereToBuy() {
   useEffect(() => {
     if (placemarksRef.current.length > 0) {
       const filteredIds = new Set(filteredDealers.map(d => d.id));
+      console.log(`Обновляем видимость маркеров. Отфильтровано дилеров: ${filteredDealers.length}, всего маркеров: ${placemarksRef.current.length}`);
       
+      let visibleCount = 0;
       placemarksRef.current.forEach(placemark => {
         const isVisible = filteredIds.has(placemark.dealerId);
         placemark.options.set('visible', isVisible);
+        if (isVisible) visibleCount++;
       });
+      
+      console.log(`Видимых маркеров: ${visibleCount}`);
 
       // Adjust bounds to show only visible placemarks
       const visiblePlacemarks = placemarksRef.current.filter(p => filteredIds.has(p.dealerId));
@@ -297,6 +302,10 @@ export default function WhereToBuy() {
   };
 
   const handleShowOnMap = (dealerId: string) => {
+    console.log(`Показать на карте дилера: ${dealerId}`);
+    console.log(`Количество маркеров в placemarksRef: ${placemarksRef.current.length}`);
+    console.log(`Количество объектов на карте:`, mapInstance?.geoObjects.getLength());
+    
     setHighlightedDealer(dealerId);
     
     // Find the dealer coordinates
@@ -316,14 +325,29 @@ export default function WhereToBuy() {
       }
       
       if (coordinates) {
-        mapInstance.setCenter(coordinates, 15);
+        console.log(`Перемещаем карту к координатам: ${coordinates}`);
         
-        // Open balloon for this dealer
-        mapInstance.geoObjects.each((obj: any) => {
-          if (obj.dealerId === dealerId) {
-            obj.balloon.open();
+        // Don't change zoom level dramatically, just center
+        mapInstance.setCenter(coordinates, 12, {
+          checkZoomRange: true,
+          duration: 1000
+        });
+        
+        // Find and open balloon for this dealer
+        let foundPlacemark = false;
+        placemarksRef.current.forEach(placemark => {
+          if (placemark.dealerId === dealerId) {
+            console.log(`Найден маркер для дилера ${dealerId}, открываем balloon`);
+            placemark.balloon.open();
+            foundPlacemark = true;
           }
         });
+        
+        if (!foundPlacemark) {
+          console.warn(`Маркер для дилера ${dealerId} не найден в placemarksRef`);
+        }
+      } else {
+        console.warn(`Координаты для дилера ${dealerId} не найдены`);
       }
     }
     
