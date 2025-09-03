@@ -509,14 +509,14 @@ export default function ProductDetails() {
                         quality={0.7}
                       />
                     ) : (
-                      <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                      <div className="w-full h-full bg-white flex items-center justify-center" style={{ backgroundColor: 'white' }}>
                         <div className="w-4 h-4 bg-gray-300 rounded animate-pulse"></div>
                       </div>
                     )}
                   </button>
                 ))}
                 {gallery.length > 8 && (
-                  <div className="flex-shrink-0 w-24 h-12 rounded-lg bg-gray-100 flex items-center justify-center text-xs text-gray-500">
+                  <div className="flex-shrink-0 w-24 h-12 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-xs text-gray-500" style={{ backgroundColor: 'white' }}>
                     +{gallery.length - 8}
                   </div>
                 )}
