@@ -8,7 +8,7 @@ export const accessories: Accessory[] = [
     price: 477,
     unit: 'ед.',
     description: '900г/600мл',
-    image: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200',
+    image: '/src/assets/products/placeholder.jpg',
     specifications: 'Универсальный клей для SPC панелей'
   },
   {
@@ -18,7 +18,7 @@ export const accessories: Accessory[] = [
     price: 491,
     unit: 'шт',
     description: '081024-1, 2.7м',
-    image: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200',
+    image: '/src/assets/products/accessories/ПрофильТорцевой/9056Серебро.png',
     specifications: 'Длина 2.7м',
     colors: ['Серебро', 'Бронза', 'Шампань']
   },
@@ -29,7 +29,7 @@ export const accessories: Accessory[] = [
     price: 460,
     unit: 'шт',
     description: '081024-2, 2.7м',
-    image: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200',
+    image: '/src/assets/products/accessories/ПрофильСоединительный/9057Серебро.png',
     specifications: 'Длина 2.7м',
     colors: ['Серебро', 'Бронза', 'Шампань']
   },
@@ -40,7 +40,7 @@ export const accessories: Accessory[] = [
     price: 728,
     unit: 'шт',
     description: '081024-3, 2.7м',
-    image: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200',
+    image: '/src/assets/products/accessories/ПрофильУгловойУниверсальный/9058Серебро.png',
     specifications: 'Длина 2.7м',
     colors: ['Серебро', 'Бронза', 'Шампань']
   },
@@ -51,7 +51,7 @@ export const accessories: Accessory[] = [
     price: 460,
     unit: 'шт',
     description: '081024-4, 2.7м',
-    image: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200',
+    image: '/src/assets/products/accessories/ПрофильПодРассеивателем/9059Серебро.png',
     specifications: 'Длина 2.7м',
     colors: ['Серебро', 'Бронза', 'Шампань']
   }
