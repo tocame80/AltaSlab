@@ -13,7 +13,7 @@ export default function Accessories() {
                 <img 
                   src={accessory.image} 
                   alt={accessory.name}
-                  className="w-full h-24 lg:h-32 object-cover rounded"
+                  className="w-full aspect-[2/1] object-cover rounded"
                 />
               </div>
               <h3 className="text-sm lg:text-lg font-bold text-[#2f378b] mb-1 lg:mb-2">{accessory.name}</h3>
