@@ -1,12 +1,36 @@
-import { useState, useContext, useMemo, useEffect } from 'react';
-import { useRoute, useLocation } from 'wouter';
-import { ArrowLeft, Heart, ShoppingCart, Calculator, Download, Share2, Eye, Maximize2, CheckCircle, Clock, Truck, X, ZoomIn, Save, Search, Mail, Play } from 'lucide-react';
-import { FavoritesContext } from '@/contexts/FavoritesContext';
-import { Collection } from '@/types';
-import Footer from '@/components/Footer';
-import Header from '@/components/Header';
-import { getProductMainImage, getProductGallery, getOptimizedGallery, getHDImageUrl, isLargeImage } from '@/assets/products/imageMap';
-import OptimizedThumbnail from '@/components/OptimizedThumbnail';
+import { useState, useContext, useMemo, useEffect } from "react";
+import { useRoute, useLocation } from "wouter";
+import {
+  ArrowLeft,
+  Heart,
+  ShoppingCart,
+  Calculator,
+  Download,
+  Share2,
+  Eye,
+  Maximize2,
+  CheckCircle,
+  Clock,
+  Truck,
+  X,
+  ZoomIn,
+  Save,
+  Search,
+  Mail,
+  Play,
+} from "lucide-react";
+import { FavoritesContext } from "@/contexts/FavoritesContext";
+import { Collection } from "@/types";
+import Footer from "@/components/Footer";
+import Header from "@/components/Header";
+import {
+  getProductMainImage,
+  getProductGallery,
+  getOptimizedGallery,
+  getHDImageUrl,
+  isLargeImage,
+} from "@/assets/products/imageMap";
+import OptimizedThumbnail from "@/components/OptimizedThumbnail";
 
 interface Product {
   id: string;
@@ -32,17 +56,18 @@ interface Product {
 }
 
 export default function ProductDetails() {
-  const [, params] = useRoute('/product/:id');
+  const [, params] = useRoute("/product/:id");
   const [, setLocation] = useLocation();
   const favoritesContext = useContext(FavoritesContext);
   if (!favoritesContext) {
-    throw new Error('ProductDetails must be used within a FavoritesProvider');
+    throw new Error("ProductDetails must be used within a FavoritesProvider");
   }
   const { favorites, toggleFavorite } = favoritesContext;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [activeTab, setActiveTab] = useState('description');
+  const [activeTab, setActiveTab] = useState("description");
   const [quantity, setQuantity] = useState(1);
-  const [selectedCollection, setSelectedCollection] = useState<Collection>('all');
+  const [selectedCollection, setSelectedCollection] =
+    useState<Collection>("all");
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [isImageViewerOpen, setIsImageViewerOpen] = useState(false);
   const [product, setProduct] = useState<Product | null>(null);
@@ -52,22 +77,29 @@ export default function ProductDetails() {
 
   // Parse images using imageMap functions for local images
   const gallery = useMemo(() => {
-    if (!product) return ['/placeholder-product.jpg'];
-    
-    const productId = product.productCode?.replace('SPC', '') || product.id;
-    
+    if (!product) return ["/placeholder-product.jpg"];
+
+    const productId = product.productCode?.replace("SPC", "") || product.id;
+
     // For profiles, use color-specific image
-    if (product.collection.toLowerCase().includes('профиль')) {
-      const mainImage = getProductMainImage(productId, product.collection, product.color);
+    if (product.collection.toLowerCase().includes("профиль")) {
+      const mainImage = getProductMainImage(
+        productId,
+        product.collection,
+        product.color,
+      );
       return [mainImage];
     }
-    
+
     // Check if API returned USE_IMAGEMAP signal
-    if (product.image?.startsWith('USE_IMAGEMAP:') || (product as any).gallery?.[0]?.startsWith('USE_IMAGEMAP:')) {
+    if (
+      product.image?.startsWith("USE_IMAGEMAP:") ||
+      (product as any).gallery?.[0]?.startsWith("USE_IMAGEMAP:")
+    ) {
       // Use optimized imageMap functions for local images (excludes very large files)
       return getOptimizedGallery(productId, product.collection);
     }
-    
+
     // Fallback - also use optimized imageMap by default
     return getOptimizedGallery(productId, product.collection);
   }, [product]);
@@ -75,40 +107,46 @@ export default function ProductDetails() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch('/api/catalog-products');
+        const response = await fetch("/api/catalog-products");
         if (response.ok) {
           const products = await response.json();
           setAllProducts(products);
-          
-          const foundProduct = products.find((p: Product) => 
-            p.productCode === params?.id || 
-            p.id === params?.id ||
-            p.productCode === `SPC${params?.id}` ||
-            p.productCode?.includes(params?.id || '') ||
-            p.name.includes(params?.id || '')
+
+          const foundProduct = products.find(
+            (p: Product) =>
+              p.productCode === params?.id ||
+              p.id === params?.id ||
+              p.productCode === `SPC${params?.id}` ||
+              p.productCode?.includes(params?.id || "") ||
+              p.name.includes(params?.id || ""),
           );
           setProduct(foundProduct || null);
-          
+
           // Если продукт найден, загружаем все уникальные цвета из той же коллекции
           if (foundProduct) {
-            const sameCollectionProducts = products.filter((p: Product) => 
-              p.collection === foundProduct.collection
+            const sameCollectionProducts = products.filter(
+              (p: Product) => p.collection === foundProduct.collection,
             );
-            
+
             // Группируем по цветам и берем первый продукт каждого цвета
-            const uniqueColors = sameCollectionProducts.reduce((acc: Product[], current: Product) => {
-              const existingColor = acc.find(p => p.color === current.color);
-              if (!existingColor) {
-                acc.push(current);
-              }
-              return acc;
-            }, []);
-            
+            const uniqueColors = sameCollectionProducts.reduce(
+              (acc: Product[], current: Product) => {
+                const existingColor = acc.find(
+                  (p) => p.color === current.color,
+                );
+                if (!existingColor) {
+                  acc.push(current);
+                }
+                return acc;
+              },
+              [],
+            );
+
             setCollectionColors(uniqueColors);
           }
         }
       } catch (error) {
-        console.error('Error fetching product:', error);
+        console.error("Error fetching product:", error);
       } finally {
         setLoading(false);
       }
@@ -122,15 +160,15 @@ export default function ProductDetails() {
   // Handle escape key for modals
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         if (isFullscreenOpen) setIsFullscreenOpen(false);
         if (isImageViewerOpen) setIsImageViewerOpen(false);
       }
     };
 
     if (isFullscreenOpen || isImageViewerOpen) {
-      document.addEventListener('keydown', handleEscape);
-      return () => document.removeEventListener('keydown', handleEscape);
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
     }
   }, [isFullscreenOpen, isImageViewerOpen]);
 
@@ -146,7 +184,9 @@ export default function ProductDetails() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Продукт не найден</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            Продукт не найден
+          </h1>
           <a href="/" className="text-[#e90039] hover:underline">
             Вернуться на главную
           </a>
@@ -158,25 +198,27 @@ export default function ProductDetails() {
   const isFavorite = favorites.has(product.id);
 
   const availability = {
-    inStock: product.availability === 'В наличии' || product.availability === 'Склад',
-    deliveryTime: '1-3 дня',
-    quantity: Math.floor(Math.random() * 50) + 10
+    inStock:
+      product.availability === "В наличии" || product.availability === "Склад",
+    deliveryTime: "1-3 дня",
+    quantity: Math.floor(Math.random() * 50) + 10,
   };
 
   const getCollectionDisplayName = () => {
-    if (!product) return 'Общий каталог';
-    
+    if (!product) return "Общий каталог";
+
     // For profiles, show specific profile type from product name
-    if (product.collection.toLowerCase().includes('профиль')) {
+    if (product.collection.toLowerCase().includes("профиль")) {
       const name = product.name.toLowerCase();
-      if (name.includes('под рассеивателем')) return 'Профиль под рассеивателем';
-      if (name.includes('соединительный')) return 'Профиль соединительный';
-      if (name.includes('торцевой')) return 'Профиль торцевой';
-      if (name.includes('угловой')) return 'Профиль угловой';
-      return 'Профиль';
+      if (name.includes("под рассеивателем"))
+        return "Профиль под рассеивателем";
+      if (name.includes("соединительный")) return "Профиль соединительный";
+      if (name.includes("торцевой")) return "Профиль торцевой";
+      if (name.includes("угловой")) return "Профиль угловой";
+      return "Профиль";
     }
-    
-    return product.collection || 'Общий каталог';
+
+    return product.collection || "Общий каталог";
   };
 
   const getProductDisplayName = () => {
@@ -195,16 +237,16 @@ export default function ProductDetails() {
   const shareImage = async () => {
     const imageUrl = gallery[currentImageIndex];
     const productName = getProductDisplayName();
-    
+
     if (navigator.share) {
       try {
         await navigator.share({
           title: `${productName} - АЛЬТА СЛЭБ`,
           text: `Посмотрите на ${productName} из коллекции ${getCollectionDisplayName()}`,
-          url: window.location.href
+          url: window.location.href,
         });
       } catch (error) {
-        console.log('Sharing failed:', error);
+        console.log("Sharing failed:", error);
         fallbackShare();
       }
     } else {
@@ -215,53 +257,99 @@ export default function ProductDetails() {
   const fallbackShare = () => {
     navigator.clipboard.writeText(window.location.href);
     // Could add toast notification here
-    alert('Ссылка скопирована в буфер обмена!');
+    alert("Ссылка скопирована в буфер обмена!");
   };
 
   const downloadImage = () => {
     const imageUrl = gallery[currentImageIndex];
-    const productName = getProductDisplayName();
+    const collectionName = getCollectionDisplayName();
+    const productColor = product.collection === 'Клей' && product.color === 'Стандарт' ? 'Альта Стик' : product.color;
+    const productCode = product.productCode || product.id.toString();
     
-    const link = document.createElement('a');
+    // Extract original file number from image URL if possible
+    const imageFileName = imageUrl.split('/').pop() || '';
+    const fileExtension = imageFileName.split('.').pop() || 'jpg';
+    
+    // Create filename: Collection_Color_ProductCode.extension
+    const downloadName = `${collectionName}_${productColor}_${productCode}.${fileExtension}`;
+
+    const link = document.createElement("a");
     link.href = imageUrl;
-    link.download = `${productName}-${currentImageIndex + 1}.jpg`;
+    link.download = downloadName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   const collections = [
-    { key: 'all' as Collection, label: 'ВСЁ', color: 'bg-gray-400', dbName: null },
-    { key: 'concrete' as Collection, label: 'МАГИЯ БЕТОНА', color: 'bg-gray-600', dbName: 'Магия бетона' },
-    { key: 'fabric' as Collection, label: 'ТКАНЕВАЯ РОСКОШЬ', color: 'bg-purple-500', dbName: 'Тканевая Роскошь' },
-    { key: 'matte' as Collection, label: 'МАТОВАЯ ЭСТЕТИКА', color: 'bg-green-500', dbName: 'Матовая эстетика' },
-    { key: 'marble' as Collection, label: 'МРАМОРНАЯ ФЕЕРИЯ', color: 'bg-blue-500', dbName: 'Мраморная феерия' },
-    { key: 'accessories' as Collection, label: 'КОМПЛЕКТУЮЩИЕ', color: 'bg-orange-500', dbName: 'Профиль' },
-    { key: 'glue' as Collection, label: 'КЛЕЙ', color: 'bg-yellow-500', dbName: 'Клей' },
+    {
+      key: "all" as Collection,
+      label: "ВСЁ",
+      color: "bg-gray-400",
+      dbName: null,
+    },
+    {
+      key: "concrete" as Collection,
+      label: "МАГИЯ БЕТОНА",
+      color: "bg-gray-600",
+      dbName: "Магия бетона",
+    },
+    {
+      key: "fabric" as Collection,
+      label: "ТКАНЕВАЯ РОСКОШЬ",
+      color: "bg-purple-500",
+      dbName: "Тканевая Роскошь",
+    },
+    {
+      key: "matte" as Collection,
+      label: "МАТОВАЯ ЭСТЕТИКА",
+      color: "bg-green-500",
+      dbName: "Матовая эстетика",
+    },
+    {
+      key: "marble" as Collection,
+      label: "МРАМОРНАЯ ФЕЕРИЯ",
+      color: "bg-blue-500",
+      dbName: "Мраморная феерия",
+    },
+    {
+      key: "accessories" as Collection,
+      label: "КОМПЛЕКТУЮЩИЕ",
+      color: "bg-orange-500",
+      dbName: "Профиль",
+    },
+    {
+      key: "glue" as Collection,
+      label: "КЛЕЙ",
+      color: "bg-yellow-500",
+      dbName: "Клей",
+    },
   ];
 
   // Функция для навигации к первому продукту коллекции
-  const navigateToCollection = (collection: typeof collections[0]) => {
-    if (collection.key === 'all') {
-      setLocation('/#catalog');
+  const navigateToCollection = (collection: (typeof collections)[0]) => {
+    if (collection.key === "all") {
+      setLocation("/#catalog");
       return;
     }
-    
-    if (collection.key === 'favorites') {
-      setLocation('/#catalog');
+
+    if (collection.key === "favorites") {
+      setLocation("/#catalog");
       return;
     }
 
     if (collection.dbName && allProducts.length > 0) {
-      const firstProduct = allProducts.find(p => p.collection === collection.dbName);
+      const firstProduct = allProducts.find(
+        (p) => p.collection === collection.dbName,
+      );
       if (firstProduct) {
         let productId = firstProduct.productCode;
-        if (productId?.startsWith('SPC')) {
-          productId = productId.replace('SPC', '');
+        if (productId?.startsWith("SPC")) {
+          productId = productId.replace("SPC", "");
         }
         setLocation(`/product/${productId || firstProduct.id}`);
       } else {
-        setLocation('/#catalog');
+        setLocation("/#catalog");
       }
     }
   };
@@ -269,7 +357,7 @@ export default function ProductDetails() {
   // Функция для определения текущей коллекции
   const getCurrentCollection = () => {
     if (!product) return null;
-    return collections.find(col => col.dbName === product.collection);
+    return collections.find((col) => col.dbName === product.collection);
   };
 
   return (
@@ -286,9 +374,9 @@ export default function ProductDetails() {
                   key={collection.key}
                   onClick={() => navigateToCollection(collection)}
                   className={`px-3 py-1 rounded-md text-sm font-medium transition-all uppercase tracking-wide ${
-                    isActive 
-                      ? 'bg-[#e90039] text-white shadow-md transform scale-105' 
-                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                    isActive
+                      ? "bg-[#e90039] text-white shadow-md transform scale-105"
+                      : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
                   }`}
                 >
                   {collection.label}
@@ -296,7 +384,7 @@ export default function ProductDetails() {
               );
             })}
             <button
-              onClick={() => setLocation('/#catalog')}
+              onClick={() => setLocation("/#catalog")}
               className="text-sm font-medium transition-colors uppercase tracking-wide text-gray-500 hover:text-gray-700"
             >
               ИЗБРАННОЕ
@@ -318,15 +406,15 @@ export default function ProductDetails() {
                   key={colorProduct.id}
                   onClick={() => {
                     let productId = colorProduct.productCode;
-                    if (productId?.startsWith('SPC')) {
-                      productId = productId.replace('SPC', '');
+                    if (productId?.startsWith("SPC")) {
+                      productId = productId.replace("SPC", "");
                     }
                     setLocation(`/product/${productId || colorProduct.id}`);
                   }}
                   className={`px-3 py-1 rounded-md text-sm font-medium transition-all uppercase tracking-wide ${
                     colorProduct.color === product?.color
-                      ? 'bg-[#e90039] text-white shadow-md transform scale-105' 
-                      : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                      ? "bg-[#e90039] text-white shadow-md transform scale-105"
+                      : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
                   }`}
                 >
                   {colorProduct.color}
@@ -340,7 +428,7 @@ export default function ProductDetails() {
       <div className="container mx-auto px-6 py-8">
         {/* Back Button */}
         <button
-          onClick={() => setLocation('/#catalog')}
+          onClick={() => setLocation("/#catalog")}
           className="flex items-center gap-2 text-gray-600 hover:text-[#e90039] mb-6 transition-colors"
         >
           <ArrowLeft size={20} />
@@ -355,11 +443,11 @@ export default function ProductDetails() {
               <OptimizedThumbnail
                 src={gallery[currentImageIndex]}
                 alt={getProductDisplayName()}
-                className="w-full h-full object-cover object-center scale-120"
+                className="w-full h-full object-cover object-center scale-110"
                 size={800}
                 quality={0.9}
               />
-              
+
               {/* Product Info Overlay - Bottom Left - Collection, Color, Price per m² */}
               <div className="absolute bottom-0 left-0 p-4 transition-all duration-300">
                 <div>
@@ -367,18 +455,26 @@ export default function ProductDetails() {
                   <div className="text-gray-600 hover:text-[#e90039] text-sm font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
                     {getCollectionDisplayName()}
                   </div>
-                  
+
                   {/* Line 2: Color */}
                   <div className="text-gray-900 hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                    {product.collection === 'Клей' && product.color === 'Стандарт' ? 'Альта Стик' : product.color}
+                    {product.collection === "Клей" &&
+                    product.color === "Стандарт"
+                      ? "Альта Стик"
+                      : product.color}
                   </div>
-                  
+
                   {/* Line 3: Price per m² (recalculation for panels only) */}
-                  {!product.collection.toLowerCase().includes('профиль') && product.collection !== 'Клей' && product.areaPerPackage && (
-                    <div className="text-gray-900 hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                      {Math.round(product.price / product.areaPerPackage).toLocaleString('ru-RU')} ₽/м²
-                    </div>
-                  )}
+                  {!product.collection.toLowerCase().includes("профиль") &&
+                    product.collection !== "Клей" &&
+                    product.areaPerPackage && (
+                      <div className="text-gray-900 hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
+                        {Math.round(
+                          product.price / product.areaPerPackage,
+                        ).toLocaleString("ru-RU")}{" "}
+                        ₽/м²
+                      </div>
+                    )}
                 </div>
               </div>
 
@@ -388,73 +484,79 @@ export default function ProductDetails() {
                   {/* Line 1: Size */}
                   <div className="text-gray-600 hover:text-[#e90039] text-sm font-medium mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
                     {(() => {
-                      if (product.collection.toLowerCase().includes('профиль')) {
-                        return '2,7м';
-                      } else if (product.collection === 'Клей') {
-                        return '900 гр / 600 мл';
+                      if (
+                        product.collection.toLowerCase().includes("профиль")
+                      ) {
+                        return "2,7м";
+                      } else if (product.collection === "Клей") {
+                        return "900 гр / 600 мл";
                       } else {
-                        return product.format || 'Размер не указан';
+                        return product.format || "Размер не указан";
                       }
                     })()}
                   </div>
-                  
+
                   {/* Line 2: Pieces per package for profiles, area per package for panels */}
-                  {product.collection.toLowerCase().includes('профиль') ? (
+                  {product.collection.toLowerCase().includes("профиль") ? (
                     <div className="text-gray-900 hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
                       30 шт/уп
                     </div>
                   ) : (
-                    product.collection !== 'Клей' && (
+                    product.collection !== "Клей" && (
                       <div className="text-gray-900 hover:text-[#e90039] text-base font-semibold mb-1 drop-shadow-lg transition-colors duration-300 cursor-pointer">
-                        {product.areaPerPackage ? `${product.areaPerPackage} м²/уп` : 'Нет данных о площади'}
+                        {product.areaPerPackage
+                          ? `${product.areaPerPackage} м²/уп`
+                          : "Нет данных о площади"}
                       </div>
                     )
                   )}
-                  
+
                   {/* Line 3: Price per package */}
                   <div className="text-gray-900 hover:text-[#e90039] text-base font-bold drop-shadow-lg transition-colors duration-300 cursor-pointer">
                     {(() => {
-                      if (product.collection.toLowerCase().includes('профиль')) {
+                      if (
+                        product.collection.toLowerCase().includes("профиль")
+                      ) {
                         // For profiles: price * 30 pieces per package
                         const packagePrice = product.price * 30;
-                        return `${packagePrice.toLocaleString('ru-RU')} ₽ за упак.`;
-                      } else if (product.collection === 'Клей') {
+                        return `${packagePrice.toLocaleString("ru-RU")} ₽ за упак.`;
+                      } else if (product.collection === "Клей") {
                         // For glue: show per unit
-                        return `${product.price.toLocaleString('ru-RU')} ₽ за шт.`;
+                        return `${product.price.toLocaleString("ru-RU")} ₽ за шт.`;
                       } else {
                         // For panels: show per package
-                        return `${product.price.toLocaleString('ru-RU')} ₽ за упак.`;
+                        return `${product.price.toLocaleString("ru-RU")} ₽ за упак.`;
                       }
                     })()}
                   </div>
                 </div>
               </div>
             </div>
-            
+
             {/* Image Controls */}
             <div className="absolute top-4 right-4 flex gap-2">
-              <button 
+              <button
                 onClick={openFullscreen}
                 className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#e90039] transition-all"
                 title="Полноэкранный просмотр"
               >
                 <Maximize2 size={16} />
               </button>
-              <button 
+              <button
                 onClick={openImageViewer}
                 className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#e90039] transition-all"
                 title="Увеличить изображение"
               >
                 <ZoomIn size={16} />
               </button>
-              <button 
+              <button
                 onClick={shareImage}
                 className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#e90039] transition-all"
                 title="Поделиться"
               >
                 <Share2 size={16} />
               </button>
-              <button 
+              <button
                 onClick={downloadImage}
                 className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#e90039] transition-all"
                 title="Скачать оригинал"
@@ -464,18 +566,15 @@ export default function ProductDetails() {
               <button
                 onClick={() => toggleFavorite(product.id)}
                 className={`w-10 h-10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all ${
-                  isFavorite 
-                    ? 'bg-red-50 text-red-500' 
-                    : 'bg-white/80 text-gray-600 hover:bg-white hover:text-red-500'
+                  isFavorite
+                    ? "bg-red-50 text-red-500"
+                    : "bg-white/80 text-gray-600 hover:bg-white hover:text-red-500"
                 }`}
                 title="Добавить в избранное"
               >
-                <Heart size={16} className={isFavorite ? 'fill-current' : ''} />
+                <Heart size={16} className={isFavorite ? "fill-current" : ""} />
               </button>
             </div>
-
-
-
           </div>
 
           {/* Thumbnail Gallery with Navigation */}
@@ -483,13 +582,19 @@ export default function ProductDetails() {
             <div className="flex items-center justify-center gap-4">
               {/* Previous Button */}
               <button
-                onClick={() => setCurrentImageIndex(currentImageIndex > 0 ? currentImageIndex - 1 : gallery.length - 1)}
+                onClick={() =>
+                  setCurrentImageIndex(
+                    currentImageIndex > 0
+                      ? currentImageIndex - 1
+                      : gallery.length - 1,
+                  )
+                }
                 className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 hover:border-[#e90039] transition-all"
                 title="Предыдущее изображение"
               >
                 <ArrowLeft size={16} />
               </button>
-              
+
               {/* Thumbnail Gallery */}
               <div className="flex gap-3 justify-center overflow-x-auto pb-2">
                 {gallery.slice(0, 8).map((image: string, index: number) => (
@@ -497,7 +602,9 @@ export default function ProductDetails() {
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
                     className={`flex-shrink-0 w-24 h-12 rounded-lg overflow-hidden border-2 transition-all ${
-                      index === currentImageIndex ? 'border-[#e90039]' : 'border-gray-200 hover:border-gray-300'
+                      index === currentImageIndex
+                        ? "border-[#e90039]"
+                        : "border-gray-200 hover:border-gray-300"
                     }`}
                   >
                     <OptimizedThumbnail
@@ -510,15 +617,24 @@ export default function ProductDetails() {
                   </button>
                 ))}
                 {gallery.length > 8 && (
-                  <div className="flex-shrink-0 w-24 h-12 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-xs text-gray-500" style={{ backgroundColor: 'white' }}>
+                  <div
+                    className="flex-shrink-0 w-24 h-12 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-xs text-gray-500"
+                    style={{ backgroundColor: "white" }}
+                  >
                     +{gallery.length - 8}
                   </div>
                 )}
               </div>
-              
+
               {/* Next Button */}
               <button
-                onClick={() => setCurrentImageIndex(currentImageIndex < gallery.length - 1 ? currentImageIndex + 1 : 0)}
+                onClick={() =>
+                  setCurrentImageIndex(
+                    currentImageIndex < gallery.length - 1
+                      ? currentImageIndex + 1
+                      : 0,
+                  )
+                }
                 className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 hover:border-[#e90039] transition-all"
                 title="Следующее изображение"
               >
@@ -526,8 +642,6 @@ export default function ProductDetails() {
               </button>
             </div>
           )}
-
-
         </div>
 
         {/* Tabs Section */}
@@ -535,22 +649,22 @@ export default function ProductDetails() {
           <div className="border-b border-gray-200">
             <nav className="flex space-x-8">
               {[
-                { id: 'description', label: 'Описание' },
-                { id: 'specifications', label: 'Характеристики' },
-                { id: 'installation', label: 'Монтаж' },
-                { id: 'calculator', label: 'Калькулятор' },
-                { id: 'certificates', label: 'Сертификаты' },
-                { id: 'faq', label: 'FAQ' },
-                { id: 'video', label: 'Видеоинструкция' },
-                { id: 'feedback', label: 'Обратная связь' }
+                { id: "description", label: "Описание" },
+                { id: "specifications", label: "Характеристики" },
+                { id: "installation", label: "Монтаж" },
+                { id: "calculator", label: "Калькулятор" },
+                { id: "certificates", label: "Сертификаты" },
+                { id: "faq", label: "FAQ" },
+                { id: "video", label: "Видеоинструкция" },
+                { id: "feedback", label: "Обратная связь" },
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                     activeTab === tab.id
-                      ? 'border-[#e90039] text-[#e90039]'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? "border-[#e90039] text-[#e90039]"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                   }`}
                 >
                   {tab.label}
@@ -560,18 +674,22 @@ export default function ProductDetails() {
           </div>
 
           <div className="mt-8">
-            {activeTab === 'description' && (
+            {activeTab === "description" && (
               <div className="prose max-w-none">
                 <p className="text-gray-700 leading-relaxed">
-                  {product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' 
+                  {product.collection ===
+                  "КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ"
                     ? `${getProductDisplayName()} - высококачественный материал для монтажа и отделки SPC панелей. Обеспечивает надежное крепление и долговечность конструкции.`
-                    : `Панель SPC ${getProductDisplayName()} из коллекции "${product.collection}" - это современное решение для стен и потолков. Изготовлена из высококачественных материалов с использованием инновационных технологий.`
-                  }
+                    : `Панель SPC ${getProductDisplayName()} из коллекции "${product.collection}" - это современное решение для стен и потолков. Изготовлена из высококачественных материалов с использованием инновационных технологий.`}
                 </p>
-                <h4 className="text-lg font-semibold text-gray-900 mt-6 mb-3">Преимущества:</h4>
+                <h4 className="text-lg font-semibold text-gray-900 mt-6 mb-3">
+                  Преимущества:
+                </h4>
                 <ul className="list-disc list-inside space-y-2 text-gray-700">
                   <li>Высокая износостойкость и долговечность</li>
-                  <li>Влагостойкость и устойчивость к температурным перепадам</li>
+                  <li>
+                    Влагостойкость и устойчивость к температурным перепадам
+                  </li>
                   <li>Простота монтажа и обслуживания</li>
                   <li>Экологическая безопасность</li>
                   <li>Широкий выбор дизайнов и текстур</li>
@@ -579,53 +697,71 @@ export default function ProductDetails() {
               </div>
             )}
 
-            {activeTab === 'specifications' && (
+            {activeTab === "specifications" && (
               <div className="bg-white rounded-xl p-6 shadow-sm">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Характеристики</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">
+                  Характеристики
+                </h3>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
                     <span className="text-gray-600">Размер панели</span>
-                    <span className="font-semibold text-gray-900">{product.format}</span>
+                    <span className="font-semibold text-gray-900">
+                      {product.format}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
                     <span className="text-gray-600">Коллекция</span>
-                    <span className="font-semibold text-gray-900">{getCollectionDisplayName()}</span>
+                    <span className="font-semibold text-gray-900">
+                      {getCollectionDisplayName()}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
                     <span className="text-gray-600">Цвет/дизайн</span>
-                    <span className="font-semibold text-gray-900">{product.color}</span>
+                    <span className="font-semibold text-gray-900">
+                      {product.color}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
                     <span className="text-gray-600">Количество в упаковке</span>
-                    <span className="font-semibold text-gray-900">{product.quantity || 1} {product.unit || 'шт'}</span>
+                    <span className="font-semibold text-gray-900">
+                      {product.quantity || 1} {product.unit || "шт"}
+                    </span>
                   </div>
                   {product.areaPerPackage && (
                     <div className="flex justify-between items-center py-2 border-b border-gray-100">
                       <span className="text-gray-600">Площадь в упаковке</span>
-                      <span className="font-semibold text-gray-900">{product.areaPerPackage} м²</span>
+                      <span className="font-semibold text-gray-900">
+                        {product.areaPerPackage} м²
+                      </span>
                     </div>
                   )}
                   <div className="flex justify-between items-center py-2">
                     <span className="text-gray-600">Цена за упаковку</span>
-                    <span className="font-semibold text-[#e90039]">{Math.round(product.price).toLocaleString('ru-RU')} ₽</span>
+                    <span className="font-semibold text-[#e90039]">
+                      {Math.round(product.price).toLocaleString("ru-RU")} ₽
+                    </span>
                   </div>
                 </div>
               </div>
             )}
 
-            {activeTab === 'installation' && (
+            {activeTab === "installation" && (
               <div className="space-y-8">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-lg font-semibold text-gray-900">Инструкция по монтажу</h4>
+                  <h4 className="text-lg font-semibold text-gray-900">
+                    Инструкция по монтажу
+                  </h4>
                   <button className="bg-[#e90039] text-white px-4 py-2 rounded-lg hover:bg-[#c8002f] transition-colors flex items-center gap-2">
                     <Download size={16} />
                     Скачать PDF инструкцию
                   </button>
                 </div>
-                
+
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
-                    <h5 className="font-semibold text-gray-900 mb-3">Подготовка поверхности:</h5>
+                    <h5 className="font-semibold text-gray-900 mb-3">
+                      Подготовка поверхности:
+                    </h5>
                     <ol className="list-decimal list-inside space-y-2 text-gray-700">
                       <li>Очистите поверхность от загрязнений</li>
                       <li>Выровняйте основание</li>
@@ -634,7 +770,9 @@ export default function ProductDetails() {
                     </ol>
                   </div>
                   <div>
-                    <h5 className="font-semibold text-gray-900 mb-3">Монтаж панелей:</h5>
+                    <h5 className="font-semibold text-gray-900 mb-3">
+                      Монтаж панелей:
+                    </h5>
                     <ol className="list-decimal list-inside space-y-2 text-gray-700">
                       <li>Нанесите клей на панель</li>
                       <li>Приложите к поверхности</li>
@@ -645,49 +783,67 @@ export default function ProductDetails() {
                 </div>
 
                 <div className="bg-gray-50 rounded-lg p-6">
-                  <h5 className="font-semibold text-gray-900 mb-4">Дополнительные материалы для скачивания:</h5>
+                  <h5 className="font-semibold text-gray-900 mb-4">
+                    Дополнительные материалы для скачивания:
+                  </h5>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                       <div className="flex items-center justify-between">
                         <div>
-                          <div className="font-medium text-gray-900">Подробная инструкция по монтажу</div>
-                          <div className="text-sm text-gray-600">PDF, 2.4 МБ</div>
+                          <div className="font-medium text-gray-900">
+                            Подробная инструкция по монтажу
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            PDF, 2.4 МБ
+                          </div>
                         </div>
                         <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
                           <Download size={20} />
                         </button>
                       </div>
                     </div>
-                    
+
                     <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                       <div className="flex items-center justify-between">
                         <div>
-                          <div className="font-medium text-gray-900">Схемы раскладки панелей</div>
-                          <div className="text-sm text-gray-600">PDF, 1.8 МБ</div>
+                          <div className="font-medium text-gray-900">
+                            Схемы раскладки панелей
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            PDF, 1.8 МБ
+                          </div>
                         </div>
                         <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
                           <Download size={20} />
                         </button>
                       </div>
                     </div>
-                    
+
                     <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                       <div className="flex items-center justify-between">
                         <div>
-                          <div className="font-medium text-gray-900">Рекомендации по уходу</div>
-                          <div className="text-sm text-gray-600">PDF, 850 КБ</div>
+                          <div className="font-medium text-gray-900">
+                            Рекомендации по уходу
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            PDF, 850 КБ
+                          </div>
                         </div>
                         <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
                           <Download size={20} />
                         </button>
                       </div>
                     </div>
-                    
+
                     <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                       <div className="flex items-center justify-between">
                         <div>
-                          <div className="font-medium text-gray-900">Гарантийные условия</div>
-                          <div className="text-sm text-gray-600">PDF, 650 КБ</div>
+                          <div className="font-medium text-gray-900">
+                            Гарантийные условия
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            PDF, 650 КБ
+                          </div>
                         </div>
                         <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
                           <Download size={20} />
@@ -703,10 +859,13 @@ export default function ProductDetails() {
                       <span className="text-white text-sm font-bold">!</span>
                     </div>
                     <div>
-                      <div className="font-semibold text-blue-900 mb-1">Важно:</div>
+                      <div className="font-semibold text-blue-900 mb-1">
+                        Важно:
+                      </div>
                       <div className="text-blue-800 text-sm">
-                        Перед началом монтажа обязательно ознакомьтесь с полной инструкцией. 
-                        При несоблюдении технологии монтажа гарантия производителя может быть аннулирована.
+                        Перед началом монтажа обязательно ознакомьтесь с полной
+                        инструкцией. При несоблюдении технологии монтажа
+                        гарантия производителя может быть аннулирована.
                       </div>
                     </div>
                   </div>
@@ -714,37 +873,47 @@ export default function ProductDetails() {
               </div>
             )}
 
-            {activeTab === 'calculator' && (
+            {activeTab === "calculator" && (
               <div className="space-y-8">
                 <div className="bg-white rounded-xl p-6 shadow-sm">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-6">Калькулятор материала</h4>
-                  
+                  <h4 className="text-lg font-semibold text-gray-900 mb-6">
+                    Калькулятор материала
+                  </h4>
+
                   <div className="grid md:grid-cols-2 gap-8">
                     <div>
-                      <h5 className="font-semibold text-gray-900 mb-4">Параметры помещения</h5>
+                      <h5 className="font-semibold text-gray-900 mb-4">
+                        Параметры помещения
+                      </h5>
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Длина помещения (м)</label>
-                          <input 
-                            type="number" 
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent" 
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Длина помещения (м)
+                          </label>
+                          <input
+                            type="number"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
                             placeholder="Введите длину"
                             step="0.1"
                             min="0"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Ширина помещения (м)</label>
-                          <input 
-                            type="number" 
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent" 
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Ширина помещения (м)
+                          </label>
+                          <input
+                            type="number"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
                             placeholder="Введите ширину"
                             step="0.1"
                             min="0"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Запас материала (%)</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Запас материала (%)
+                          </label>
                           <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent">
                             <option value="5">5% - стандартный запас</option>
                             <option value="10">10% - с учетом подрезки</option>
@@ -753,47 +922,70 @@ export default function ProductDetails() {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div>
-                      <h5 className="font-semibold text-gray-900 mb-4">Результат расчета</h5>
+                      <h5 className="font-semibold text-gray-900 mb-4">
+                        Результат расчета
+                      </h5>
                       <div className="bg-gray-50 rounded-lg p-4 space-y-3">
                         <div className="flex justify-between">
-                          <span className="text-gray-600">Площадь помещения:</span>
-                          <span className="font-medium text-gray-900">-- м²</span>
+                          <span className="text-gray-600">
+                            Площадь помещения:
+                          </span>
+                          <span className="font-medium text-gray-900">
+                            -- м²
+                          </span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">С учетом запаса:</span>
-                          <span className="font-medium text-gray-900">-- м²</span>
+                          <span className="text-gray-600">
+                            С учетом запаса:
+                          </span>
+                          <span className="font-medium text-gray-900">
+                            -- м²
+                          </span>
                         </div>
                         <div className="border-t border-gray-200 pt-3">
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Количество упаковок:</span>
-                            <span className="font-semibold text-gray-900">-- шт</span>
+                            <span className="text-gray-600">
+                              Количество упаковок:
+                            </span>
+                            <span className="font-semibold text-gray-900">
+                              -- шт
+                            </span>
                           </div>
                           <div className="flex justify-between mt-2">
-                            <span className="text-gray-600">Общая стоимость:</span>
-                            <span className="font-bold text-[#e90039] text-lg">-- ₽</span>
+                            <span className="text-gray-600">
+                              Общая стоимость:
+                            </span>
+                            <span className="font-bold text-[#e90039] text-lg">
+                              -- ₽
+                            </span>
                           </div>
                         </div>
                       </div>
-                      
+
                       <button className="w-full mt-4 bg-[#e90039] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#c8002f] transition-colors">
                         Рассчитать
                       </button>
                     </div>
                   </div>
-                  
+
                   <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <div className="flex items-start gap-3">
                       <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                         <span className="text-white text-sm font-bold">i</span>
                       </div>
                       <div>
-                        <div className="font-semibold text-blue-900 mb-1">Рекомендации:</div>
+                        <div className="font-semibold text-blue-900 mb-1">
+                          Рекомендации:
+                        </div>
                         <div className="text-blue-800 text-sm">
-                          • Для помещений сложной формы рекомендуем увеличить запас до 15%<br/>
-                          • При диагональной укладке добавьте дополнительно 10% к общему количеству<br/>
-                          • Окончательный расчет уточняйте с менеджером
+                          • Для помещений сложной формы рекомендуем увеличить
+                          запас до 15%
+                          <br />
+                          • При диагональной укладке добавьте дополнительно 10%
+                          к общему количеству
+                          <br />• Окончательный расчет уточняйте с менеджером
                         </div>
                       </div>
                     </div>
@@ -802,17 +994,23 @@ export default function ProductDetails() {
               </div>
             )}
 
-            {activeTab === 'certificates' && (
+            {activeTab === "certificates" && (
               <div className="space-y-8">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Документы качества</h4>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                      Документы качества
+                    </h4>
                     <div className="space-y-3">
                       <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="font-medium text-gray-900">Сертификат соответствия ГОСТ</div>
-                            <div className="text-sm text-gray-600">Действителен до: 15.06.2025</div>
+                            <div className="font-medium text-gray-900">
+                              Сертификат соответствия ГОСТ
+                            </div>
+                            <div className="text-sm text-gray-600">
+                              Действителен до: 15.06.2025
+                            </div>
                           </div>
                           <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
                             <Download size={20} />
@@ -822,8 +1020,12 @@ export default function ProductDetails() {
                       <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="font-medium text-gray-900">Декларация соответствия ТР ТС</div>
-                            <div className="text-sm text-gray-600">Действительна до: 22.08.2025</div>
+                            <div className="font-medium text-gray-900">
+                              Декларация соответствия ТР ТС
+                            </div>
+                            <div className="text-sm text-gray-600">
+                              Действительна до: 22.08.2025
+                            </div>
                           </div>
                           <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
                             <Download size={20} />
@@ -832,15 +1034,21 @@ export default function ProductDetails() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Международные сертификаты</h4>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                      Международные сертификаты
+                    </h4>
                     <div className="space-y-3">
                       <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="font-medium text-gray-900">ISO 14001 (Экологический менеджмент)</div>
-                            <div className="text-sm text-gray-600">Международный стандарт</div>
+                            <div className="font-medium text-gray-900">
+                              ISO 14001 (Экологический менеджмент)
+                            </div>
+                            <div className="text-sm text-gray-600">
+                              Международный стандарт
+                            </div>
                           </div>
                           <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
                             <Download size={20} />
@@ -850,8 +1058,12 @@ export default function ProductDetails() {
                       <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="font-medium text-gray-900">CE Marking</div>
-                            <div className="text-sm text-gray-600">Европейское соответствие</div>
+                            <div className="font-medium text-gray-900">
+                              CE Marking
+                            </div>
+                            <div className="text-sm text-gray-600">
+                              Европейское соответствие
+                            </div>
                           </div>
                           <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
                             <Download size={20} />
@@ -864,13 +1076,19 @@ export default function ProductDetails() {
 
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Пожарная безопасность</h4>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                      Пожарная безопасность
+                    </h4>
                     <div className="space-y-3">
                       <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="font-medium text-gray-900">Сертификат пожарной безопасности</div>
-                            <div className="text-sm text-gray-600">Класс КМ2 по НПБ 244-97</div>
+                            <div className="font-medium text-gray-900">
+                              Сертификат пожарной безопасности
+                            </div>
+                            <div className="text-sm text-gray-600">
+                              Класс КМ2 по НПБ 244-97
+                            </div>
                           </div>
                           <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
                             <Download size={20} />
@@ -879,15 +1097,21 @@ export default function ProductDetails() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Гарантия</h4>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                      Гарантия
+                    </h4>
                     <div className="space-y-3">
                       <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="font-medium text-gray-900">Гарантийный талон</div>
-                            <div className="text-sm text-gray-600">Гарантия 15 лет от производителя</div>
+                            <div className="font-medium text-gray-900">
+                              Гарантийный талон
+                            </div>
+                            <div className="text-sm text-gray-600">
+                              Гарантия 15 лет от производителя
+                            </div>
                           </div>
                           <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
                             <Download size={20} />
@@ -900,17 +1124,21 @@ export default function ProductDetails() {
               </div>
             )}
 
-            {activeTab === 'faq' && (
+            {activeTab === "faq" && (
               <div className="space-y-6">
                 <div className="space-y-4">
-                  <h4 className="text-lg font-semibold text-gray-900">Технические вопросы</h4>
+                  <h4 className="text-lg font-semibold text-gray-900">
+                    Технические вопросы
+                  </h4>
                   <div className="space-y-3">
                     <details className="bg-white border border-gray-200 rounded-lg">
                       <summary className="p-4 cursor-pointer font-medium text-gray-900 hover:bg-gray-50">
                         Можно ли укладывать панели на неровную поверхность?
                       </summary>
                       <div className="p-4 pt-0 text-gray-700">
-                        Поверхность должна быть ровной с перепадами не более 2мм на 1м. При необходимости выровняйте основание шпаклевкой или грунтовкой.
+                        Поверхность должна быть ровной с перепадами не более 2мм
+                        на 1м. При необходимости выровняйте основание шпаклевкой
+                        или грунтовкой.
                       </div>
                     </details>
                     <details className="bg-white border border-gray-200 rounded-lg">
@@ -918,7 +1146,9 @@ export default function ProductDetails() {
                         Какой клей лучше использовать для монтажа?
                       </summary>
                       <div className="p-4 pt-0 text-gray-700">
-                        Рекомендуем использовать специальный клей для SPC панелей из нашего каталога. Он обеспечивает надежное сцепление и долговечность крепления.
+                        Рекомендуем использовать специальный клей для SPC
+                        панелей из нашего каталога. Он обеспечивает надежное
+                        сцепление и долговечность крепления.
                       </div>
                     </details>
                     <details className="bg-white border border-gray-200 rounded-lg">
@@ -926,21 +1156,27 @@ export default function ProductDetails() {
                         Можно ли использовать панели во влажных помещениях?
                       </summary>
                       <div className="p-4 pt-0 text-gray-700">
-                        Да, SPC панели обладают высокой влагостойкостью и подходят для ванных комнат, кухонь и других влажных помещений.
+                        Да, SPC панели обладают высокой влагостойкостью и
+                        подходят для ванных комнат, кухонь и других влажных
+                        помещений.
                       </div>
                     </details>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <h4 className="text-lg font-semibold text-gray-900">Уход и эксплуатация</h4>
+                  <h4 className="text-lg font-semibold text-gray-900">
+                    Уход и эксплуатация
+                  </h4>
                   <div className="space-y-3">
                     <details className="bg-white border border-gray-200 rounded-lg">
                       <summary className="p-4 cursor-pointer font-medium text-gray-900 hover:bg-gray-50">
                         Как правильно ухаживать за панелями?
                       </summary>
                       <div className="p-4 pt-0 text-gray-700">
-                        Для ухода достаточно влажной уборки обычными моющими средствами. Избегайте абразивных средств и растворителей.
+                        Для ухода достаточно влажной уборки обычными моющими
+                        средствами. Избегайте абразивных средств и
+                        растворителей.
                       </div>
                     </details>
                     <details className="bg-white border border-gray-200 rounded-lg">
@@ -948,21 +1184,27 @@ export default function ProductDetails() {
                         Можно ли устанавливать панели в детской комнате?
                       </summary>
                       <div className="p-4 pt-0 text-gray-700">
-                        Да, панели абсолютно безопасны для детей. Они не выделяют вредных веществ и имеют экологические сертификаты.
+                        Да, панели абсолютно безопасны для детей. Они не
+                        выделяют вредных веществ и имеют экологические
+                        сертификаты.
                       </div>
                     </details>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <h4 className="text-lg font-semibold text-gray-900">Доставка и оплата</h4>
+                  <h4 className="text-lg font-semibold text-gray-900">
+                    Доставка и оплата
+                  </h4>
                   <div className="space-y-3">
                     <details className="bg-white border border-gray-200 rounded-lg">
                       <summary className="p-4 cursor-pointer font-medium text-gray-900 hover:bg-gray-50">
                         Какие способы доставки доступны?
                       </summary>
                       <div className="p-4 pt-0 text-gray-700">
-                        Доступна доставка курьером по Москве и области, а также транспортными компаниями по всей России. Подробности уточняйте у менеджера.
+                        Доступна доставка курьером по Москве и области, а также
+                        транспортными компаниями по всей России. Подробности
+                        уточняйте у менеджера.
                       </div>
                     </details>
                     <details className="bg-white border border-gray-200 rounded-lg">
@@ -970,7 +1212,9 @@ export default function ProductDetails() {
                         Можно ли вернуть товар если он не подошел?
                       </summary>
                       <div className="p-4 pt-0 text-gray-700">
-                        Да, возврат возможен в течение 14 дней при сохранении товарного вида и упаковки. Стоимость обратной доставки оплачивает покупатель.
+                        Да, возврат возможен в течение 14 дней при сохранении
+                        товарного вида и упаковки. Стоимость обратной доставки
+                        оплачивает покупатель.
                       </div>
                     </details>
                   </div>
@@ -978,11 +1222,13 @@ export default function ProductDetails() {
               </div>
             )}
 
-            {activeTab === 'video' && (
+            {activeTab === "video" && (
               <div className="space-y-8">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Инструкции по монтажу</h4>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                      Инструкции по монтажу
+                    </h4>
                     <div className="space-y-4">
                       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                         <div className="aspect-video bg-gray-100 flex items-center justify-center">
@@ -990,34 +1236,48 @@ export default function ProductDetails() {
                             <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
                               <Play size={24} className="text-white" />
                             </div>
-                            <div className="text-sm text-gray-600">Видео недоступно</div>
+                            <div className="text-sm text-gray-600">
+                              Видео недоступно
+                            </div>
                           </div>
                         </div>
                         <div className="p-4">
-                          <div className="font-medium text-gray-900">Подготовка поверхности и разметка</div>
-                          <div className="text-sm text-gray-600 mt-1">Продолжительность: 8:30</div>
+                          <div className="font-medium text-gray-900">
+                            Подготовка поверхности и разметка
+                          </div>
+                          <div className="text-sm text-gray-600 mt-1">
+                            Продолжительность: 8:30
+                          </div>
                         </div>
                       </div>
-                      
+
                       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                         <div className="aspect-video bg-gray-100 flex items-center justify-center">
                           <div className="text-center">
                             <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
                               <Play size={24} className="text-white" />
                             </div>
-                            <div className="text-sm text-gray-600">Видео недоступно</div>
+                            <div className="text-sm text-gray-600">
+                              Видео недоступно
+                            </div>
                           </div>
                         </div>
                         <div className="p-4">
-                          <div className="font-medium text-gray-900">Техника нанесения клея и укладки</div>
-                          <div className="text-sm text-gray-600 mt-1">Продолжительность: 12:15</div>
+                          <div className="font-medium text-gray-900">
+                            Техника нанесения клея и укладки
+                          </div>
+                          <div className="text-sm text-gray-600 mt-1">
+                            Продолжительность: 12:15
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  
+
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Обзоры коллекций</h4>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                      Обзоры коллекций
+                    </h4>
                     <div className="space-y-4">
                       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                         <div className="aspect-video bg-gray-100 flex items-center justify-center">
@@ -1025,35 +1285,49 @@ export default function ProductDetails() {
                             <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
                               <Play size={24} className="text-white" />
                             </div>
-                            <div className="text-sm text-gray-600">Видео недоступно</div>
+                            <div className="text-sm text-gray-600">
+                              Видео недоступно
+                            </div>
                           </div>
                         </div>
                         <div className="p-4">
-                          <div className="font-medium text-gray-900">Коллекция "Магия Бетона" - детальный обзор</div>
-                          <div className="text-sm text-gray-600 mt-1">Продолжительность: 6:45</div>
+                          <div className="font-medium text-gray-900">
+                            Коллекция "Магия Бетона" - детальный обзор
+                          </div>
+                          <div className="text-sm text-gray-600 mt-1">
+                            Продолжительность: 6:45
+                          </div>
                         </div>
                       </div>
-                      
+
                       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                         <div className="aspect-video bg-gray-100 flex items-center justify-center">
                           <div className="text-center">
                             <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
                               <Play size={24} className="text-white" />
                             </div>
-                            <div className="text-sm text-gray-600">Видео недоступно</div>
+                            <div className="text-sm text-gray-600">
+                              Видео недоступно
+                            </div>
                           </div>
                         </div>
                         <div className="p-4">
-                          <div className="font-medium text-gray-900">Сравнение всех коллекций АЛЬТА СЛЭБ</div>
-                          <div className="text-sm text-gray-600 mt-1">Продолжительность: 15:20</div>
+                          <div className="font-medium text-gray-900">
+                            Сравнение всех коллекций АЛЬТА СЛЭБ
+                          </div>
+                          <div className="text-sm text-gray-600 mt-1">
+                            Продолжительность: 15:20
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                
+
                 <div>
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Примеры применения</h4>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                    Примеры применения
+                  </h4>
                   <div className="grid md:grid-cols-3 gap-4">
                     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                       <div className="aspect-video bg-gray-100 flex items-center justify-center">
@@ -1061,41 +1335,53 @@ export default function ProductDetails() {
                           <div className="w-12 h-12 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
                             <Play size={16} className="text-white" />
                           </div>
-                          <div className="text-xs text-gray-600">Видео недоступно</div>
+                          <div className="text-xs text-gray-600">
+                            Видео недоступно
+                          </div>
                         </div>
                       </div>
                       <div className="p-3">
-                        <div className="font-medium text-gray-900 text-sm">Современная гостиная</div>
+                        <div className="font-medium text-gray-900 text-sm">
+                          Современная гостиная
+                        </div>
                         <div className="text-xs text-gray-600 mt-1">4:30</div>
                       </div>
                     </div>
-                    
+
                     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                       <div className="aspect-video bg-gray-100 flex items-center justify-center">
                         <div className="text-center">
                           <div className="w-12 h-12 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
                             <Play size={16} className="text-white" />
                           </div>
-                          <div className="text-xs text-gray-600">Видео недоступно</div>
+                          <div className="text-xs text-gray-600">
+                            Видео недоступно
+                          </div>
                         </div>
                       </div>
                       <div className="p-3">
-                        <div className="font-medium text-gray-900 text-sm">Офисные интерьеры</div>
+                        <div className="font-medium text-gray-900 text-sm">
+                          Офисные интерьеры
+                        </div>
                         <div className="text-xs text-gray-600 mt-1">7:15</div>
                       </div>
                     </div>
-                    
+
                     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                       <div className="aspect-video bg-gray-100 flex items-center justify-center">
                         <div className="text-center">
                           <div className="w-12 h-12 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
                             <Play size={16} className="text-white" />
                           </div>
-                          <div className="text-xs text-gray-600">Видео недоступно</div>
+                          <div className="text-xs text-gray-600">
+                            Видео недоступно
+                          </div>
                         </div>
                       </div>
                       <div className="p-3">
-                        <div className="font-medium text-gray-900 text-sm">Ванная и кухня</div>
+                        <div className="font-medium text-gray-900 text-sm">
+                          Ванная и кухня
+                        </div>
                         <div className="text-xs text-gray-600 mt-1">5:50</div>
                       </div>
                     </div>
@@ -1104,33 +1390,41 @@ export default function ProductDetails() {
               </div>
             )}
 
-            {activeTab === 'feedback' && (
+            {activeTab === "feedback" && (
               <div className="space-y-8">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Связь с менеджером</h4>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                      Связь с менеджером
+                    </h4>
                     <form className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Ваше имя</label>
-                        <input 
-                          type="text" 
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent" 
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Ваше имя
+                        </label>
+                        <input
+                          type="text"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
                           placeholder="Введите ваше имя"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Телефон</label>
-                        <input 
-                          type="tel" 
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent" 
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Телефон
+                        </label>
+                        <input
+                          type="tel"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
                           placeholder="+7 (___) ___-__-__"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Сообщение</label>
-                        <textarea 
-                          rows={4} 
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent" 
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Сообщение
+                        </label>
+                        <textarea
+                          rows={4}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
                           placeholder="Опишите ваш вопрос или пожелание"
                         ></textarea>
                       </div>
@@ -1139,45 +1433,61 @@ export default function ProductDetails() {
                       </button>
                     </form>
                   </div>
-                  
+
                   <div className="space-y-6">
                     <div>
-                      <h4 className="text-lg font-semibold text-gray-900 mb-4">Техническая поддержка</h4>
+                      <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                        Техническая поддержка
+                      </h4>
                       <div className="space-y-3">
                         <div className="flex items-center gap-3">
                           <Mail size={20} className="text-[#e90039]" />
                           <div>
-                            <div className="font-medium text-gray-900">Email</div>
-                            <div className="text-gray-600">support@altaslab.ru</div>
+                            <div className="font-medium text-gray-900">
+                              Email
+                            </div>
+                            <div className="text-gray-600">
+                              support@altaslab.ru
+                            </div>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
                           <Search size={20} className="text-[#e90039]" />
                           <div>
-                            <div className="font-medium text-gray-900">Горячая линия</div>
-                            <div className="text-gray-600">8 (800) 555-35-35</div>
+                            <div className="font-medium text-gray-900">
+                              Горячая линия
+                            </div>
+                            <div className="text-gray-600">
+                              8 (800) 555-35-35
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                    
+
                     <div>
-                      <h4 className="text-lg font-semibold text-gray-900 mb-4">Заказ образцов</h4>
+                      <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                        Заказ образцов
+                      </h4>
                       <div className="bg-gray-50 rounded-lg p-4">
                         <p className="text-gray-700 mb-3">
-                          Закажите бесплатные образцы материала для оценки качества и цвета
+                          Закажите бесплатные образцы материала для оценки
+                          качества и цвета
                         </p>
                         <button className="bg-[#e90039] text-white py-2 px-4 rounded-lg font-medium hover:bg-[#c8002f] transition-colors">
                           Заказать образцы
                         </button>
                       </div>
                     </div>
-                    
+
                     <div>
-                      <h4 className="text-lg font-semibold text-gray-900 mb-4">Консультация дизайнера</h4>
+                      <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                        Консультация дизайнера
+                      </h4>
                       <div className="bg-gray-50 rounded-lg p-4">
                         <p className="text-gray-700 mb-3">
-                          Получите профессиональную консультацию по выбору материалов для вашего проекта
+                          Получите профессиональную консультацию по выбору
+                          материалов для вашего проекта
                         </p>
                         <button className="bg-[#e90039] text-white py-2 px-4 rounded-lg font-medium hover:bg-[#c8002f] transition-colors">
                           Записаться на консультацию
@@ -1188,10 +1498,8 @@ export default function ProductDetails() {
                 </div>
               </div>
             )}
-
           </div>
         </div>
-
       </div>
       <Footer />
       {/* Fullscreen Modal */}
@@ -1204,7 +1512,7 @@ export default function ProductDetails() {
             >
               <X size={24} />
             </button>
-            
+
             <OptimizedThumbnail
               src={gallery[currentImageIndex]}
               alt={getProductDisplayName()}
@@ -1212,25 +1520,37 @@ export default function ProductDetails() {
               size={1200}
               quality={0.95}
             />
-            
+
             {/* Navigation arrows */}
             {gallery.length > 1 && (
               <>
                 <button
-                  onClick={() => setCurrentImageIndex(currentImageIndex > 0 ? currentImageIndex - 1 : gallery.length - 1)}
+                  onClick={() =>
+                    setCurrentImageIndex(
+                      currentImageIndex > 0
+                        ? currentImageIndex - 1
+                        : gallery.length - 1,
+                    )
+                  }
                   className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all text-white"
                 >
                   <ArrowLeft size={24} />
                 </button>
                 <button
-                  onClick={() => setCurrentImageIndex(currentImageIndex < gallery.length - 1 ? currentImageIndex + 1 : 0)}
+                  onClick={() =>
+                    setCurrentImageIndex(
+                      currentImageIndex < gallery.length - 1
+                        ? currentImageIndex + 1
+                        : 0,
+                    )
+                  }
                   className="absolute right-16 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all text-white"
                 >
                   <ArrowLeft size={24} className="rotate-180" />
                 </button>
               </>
             )}
-            
+
             {/* Image counter */}
             {gallery.length > 1 && (
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full">
@@ -1250,7 +1570,7 @@ export default function ProductDetails() {
             >
               <X size={20} />
             </button>
-            
+
             <OptimizedThumbnail
               src={gallery[currentImageIndex]}
               alt={getProductDisplayName()}
@@ -1258,42 +1578,54 @@ export default function ProductDetails() {
               size={1200}
               quality={0.95}
             />
-            
+
             {/* Navigation arrows */}
             {gallery.length > 1 && (
               <>
                 <button
-                  onClick={() => setCurrentImageIndex(currentImageIndex > 0 ? currentImageIndex - 1 : gallery.length - 1)}
+                  onClick={() =>
+                    setCurrentImageIndex(
+                      currentImageIndex > 0
+                        ? currentImageIndex - 1
+                        : gallery.length - 1,
+                    )
+                  }
                   className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all text-white"
                 >
                   <ArrowLeft size={24} />
                 </button>
                 <button
-                  onClick={() => setCurrentImageIndex(currentImageIndex < gallery.length - 1 ? currentImageIndex + 1 : 0)}
+                  onClick={() =>
+                    setCurrentImageIndex(
+                      currentImageIndex < gallery.length - 1
+                        ? currentImageIndex + 1
+                        : 0,
+                    )
+                  }
                   className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all text-white"
                 >
                   <ArrowLeft size={24} className="rotate-180" />
                 </button>
               </>
             )}
-            
+
             {/* Image counter */}
             {gallery.length > 1 && (
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full">
                 {currentImageIndex + 1} из {gallery.length}
               </div>
             )}
-            
+
             {/* Image actions */}
             <div className="absolute bottom-4 right-4 flex gap-2">
-              <button 
+              <button
                 onClick={shareImage}
                 className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all"
                 title="Поделиться"
               >
                 <Share2 size={16} />
               </button>
-              <button 
+              <button
                 onClick={downloadImage}
                 className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all"
                 title="Скачать оригинал"
