@@ -293,9 +293,14 @@ export default function VideoPage() {
             <p className="text-lg opacity-90 mb-6">
               Получайте уведомления о новых видеоинструкциях и обучающих материалах
             </p>
-            <button className="bg-white text-[#e90039] px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+            <a 
+              href="https://www.youtube.com/user/altaprofil1" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-block bg-white text-[#e90039] px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+            >
               Подписаться на YouTube
-            </button>
+            </a>
           </div>
         </div>
       </main>
