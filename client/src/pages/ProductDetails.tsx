@@ -133,14 +133,19 @@ export default function ProductDetails() {
               (p: Product) => p.collection === foundProduct.collection,
             );
 
-            // Группируем по цветам и берем первый продукт каждого цвета
+            // Группируем по цветам, приоритет товарам того же размера
             const uniqueColors = sameCollectionProducts.reduce(
               (acc: Product[], current: Product) => {
                 const existingColor = acc.find(
                   (p) => p.color === current.color,
                 );
                 if (!existingColor) {
-                  acc.push(current);
+                  // Для нового цвета ищем товар того же размера что и текущий
+                  const sameFormatProduct = sameCollectionProducts.find(
+                    (p) => p.color === current.color && p.format === foundProduct.format
+                  );
+                  // Если есть товар того же формата - берем его, иначе текущий
+                  acc.push(sameFormatProduct || current);
                 }
                 return acc;
               },
