@@ -142,7 +142,7 @@ export default function ProductDetails() {
                 if (!existingColor) {
                   // Для нового цвета ищем товар того же размера что и текущий
                   const sameFormatProduct = sameCollectionProducts.find(
-                    (p) => p.color === current.color && p.format === foundProduct.format
+                    (p: Product) => p.color === current.color && p.format === foundProduct.format
                   );
                   // Если есть товар того же формата - берем его, иначе текущий
                   acc.push(sameFormatProduct || current);

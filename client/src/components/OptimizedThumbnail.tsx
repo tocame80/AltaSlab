@@ -35,7 +35,7 @@ export default function OptimizedThumbnail({
       if (!src) return;
 
       // Check if this is a placeholder image (imported module)
-      const isPlaceholder = src.includes('placeholder.jpg') || src.includes('/assets/products/placeholder.jpg');
+      const isPlaceholder = src.includes('placeholder.png') || src.includes('/assets/products/placeholder.png');
       
       if (isPlaceholder) {
         // For placeholder images, use them directly without server processing
