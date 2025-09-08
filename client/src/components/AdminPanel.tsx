@@ -32,7 +32,7 @@ interface ExistingImage {
   url: string;
 }
 
-type AdminTab = 'images' | 'certificates' | 'instructions' | 'videos' | 'catalog' | 'hero' | 'gallery' | 'salepoints';
+type AdminTab = 'images' | 'certificates' | 'videos' | 'catalog' | 'hero' | 'gallery' | 'salepoints';
 
 const certificateFormSchema = insertCertificateSchema.extend({
   // Form validation schema with required fields
@@ -226,9 +226,27 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     },
   });
 
+  // Instruction form
+  const instructionForm = useForm<InstructionFormData>({
+    resolver: zodResolver(instructionFormSchema),
+    defaultValues: {
+      title: '',
+      category: '',
+      description: '',
+      size: '',
+      fileUrl: '',
+      sortOrder: 0,
+    },
+  });
+
   // Queries and mutations for certificates
   const { data: certificates = [], isLoading: certificatesLoading } = useQuery<Certificate[]>({
     queryKey: ['/api/certificates'],
+  });
+
+  // Queries and mutations for instructions
+  const { data: instructions = [], isLoading: instructionsLoading } = useQuery<InstallationInstruction[]>({
+    queryKey: ['/api/installation-instructions'],
   });
 
   const createCertificateMutation = useMutation({
@@ -291,6 +309,71 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       toast({
         title: 'Ошибка',
         description: 'Не удалось удалить сертификат',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const createInstructionMutation = useMutation({
+    mutationFn: async (data: InstructionFormData) => {
+      return apiRequest('POST', '/api/installation-instructions', data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/installation-instructions'] });
+      setShowInstructionForm(false);
+      instructionForm.reset();
+      toast({
+        title: 'Успешно',
+        description: 'Инструкция создана',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось создать инструкцию',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const updateInstructionMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: Partial<InstructionFormData> }) => {
+      return apiRequest('PUT', `/api/installation-instructions/${id}`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/installation-instructions'] });
+      setEditingInstruction(null);
+      setShowInstructionForm(false);
+      instructionForm.reset();
+      toast({
+        title: 'Успешно',
+        description: 'Инструкция обновлена',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось обновить инструкцию',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const deleteInstructionMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return apiRequest('DELETE', `/api/installation-instructions/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/installation-instructions'] });
+      toast({
+        title: 'Успешно',
+        description: 'Инструкция удалена',
+      });
+    },
+    onError: () => {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось удалить инструкцию',
         variant: 'destructive',
       });
     },
@@ -778,6 +861,37 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const handleDeleteCertificate = (id: string) => {
     if (confirm('Вы уверены, что хотите удалить этот сертификат?')) {
       deleteCertificateMutation.mutate(id);
+    }
+  };
+
+  // Instruction form handlers
+  const startEditingInstruction = (instruction: InstallationInstruction) => {
+    setEditingInstruction(instruction);
+    setShowInstructionForm(true);
+    instructionForm.reset({
+      title: instruction.title,
+      category: instruction.category,
+      description: instruction.description || '',
+      size: instruction.size,
+      fileUrl: instruction.fileUrl || '',
+      sortOrder: instruction.sortOrder || 0,
+    });
+  };
+
+  const handleSubmitInstruction = (data: InstructionFormData) => {
+    if (editingInstruction) {
+      updateInstructionMutation.mutate({
+        id: editingInstruction.id,
+        data,
+      });
+    } else {
+      createInstructionMutation.mutate(data);
+    }
+  };
+
+  const handleDeleteInstruction = (id: string) => {
+    if (confirm('Вы уверены, что хотите удалить эту инструкцию?')) {
+      deleteInstructionMutation.mutate(id);
     }
   };
 
@@ -2372,6 +2486,197 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     ))}
                   </div>
                 )}
+              </div>
+
+              {/* Instructions Section */}
+              <div className="border-t border-gray-200 pt-8 mt-8">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-semibold text-gray-900">Управление инструкциями по монтажу</h3>
+                  <button
+                    onClick={() => {
+                      setEditingInstruction(null);
+                      setShowInstructionForm(true);
+                      instructionForm.reset();
+                    }}
+                    className="bg-[#E95D22] text-white px-4 py-2 rounded-lg hover:bg-[#d54a1a] transition-colors flex items-center gap-2"
+                  >
+                    <Plus size={16} />
+                    Добавить инструкцию
+                  </button>
+                </div>
+
+                {/* Instruction Form */}
+                {showInstructionForm && (
+                  <div className="bg-gray-50 rounded-lg p-6 mb-6">
+                    <h4 className="text-lg font-semibold mb-4">
+                      {editingInstruction ? 'Редактировать инструкцию' : 'Добавить новую инструкцию'}
+                    </h4>
+                    
+                    <form onSubmit={instructionForm.handleSubmit(handleSubmitInstruction)} className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Название *
+                          </label>
+                          <input
+                            {...instructionForm.register('title')}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                            placeholder="Введите название инструкции"
+                          />
+                          {instructionForm.formState.errors.title && (
+                            <p className="text-red-600 text-sm mt-1">{instructionForm.formState.errors.title.message}</p>
+                          )}
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Категория *
+                          </label>
+                          <select
+                            {...instructionForm.register('category')}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                          >
+                            <option value="">Выберите категорию</option>
+                            <option value="installation-guide">Инструкции по монтажу</option>
+                            <option value="layout-schemes">Схемы раскладки</option>
+                            <option value="care-recommendations">Рекомендации по уходу</option>
+                            <option value="warranty-conditions">Гарантийные условия</option>
+                          </select>
+                          {instructionForm.formState.errors.category && (
+                            <p className="text-red-600 text-sm mt-1">{instructionForm.formState.errors.category.message}</p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Описание
+                        </label>
+                        <textarea
+                          {...instructionForm.register('description')}
+                          rows={3}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                          placeholder="Введите описание инструкции"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Размер файла *
+                          </label>
+                          <input
+                            {...instructionForm.register('size')}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                            placeholder="Например: 2.5 MB"
+                          />
+                          {instructionForm.formState.errors.size && (
+                            <p className="text-red-600 text-sm mt-1">{instructionForm.formState.errors.size.message}</p>
+                          )}
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            URL файла
+                          </label>
+                          <input
+                            {...instructionForm.register('fileUrl')}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                            placeholder="https://example.com/file.pdf"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Порядок сортировки
+                          </label>
+                          <input
+                            {...instructionForm.register('sortOrder', { valueAsNumber: true })}
+                            type="number"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                            placeholder="0"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex gap-4">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowInstructionForm(false);
+                            setEditingInstruction(null);
+                            instructionForm.reset();
+                          }}
+                          className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                          Отмена
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={createInstructionMutation.isPending || updateInstructionMutation.isPending}
+                          className="bg-[#E95D22] text-white px-6 py-2 rounded-lg hover:bg-[#d54a1a] transition-colors disabled:opacity-50"
+                        >
+                          {createInstructionMutation.isPending || updateInstructionMutation.isPending
+                            ? 'Сохранение...'
+                            : editingInstruction
+                            ? 'Обновить'
+                            : 'Создать'
+                          }
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                )}
+
+                {/* Instructions List */}
+                <div>
+                  <h4 className="text-lg font-semibold mb-4">Список инструкций</h4>
+                  {instructionsLoading ? (
+                    <div className="text-center py-8">Загрузка инструкций...</div>
+                  ) : instructions.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">Инструкции не найдены</div>
+                  ) : (
+                    <div className="space-y-4">
+                      {instructions.map((instruction) => (
+                        <div key={instruction.id} className="bg-white border border-gray-200 rounded-lg p-4">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <h5 className="font-semibold text-gray-900 mb-2">{instruction.title}</h5>
+                              {instruction.description && (
+                                <p className="text-sm text-gray-600 mb-2">{instruction.description}</p>
+                              )}
+                              <div className="flex gap-4 text-sm text-gray-500">
+                                <span>Категория: {instruction.category}</span>
+                                <span>Размер: {instruction.size}</span>
+                                {instruction.fileUrl && (
+                                  <a href={instruction.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700">
+                                    Скачать
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => startEditingInstruction(instruction)}
+                                className="text-blue-600 hover:text-blue-700 p-2"
+                                title="Редактировать"
+                              >
+                                <Edit size={16} />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteInstruction(instruction.id)}
+                                className="text-red-600 hover:text-red-700 p-2"
+                                title="Удалить"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}
