@@ -832,7 +832,11 @@ export default function ProductDetails() {
                   </div>
                 </div>
 
-                <DownloadableDocuments />
+                <DownloadableDocuments 
+                  title="Инструкции по монтажу"
+                  showInstallationDocs={true}
+                  showCertificates={false}
+                />
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <div className="flex items-start gap-3">
@@ -1087,12 +1091,6 @@ export default function ProductDetails() {
                 <VideoInstructionsComponent 
                   title="Видео инструкции по монтажу"
                   showByCategory={true}
-                />
-                
-                {/* Footer with downloadable documents */}
-                <DownloadableDocuments 
-                  title="Полезные материалы"
-                  showInstallationDocs={true}
                 />
               </div>
             )}

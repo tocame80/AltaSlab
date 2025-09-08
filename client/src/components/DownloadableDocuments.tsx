@@ -20,11 +20,13 @@ interface Certificate {
 interface DownloadableDocumentsProps {
   title?: string;
   showInstallationDocs?: boolean;
+  showCertificates?: boolean;
 }
 
 export default function DownloadableDocuments({ 
   title = "Дополнительные материалы для скачивания",
-  showInstallationDocs = true 
+  showInstallationDocs = true,
+  showCertificates = true 
 }: DownloadableDocumentsProps) {
   const { data: certificates = [], isLoading: certificatesLoading } = useQuery({
     queryKey: ['/api/certificates'],
@@ -82,11 +84,11 @@ export default function DownloadableDocuments({
 
   const allDocuments = [
     ...installationDocs.map(doc => ({ ...doc, type: 'installation' })),
-    ...sortedCertificates.map(cert => ({ 
+    ...(showCertificates ? sortedCertificates.map(cert => ({ 
       ...cert, 
       type: 'certificate',
       size: cert.size || 'PDF'
-    }))
+    })) : [])
   ];
 
   if (certificatesLoading) {
