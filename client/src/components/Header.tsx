@@ -2,6 +2,7 @@ import { Mail, Search, Menu } from "lucide-react";
 import { useState } from "react";
 import { useScrollDirection } from "@/hooks/useScrollDirection";
 import { Link, useLocation } from "wouter";
+import altaSlabLogo from "@/assets/alta-slab-logo.png";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -64,15 +65,13 @@ export default function Header() {
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+            className="hover:opacity-80 transition-opacity"
           >
-            <div className="w-9 h-9 lg:w-11 lg:h-11 rounded-lg flex items-center justify-center bg-[#e90039]">
-              <span className="text-white font-bold text-sm lg:text-base">АС</span>
-            </div>
-            <div>
-              <h1 className="font-bold text-base lg:text-lg text-[#2f378b]">АЛЬТА СЛЭБ</h1>
-              <p className="text-muted text-xs">SPC ПАНЕЛИ</p>
-            </div>
+            <img 
+              src={altaSlabLogo} 
+              alt="АЛЬТА СЛЭБ - SPC ПАНЕЛИ" 
+              className="h-8 lg:h-12 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation */}
