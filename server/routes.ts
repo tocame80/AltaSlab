@@ -3,7 +3,7 @@ import express from "express";
 import path from "path";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertCertificateSchema, insertVideoInstructionSchema, insertHeroImageSchema, insertGalleryProjectSchema, insertDealerLocationSchema, insertCatalogProductSchema, catalogProducts, galleryProjects } from "@shared/schema";
+import { insertCertificateSchema, insertVideoInstructionSchema, insertInstallationInstructionSchema, insertHeroImageSchema, insertGalleryProjectSchema, insertDealerLocationSchema, insertCatalogProductSchema, catalogProducts, galleryProjects, installationInstructions } from "@shared/schema";
 import adminRoutes from "./routes/admin";
 import thumbnailRoutes from "./routes/thumbnails";
 import {
