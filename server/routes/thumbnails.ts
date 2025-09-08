@@ -101,7 +101,13 @@ router.get('/thumbnail', async (req: Request, res: Response) => {
     
     if (decodedSrc.startsWith('/assets/')) {
       // Handle frontend URL format like /assets/products/image.jpg
-      filePath = path.join(process.cwd(), 'client/src', decodedSrc.replace(/^\//, ''));
+      const isDev = process.env.NODE_ENV === 'development';
+      if (isDev) {
+        filePath = path.join(process.cwd(), 'client/src', decodedSrc.replace(/^\//, ''));
+      } else {
+        // In production, assets are in dist/public
+        filePath = path.join(process.cwd(), 'dist/public', decodedSrc.replace(/^\//, ''));
+      }
     } else if (decodedSrc.startsWith('/src/assets/')) {
       // Handle webpack format
       const cleanPath = decodedSrc.replace(/^\/src\/assets\//, '');
@@ -113,13 +119,19 @@ router.get('/thumbnail', async (req: Request, res: Response) => {
       const folder = pathParts[0]; // concrete, matte, etc.
       const filename = pathParts.slice(1).join('/'); // image filename with possible subdirs
       
+      // Choose correct base directory for dev vs production
+      const isDev = process.env.NODE_ENV === 'development';
+      const baseAssetsDir = isDev 
+        ? path.join(process.cwd(), 'client/src/assets/products') 
+        : path.join(process.cwd(), 'dist/public/assets');
+      
       // First try direct path
-      const directPath = path.join(process.cwd(), 'client/src/assets/products', folder, filename);
+      const directPath = path.join(baseAssetsDir, folder, filename);
       if (fs.existsSync(directPath)) {
         filePath = directPath;
       } else {
         // Try recursive search in subfolders
-        const baseDir = path.join(process.cwd(), 'client/src/assets/products', folder);
+        const baseDir = path.join(baseAssetsDir, folder);
         const foundPath = findFileRecursively(baseDir, filename);
         if (foundPath) {
           filePath = foundPath;
@@ -129,7 +141,11 @@ router.get('/thumbnail', async (req: Request, res: Response) => {
       }
     } else {
       // Handle relative paths
-      filePath = path.join(process.cwd(), 'client/src/assets/products', decodedSrc);
+      const isDev = process.env.NODE_ENV === 'development';
+      const baseDir = isDev 
+        ? path.join(process.cwd(), 'client/src/assets/products') 
+        : path.join(process.cwd(), 'dist/public/assets');
+      filePath = path.join(baseDir, decodedSrc);
     }
 
     // Debug logging
