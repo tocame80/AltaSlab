@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRoute } from 'wouter';
-import { ArrowLeft, MapPin, Calendar, Maximize2, ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Maximize2, ChevronLeft, ChevronRight, X, ZoomIn, Share2, Save } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { products } from '@/data/products';
 import ProductCard from '@/components/ProductCard';
@@ -61,6 +61,42 @@ export default function ProjectDetails() {
 
   const closeFullscreen = () => {
     setIsFullscreenOpen(false);
+  };
+
+  // Share project function
+  const shareProject = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${project?.title} - АЛЬТА СЛЭБ`,
+          text: `Посмотрите на проект "${project?.title}"`,
+          url: window.location.href,
+        });
+      } catch (error) {
+        console.log('Sharing failed:', error);
+        fallbackShare();
+      }
+    } else {
+      fallbackShare();
+    }
+  };
+
+  const fallbackShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    alert('Ссылка скопирована в буфер обмена!');
+  };
+
+  // Download current image
+  const downloadImage = () => {
+    if (!project) return;
+    
+    const imageUrl = project.images[currentImageIndex];
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = `${project.title}_${currentImageIndex + 1}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   // Handle keyboard navigation
@@ -130,15 +166,36 @@ export default function ProjectDetails() {
               <img
                 src={project.images[currentImageIndex] || '/placeholder-image.jpg'}
                 alt={project.title}
-                className="w-full h-full object-cover cursor-pointer"
-                onClick={openFullscreen}
+                className="w-full h-full object-cover"
                 data-testid={`image-main-${currentImageIndex}`}
               />
-              
-              {/* Zoom hint overlay */}
-              <div className="absolute top-4 left-4 bg-black/50 backdrop-blur-sm text-white px-3 py-2 rounded-full text-sm font-medium flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <ZoomIn className="w-4 h-4" />
-                Увеличить
+
+              {/* Image Controls Overlay */}
+              <div className="absolute top-4 right-4 flex gap-2">
+                <button
+                  onClick={openFullscreen}
+                  className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#e90039] transition-all"
+                  title="Полноэкранный просмотр"
+                  data-testid="button-fullscreen"
+                >
+                  <Maximize2 size={16} />
+                </button>
+                <button
+                  onClick={shareProject}
+                  className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#e90039] transition-all"
+                  title="Поделиться проектом"
+                  data-testid="button-share"
+                >
+                  <Share2 size={16} />
+                </button>
+                <button
+                  onClick={downloadImage}
+                  className="w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:text-[#e90039] transition-all"
+                  title="Скачать изображение"
+                  data-testid="button-download"
+                >
+                  <Save size={16} />
+                </button>
               </div>
               
               {/* Project Info Overlay - Bottom Left */}
