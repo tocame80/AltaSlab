@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import sharp from 'sharp';
 import fs from 'fs';
+import { promises as fsPromises } from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 
@@ -111,7 +112,21 @@ router.get('/thumbnail', async (req: Request, res: Response) => {
       const pathParts = cleanSrc.replace('/api/admin/static-images/', '').split('/');
       const folder = pathParts[0]; // concrete, matte, etc.
       const filename = pathParts.slice(1).join('/'); // image filename with possible subdirs
-      filePath = path.join(process.cwd(), 'client/src/assets/products', folder, filename);
+      
+      // First try direct path
+      const directPath = path.join(process.cwd(), 'client/src/assets/products', folder, filename);
+      if (fs.existsSync(directPath)) {
+        filePath = directPath;
+      } else {
+        // Try recursive search in subfolders
+        const baseDir = path.join(process.cwd(), 'client/src/assets/products', folder);
+        const foundPath = await findFileRecursively(baseDir, filename);
+        if (foundPath) {
+          filePath = foundPath;
+        } else {
+          filePath = directPath; // fallback to direct path for error handling
+        }
+      }
     } else {
       // Handle relative paths
       filePath = path.join(process.cwd(), 'client/src/assets/products', decodedSrc);
@@ -168,5 +183,27 @@ router.delete('/thumbnail-cache', (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to clear cache' });
   }
 });
+
+// Helper function to find file in subdirectories
+async function findFileRecursively(dir: string, targetFilename: string): Promise<string | null> {
+  try {
+    const items = await fsPromises.readdir(dir, { withFileTypes: true });
+    
+    for (const item of items) {
+      const fullPath = path.join(dir, item.name);
+      
+      if (item.isDirectory()) {
+        const found = await findFileRecursively(fullPath, targetFilename);
+        if (found) return found;
+      } else if (item.isFile() && item.name === targetFilename) {
+        return fullPath;
+      }
+    }
+  } catch (error) {
+    // Directory access error
+  }
+  
+  return null;
+}
 
 export default router;
