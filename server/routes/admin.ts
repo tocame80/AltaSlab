@@ -13,10 +13,13 @@ const isProductImageFileGlobal = (filename: string, productId: string): boolean 
   // Pattern 1: 8934-1.png, 8934-2.png
   if (filename.startsWith(`${productId}-`)) return true;
   
-  // Pattern 2: 8934 (2.2).png, 8934 (коллаж).png  
+  // Pattern 2: 8938_1.png, 8938_2.png (underscore support)
+  if (filename.startsWith(`${productId}_`)) return true;
+  
+  // Pattern 3: 8934 (2.2).png, 8934 (коллаж).png  
   if (filename.startsWith(`${productId} (`)) return true;
   
-  // Pattern 3: 8934.jpg
+  // Pattern 4: 8934.jpg
   if (filename === `${productId}.jpg` || filename === `${productId}.png`) return true;
   
   return false;
@@ -141,10 +144,13 @@ router.get('/product-images/:productId', async (req, res) => {
       // Pattern 1: 8934-1.png, 8934-2.png
       if (filename.startsWith(`${productId}-`)) return true;
       
-      // Pattern 2: 8934 (2.2).png, 8934 (коллаж).png  
+      // Pattern 2: 8938_1.png, 8938_2.png (underscore support)
+      if (filename.startsWith(`${productId}_`)) return true;
+      
+      // Pattern 3: 8934 (2.2).png, 8934 (коллаж).png  
       if (filename.startsWith(`${productId} (`)) return true;
       
-      // Pattern 3: 8934.jpg
+      // Pattern 4: 8934.jpg
       if (filename === `${productId}.jpg` || filename === `${productId}.png`) return true;
       
       return false;
