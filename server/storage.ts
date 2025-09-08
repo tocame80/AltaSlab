@@ -1755,7 +1755,7 @@ export class DatabaseStorage implements IStorage {
         name: "Клей для потолочно-стеновых SPC панелей Альта Стик 900 гр/600 мл (12шт/уп)",
         unit: "шт",
         quantity: 0,
-        collection: "concrete",
+        collection: "Клей",
         color: "Стандарт",
         surface: "упак",
         format: "",
