@@ -8,7 +8,7 @@ export const accessories: Accessory[] = [
     price: 477,
     unit: 'ед.',
     description: '900г/600мл',
-    image: '/src/assets/products/placeholder.jpg',
+    image: '/src/assets/products/accessories/Клей.jpg',
     specifications: 'Универсальный клей для SPC панелей'
   },
   {
