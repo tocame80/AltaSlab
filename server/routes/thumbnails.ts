@@ -105,6 +105,12 @@ router.get('/thumbnail', async (req: Request, res: Response) => {
       // Handle webpack format
       const cleanPath = decodedSrc.replace(/^\/src\/assets\//, '');
       filePath = path.join(process.cwd(), 'client/src/assets', cleanPath);
+    } else if (decodedSrc.startsWith('/api/admin/static-images/')) {
+      // Handle admin panel URLs like /api/admin/static-images/concrete/image.png
+      const pathParts = decodedSrc.replace('/api/admin/static-images/', '').split('/');
+      const folder = pathParts[0]; // concrete, matte, etc.
+      const filename = pathParts.slice(1).join('/'); // image filename with possible subdirs
+      filePath = path.join(process.cwd(), 'client/src/assets/products', folder, filename);
     } else {
       // Handle relative paths
       filePath = path.join(process.cwd(), 'client/src/assets/products', decodedSrc);
