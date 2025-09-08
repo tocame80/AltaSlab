@@ -421,6 +421,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         stack: error.stack,
         name: error.name
       });
+      
+      // In production, try fallback data instead of returning error
+      if (process.env.NODE_ENV === 'production') {
+        console.log('API: Database unavailable in production, using fallback catalog');
+        try {
+          const fallbackProducts = await storage.exportCatalogProducts();
+          console.log('API: Using fallback catalog with', fallbackProducts.length, 'products');
+          res.json(fallbackProducts);
+          return;
+        } catch (fallbackError) {
+          console.error('API: Fallback also failed:', fallbackError);
+        }
+      }
+      
       res.status(500).json({ 
         message: 'Failed to fetch catalog products',
         error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
