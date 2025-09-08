@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import altaSlabLogo from "@/assets/alta-slab-logo.png";
 import { heroImages } from '@/assets/hero/heroImages';
 
 export default function Hero() {
@@ -57,15 +58,16 @@ export default function Hero() {
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="container mx-auto px-6">
                 <div className="text-center text-white">
-                  <h1 
-                    className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 lg:mb-6 text-[#e90039]" 
-                    style={{ 
-                      letterSpacing: '2px',
-                      textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7), 0 0 8px rgba(0, 0, 0, 0.5)'
-                    }}
-                  >
-                    АЛЬТА СЛЭБ
-                  </h1>
+                  <div className="mb-4 lg:mb-6 flex justify-center">
+                    <img 
+                      src={altaSlabLogo} 
+                      alt="АЛЬТА СЛЭБ - SPC ПАНЕЛИ" 
+                      className="h-16 sm:h-20 md:h-24 lg:h-32 w-auto"
+                      style={{ 
+                        filter: 'drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 8px rgba(0, 0, 0, 0.5))'
+                      }}
+                    />
+                  </div>
                   <p 
                     className="text-base sm:text-lg md:text-xl lg:text-2xl mb-4 lg:mb-8 font-light"
                     style={{ textShadow: '1px 1px 3px rgba(0, 0, 0, 0.8)' }}
