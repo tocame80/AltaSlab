@@ -118,6 +118,24 @@ const staticImageMap: Record<string, string[]> = {
 
 // Helper function to get product gallery
 export const getProductGallery = (productId: string, collection: string = ''): string[] => {
+  // Special handling for glue - use specific image from Клей folder
+  if (collection === 'Клей' || collection.toLowerCase().includes('клей')) {
+    try {
+      const glueImages = import.meta.glob('./accessories/Клей/*.{png,jpg,jpeg,webp}', { eager: true }) as Record<string, { default: string }>;
+      
+      const glueImagePaths = Object.values(glueImages).map(module => {
+        // Decode URL-encoded path to handle Cyrillic characters
+        return decodeURIComponent(module.default);
+      });
+      
+      if (glueImagePaths.length > 0) {
+        return glueImagePaths;
+      }
+    } catch (error) {
+      console.warn('Failed to load glue images:', error);
+    }
+  }
+
   // Initialize image map if needed
   if (!imageMapInitialized) {
     initializeImageMap();
