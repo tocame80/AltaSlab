@@ -148,6 +148,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Installation Instructions routes
+  app.get('/api/installation-instructions', async (req, res) => {
+    try {
+      const instructions = await storage.getInstallationInstructions();
+      res.json(instructions);
+    } catch (error) {
+      console.error('Error fetching installation instructions:', error);
+      res.status(500).json({ message: 'Failed to fetch installation instructions' });
+    }
+  });
+
+  app.post('/api/installation-instructions', async (req, res) => {
+    try {
+      const instructionData = insertInstallationInstructionSchema.parse(req.body);
+      const instruction = await storage.createInstallationInstruction(instructionData);
+      res.status(201).json(instruction);
+    } catch (error) {
+      console.error('Error creating installation instruction:', error);
+      res.status(400).json({ message: 'Failed to create installation instruction' });
+    }
+  });
+
+  app.put('/api/installation-instructions/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = insertInstallationInstructionSchema.partial().parse(req.body);
+      const instruction = await storage.updateInstallationInstruction(id, updates);
+      res.json(instruction);
+    } catch (error) {
+      console.error('Error updating installation instruction:', error);
+      res.status(400).json({ message: 'Failed to update installation instruction' });
+    }
+  });
+
+  app.delete('/api/installation-instructions/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteInstallationInstruction(id);
+      res.status(204).send();
+    } catch (error) {
+      console.error('Error deleting installation instruction:', error);
+      res.status(500).json({ message: 'Failed to delete installation instruction' });
+    }
+  });
+
   // Video instruction routes
   app.get('/api/video-instructions', async (req, res) => {
     try {

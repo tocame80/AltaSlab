@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type Certificate, type InsertCertificate, type VideoInstruction, type InsertVideoInstruction, type HeroImage, type InsertHeroImage, type GalleryProject, type InsertGalleryProject, type DealerLocation, type InsertDealerLocation, type CatalogProduct, type InsertCatalogProduct, users, certificates, videoInstructions, heroImages, galleryProjects, dealerLocations, catalogProducts } from "@shared/schema";
+import { type User, type InsertUser, type Certificate, type InsertCertificate, type InstallationInstruction, type InsertInstallationInstruction, type VideoInstruction, type InsertVideoInstruction, type HeroImage, type InsertHeroImage, type GalleryProject, type InsertGalleryProject, type DealerLocation, type InsertDealerLocation, type CatalogProduct, type InsertCatalogProduct, users, certificates, installationInstructions, videoInstructions, heroImages, galleryProjects, dealerLocations, catalogProducts } from "@shared/schema";
 import { db } from "./db";
 import { eq, asc } from "drizzle-orm";
 
@@ -14,6 +14,13 @@ export interface IStorage {
   createCertificate(certificate: InsertCertificate): Promise<Certificate>;
   updateCertificate(id: string, certificate: Partial<InsertCertificate>): Promise<Certificate>;
   deleteCertificate(id: string): Promise<void>;
+  
+  // Installation instruction methods
+  getInstallationInstructions(): Promise<InstallationInstruction[]>;
+  getInstallationInstruction(id: string): Promise<InstallationInstruction | undefined>;
+  createInstallationInstruction(instruction: InsertInstallationInstruction): Promise<InstallationInstruction>;
+  updateInstallationInstruction(id: string, instruction: Partial<InsertInstallationInstruction>): Promise<InstallationInstruction>;
+  deleteInstallationInstruction(id: string): Promise<void>;
   
   // Video instruction methods
   getVideoInstructions(): Promise<VideoInstruction[]>;
@@ -104,6 +111,37 @@ export class DatabaseStorage implements IStorage {
 
   async deleteCertificate(id: string): Promise<void> {
     await db.delete(certificates).where(eq(certificates.id, id));
+  }
+
+  // Installation instruction methods
+  async getInstallationInstructions(): Promise<InstallationInstruction[]> {
+    return await db.select().from(installationInstructions).orderBy(asc(installationInstructions.sortOrder));
+  }
+
+  async getInstallationInstruction(id: string): Promise<InstallationInstruction | undefined> {
+    const [instruction] = await db.select().from(installationInstructions).where(eq(installationInstructions.id, id));
+    return instruction || undefined;
+  }
+
+  async createInstallationInstruction(insertInstruction: InsertInstallationInstruction): Promise<InstallationInstruction> {
+    const [instruction] = await db
+      .insert(installationInstructions)
+      .values(insertInstruction)
+      .returning();
+    return instruction;
+  }
+
+  async updateInstallationInstruction(id: string, updates: Partial<InsertInstallationInstruction>): Promise<InstallationInstruction> {
+    const [instruction] = await db
+      .update(installationInstructions)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(installationInstructions.id, id))
+      .returning();
+    return instruction;
+  }
+
+  async deleteInstallationInstruction(id: string): Promise<void> {
+    await db.delete(installationInstructions).where(eq(installationInstructions.id, id));
   }
 
   // Video instruction methods
