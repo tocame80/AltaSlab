@@ -1,103 +1,111 @@
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { useState } from 'react';
-import { ChevronDown, MessageCircle, Search } from 'lucide-react';
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { useState } from "react";
+import { ChevronDown, MessageCircle, Search } from "lucide-react";
 
 export default function FAQPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("all");
 
   const categories = [
-    { id: 'all', name: 'Все вопросы' },
-    { id: 'general', name: 'Общие вопросы' },
-    { id: 'installation', name: 'Монтаж' },
-    { id: 'care', name: 'Уход и эксплуатация' },
-    { id: 'technical', name: 'Технические характеристики' },
-    { id: 'purchase', name: 'Покупка и доставка' }
+    { id: "all", name: "Все вопросы" },
+    { id: "general", name: "Общие вопросы" },
+    { id: "installation", name: "Монтаж" },
+    { id: "care", name: "Уход и эксплуатация" },
+    { id: "technical", name: "Технические характеристики" },
+    { id: "purchase", name: "Покупка и доставка" },
   ];
 
   const faqs = [
     {
-      category: 'general',
-      question: 'Что такое SPC панели и чем они отличаются от других материалов?',
-      answer: 'SPC (Stone Plastic Composite) - это композитный материал, состоящий из каменной муки (около 60%), PVC смолы (около 30%) и стабилизаторов (около 10%). Он обладает высокой прочностью, влагостойкостью и долговечностью, превосходя по характеристикам обычные пластиковые панели, МДФ и даже некоторые виды керамической плитки.'
+      question: "Панель идет с пазом?",
+      answer:
+        "Все панели имеют замковое соединение SeamlessLock. С двух сторон паз и с двух сторон гребень.",
     },
     {
-      category: 'general',
-      question: 'Можно ли устанавливать панели во влажных помещениях?',
-      answer: 'Да, SPC панели АЛЬТА СЛЭБ полностью влагостойки и идеально подходят для ванных комнат, кухонь, саун, бассейнов и других влажных помещений. Материал не деформируется, не разбухает от воздействия влаги и не подвержен образованию плесени и грибка.'
+      question: "Как устанавливать панель — гребнем вверх или вниз?",
+      answer:
+        "Рекомендуется установка панелей с соединением SeamlessLock гребнем вверх. Это исключает попадание влаги через замковое соединение.",
     },
     {
-      category: 'technical',
-      question: 'Какие размеры панелей доступны?',
-      answer: 'Мы предлагаем панели различных размеров: 122×244 мм, 153×2440 мм, 200×3000 мм и другие форматы. Каждая коллекция может иметь свои стандартные размеры. Точные размеры указаны в характеристиках каждой коллекции.'
+      question: "Поверхность глянцевая или матовая?",
+      answer:
+        "Все коллекции представлены в матовом исполнении. Глянцевые панели пока не производятся.",
     },
     {
-      category: 'purchase',
-      question: 'Как рассчитать необходимое количество материала?',
-      answer: 'Используйте наш онлайн-калькулятор на сайте. Введите размеры помещения, и система автоматически рассчитает количество панелей с учетом отходов. Рекомендуем добавить 10-15% к расчетному количеству для компенсации отходов при резке и возможных повреждений.'
+      question: "Есть ли тиснение на панели как на ламинате?",
+      answer:
+        "На коллекциях «Мраморная феерия», «Тканевая роскошь», «Магия Бетона», «Матовая Эстетика» тиснение не наносится.",
     },
     {
-      category: 'general',
-      question: 'Какой срок службы у панелей АЛЬТА СЛЭБ?',
-      answer: 'При правильном монтаже и эксплуатации срок службы панелей составляет более 25 лет. Мы предоставляем гарантию 10 лет на все коллекции от производственных дефектов и потери первоначального внешнего вида при нормальных условиях эксплуатации.'
+      question: "Может ли быть разнотон в разных упаковках?",
+      answer:
+        "Незначительные отличия в оттенках допустимы только в разных партиях, как и у кафельной плитки или обоев.",
     },
     {
-      category: 'installation',
-      question: 'Можно ли монтировать панели самостоятельно?',
-      answer: 'Да, монтаж довольно простой и может выполняться самостоятельно при наличии базовых навыков работы с инструментами. Мы предоставляем подробные видеоинструкции, схемы раскладки и рекомендации по установке. Основные инструменты: дрель, уровень, рулетка, клей для SPC панелей.'
+      question: "Можно ли клеить ещё на какой-то клей?",
+      answer:
+        "Да, можно. Необходимо подобрать клей для SPC покрытий и материала стены. Клей Альта Стик разработан для SPC-панелей Альта Слэб с учётом гарантийных обязательств.",
     },
     {
-      category: 'installation',
-      question: 'Какая подготовка поверхности требуется?',
-      answer: 'Поверхность должна быть чистой, сухой, ровной и прочной. Максимально допустимые неровности - 2 мм на 1 метр. При необходимости выровняйте поверхность шпаклевкой или штукатуркой. Обязательно обработайте поверхность грунтовкой глубокого проникновения.'
+      question: "На какую основу можно приклеить панель?",
+      answer:
+        "Основание должно быть ровным, чистым, монолитным, твёрдым. Допустимые материалы: бетон, гипсокартон, ОСБ, стекло-магниевый лист, влагостойкая фанера. Следуйте инструкции производителя.",
     },
     {
-      category: 'installation',
-      question: 'Какой клей использовать для монтажа?',
-      answer: 'Рекомендуем использовать специальный клей для SPC панелей или универсальный строительный клей на полиуретановой основе. В нашем ассортименте есть клей собственного производства, оптимально подходящий для наших панелей. Расход клея составляет примерно 300-400 г на 1 м².'
+      question: "Нужно ли грунтовать стену перед монтажом?",
+      answer:
+        "Грунтование необходимо для улучшения адгезии, укрепления поверхности и снижения расхода клея.",
     },
     {
-      category: 'care',
-      question: 'Как ухаживать за панелями?',
-      answer: 'Панели не требуют специального ухода. Для очистки используйте влажную тряпку с мягким моющим средством. Избегайте абразивных средств и жестких щеток. При сильных загрязнениях можно использовать спиртосодержащие средства. Панели не требуют покраски, лакировки или других видов обработки.'
+      question: "Можно ли на пол класть?",
+      answer: "Использование стеновых SPC-панелей на полу запрещено.",
     },
     {
-      category: 'care',
-      question: 'Устойчивы ли панели к механическим повреждениям?',
-      answer: 'SPC панели обладают высокой устойчивостью к ударам, царапинам и другим механическим воздействиям. Однако при сильных ударах острыми предметами возможны повреждения. В случае серьезного повреждения отдельную панель можно заменить без демонтажа всей поверхности.'
+      question: "Если стена больше 15 метров, нужен ли зазор и как его делать?",
+      answer:
+        "Зазор нужен для компенсации линейных расширений. Используйте соединительный профиль или оконные/дверные проёмы в качестве демпфера.",
     },
     {
-      category: 'technical',
-      question: 'При какой температуре можно эксплуатировать панели?',
-      answer: 'Панели АЛЬТА СЛЭБ выдерживают температуры от -40°C до +60°C без изменения свойств. Они подходят для неотапливаемых помещений, саун (до +80°C кратковременно), а также для наружного применения в климатических условиях России.'
+      question: "Нужно ли делать упор для первого ряда панелей?",
+      answer:
+        "Первый ряд панелей необходимо зафиксировать для избежания смещения и образования зазоров.",
     },
     {
-      category: 'technical',
-      question: 'Можно ли резать панели?',
-      answer: 'Да, панели легко режутся обычными инструментами: ножовкой по металлу, электролобзиком, болгаркой с диском по пластику. При резке используйте мелкозубчатые пилки для получения ровного среза. Обязательно используйте средства защиты глаз и органов дыхания.'
+      question:
+        "Можно ли использовать в неотапливаемых помещениях с температурой ниже -30°C?",
+      answer:
+        "Панели предназначены для помещений со стабильной плюсовой температурой от +10°C до +35°C. Использование ниже этого диапазона не входит в гарантию.",
     },
     {
-      category: 'purchase',
-      question: 'Как заказать продукцию?',
-      answer: 'Заказ можно оформить через наш сайт, по телефону 8 800 555-77-73 или в офисе продаж. Мы принимаем заказы от частных лиц и организаций. Для крупных заказов предоставляем скидки. Минимальная сумма заказа для доставки составляет 5000 рублей.'
+      question: "Можно и как комбинировать панели 600х300 и 1200х600мм?",
+      answer:
+        "Панели, произведённые с июля 2025 года, совместимы по замковому соединению с любым типоразмером и коллекцией Альта Слэб.",
     },
     {
-      category: 'purchase',
-      question: 'Какие способы доставки доступны?',
-      answer: 'Доставка осуществляется по Москве и Московской области нашим транспортом, в регионы - транспортными компаниями. Стоимость доставки рассчитывается индивидуально в зависимости от объема и удаленности. Самовывоз доступен с нашего склада в Москве.'
+      question: "Обязательно ли сдвигать панели при монтаже и на сколько?",
+      answer:
+        "Смещать панели не требуется, монтаж допускается как со смещением, так и без — это расширяет возможности дизайна.",
     },
     {
-      category: 'purchase',
-      question: 'Предоставляете ли вы образцы?',
-      answer: 'Да, мы предоставляем бесплатные образцы размером 10×10 см для ознакомления с фактурой и цветом. Вы можете заказать до 5 образцов бесплатно. Образцы отправляем почтой России или можете забрать в нашем офисе.'
-    }
+      question: "В чём разница SPC и кварцвиниловых панелей?",
+      answer:
+        "Главное различие — состав минералов. В SPC Альта Слэб используется карбонат кальция (до 2000 кг/м³), что обеспечивает прочность и термостабильность.",
+    },
+    {
+      question:
+        "Почему используется термин «кварцвинил» при отсутствии кварца?",
+      answer:
+        "Термин «кварцвинил» применяется для узнаваемости с 1990-х годов, хотя современные панели содержат карбонат кальция.",
+    },
   ];
 
-  const filteredFAQs = faqs.filter(faq => {
-    const matchesCategory = activeCategory === 'all' || faq.category === activeCategory;
-    const matchesSearch = searchQuery === '' || 
+  const filteredFAQs = faqs.filter((faq) => {
+    const matchesCategory =
+      activeCategory === "all" || faq.category === activeCategory;
+    const matchesSearch =
+      searchQuery === "" ||
       faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
       faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
@@ -106,7 +114,7 @@ export default function FAQPage() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      
+
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-6">
           {/* Hero Section */}
@@ -115,8 +123,8 @@ export default function FAQPage() {
               Часто задаваемые вопросы
             </h1>
             <p className="text-xl text-gray-600 max-w-4xl mx-auto">
-              Ответы на самые популярные вопросы о наших SPC панелях, 
-              их характеристиках, особенностях монтажа и эксплуатации.
+              Ответы на самые популярные вопросы о наших SPC панелях, их
+              характеристиках, особенностях монтажа и эксплуатации.
             </p>
           </div>
 
@@ -142,8 +150,8 @@ export default function FAQPage() {
                   onClick={() => setActiveCategory(category.id)}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                     activeCategory === category.id
-                      ? 'bg-[#e90039] text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? "bg-[#e90039] text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
                   {category.name}
@@ -156,27 +164,36 @@ export default function FAQPage() {
           <div className="max-w-4xl mx-auto">
             <div className="space-y-4">
               {filteredFAQs.map((faq, index) => (
-                <div key={index} className="border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                <div
+                  key={index}
+                  className="border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                >
                   <button
                     className="w-full text-left p-6 bg-white hover:bg-gray-50 transition-colors flex items-center justify-between"
-                    onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                    onClick={() =>
+                      setOpenIndex(openIndex === index ? null : index)
+                    }
                   >
                     <div className="flex items-start gap-4">
                       <div className="w-8 h-8 bg-[#e90039] bg-opacity-10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                         <MessageCircle className="w-4 h-4 text-[#e90039]" />
                       </div>
-                      <span className="font-semibold text-gray-900 pr-4 text-lg">{faq.question}</span>
+                      <span className="font-semibold text-gray-900 pr-4 text-lg">
+                        {faq.question}
+                      </span>
                     </div>
-                    <ChevronDown 
+                    <ChevronDown
                       className={`w-5 h-5 text-gray-500 transition-transform flex-shrink-0 ${
-                        openIndex === index ? 'transform rotate-180' : ''
+                        openIndex === index ? "transform rotate-180" : ""
                       }`}
                     />
                   </button>
                   {openIndex === index && (
                     <div className="px-6 pb-6">
                       <div className="pl-12">
-                        <p className="text-gray-600 leading-relaxed text-lg">{faq.answer}</p>
+                        <p className="text-gray-600 leading-relaxed text-lg">
+                          {faq.answer}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -187,23 +204,37 @@ export default function FAQPage() {
             {filteredFAQs.length === 0 && (
               <div className="text-center py-12">
                 <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Вопросы не найдены</h3>
-                <p className="text-gray-600">Попробуйте изменить поисковый запрос или выберите другую категорию</p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  Вопросы не найдены
+                </h3>
+                <p className="text-gray-600">
+                  Попробуйте изменить поисковый запрос или выберите другую
+                  категорию
+                </p>
               </div>
             )}
           </div>
 
           {/* Contact Section */}
           <div className="mt-16 bg-gradient-to-r from-[#e90039] to-[#c8002f] rounded-2xl p-8 text-white text-center">
-            <h2 className="text-2xl font-bold mb-4">Не нашли ответ на свой вопрос?</h2>
+            <h2 className="text-2xl font-bold mb-4">
+              Не нашли ответ на свой вопрос?
+            </h2>
             <p className="text-lg opacity-90 mb-6">
-              Свяжитесь с нами, и наши специалисты ответят на любые вопросы о продукции и услугах
+              Свяжитесь с нами, и наши специалисты ответят на любые вопросы о
+              продукции и услугах
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="tel:88005557773" className="bg-white text-[#e90039] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              <a
+                href="tel:88005557773"
+                className="bg-white text-[#e90039] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+              >
                 8 800 555-77-73
               </a>
-              <a href="mailto:info@alta-slab.ru" className="bg-white bg-opacity-20 text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-30 transition-colors">
+              <a
+                href="mailto:info@alta-slab.ru"
+                className="bg-white bg-opacity-20 text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-30 transition-colors"
+              >
                 info@alta-slab.ru
               </a>
             </div>
