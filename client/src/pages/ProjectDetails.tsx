@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRoute } from 'wouter';
-import { ArrowLeft, MapPin, Calendar, Maximize2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Maximize2, ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { products } from '@/data/products';
 import ProductCard from '@/components/ProductCard';
@@ -24,6 +24,7 @@ export default function ProjectDetails() {
   const [, params] = useRoute('/project/:id');
   const { favorites, toggleFavorite, isFavorite } = useFavoritesContext();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
 
   // Fetch project details
   const { data: galleryProjects = [], isLoading } = useQuery<GalleryProject[]>({
@@ -53,11 +54,21 @@ export default function ProjectDetails() {
     });
   };
 
+  // Fullscreen image viewer functions
+  const openFullscreen = () => {
+    setIsFullscreenOpen(true);
+  };
+
+  const closeFullscreen = () => {
+    setIsFullscreenOpen(false);
+  };
+
   // Handle keyboard navigation
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'ArrowLeft') navigateImage('prev');
       if (event.key === 'ArrowRight') navigateImage('next');
+      if (event.key === 'Escape') closeFullscreen();
     };
 
     document.addEventListener('keydown', handleKeyDown);
@@ -119,9 +130,16 @@ export default function ProjectDetails() {
               <img
                 src={project.images[currentImageIndex] || '/placeholder-image.jpg'}
                 alt={project.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover cursor-pointer"
+                onClick={openFullscreen}
                 data-testid={`image-main-${currentImageIndex}`}
               />
+              
+              {/* Zoom hint overlay */}
+              <div className="absolute top-4 left-4 bg-black/50 backdrop-blur-sm text-white px-3 py-2 rounded-full text-sm font-medium flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <ZoomIn className="w-4 h-4" />
+                Увеличить
+              </div>
               
               {/* Project Info Overlay - Bottom Left */}
               <div className="absolute bottom-0 left-0 p-6">
@@ -279,6 +297,70 @@ export default function ProjectDetails() {
           </div>
         )}
       </div>
+      
+      {/* Fullscreen Image Viewer */}
+      {isFullscreenOpen && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm flex items-center justify-center"
+          onClick={(e) => {
+            // Close if clicking on backdrop (not on the image)
+            if (e.target === e.currentTarget) {
+              closeFullscreen();
+            }
+          }}
+        >
+          {/* Close Button */}
+          <button
+            onClick={closeFullscreen}
+            className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all duration-200 z-10"
+            data-testid="button-close-fullscreen"
+          >
+            <X className="w-6 h-6" />
+          </button>
+
+          {/* Image Navigation Arrows */}
+          {project && project.images.length > 1 && (
+            <>
+              <button
+                onClick={() => navigateImage('prev')}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-4 rounded-full hover:bg-white/30 transition-all duration-200 z-10"
+                data-testid="button-prev-fullscreen"
+              >
+                <ChevronLeft className="w-8 h-8" />
+              </button>
+              <button
+                onClick={() => navigateImage('next')}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-4 rounded-full hover:bg-white/30 transition-all duration-200 z-10"
+                data-testid="button-next-fullscreen"
+              >
+                <ChevronRight className="w-8 h-8" />
+              </button>
+            </>
+          )}
+
+          {/* Image Counter */}
+          {project && project.images.length > 1 && (
+            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white px-6 py-3 rounded-full text-lg font-medium">
+              {currentImageIndex + 1} / {project.images.length}
+            </div>
+          )}
+
+          {/* Main Fullscreen Image */}
+          <div className="max-w-[90vw] max-h-[90vh] flex items-center justify-center">
+            <img
+              src={project?.images[currentImageIndex] || '/placeholder-image.jpg'}
+              alt={project?.title}
+              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+              data-testid={`fullscreen-image-${currentImageIndex}`}
+            />
+          </div>
+
+          {/* Instructions */}
+          <div className="absolute bottom-6 right-6 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm">
+            ESC для закрытия
+          </div>
+        </div>
+      )}
       
       <Footer />
     </div>
