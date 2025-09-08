@@ -107,7 +107,8 @@ router.get('/thumbnail', async (req: Request, res: Response) => {
       filePath = path.join(process.cwd(), 'client/src/assets', cleanPath);
     } else if (decodedSrc.startsWith('/api/admin/static-images/')) {
       // Handle admin panel URLs like /api/admin/static-images/concrete/image.png
-      const pathParts = decodedSrc.replace('/api/admin/static-images/', '').split('/');
+      const cleanSrc = decodedSrc.split('?')[0]; // Remove timestamp query params
+      const pathParts = cleanSrc.replace('/api/admin/static-images/', '').split('/');
       const folder = pathParts[0]; // concrete, matte, etc.
       const filename = pathParts.slice(1).join('/'); // image filename with possible subdirs
       filePath = path.join(process.cwd(), 'client/src/assets/products', folder, filename);
