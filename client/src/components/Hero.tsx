@@ -64,7 +64,9 @@ export default function Hero() {
                       alt="АЛЬТА СЛЭБ - SPC ПАНЕЛИ" 
                       className="h-16 sm:h-20 md:h-24 lg:h-32 w-auto"
                       style={{ 
-                        filter: 'drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 8px rgba(0, 0, 0, 0.5))'
+                        filter: 'drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 8px rgba(0, 0, 0, 0.5)) brightness(1.2) contrast(1.1)',
+                        mixBlendMode: 'multiply',
+                        backgroundColor: 'transparent'
                       }}
                     />
                   </div>
