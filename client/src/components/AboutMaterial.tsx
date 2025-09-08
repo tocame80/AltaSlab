@@ -14,6 +14,9 @@ export default function AboutMaterial() {
               популярны благодаря своей многофункциональности и универсальности,
               подходят как для жилых, так и для коммерческих помещений.
             </p>
+            <h2 className="text-2xl lg:text-3xl xl:text-4xl font-bold text-[#2f378b] mb-6 lg:mb-8">
+              СТРУКТУРА СТЕНОВЫХ ПАНЕЛЕЙ АЛЬТА СЛЭБ:
+            </h2>
             <p className="text-sm lg:text-lg mb-4 lg:mb-6">
               СТРУКТУРА СТЕНОВЫХ ПАНЕЛЕЙ АЛЬТА СЛЭБ: ДВА СЛОЯ – СПЕЦИАЛЬНАЯ UV
               ЗАЩИТА Сохраняет декоративные свойства и защищает от
@@ -25,6 +28,9 @@ export default function AboutMaterial() {
               что делает их подходящими для применения в условиях с интенсивными
               нагрузками в любых помещениях.
             </p>
+            <h2 className="text-2xl lg:text-3xl xl:text-4xl font-bold text-[#2f378b] mb-6 lg:mb-8">
+              О МАТЕРИАЛЕ
+            </h2>
             <p className="text-sm lg:text-lg">
               СИСТЕМА ЗАМКОВОГО СОЕДИНЕНИЯ «SEAMLESSLOCK» • БЕСШОВНОЕ СОЕДИНЕНИЕ
               – БЫСТРАЯ И ПРОСТАЯ УСТАНОВКА. • НЕ ТРЕБУЕТСЯ ЗАТИРКИ И
