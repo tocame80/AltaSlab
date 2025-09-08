@@ -50,6 +50,13 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
       return [mainImage];
     }
     
+    // For glue products, use specific glue image
+    if (product.design === 'КЛЕЙ' || product.collection === 'Клей' || 
+        (product.collection === 'КЛЕЙ И ПРОФИЛЯ ДЛЯ ПАНЕЛЕЙ АЛЬТА СЛЭБ' && product.name.toLowerCase().includes('клей'))) {
+      const mainImage = getProductMainImage(productId, product.collection, product.color);
+      return [mainImage];
+    }
+    
     // Check if API returned USE_IMAGEMAP signal
     if (product.image?.startsWith('USE_IMAGEMAP:') || product.gallery?.[0]?.startsWith('USE_IMAGEMAP:')) {
       // Always use imageMap functions for local images
