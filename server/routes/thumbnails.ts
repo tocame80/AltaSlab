@@ -120,7 +120,7 @@ router.get('/thumbnail', async (req: Request, res: Response) => {
       } else {
         // Try recursive search in subfolders
         const baseDir = path.join(process.cwd(), 'client/src/assets/products', folder);
-        const foundPath = await findFileRecursively(baseDir, filename);
+        const foundPath = findFileRecursively(baseDir, filename);
         if (foundPath) {
           filePath = foundPath;
         } else {
@@ -185,15 +185,15 @@ router.delete('/thumbnail-cache', (req: Request, res: Response) => {
 });
 
 // Helper function to find file in subdirectories
-async function findFileRecursively(dir: string, targetFilename: string): Promise<string | null> {
+function findFileRecursively(dir: string, targetFilename: string): string | null {
   try {
-    const items = await fsPromises.readdir(dir, { withFileTypes: true });
+    const items = fs.readdirSync(dir, { withFileTypes: true });
     
     for (const item of items) {
       const fullPath = path.join(dir, item.name);
       
       if (item.isDirectory()) {
-        const found = await findFileRecursively(fullPath, targetFilename);
+        const found = findFileRecursively(fullPath, targetFilename);
         if (found) return found;
       } else if (item.isFile() && item.name === targetFilename) {
         return fullPath;
