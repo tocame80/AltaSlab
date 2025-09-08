@@ -71,7 +71,7 @@ const initializeImageMap = () => {
   dynamicImageMap = imageModules;
   imageMapInitialized = true;
   
-  console.log('🖼️ Dynamic image map initialized with', Object.keys(imageModules).length, 'products:', Object.keys(imageModules));
+  // console.log('🖼️ Dynamic image map initialized with', Object.keys(imageModules).length, 'products:', Object.keys(imageModules));
 };
 
 // Initialize image map immediately
