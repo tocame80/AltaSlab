@@ -33,6 +33,9 @@ import {
   isLargeImage,
 } from "@/assets/products/imageMap";
 import OptimizedThumbnail from "@/components/OptimizedThumbnail";
+import DownloadableDocuments from "@/components/DownloadableDocuments";
+import VideoInstructionsComponent from "@/components/VideoInstructionsComponent";
+import FAQComponent from "@/components/FAQComponent";
 
 interface Product {
   id: string;
@@ -804,16 +807,6 @@ export default function ProductDetails() {
 
             {activeTab === "installation" && (
               <div className="space-y-8">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-lg font-semibold text-gray-900">
-                    Инструкция по монтажу
-                  </h4>
-                  <button className="bg-[#e90039] text-white px-4 py-2 rounded-lg hover:bg-[#c8002f] transition-colors flex items-center gap-2">
-                    <Download size={16} />
-                    Скачать PDF инструкцию
-                  </button>
-                </div>
-
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
                     <h5 className="font-semibold text-gray-900 mb-3">
@@ -839,76 +832,7 @@ export default function ProductDetails() {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-6">
-                  <h5 className="font-semibold text-gray-900 mb-4">
-                    Дополнительные материалы для скачивания:
-                  </h5>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="font-medium text-gray-900">
-                            Подробная инструкция по монтажу
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            PDF, 2.4 МБ
-                          </div>
-                        </div>
-                        <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
-                          <Download size={20} />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="font-medium text-gray-900">
-                            Схемы раскладки панелей
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            PDF, 1.8 МБ
-                          </div>
-                        </div>
-                        <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
-                          <Download size={20} />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="font-medium text-gray-900">
-                            Рекомендации по уходу
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            PDF, 850 КБ
-                          </div>
-                        </div>
-                        <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
-                          <Download size={20} />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="font-medium text-gray-900">
-                            Гарантийные условия
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            PDF, 650 КБ
-                          </div>
-                        </div>
-                        <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
-                          <Download size={20} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <DownloadableDocuments />
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <div className="flex items-start gap-3">
@@ -1053,131 +977,10 @@ export default function ProductDetails() {
 
             {activeTab === "certificates" && (
               <div className="space-y-8">
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-4">
-                      Документы качества
-                    </h4>
-                    <div className="space-y-3">
-                      <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="font-medium text-gray-900">
-                              Сертификат соответствия ГОСТ
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              Действителен до: 15.06.2025
-                            </div>
-                          </div>
-                          <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
-                            <Download size={20} />
-                          </button>
-                        </div>
-                      </div>
-                      <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="font-medium text-gray-900">
-                              Декларация соответствия ТР ТС
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              Действительна до: 22.08.2025
-                            </div>
-                          </div>
-                          <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
-                            <Download size={20} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-4">
-                      Международные сертификаты
-                    </h4>
-                    <div className="space-y-3">
-                      <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="font-medium text-gray-900">
-                              ISO 14001 (Экологический менеджмент)
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              Международный стандарт
-                            </div>
-                          </div>
-                          <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
-                            <Download size={20} />
-                          </button>
-                        </div>
-                      </div>
-                      <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="font-medium text-gray-900">
-                              CE Marking
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              Европейское соответствие
-                            </div>
-                          </div>
-                          <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
-                            <Download size={20} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-4">
-                      Пожарная безопасность
-                    </h4>
-                    <div className="space-y-3">
-                      <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="font-medium text-gray-900">
-                              Сертификат пожарной безопасности
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              Класс КМ2 по НПБ 244-97
-                            </div>
-                          </div>
-                          <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
-                            <Download size={20} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-4">
-                      Гарантия
-                    </h4>
-                    <div className="space-y-3">
-                      <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="font-medium text-gray-900">
-                              Гарантийный талон
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              Гарантия 15 лет от производителя
-                            </div>
-                          </div>
-                          <button className="text-[#e90039] hover:text-[#c8002f] transition-colors">
-                            <Download size={20} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <DownloadableDocuments 
+                  title="Сертификаты и документы качества"
+                  showInstallationDocs={false}
+                />
               </div>
             )}
 
@@ -1281,169 +1084,16 @@ export default function ProductDetails() {
 
             {activeTab === "video" && (
               <div className="space-y-8">
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-4">
-                      Инструкции по монтажу
-                    </h4>
-                    <div className="space-y-4">
-                      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                        <div className="aspect-video bg-gray-100 flex items-center justify-center">
-                          <div className="text-center">
-                            <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
-                              <Play size={24} className="text-white" />
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              Видео недоступно
-                            </div>
-                          </div>
-                        </div>
-                        <div className="p-4">
-                          <div className="font-medium text-gray-900">
-                            Подготовка поверхности и разметка
-                          </div>
-                          <div className="text-sm text-gray-600 mt-1">
-                            Продолжительность: 8:30
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                        <div className="aspect-video bg-gray-100 flex items-center justify-center">
-                          <div className="text-center">
-                            <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
-                              <Play size={24} className="text-white" />
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              Видео недоступно
-                            </div>
-                          </div>
-                        </div>
-                        <div className="p-4">
-                          <div className="font-medium text-gray-900">
-                            Техника нанесения клея и укладки
-                          </div>
-                          <div className="text-sm text-gray-600 mt-1">
-                            Продолжительность: 12:15
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="text-lg font-semibold text-gray-900 mb-4">
-                      Обзоры коллекций
-                    </h4>
-                    <div className="space-y-4">
-                      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                        <div className="aspect-video bg-gray-100 flex items-center justify-center">
-                          <div className="text-center">
-                            <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
-                              <Play size={24} className="text-white" />
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              Видео недоступно
-                            </div>
-                          </div>
-                        </div>
-                        <div className="p-4">
-                          <div className="font-medium text-gray-900">
-                            Коллекция "Магия Бетона" - детальный обзор
-                          </div>
-                          <div className="text-sm text-gray-600 mt-1">
-                            Продолжительность: 6:45
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                        <div className="aspect-video bg-gray-100 flex items-center justify-center">
-                          <div className="text-center">
-                            <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
-                              <Play size={24} className="text-white" />
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              Видео недоступно
-                            </div>
-                          </div>
-                        </div>
-                        <div className="p-4">
-                          <div className="font-medium text-gray-900">
-                            Сравнение всех коллекций АЛЬТА СЛЭБ
-                          </div>
-                          <div className="text-sm text-gray-600 mt-1">
-                            Продолжительность: 15:20
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">
-                    Примеры применения
-                  </h4>
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                      <div className="aspect-video bg-gray-100 flex items-center justify-center">
-                        <div className="text-center">
-                          <div className="w-12 h-12 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
-                            <Play size={16} className="text-white" />
-                          </div>
-                          <div className="text-xs text-gray-600">
-                            Видео недоступно
-                          </div>
-                        </div>
-                      </div>
-                      <div className="p-3">
-                        <div className="font-medium text-gray-900 text-sm">
-                          Современная гостиная
-                        </div>
-                        <div className="text-xs text-gray-600 mt-1">4:30</div>
-                      </div>
-                    </div>
-
-                    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                      <div className="aspect-video bg-gray-100 flex items-center justify-center">
-                        <div className="text-center">
-                          <div className="w-12 h-12 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
-                            <Play size={16} className="text-white" />
-                          </div>
-                          <div className="text-xs text-gray-600">
-                            Видео недоступно
-                          </div>
-                        </div>
-                      </div>
-                      <div className="p-3">
-                        <div className="font-medium text-gray-900 text-sm">
-                          Офисные интерьеры
-                        </div>
-                        <div className="text-xs text-gray-600 mt-1">7:15</div>
-                      </div>
-                    </div>
-
-                    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                      <div className="aspect-video bg-gray-100 flex items-center justify-center">
-                        <div className="text-center">
-                          <div className="w-12 h-12 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
-                            <Play size={16} className="text-white" />
-                          </div>
-                          <div className="text-xs text-gray-600">
-                            Видео недоступно
-                          </div>
-                        </div>
-                      </div>
-                      <div className="p-3">
-                        <div className="font-medium text-gray-900 text-sm">
-                          Ванная и кухня
-                        </div>
-                        <div className="text-xs text-gray-600 mt-1">5:50</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <VideoInstructionsComponent 
+                  title="Видео инструкции по монтажу"
+                  showByCategory={true}
+                />
+                
+                {/* Footer with downloadable documents */}
+                <DownloadableDocuments 
+                  title="Полезные материалы"
+                  showInstallationDocs={true}
+                />
               </div>
             )}
 
