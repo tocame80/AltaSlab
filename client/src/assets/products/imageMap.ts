@@ -143,6 +143,21 @@ export const getProductGallery = (productId: string, collection: string = ''): s
 
 // Function to get main image for catalog display
 export const getProductMainImage = (productId: string, collection: string = '', color: string = ''): string => {
+  // Special handling for glue - use specific image from Клей folder
+  if (collection === 'Клей' || collection.toLowerCase().includes('клей')) {
+    try {
+      const glueImages = import.meta.glob('./accessories/Клей/*.{png,jpg,jpeg,webp}', { eager: true }) as Record<string, { default: string }>;
+      
+      // Return the first available glue image
+      const glueImageKey = Object.keys(glueImages)[0];
+      if (glueImageKey && glueImages[glueImageKey]) {
+        return glueImages[glueImageKey].default;
+      }
+    } catch (error) {
+      console.warn('Failed to load glue image:', error);
+    }
+  }
+
   // Special handling for profiles - use color-specific images
   if (collection.toLowerCase().includes('профиль')) {
     try {
