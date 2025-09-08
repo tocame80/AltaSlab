@@ -17,6 +17,18 @@ interface Certificate {
   updatedAt: string;
 }
 
+interface InstallationInstruction {
+  id: string;
+  title: string;
+  description?: string;
+  category: string;
+  size: string;
+  fileUrl?: string;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface DownloadableDocumentsProps {
   title?: string;
   showInstallationDocs?: boolean;
@@ -37,6 +49,15 @@ export default function DownloadableDocuments({
     },
   });
 
+  const { data: installationInstructions = [], isLoading: instructionsLoading } = useQuery({
+    queryKey: ['/api/installation-instructions'],
+    queryFn: async () => {
+      const response = await fetch('/api/installation-instructions');
+      if (!response.ok) throw new Error('Failed to fetch installation instructions');
+      return response.json();
+    },
+  });
+
   const handleDownload = (fileUrl: string, fileName: string) => {
     if (!fileUrl) {
       alert('Файл недоступен для скачивания');
@@ -51,33 +72,9 @@ export default function DownloadableDocuments({
     document.body.removeChild(link);
   };
 
-  // Installation documents (static for now, could be moved to admin later)
-  const installationDocs = showInstallationDocs ? [
-    {
-      id: 'installation-guide',
-      title: 'Подробная инструкция по монтажу',
-      size: 'PDF, 2.4 МБ',
-      fileUrl: '/docs/installation-guide.pdf'
-    },
-    {
-      id: 'layout-schemes',
-      title: 'Схемы раскладки панелей',
-      size: 'PDF, 1.8 МБ',
-      fileUrl: '/docs/layout-schemes.pdf'
-    },
-    {
-      id: 'care-recommendations',
-      title: 'Рекомендации по уходу',
-      size: 'PDF, 850 КБ',
-      fileUrl: '/docs/care-recommendations.pdf'
-    },
-    {
-      id: 'warranty-conditions',
-      title: 'Гарантийные условия',
-      size: 'PDF, 650 КБ',
-      fileUrl: '/docs/warranty-conditions.pdf'
-    }
-  ] : [];
+  // Sort installation instructions by sortOrder
+  const sortedInstructions = [...installationInstructions].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+  const installationDocs = showInstallationDocs ? sortedInstructions : [];
 
   // Sort certificates by sortOrder
   const sortedCertificates = [...certificates].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
@@ -91,7 +88,7 @@ export default function DownloadableDocuments({
     })) : [])
   ];
 
-  if (certificatesLoading) {
+  if (certificatesLoading || instructionsLoading) {
     return (
       <div className="bg-gray-50 rounded-lg p-6">
         <h5 className="font-semibold text-gray-900 mb-4">{title}</h5>
