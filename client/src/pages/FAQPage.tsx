@@ -102,8 +102,8 @@ export default function FAQPage() {
   ];
 
   const filteredFAQs = faqs.filter((faq) => {
-    const matchesCategory =
-      activeCategory === "all" || faq.category === activeCategory;
+    // For now, since FAQs don't have categories, we'll show all when category is "all"
+    const matchesCategory = activeCategory === "all";
     const matchesSearch =
       searchQuery === "" ||
       faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
