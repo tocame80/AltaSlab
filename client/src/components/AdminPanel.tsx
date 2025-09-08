@@ -3,7 +3,7 @@ import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit, Play, Database, Dow
 import { products } from '../data/products';
 import * as XLSX from 'xlsx';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Certificate, insertCertificateSchema, VideoInstruction, insertVideoInstructionSchema, HeroImage, insertHeroImageSchema, GalleryProject, insertGalleryProjectSchema, CatalogProduct, insertCatalogProductSchema, DealerLocation, insertDealerLocationSchema } from '@shared/schema';
+import { Certificate, insertCertificateSchema, InstallationInstruction, insertInstallationInstructionSchema, VideoInstruction, insertVideoInstructionSchema, HeroImage, insertHeroImageSchema, GalleryProject, insertGalleryProjectSchema, CatalogProduct, insertCatalogProductSchema, DealerLocation, insertDealerLocationSchema } from '@shared/schema';
 import { apiRequest } from '@/lib/queryClient';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -32,7 +32,7 @@ interface ExistingImage {
   url: string;
 }
 
-type AdminTab = 'images' | 'certificates' | 'videos' | 'catalog' | 'hero' | 'gallery' | 'salepoints';
+type AdminTab = 'images' | 'certificates' | 'instructions' | 'videos' | 'catalog' | 'hero' | 'gallery' | 'salepoints';
 
 const certificateFormSchema = insertCertificateSchema.extend({
   // Form validation schema with required fields
@@ -42,6 +42,12 @@ const certificateFormSchema = insertCertificateSchema.extend({
   validUntil: z.string().min(1, 'Срок действия обязателен'),
   issuer: z.string().min(1, 'Орган выдачи обязателен'),
   number: z.string().min(1, 'Номер сертификата обязателен'),
+  size: z.string().min(1, 'Размер файла обязателен'),
+});
+
+const instructionFormSchema = insertInstallationInstructionSchema.extend({
+  title: z.string().min(1, 'Название обязательно'),
+  category: z.string().min(1, 'Категория обязательна'),
   size: z.string().min(1, 'Размер файла обязателен'),
 });
 
@@ -79,6 +85,7 @@ const catalogProductFormSchema = insertCatalogProductSchema.extend({
 });
 
 type CertificateFormData = z.infer<typeof certificateFormSchema>;
+type InstructionFormData = z.infer<typeof instructionFormSchema>;
 type VideoFormData = z.infer<typeof videoFormSchema>;
 type HeroImageFormData = z.infer<typeof heroImageFormSchema>;
 type GalleryProjectFormData = z.infer<typeof galleryProjectFormSchema>;
@@ -93,6 +100,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [editingCertificate, setEditingCertificate] = useState<Certificate | null>(null);
   const [showCertificateForm, setShowCertificateForm] = useState(false);
+  const [editingInstruction, setEditingInstruction] = useState<InstallationInstruction | null>(null);
+  const [showInstructionForm, setShowInstructionForm] = useState(false);
   const [editingVideo, setEditingVideo] = useState<VideoInstruction | null>(null);
   const [showVideoForm, setShowVideoForm] = useState(false);
   const [editingHeroImage, setEditingHeroImage] = useState<HeroImage | null>(null);
