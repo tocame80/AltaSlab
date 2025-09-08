@@ -145,13 +145,20 @@ export const getProductGallery = (productId: string, collection: string = ''): s
 export const getProductMainImage = (productId: string, collection: string = '', color: string = ''): string => {
   // Special handling for glue - use specific image from Клей folder
   if (collection === 'Клей' || collection.toLowerCase().includes('клей')) {
+    console.log('🧪 Processing glue product:', { productId, collection });
     try {
       const glueImages = import.meta.glob('./accessories/Клей/*.{png,jpg,jpeg,webp}', { eager: true }) as Record<string, { default: string }>;
+      console.log('🧪 Found glue images:', Object.keys(glueImages));
       
       // Return the first available glue image
       const glueImageKey = Object.keys(glueImages)[0];
       if (glueImageKey && glueImages[glueImageKey]) {
-        return glueImages[glueImageKey].default;
+        const imagePath = glueImages[glueImageKey].default;
+        console.log('🧪 Using glue image:', glueImageKey, imagePath);
+        // Decode URL-encoded path to handle Cyrillic characters
+        const decodedPath = decodeURIComponent(imagePath);
+        console.log('🧪 Decoded glue image path:', decodedPath);
+        return decodedPath;
       }
     } catch (error) {
       console.warn('Failed to load glue image:', error);
