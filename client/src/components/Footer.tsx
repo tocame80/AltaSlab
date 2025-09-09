@@ -86,7 +86,25 @@ export default function Footer() {
         
         <div className="border-t border-gray-700 mt-8 lg:mt-12 pt-6 lg:pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-xs lg:text-sm text-gray-400">©2025. АЛЬТА СЛЭБ - SPC панели. Разработка сайта</p>
+            <div className="flex items-center gap-2">
+              <p className="text-xs lg:text-sm text-gray-400">©2025. АЛЬТА СЛЭБ - SPC панели. Разработка сайта</p>
+              <svg 
+                viewBox="0 0 200 45" 
+                className="h-3 lg:h-4 w-auto opacity-60"
+                style={{ filter: 'brightness(0.7)' }}
+              >
+                <rect x="2" y="2" width="196" height="41" rx="20" ry="20" 
+                      fill="#1a1a1a" stroke="#666" strokeWidth="1"/>
+                <text x="100" y="28" 
+                      fontFamily="Arial, sans-serif" 
+                      fontSize="14" 
+                      fontWeight="bold" 
+                      fill="white" 
+                      textAnchor="middle">
+                  goryacheff.pro
+                </text>
+              </svg>
+            </div>
             <div className="flex space-x-3 lg:space-x-4 lg:mt-4 md:mt-0 mt-[0px] mb-[0px] ml-[100px] mr-[100px] pl-[0px] pr-[0px] pt-[0px] pb-[0px]">
               <a href="https://vk.com/altaprofilru" target="_blank" rel="noopener noreferrer" aria-label="ВКонтакте" className="w-8 h-8 lg:w-9 lg:h-9 rounded-full bg-[#4C75A3] hover:bg-[#3e5f85] transition-colors flex items-center justify-center">
                 <svg className="w-4 h-4 lg:w-5 lg:h-5" viewBox="0 0 24 24" fill="white">
