@@ -322,8 +322,16 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/installation-instructions'] });
+      setEditingInstruction(null);
       setShowInstructionForm(false);
-      instructionForm.reset();
+      instructionForm.reset({
+        title: '',
+        category: '',
+        description: '',
+        size: '',
+        fileUrl: '',
+        sortOrder: 0,
+      });
       toast({
         title: 'Успешно',
         description: 'Инструкция создана',
@@ -346,7 +354,14 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       queryClient.invalidateQueries({ queryKey: ['/api/installation-instructions'] });
       setEditingInstruction(null);
       setShowInstructionForm(false);
-      instructionForm.reset();
+      instructionForm.reset({
+        title: '',
+        category: '',
+        description: '',
+        size: '',
+        fileUrl: '',
+        sortOrder: 0,
+      });
       toast({
         title: 'Успешно',
         description: 'Инструкция обновлена',
@@ -2559,7 +2574,14 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     onClick={() => {
                       setEditingInstruction(null);
                       setShowInstructionForm(true);
-                      instructionForm.reset();
+                      instructionForm.reset({
+                        title: '',
+                        category: '',
+                        description: '',
+                        size: '',
+                        fileUrl: '',
+                        sortOrder: 0,
+                      });
                     }}
                     className="bg-[#E95D22] text-white px-4 py-2 rounded-lg hover:bg-[#d54a1a] transition-colors flex items-center gap-2"
                   >
@@ -2725,7 +2747,14 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           onClick={() => {
                             setShowInstructionForm(false);
                             setEditingInstruction(null);
-                            instructionForm.reset();
+                            instructionForm.reset({
+                              title: '',
+                              category: '',
+                              description: '',
+                              size: '',
+                              fileUrl: '',
+                              sortOrder: 0,
+                            });
                           }}
                           className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                         >
