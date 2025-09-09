@@ -285,11 +285,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/certificates'] });
-      setShowCertificateForm(false);
-      setEditingCertificate(null);
-      setCertificateFileData({});
-      setIsReplacingCertificateFile(false);
-      certificateForm.reset();
       toast({
         title: 'Успешно',
         description: 'Сертификат сохранен',
@@ -360,18 +355,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/installation-instructions'] });
-      setShowInstructionForm(false);
-      setEditingInstruction(null);
-      setInstructionFileData({});
-      setIsReplacingInstructionFile(false);
-      instructionForm.reset({
-        title: '',
-        category: '',
-        description: '',
-        size: '',
-        fileUrl: '',
-        sortOrder: 0,
-      });
       toast({
         title: 'Успешно',
         description: 'Инструкция сохранена',
@@ -2436,11 +2419,11 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-4">PDF сертификат</label>
                       
-                      {/* Show current file if has file data and not replacing */}
-                      {certificateFileData.fileName && !isReplacingCertificateFile && (
+                      {/* Show current file if has file data or editing existing file, and not replacing */}
+                      {(certificateFileData.fileName || editingCertificate?.fileUrl) && !isReplacingCertificateFile && (
                         <div className="mb-4">
                           <FileDisplay
-                            fileName={certificateFileData.fileName}
+                            fileName={certificateFileData.fileName || editingCertificate?.fileUrl?.split('/').pop()}
                             fileSize={certificateFileData.fileSize}
                             fileUrl={editingCertificate?.fileUrl || `/api/admin/documents/certificates/${certificateFileData.fileName}`}
                             onReplace={() => {
@@ -2450,8 +2433,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         </div>
                       )}
                       
-                      {/* Show uploader if no file data or replacing */}
-                      {(!certificateFileData.fileName || isReplacingCertificateFile) && (
+                      {/* Show uploader if no file data and no existing file, or replacing */}
+                      {(!certificateFileData.fileName && !editingCertificate?.fileUrl || isReplacingCertificateFile) && (
                         <LocalFileUploader
                           maxFileSize={26214400} // 25MB
                           allowedFileTypes={['application/pdf']}
@@ -2687,11 +2670,11 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-4">PDF инструкция</label>
                         
-                        {/* Show current file if has file data and not replacing */}
-                        {instructionFileData.fileName && !isReplacingInstructionFile && (
+                        {/* Show current file if has file data or editing existing file, and not replacing */}
+                        {(instructionFileData.fileName || editingInstruction?.fileUrl) && !isReplacingInstructionFile && (
                           <div className="mb-4">
                             <FileDisplay
-                              fileName={instructionFileData.fileName}
+                              fileName={instructionFileData.fileName || editingInstruction?.fileUrl?.split('/').pop()}
                               fileSize={instructionFileData.fileSize}
                               fileUrl={editingInstruction?.fileUrl || `/api/admin/documents/instructions/${instructionFileData.fileName}`}
                               onReplace={() => {
@@ -2701,8 +2684,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           </div>
                         )}
                         
-                        {/* Show uploader if no file data or replacing */}
-                        {(!instructionFileData.fileName || isReplacingInstructionFile) && (
+                        {/* Show uploader if no file data and no existing file, or replacing */}
+                        {(!instructionFileData.fileName && !editingInstruction?.fileUrl || isReplacingInstructionFile) && (
                           <LocalFileUploader
                             maxFileSize={26214400} // 25MB
                             allowedFileTypes={['application/pdf']}
