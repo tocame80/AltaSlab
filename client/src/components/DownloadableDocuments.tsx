@@ -1,6 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
 import { Download, FileText, Award } from 'lucide-react';
 
+// Функция для перевода категорий на русский
+const translateCategory = (category: string): string => {
+  const translations: Record<string, string> = {
+    'installation-guide': 'Руководство по установке',
+    'layout-schemes': 'Схемы раскладки',
+    'care-recommendations': 'Рекомендации по уходу',
+    'warranty-conditions': 'Гарантийные условия',
+    'quality-certificates': 'Сертификаты качества',
+    'test-reports': 'Протоколы испытаний',
+    'compliance-docs': 'Документы соответствия',
+    'standards-certification': 'Сертификация стандартов'
+  };
+  return translations[category] || category;
+};
+
 interface Certificate {
   id: string;
   title: string;
@@ -154,7 +169,7 @@ export default function DownloadableDocuments({
                       <div>
                         {!doc.fileUrl && <span className="text-red-500">Файл не загружен</span>}
                         {doc.size && doc.fileUrl && <div>Размер: {doc.size}</div>}
-                        <div className="text-xs">Категория: {doc.category}</div>
+                        <div className="text-xs">Категория: {translateCategory(doc.category)}</div>
                       </div>
                     )}
                   </div>

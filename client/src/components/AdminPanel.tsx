@@ -13,6 +13,21 @@ import OptimizedThumbnail from './OptimizedThumbnail';
 import { LocalFileUploader } from './LocalFileUploader';
 import { FileDisplay } from './FileDisplay';
 
+// Функция для перевода категорий на русский
+const translateCategory = (category: string): string => {
+  const translations: Record<string, string> = {
+    'installation-guide': 'Руководство по установке',
+    'layout-schemes': 'Схемы раскладки',
+    'care-recommendations': 'Рекомендации по уходу',
+    'warranty-conditions': 'Гарантийные условия',
+    'quality-certificates': 'Сертификаты качества',
+    'test-reports': 'Протоколы испытаний',
+    'compliance-docs': 'Документы соответствия',
+    'standards-certification': 'Сертификация стандартов'
+  };
+  return translations[category] || category;
+};
+
 interface AdminPanelProps {
   isOpen: boolean;
   onClose: () => void;
@@ -2360,6 +2375,23 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       )}
                     </div>
 
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Категория</label>
+                      <select
+                        {...certificateForm.register('category')}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
+                      >
+                        <option value="">Выберите категорию</option>
+                        <option value="quality-certificates">Сертификаты качества</option>
+                        <option value="test-reports">Протоколы испытаний</option>
+                        <option value="compliance-docs">Документы соответствия</option>
+                        <option value="standards-certification">Сертификация стандартов</option>
+                      </select>
+                      {certificateForm.formState.errors.category && (
+                        <p className="text-red-500 text-sm mt-1">{certificateForm.formState.errors.category.message}</p>
+                      )}
+                    </div>
+
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Дата выдачи</label>
@@ -2532,10 +2564,27 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           <div className="flex-1">
                             <h5 className="font-semibold text-gray-900 mb-2">{cert.title}</h5>
                             <p className="text-sm text-gray-600 mb-2">{cert.description}</p>
-                            <div className="flex gap-4 text-sm text-gray-500">
-                              <span>Выдан: {cert.issueDate}</span>
-                              <span>До: {cert.validUntil}</span>
-                              <span>№: {cert.number}</span>
+                            <div className="text-sm text-gray-500">
+                              <div className="flex gap-4 mb-1">
+                                <span>Выдан: {cert.issueDate}</span>
+                                <span>До: {cert.validUntil}</span>
+                                <span>№: {cert.number}</span>
+                              </div>
+                              <div className="flex gap-4">
+                                <span>Категория: {translateCategory(cert.category)}</span>
+                                <span>Орган: {cert.issuer}</span>
+                              </div>
+                              {cert.fileUrl && (
+                                <div className="font-semibold text-blue-700 text-base mt-1">
+                                  📄 {cert.fileUrl.split('/').pop()?.replace(/\.[^/.]+$/, '') || 'Файл'}
+                                  <a href={cert.fileUrl} target="_blank" rel="noopener noreferrer" className="ml-3 text-sm text-blue-600 hover:text-blue-700">
+                                    Скачать
+                                  </a>
+                                </div>
+                              )}
+                              {!cert.fileUrl && (
+                                <div className="text-red-500 font-medium mt-1">Файл не загружен</div>
+                              )}
                             </div>
                           </div>
                           <div className="flex gap-2">
@@ -2784,7 +2833,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                               )}
                               <div className="text-sm text-gray-500">
                                 <div className="flex gap-4 mb-1">
-                                  <span>Категория: {instruction.category}</span>
+                                  <span>Категория: {translateCategory(instruction.category)}</span>
                                   <span>Размер: {instruction.size}</span>
                                 </div>
                                 {instruction.fileUrl && (

@@ -13,6 +13,7 @@ export const certificates = pgTable("certificates", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   title: text("title").notNull(),
   description: text("description").notNull(),
+  category: text("category").notNull(), // quality-certificates, test-reports, compliance-docs, standards-certification
   issueDate: text("issue_date").notNull(),
   validUntil: text("valid_until").notNull(),
   issuer: text("issuer").notNull(),
