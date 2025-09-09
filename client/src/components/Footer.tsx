@@ -26,6 +26,19 @@ export default function Footer() {
       window.location.href = `/#${sectionId}`;
     }
   };
+
+  const handleCatalogClick = () => {
+    if (location === '/') {
+      // If on home page, scroll to catalog
+      const element = document.getElementById('catalog');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // If on any other page, navigate to home page
+      window.location.href = '/#catalog';
+    }
+  };
   return (
     <footer className="bg-[#2f378b] text-white py-8 lg:py-16">
       <div className="container mx-auto px-4 lg:px-6">
@@ -53,12 +66,13 @@ export default function Footer() {
           <div>
             <h4 className="font-bold text-base lg:text-lg mb-3 lg:mb-4">О КОМПАНИИ</h4>
             <ul className="space-y-1 lg:space-y-2 text-xs lg:text-sm text-gray-300">
-              <li><button onClick={() => handleSectionClick('contacts')} className="hover:text-accent transition-colors text-left">КОНТАКТЫ</button></li>
-              <li><a href="/gallery" className="hover:text-accent transition-colors">ПОРТФОЛИО</a></li>
-              <li><button onClick={() => handleSectionClick('company')} className="hover:text-accent transition-colors text-left">НОВОСТИ</button></li>
-              <li><button onClick={() => handleSectionClick('company')} className="hover:text-accent transition-colors text-left">ПАРТНЕРАМ</button></li>
-              <li><button onClick={() => handleSectionClick('material')} className="hover:text-accent transition-colors text-left">О МАТЕРИАЛЕ</button></li>
-              <li><button onClick={() => handleSectionClick('company')} className="hover:text-accent transition-colors text-left">ДОСТАВКА И ОПЛАТА</button></li>
+              <li><button onClick={handleCatalogClick} className="hover:text-accent transition-colors text-left">КАТАЛОГ</button></li>
+              <li><a href="/gallery" className="hover:text-accent transition-colors">ГАЛЕРЕЯ</a></li>
+              <li><a href="/where-to-buy" className="hover:text-accent transition-colors">ГДЕ КУПИТЬ</a></li>
+              <li><a href="/calculator" className="hover:text-accent transition-colors">КАЛЬКУЛЯТОР</a></li>
+              <li><a href="/certificates" className="hover:text-accent transition-colors">СЕРТИФИКАТЫ</a></li>
+              <li><a href="/video" className="hover:text-accent transition-colors">ВИДЕО</a></li>
+              <li><a href="/faq" className="hover:text-accent transition-colors">ВОПРОСЫ</a></li>
             </ul>
           </div>
           
