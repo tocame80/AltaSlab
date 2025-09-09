@@ -2411,7 +2411,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       <label className="block text-sm font-medium text-gray-700 mb-4">Загрузить PDF сертификат</label>
                       <ObjectUploader
                         maxNumberOfFiles={1}
-                        maxFileSize={10485760} // 10MB
+                        maxFileSize={26214400} // 25MB
                         allowedFileTypes={['application/pdf']}
                         onGetUploadParameters={async () => {
                           const response = await fetch('/api/admin/certificates/upload-url', {
@@ -2444,7 +2444,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         <div className="flex flex-col items-center gap-2 text-gray-600">
                           <FileText size={24} />
                           <span>Нажмите для загрузки PDF</span>
-                          <span className="text-sm text-gray-500">Максимум 10 МБ</span>
+                          <span className="text-sm text-gray-500">Максимум 25 МБ</span>
                         </div>
                       </ObjectUploader>
                     </div>
