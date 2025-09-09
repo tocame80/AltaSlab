@@ -66,7 +66,7 @@ export function ObjectUploader({
       restrictions: {
         maxNumberOfFiles,
         maxFileSize,
-        allowedFileTypes,
+        allowedFileTypes: allowedFileTypes.length > 0 ? allowedFileTypes : undefined,
       },
       autoProceed: false,
     })
@@ -77,19 +77,21 @@ export function ObjectUploader({
       .on("complete", (result) => {
         console.log('Uppy complete event:', result);
         onComplete?.(result);
-        // Don't automatically close modal, let the parent component handle it
+        // Auto-close modal after successful upload
+        if (result.successful && result.successful.length > 0) {
+          setTimeout(() => {
+            setShowModal(false);
+          }, 1500); // Close after 1.5 seconds to show success
+        }
       })
       .on("error", (error) => {
         console.error('ObjectUploader error:', error);
-        alert(`Ошибка загрузки: ${error.message}`);
       })
       .on("restriction-failed", (file, error) => {
         console.error('Restriction failed:', error);
-        alert(`Файл не прошел проверку: ${error.message}`);
       })
       .on("upload-error", (file, error, response) => {
         console.error('Upload error:', error, response);
-        alert(`Ошибка загрузки файла: ${error.message}`);
       })
       .on("upload-success", (file, response) => {
         console.log('Upload success:', file, response);
