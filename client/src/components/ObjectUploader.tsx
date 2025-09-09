@@ -75,8 +75,9 @@ export function ObjectUploader({
         getUploadParameters: onGetUploadParameters,
       })
       .on("complete", (result) => {
+        console.log('Uppy complete event:', result);
         onComplete?.(result);
-        setShowModal(false);
+        // Don't automatically close modal, let the parent component handle it
       })
       .on("error", (error) => {
         console.error('ObjectUploader error:', error);
@@ -89,6 +90,9 @@ export function ObjectUploader({
       .on("upload-error", (file, error, response) => {
         console.error('Upload error:', error, response);
         alert(`Ошибка загрузки файла: ${error.message}`);
+      })
+      .on("upload-success", (file, response) => {
+        console.log('Upload success:', file, response);
       })
   );
 

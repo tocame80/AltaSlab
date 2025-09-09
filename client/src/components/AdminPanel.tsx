@@ -2416,25 +2416,45 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           };
                         }}
                         onComplete={(result: UploadResult<Record<string, unknown>, Record<string, unknown>>) => {
-                          if (result.successful && result.successful[0] && result.successful[0].uploadURL) {
-                            const uploadURL = result.successful[0].uploadURL;
-                            // Extract object path from upload URL and set it as fileUrl
-                            const url = new URL(uploadURL);
-                            const objectPath = url.pathname;
-                            // Extract UUID from object path (e.g., from /bucket/.private/certificates/uuid to uuid)
-                            const pathParts = objectPath.split('/');
-                            const fileId = pathParts[pathParts.length - 1];
-                            const fileUrl = `/api/admin/certificates/file/${fileId}`;
-                            certificateForm.setValue('fileUrl', fileUrl);
+                          console.log('Certificate upload complete:', result);
+                          if (result.successful && result.successful.length > 0) {
+                            const successfulFile = result.successful[0];
+                            console.log('Successful file upload:', successfulFile);
                             
-                            // Auto-save the form after file upload
-                            const formData = certificateForm.getValues();
-                            formData.fileUrl = fileUrl;
-                            handleSubmitCertificate(formData);
-                            
+                            if (successfulFile.uploadURL) {
+                              const uploadURL = successfulFile.uploadURL;
+                              console.log('Certificate upload URL:', uploadURL);
+                              // Extract object path from upload URL and set it as fileUrl
+                              const url = new URL(uploadURL);
+                              const objectPath = url.pathname;
+                              // Extract UUID from object path (e.g., from /bucket/.private/certificates/uuid to uuid)
+                              const pathParts = objectPath.split('/');
+                              const fileId = pathParts[pathParts.length - 1];
+                              const fileUrl = `/api/admin/certificates/file/${fileId}`;
+                              console.log('Certificate file URL:', fileUrl);
+                              certificateForm.setValue('fileUrl', fileUrl);
+                              
+                              toast({
+                                title: 'Успешно',
+                                description: 'PDF сертификат загружен. Сохраните форму для завершения.',
+                              });
+                            } else {
+                              console.error('No upload URL in successful result:', successfulFile);
+                              toast({
+                                title: 'Ошибка',
+                                description: 'Не удалось получить ссылку на загруженный файл',
+                                variant: 'destructive',
+                              });
+                            }
+                          } else {
+                            console.error('Certificate upload failed:', result);
+                            const errorMessage = result.failed && result.failed.length > 0 
+                              ? (typeof result.failed[0].error === 'string' ? result.failed[0].error : result.failed[0].error?.message) || 'Ошибка загрузки файла'
+                              : 'Файл не был загружен';
                             toast({
-                              title: 'Успешно',
-                              description: 'PDF сертификат загружен и сохранен',
+                              title: 'Ошибка',
+                              description: errorMessage,
+                              variant: 'destructive',
                             });
                           }
                         }}
@@ -2648,24 +2668,44 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             };
                           }}
                           onComplete={(result: UploadResult<Record<string, unknown>, Record<string, unknown>>) => {
-                            if (result.successful && result.successful[0] && result.successful[0].uploadURL) {
-                              const uploadURL = result.successful[0].uploadURL;
-                              const url = new URL(uploadURL);
-                              const objectPath = url.pathname;
-                              // Extract UUID from object path (e.g., from /bucket/.private/instructions/uuid to uuid)
-                              const pathParts = objectPath.split('/');
-                              const fileId = pathParts[pathParts.length - 1];
-                              const fileUrl = `/api/admin/instructions/file/${fileId}`;
-                              instructionForm.setValue('fileUrl', fileUrl);
+                            console.log('Instruction upload complete:', result);
+                            if (result.successful && result.successful.length > 0) {
+                              const successfulFile = result.successful[0];
+                              console.log('Successful file upload:', successfulFile);
                               
-                              // Auto-save the form after file upload  
-                              const formData = instructionForm.getValues();
-                              formData.fileUrl = fileUrl;
-                              handleSubmitInstruction(formData);
-                              
+                              if (successfulFile.uploadURL) {
+                                const uploadURL = successfulFile.uploadURL;
+                                console.log('Instruction upload URL:', uploadURL);
+                                const url = new URL(uploadURL);
+                                const objectPath = url.pathname;
+                                // Extract UUID from object path (e.g., from /bucket/.private/instructions/uuid to uuid)
+                                const pathParts = objectPath.split('/');
+                                const fileId = pathParts[pathParts.length - 1];
+                                const fileUrl = `/api/admin/instructions/file/${fileId}`;
+                                console.log('Instruction file URL:', fileUrl);
+                                instructionForm.setValue('fileUrl', fileUrl);
+                                
+                                toast({
+                                  title: 'Успешно',
+                                  description: 'PDF инструкция загружена. Сохраните форму для завершения.',
+                                });
+                              } else {
+                                console.error('No upload URL in successful result:', successfulFile);
+                                toast({
+                                  title: 'Ошибка',
+                                  description: 'Не удалось получить ссылку на загруженный файл',
+                                  variant: 'destructive',
+                                });
+                              }
+                            } else {
+                              console.error('Instruction upload failed:', result);
+                              const errorMessage = result.failed && result.failed.length > 0 
+                                ? (typeof result.failed[0].error === 'string' ? result.failed[0].error : result.failed[0].error?.message) || 'Ошибка загрузки файла'
+                                : 'Файл не был загружен';
                               toast({
-                                title: 'Успешно',
-                                description: 'PDF инструкция загружена и сохранена',
+                                title: 'Ошибка',
+                                description: errorMessage,
+                                variant: 'destructive',
                               });
                             }
                           }}
