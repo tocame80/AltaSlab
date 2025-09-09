@@ -2782,13 +2782,21 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                               {instruction.description && (
                                 <p className="text-sm text-gray-600 mb-2">{instruction.description}</p>
                               )}
-                              <div className="flex gap-4 text-sm text-gray-500">
-                                <span>Категория: {instruction.category}</span>
-                                <span>Размер: {instruction.size}</span>
+                              <div className="text-sm text-gray-500">
+                                <div className="flex gap-4 mb-1">
+                                  <span>Категория: {instruction.category}</span>
+                                  <span>Размер: {instruction.size}</span>
+                                </div>
                                 {instruction.fileUrl && (
-                                  <a href={instruction.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700">
-                                    Скачать
-                                  </a>
+                                  <div className="font-semibold text-blue-700 text-base">
+                                    📄 {instruction.fileUrl.split('/').pop()?.replace(/\.[^/.]+$/, '') || 'Файл'}
+                                    <a href={instruction.fileUrl} target="_blank" rel="noopener noreferrer" className="ml-3 text-sm text-blue-600 hover:text-blue-700">
+                                      Скачать
+                                    </a>
+                                  </div>
+                                )}
+                                {!instruction.fileUrl && (
+                                  <div className="text-red-500 font-medium">Файл не загружен</div>
                                 )}
                               </div>
                             </div>
