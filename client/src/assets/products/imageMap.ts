@@ -3,7 +3,7 @@
 // Supports multiple naming patterns: 8934-1.jpg, 8933 (1).png, etc.
 
 // Import placeholder image (used when no specific product images available)
-import placeholderImage from "./placeholder.png";
+import placeholderImage from "./placeholder.jpg";
 
 // Static imports for known products (kept for immediate availability)
 // Note: Removed static imports due to file path encoding issues - using dynamic imports instead
