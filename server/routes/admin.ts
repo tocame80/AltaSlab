@@ -1254,12 +1254,22 @@ router.post('/upload-certificate-pdf', uploadPDF.single('file'), async (req, res
     const fileName = req.file.filename;
     const fileSize = req.file.size;
     const filePath = `/src/assets/documents/certificates/${fileName}`;
+    
+    // Get original name for display (decode if needed)
+    let displayName;
+    try {
+      const buffer = Buffer.from(req.file.originalname, 'latin1');
+      displayName = buffer.toString('utf8');
+    } catch {
+      displayName = req.file.originalname;
+    }
 
     res.json({
       success: true,
       fileName,
       fileSize,
       filePath,
+      displayName, // Original name for interface
       message: 'Certificate PDF uploaded successfully'
     });
 
@@ -1279,12 +1289,22 @@ router.post('/upload-instruction-pdf', uploadPDF.single('file'), async (req, res
     const fileName = req.file.filename;
     const fileSize = req.file.size;
     const filePath = `/src/assets/documents/instructions/${fileName}`;
+    
+    // Get original name for display (decode if needed)
+    let displayName;
+    try {
+      const buffer = Buffer.from(req.file.originalname, 'latin1');
+      displayName = buffer.toString('utf8');
+    } catch {
+      displayName = req.file.originalname;
+    }
 
     res.json({
       success: true,
       fileName,
       fileSize,
       filePath,
+      displayName, // Original name for interface
       message: 'Instruction PDF uploaded successfully'
     });
 

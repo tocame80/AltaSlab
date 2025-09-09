@@ -2453,7 +2453,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                               
                               // Store file data for display
                               setCertificateFileData({
-                                fileName: result.fileName,
+                                fileName: result.displayName || result.fileName, // Use original name for display
                                 fileSize: result.fileSize
                               });
                               
@@ -2709,7 +2709,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                 
                                 // Store file data for display
                                 setInstructionFileData({
-                                  fileName: result.fileName,
+                                  fileName: result.displayName || result.fileName, // Use original name for display
                                   fileSize: result.fileSize
                                 });
                                 

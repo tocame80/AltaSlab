@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 interface LocalFileUploaderProps {
   maxFileSize?: number;
   allowedFileTypes?: string[];
-  onUploadComplete?: (result: { success: boolean; fileName?: string; fileSize?: number; error?: string }) => void;
+  onUploadComplete?: (result: { success: boolean; fileName?: string; fileSize?: number; displayName?: string; error?: string }) => void;
   uploadEndpoint: string;
   buttonClassName?: string;
   children: ReactNode;
