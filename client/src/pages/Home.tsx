@@ -70,7 +70,6 @@ export default function Home() {
         keywords="SPC панели, стеновые панели, потолочные панели, АЛЬТА СЛЭБ, водостойкие панели, ремонт, отделка"
         canonicalUrl="https://altaslab.ru/"
       />
-      
       <div className="min-h-screen bg-white">
         <Header />
         
@@ -143,7 +142,7 @@ export default function Home() {
         {/* Back to Top Button */}
         <button
           onClick={scrollToTop}
-          className={`back-to-top ${isVisible ? '' : 'hidden'}`}
+          className="back-to-top mt-[100px] mb-[100px]"
           aria-label="Вернуться наверх"
           type="button"
         >
