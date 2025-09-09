@@ -1,4 +1,31 @@
+import { useLocation } from 'wouter';
+import { Collection } from '@/types';
+
 export default function Footer() {
+  const [location] = useLocation();
+
+  const handleCollectionClick = (collection: Collection) => {
+    if (location === '/') {
+      // If on home page, dispatch event to change collection and scroll to catalog
+      window.dispatchEvent(new CustomEvent('navigate-to-collection', { detail: collection }));
+    } else {
+      // If on any other page, navigate to home page with hash
+      window.location.href = `/#${collection}`;
+    }
+  };
+
+  const handleSectionClick = (sectionId: string) => {
+    if (location === '/') {
+      // If on home page, scroll to section
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // If on any other page, navigate to home page with hash
+      window.location.href = `/#${sectionId}`;
+    }
+  };
   return (
     <footer className="bg-[#2f378b] text-white py-8 lg:py-16">
       <div className="container mx-auto px-4 lg:px-6">
@@ -6,32 +33,32 @@ export default function Footer() {
           <div>
             <h4 className="font-bold text-base lg:text-lg mb-3 lg:mb-4">КАТАЛОГ</h4>
             <ul className="space-y-1 lg:space-y-2 text-xs lg:text-sm text-gray-300">
-              <li><a href="/#concrete" className="hover:text-accent transition-colors">МАГИЯ БЕТОНА</a></li>
-              <li><a href="/#fabric" className="hover:text-accent transition-colors">ТКАНЕВАЯ РОСКОШЬ</a></li>
-              <li><a href="/#matte" className="hover:text-accent transition-colors">МАТОВАЯ ЭСТЕТИКА</a></li>
-              <li><a href="/#marble" className="hover:text-accent transition-colors">МРАМОРНАЯ ФЕЕРИЯ</a></li>
-              <li><a href="/#accessories" className="hover:text-accent transition-colors">КОМПЛЕКТУЮЩИЕ</a></li>
+              <li><button onClick={() => handleCollectionClick('concrete')} className="hover:text-accent transition-colors text-left">МАГИЯ БЕТОНА</button></li>
+              <li><button onClick={() => handleCollectionClick('fabric')} className="hover:text-accent transition-colors text-left">ТКАНЕВАЯ РОСКОШЬ</button></li>
+              <li><button onClick={() => handleCollectionClick('matte')} className="hover:text-accent transition-colors text-left">МАТОВАЯ ЭСТЕТИКА</button></li>
+              <li><button onClick={() => handleCollectionClick('marble')} className="hover:text-accent transition-colors text-left">МРАМОРНАЯ ФЕЕРИЯ</button></li>
+              <li><button onClick={() => handleCollectionClick('accessories')} className="hover:text-accent transition-colors text-left">КОМПЛЕКТУЮЩИЕ</button></li>
             </ul>
           </div>
           
           <div>
             <h4 className="font-bold text-base lg:text-lg mb-3 lg:mb-4">УСЛУГИ</h4>
             <ul className="space-y-1 lg:space-y-2 text-xs lg:text-sm text-gray-300">
-              <li><a href="/#projects" className="hover:text-accent transition-colors">ПРОЕКТЫ</a></li>
-              <li><a href="/#installation" className="hover:text-accent transition-colors">МОНТАЖ</a></li>
-              <li><a href="/#video-instructions" className="hover:text-accent transition-colors">ОБУЧЕНИЕ</a></li>
+              <li><button onClick={() => handleSectionClick('projects')} className="hover:text-accent transition-colors text-left">ПРОЕКТЫ</button></li>
+              <li><button onClick={() => handleSectionClick('installation')} className="hover:text-accent transition-colors text-left">МОНТАЖ</button></li>
+              <li><button onClick={() => handleSectionClick('video-instructions')} className="hover:text-accent transition-colors text-left">ОБУЧЕНИЕ</button></li>
             </ul>
           </div>
           
           <div>
             <h4 className="font-bold text-base lg:text-lg mb-3 lg:mb-4">О КОМПАНИИ</h4>
             <ul className="space-y-1 lg:space-y-2 text-xs lg:text-sm text-gray-300">
-              <li><a href="/#contacts" className="hover:text-accent transition-colors">КОНТАКТЫ</a></li>
+              <li><button onClick={() => handleSectionClick('contacts')} className="hover:text-accent transition-colors text-left">КОНТАКТЫ</button></li>
               <li><a href="/gallery" className="hover:text-accent transition-colors">ПОРТФОЛИО</a></li>
-              <li><a href="/#company" className="hover:text-accent transition-colors">НОВОСТИ</a></li>
-              <li><a href="/#company" className="hover:text-accent transition-colors">ПАРТНЕРАМ</a></li>
-              <li><a href="/#material" className="hover:text-accent transition-colors">О МАТЕРИАЛЕ</a></li>
-              <li><a href="/#company" className="hover:text-accent transition-colors">ДОСТАВКА И ОПЛАТА</a></li>
+              <li><button onClick={() => handleSectionClick('company')} className="hover:text-accent transition-colors text-left">НОВОСТИ</button></li>
+              <li><button onClick={() => handleSectionClick('company')} className="hover:text-accent transition-colors text-left">ПАРТНЕРАМ</button></li>
+              <li><button onClick={() => handleSectionClick('material')} className="hover:text-accent transition-colors text-left">О МАТЕРИАЛЕ</button></li>
+              <li><button onClick={() => handleSectionClick('company')} className="hover:text-accent transition-colors text-left">ДОСТАВКА И ОПЛАТА</button></li>
             </ul>
           </div>
           
