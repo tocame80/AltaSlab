@@ -2460,10 +2460,13 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                               // Exit replace mode
                               setIsReplacingCertificateFile(false);
                               
-                              toast({
-                                title: 'Успешно',
-                                description: 'PDF сертификат загружен',
-                              });
+                              // Delay toast to show after interface updates
+                              setTimeout(() => {
+                                toast({
+                                  title: 'Успешно',
+                                  description: 'PDF сертификат загружен',
+                                });
+                              }, 100);
                             } else {
                               toast({
                                 title: 'Ошибка',
@@ -2716,10 +2719,13 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                 // Exit replace mode
                                 setIsReplacingInstructionFile(false);
                                 
-                                toast({
-                                  title: 'Успешно',
-                                  description: 'PDF инструкция загружена',
-                                });
+                                // Delay toast to show after interface updates
+                                setTimeout(() => {
+                                  toast({
+                                    title: 'Успешно',
+                                    description: 'PDF инструкция загружена',
+                                  });
+                                }, 100);
                               } else {
                                 toast({
                                   title: 'Ошибка',
