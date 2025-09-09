@@ -140,7 +140,11 @@ export default function DownloadableDocuments({
                         <div className="text-xs mt-1">{doc.description}</div>
                         {doc.validUntil && (
                           <div className="text-xs text-gray-500">
-                            Действует до: {new Date(doc.validUntil).toLocaleDateString('ru-RU')}
+                            Действует до: {
+                              doc.validUntil.includes('.') 
+                                ? doc.validUntil 
+                                : new Date(doc.validUntil).toLocaleDateString('ru-RU')
+                            }
                           </div>
                         )}
                       </div>

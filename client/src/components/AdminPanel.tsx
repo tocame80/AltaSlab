@@ -49,9 +49,7 @@ const certificateFormSchema = insertCertificateSchema.extend({
 
 const instructionFormSchema = insertInstallationInstructionSchema.extend({
   title: z.string().min(1, 'Название обязательно'),
-  category: z.string().min(1, 'Категория обязательна'),
-
-});
+}).omit({ category: true });
 
 const videoFormSchema = insertVideoInstructionSchema.extend({
   title: z.string().min(1, 'Название обязательно'),
@@ -87,7 +85,9 @@ const catalogProductFormSchema = insertCatalogProductSchema.extend({
 });
 
 type CertificateFormData = z.infer<typeof certificateFormSchema>;
-type InstructionFormData = z.infer<typeof instructionFormSchema>;
+type InstructionFormData = Omit<z.infer<typeof insertInstallationInstructionSchema>, 'category'> & {
+  title: string;
+};
 type VideoFormData = z.infer<typeof videoFormSchema>;
 type HeroImageFormData = z.infer<typeof heroImageFormSchema>;
 type GalleryProjectFormData = z.infer<typeof galleryProjectFormSchema>;
@@ -239,7 +239,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     resolver: zodResolver(instructionFormSchema),
     defaultValues: {
       title: '',
-      category: '',
       description: '',
       size: '',
       fileUrl: '',
@@ -329,7 +328,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
       setShowInstructionForm(false);
       instructionForm.reset({
         title: '',
-        category: '',
+
         description: '',
         size: '',
         fileUrl: '',
@@ -890,7 +889,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     });
     instructionForm.reset({
       title: instruction.title,
-      category: instruction.category,
       description: instruction.description || '',
       size: instruction.size,
       fileUrl: instruction.fileUrl || '',
@@ -2573,7 +2571,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       setIsReplacingInstructionFile(false);
                       instructionForm.reset({
                         title: '',
-                        category: '',
+                
                         description: '',
                         size: '',
                         fileUrl: '',
@@ -2610,24 +2608,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           )}
                         </div>
                         
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Категория *
-                          </label>
-                          <select
-                            {...instructionForm.register('category')}
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
-                          >
-                            <option value="">Выберите категорию</option>
-                            <option value="installation-guide">Инструкции по монтажу</option>
-                            <option value="layout-schemes">Схемы раскладки</option>
-                            <option value="care-recommendations">Рекомендации по уходу</option>
-                            <option value="warranty-conditions">Гарантийные условия</option>
-                          </select>
-                          {instructionForm.formState.errors.category && (
-                            <p className="text-red-600 text-sm mt-1">{instructionForm.formState.errors.category.message}</p>
-                          )}
-                        </div>
                       </div>
 
                       <div>
@@ -2737,7 +2717,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             setIsReplacingInstructionFile(false);
                             instructionForm.reset({
                               title: '',
-                              category: '',
+                      
                               description: '',
                               size: '',
                               fileUrl: '',
@@ -2783,7 +2763,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                 <p className="text-sm text-gray-600 mb-2">{instruction.description}</p>
                               )}
                               <div className="flex gap-4 text-sm text-gray-500">
-                                <span>Категория: {instruction.category}</span>
                                 <span>Размер: {instruction.size}</span>
                                 {instruction.fileUrl && (
                                   <a href={instruction.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700">

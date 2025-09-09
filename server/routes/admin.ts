@@ -1304,7 +1304,7 @@ router.get('/documents/:type/:filename', (req, res) => {
 
     // Set appropriate headers for PDF
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
+    res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(filename)}"`);
     
     // Stream the file
     const fileStream = fsSync.createReadStream(filePath);
