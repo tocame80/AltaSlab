@@ -1,14 +1,9 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Download, Award, Shield, Verified, Calendar, MapPin } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
-import { Certificate } from '@shared/schema';
+import { Shield, Verified, Award } from 'lucide-react';
 import DownloadableDocuments from '@/components/DownloadableDocuments';
 
 export default function CertificatesPage() {
-  const { data: certificates = [], isLoading } = useQuery<Certificate[]>({
-    queryKey: ['/api/certificates'],
-  });
 
   const qualityStandards = [
     {
@@ -63,67 +58,16 @@ export default function CertificatesPage() {
             ))}
           </div>
 
-          {/* Certificates Grid */}
+          {/* Certificates */}
           <div className="mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
               Официальные сертификаты
             </h2>
-            {isLoading ? (
-              <div className="text-center">Загрузка сертификатов...</div>
-            ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {certificates.map((cert) => (
-                  <div key={cert.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
-                    <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-xl flex items-center justify-center">
-                      {cert.imageUrl ? (
-                        <img src={cert.imageUrl} alt={cert.title} className="w-full h-full object-cover rounded-t-xl" />
-                      ) : (
-                        <Award className="w-20 h-20 text-gray-400" />
-                      )}
-                    </div>
-                    <div className="p-6">
-                      <h3 className="font-bold text-gray-900 mb-3 text-lg leading-tight">{cert.title}</h3>
-                      <p className="text-sm text-gray-600 mb-4 leading-relaxed">{cert.description}</p>
-                      
-                      <div className="space-y-3 mb-6">
-                        <div className="flex items-center text-sm text-gray-500">
-                          <Calendar className="w-4 h-4 mr-2" />
-                          <span>Выдан: {cert.issueDate}</span>
-                        </div>
-                        <div className="flex items-center text-sm text-gray-500">
-                          <Calendar className="w-4 h-4 mr-2" />
-                          <span>Действителен до: {cert.validUntil}</span>
-                        </div>
-                        <div className="flex items-center text-sm text-gray-500">
-                          <MapPin className="w-4 h-4 mr-2" />
-                          <span>{cert.issuer}</span>
-                        </div>
-                      </div>
-
-                      <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                        <div className="text-xs text-gray-500 mb-1">Номер сертификата:</div>
-                        <div className="text-sm font-mono text-gray-900">{cert.number}</div>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-500">{cert.size}</span>
-                        {cert.fileUrl ? (
-                          <a href={cert.fileUrl} download className="bg-[#e90039] text-white px-4 py-2 rounded-lg hover:bg-[#c8002f] transition-colors flex items-center gap-2">
-                            <Download size={16} />
-                            Скачать
-                          </a>
-                        ) : (
-                          <button disabled className="bg-gray-300 text-gray-500 px-4 py-2 rounded-lg cursor-not-allowed flex items-center gap-2">
-                            <Download size={16} />
-                            Скачать
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            <DownloadableDocuments 
+              title="Сертификаты и документы качества"
+              showInstallationDocs={false}
+              showCertificates={true}
+            />
           </div>
 
           {/* Installation Instructions and Documents */}
