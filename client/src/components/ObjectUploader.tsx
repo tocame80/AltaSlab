@@ -79,10 +79,7 @@ export function ObjectUploader({
         console.log('Uppy complete event:', result);
         const closeModal = () => setShowModal(false);
         onComplete?.(result, closeModal);
-        // Auto-close modal after successful upload
-        if (result.successful && result.successful.length > 0) {
-          setTimeout(closeModal, 2000); // Close after 2 seconds to show success
-        }
+        // Don't auto-close - let user close manually
       })
       .on("error", (error) => {
         console.error('ObjectUploader error:', error);

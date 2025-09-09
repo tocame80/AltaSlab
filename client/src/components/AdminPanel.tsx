@@ -2451,13 +2451,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                               
                               toast({
                                 title: 'Успешно',
-                                description: 'PDF сертификат загружен. Сохраните форму для завершения.',
+                                description: 'PDF сертификат загружен. Закройте окно загрузки и сохраните форму.',
                               });
-                              
-                              // Close the upload modal after a short delay to show success
-                              setTimeout(() => {
-                                // The modal will close automatically via the upload component
-                              }, 2000);
                             } else {
                               console.error('No upload URL in successful result:', successfulFile);
                               toast({
@@ -2714,10 +2709,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                 
                                 toast({
                                   title: 'Успешно',
-                                  description: 'PDF инструкция загружена. Сохраните форму для завершения.',
+                                  description: 'PDF инструкция загружена. Закройте окно загрузки и сохраните форму.',
                                 });
-                                
-                                // Modal will close automatically after showing success
                               } else {
                                 console.error('No upload URL in successful result:', successfulFile);
                                 toast({
