@@ -133,17 +133,16 @@ export default function DownloadableDocuments({
                   <div className="font-medium text-gray-900">
                     {doc.title}
                   </div>
-                  <div className="text-sm text-gray-600">
+                  {/* Показываем название файла крупно и заметно */}
+                  {doc.fileUrl && (
+                    <div className="font-semibold text-blue-700 text-base mt-1">
+                      📄 {doc.fileUrl.split('/').pop()?.replace(/\.[^/.]+$/, '') || 'Документ'}
+                    </div>
+                  )}
+                  <div className="text-sm text-gray-600 mt-2">
                     {doc.type === 'certificate' && doc.description ? (
                       <div>
-                        <div>
-                          {doc.fileUrl ? (
-                            <span className="font-medium">{doc.fileUrl.split('/').pop()?.replace(/\.[^/.]+$/, '') || doc.size}</span>
-                          ) : (
-                            doc.size
-                          )}
-                          {doc.size && doc.fileUrl && <span>, {doc.size}</span>}
-                        </div>
+                        {doc.size && <div>Размер: {doc.size}</div>}
                         <div className="text-xs mt-1">{doc.description}</div>
                         {doc.validUntil && (
                           <div className="text-xs text-gray-500">
@@ -153,12 +152,9 @@ export default function DownloadableDocuments({
                       </div>
                     ) : (
                       <div>
-                        {doc.fileUrl ? (
-                          <span className="font-medium">{doc.fileUrl.split('/').pop()?.replace(/\.[^/.]+$/, '') || 'Файл'}</span>
-                        ) : (
-                          <span>Файл недоступен</span>
-                        )}
-                        {doc.size && doc.fileUrl && <span>, {doc.size}</span>}
+                        {!doc.fileUrl && <span className="text-red-500">Файл не загружен</span>}
+                        {doc.size && doc.fileUrl && <div>Размер: {doc.size}</div>}
+                        <div className="text-xs">Категория: {doc.category}</div>
                       </div>
                     )}
                   </div>
