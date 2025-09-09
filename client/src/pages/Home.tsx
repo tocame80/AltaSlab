@@ -17,13 +17,10 @@ import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
 import { useState, useEffect } from 'react';
 import { Collection } from '@/types';
-import { ChevronUp } from 'lucide-react';
-import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { useFavoritesContext } from '@/contexts/FavoritesContext';
 
 export default function Home() {
   const [activeCollection, setActiveCollection] = useState<Collection>('all');
-  const { isVisible, scrollToTop } = useScrollToTop();
   const { favoriteCount } = useFavoritesContext();
 
   // Listen for navigation events from footer
@@ -140,15 +137,6 @@ export default function Home() {
         
         <Footer />
         
-        {/* Back to Top Button */}
-        <button
-          onClick={scrollToTop}
-          className={`back-to-top ${isVisible ? '' : 'hidden'}`}
-          aria-label="Вернуться наверх"
-          type="button"
-        >
-          <ChevronUp size={20} />
-        </button>
       </div>
     </>
   );
