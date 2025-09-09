@@ -44,7 +44,7 @@ export function FileDisplay({ fileName, fileSize, fileUrl, onReplace, className 
           <div>
             <div className="font-medium text-gray-900">{displayName}</div>
             <div className="text-sm text-gray-600">
-              PDF{sizeText ? `, ${sizeText}` : ''}
+              Документ{sizeText ? `, ${sizeText}` : ''}
             </div>
           </div>
         </div>
@@ -52,6 +52,7 @@ export function FileDisplay({ fileName, fileSize, fileUrl, onReplace, className 
         <div className="flex gap-2">
           {onReplace && (
             <Button
+              type="button"
               variant="outline"
               size="sm"
               onClick={onReplace}

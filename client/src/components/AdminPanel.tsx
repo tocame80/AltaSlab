@@ -2494,7 +2494,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         >
                           <div className="flex flex-col items-center gap-2 text-gray-600">
                             <FileText size={24} />
-                            <span>Нажмите для загрузки PDF</span>
+                            <span>Нажмите для загрузки файла</span>
                             <span className="text-sm text-gray-500">Максимум 25 МБ</span>
                           </div>
                         </LocalFileUploader>
@@ -2753,7 +2753,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           >
                             <div className="flex flex-col items-center gap-2 text-gray-600">
                               <FileText size={24} />
-                              <span>Нажмите для загрузки PDF</span>
+                              <span>Нажмите для загрузки файла</span>
                               <span className="text-sm text-gray-500">Максимум 25 МБ</span>
                             </div>
                           </LocalFileUploader>
