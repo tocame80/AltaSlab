@@ -87,9 +87,9 @@ export default function Footer() {
         <div className="border-t border-gray-700 mt-8 lg:mt-12 pt-6 lg:pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center gap-2">
-              <p className="text-xs lg:text-sm text-gray-400">©2025. АЛЬТА СЛЭБ - SPC панели. Разработка сайта</p>
+              <p className="text-xs lg:text-sm text-gray-400">©2025. АЛЬТА СЛЭБ - SPC панели.</p>
               <a 
-                href="https://www.goryacheff.pro/?roistat_visit=6822452" 
+                href="https://www.goryacheff.pro" 
                 className="text-xs lg:text-sm text-gray-400 hover:text-gray-300 transition-colors flex items-center gap-1"
                 target="_blank" 
                 rel="noopener noreferrer"
@@ -110,7 +110,7 @@ export default function Footer() {
                     goryacheff.pro
                   </text>
                 </svg>
-                Сделано в <span className="font-medium">Completo</span>
+                Разработка сайта
               </a>
             </div>
             <div className="flex space-x-3 lg:space-x-4 lg:mt-4 md:mt-0 mt-[0px] mb-[0px] ml-[100px] mr-[100px] pl-[0px] pr-[0px] pt-[0px] pb-[0px]">
