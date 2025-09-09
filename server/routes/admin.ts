@@ -1188,14 +1188,16 @@ const uploadPDF = multer({
       // Ensure directory exists
       fs.mkdir(uploadPath, { recursive: true })
         .then(() => cb(null, uploadPath))
-        .catch((err) => cb(err));
+        .catch((err) => cb(err, ''));
     },
     filename: (req, file, cb) => {
       // Generate unique filename with timestamp
       const timestamp = Date.now();
       const extension = path.extname(file.originalname);
-      const basename = path.basename(file.originalname, extension);
-      const filename = `${basename}_${timestamp}${extension}`;
+      // Use simple safe filename
+      const originalName = file.originalname.replace(extension, '');
+      const safeBasename = originalName.replace(/[^\w\s\-а-яА-Я]/g, '').replace(/\s+/g, '_');
+      const filename = `${safeBasename}_${timestamp}${extension}`;
       cb(null, filename);
     }
   }),
