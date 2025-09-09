@@ -10,7 +10,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
 import OptimizedThumbnail from './OptimizedThumbnail';
-import { SimpleFileUploader } from './SimpleFileUploader';
+import { LocalFileUploader } from './LocalFileUploader';
+import { FileDisplay } from './FileDisplay';
 
 interface AdminPanelProps {
   isOpen: boolean;
@@ -103,6 +104,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [showCertificateForm, setShowCertificateForm] = useState(false);
   const [editingInstruction, setEditingInstruction] = useState<InstallationInstruction | null>(null);
   const [showInstructionForm, setShowInstructionForm] = useState(false);
+  
+  // File upload states
+  const [certificateFileData, setCertificateFileData] = useState<{ fileName?: string; fileSize?: number }>({});
+  const [instructionFileData, setInstructionFileData] = useState<{ fileName?: string; fileSize?: number }>({});
   const [editingVideo, setEditingVideo] = useState<VideoInstruction | null>(null);
   const [showVideoForm, setShowVideoForm] = useState(false);
   const [editingHeroImage, setEditingHeroImage] = useState<HeroImage | null>(null);
@@ -849,6 +854,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const startEditingCertificate = (certificate: Certificate) => {
     setEditingCertificate(certificate);
     setShowCertificateForm(true);
+    setCertificateFileData({
+      fileName: certificate.fileUrl?.split('/').pop() || '',
+      fileSize: undefined // We don't store file size, but show filename
+    });
     certificateForm.reset({
       title: certificate.title,
       description: certificate.description,
@@ -884,6 +893,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const startEditingInstruction = (instruction: InstallationInstruction) => {
     setEditingInstruction(instruction);
     setShowInstructionForm(true);
+    setInstructionFileData({
+      fileName: instruction.fileUrl?.split('/').pop() || '',
+      fileSize: undefined // We don't store file size, but show filename
+    });
     instructionForm.reset({
       title: instruction.title,
       category: instruction.category,
@@ -2300,6 +2313,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                   onClick={() => {
                     setEditingCertificate(null);
                     setShowCertificateForm(true);
+                    setCertificateFileData({});
                     certificateForm.reset();
                   }}
                   className="bg-[#E95D22] text-white px-4 py-2 rounded-lg hover:bg-[#d54a1a] transition-colors flex items-center gap-2"
@@ -2411,79 +2425,66 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-4">Загрузить PDF сертификат</label>
-                      <SimpleFileUploader
-                        maxFileSize={26214400} // 25MB
-                        allowedFileTypes={['application/pdf']}
-                        onGetUploadParameters={async () => {
-                          const response = await fetch('/api/admin/certificates/upload-url', {
-                            method: 'POST',
-                            headers: {
-                              'Content-Type': 'application/json',
-                            },
-                          });
-                          const data = await response.json();
-                          return {
-                            method: 'PUT' as const,
-                            url: data.uploadURL,
-                          };
-                        }}
-                        onComplete={(result) => {
-                          console.log('Certificate upload result:', result);
-                          if (result.success && result.uploadURL) {
-                            try {
-                              const url = new URL(result.uploadURL);
-                              const objectPath = url.pathname;
-                              console.log('Processing object path:', objectPath);
-                              const pathParts = objectPath.split('/');
-                              const fileId = pathParts[pathParts.length - 1];
-                              console.log('Extracted file ID:', fileId);
+                      <label className="block text-sm font-medium text-gray-700 mb-4">PDF сертификат</label>
+                      
+                      {/* Show current file if editing and has fileUrl */}
+                      {editingCertificate?.fileUrl && (
+                        <div className="mb-4">
+                          <FileDisplay
+                            fileName={certificateFileData.fileName || editingCertificate.fileUrl.split('/').pop()}
+                            fileSize={certificateFileData.fileSize}
+                            fileUrl={editingCertificate.fileUrl}
+                            onReplace={() => {
+                              // Reset file data to show uploader
+                              setCertificateFileData({});
+                            }}
+                          />
+                        </div>
+                      )}
+                      
+                      {/* Show uploader if no current file or replacing */}
+                      {(!editingCertificate?.fileUrl || Object.keys(certificateFileData).length === 0) && (
+                        <LocalFileUploader
+                          maxFileSize={26214400} // 25MB
+                          allowedFileTypes={['application/pdf']}
+                          uploadEndpoint="/api/admin/upload-certificate-pdf"
+                          onUploadComplete={(result) => {
+                            if (result.success && result.fileName) {
+                              const fileUrl = `/api/admin/documents/certificates/${result.fileName}`;
                               
-                              if (fileId && fileId.length > 0) {
-                                const fileUrl = `/api/admin/certificates/file/${fileId}`;
-                                console.log('Setting fileUrl to:', fileUrl);
-                                
-                                // Force form update
-                                certificateForm.setValue('fileUrl', fileUrl, { 
-                                  shouldValidate: true, 
-                                  shouldDirty: true 
-                                });
-                                
-                                // Log current form value to verify
-                                console.log('Current form fileUrl value:', certificateForm.getValues('fileUrl'));
-                                
-                                toast({
-                                  title: 'Успешно',
-                                  description: `PDF сертификат загружен: ${fileUrl}`,
-                                });
-                              } else {
-                                throw new Error('Не удалось извлечь ID файла из URL');
-                              }
-                            } catch (error) {
-                              console.error('Error processing upload URL:', error);
+                              // Update form
+                              certificateForm.setValue('fileUrl', fileUrl, { 
+                                shouldValidate: true, 
+                                shouldDirty: true 
+                              });
+                              
+                              // Store file data for display
+                              setCertificateFileData({
+                                fileName: result.fileName,
+                                fileSize: result.fileSize
+                              });
+                              
+                              toast({
+                                title: 'Успешно',
+                                description: 'PDF сертификат загружен',
+                              });
+                            } else {
                               toast({
                                 title: 'Ошибка',
-                                description: 'Ошибка обработки ссылки на файл',
+                                description: result.error || 'Ошибка загрузки файла',
                                 variant: 'destructive',
                               });
                             }
-                          } else {
-                            console.error('Upload failed or missing URL:', result);
-                            toast({
-                              title: 'Ошибка',
-                              description: result.error || 'Ошибка загрузки файла',
-                              variant: 'destructive',
-                            });
-                          }
-                        }}
-                        buttonClassName="w-full bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-[#E95D22] hover:bg-gray-50 transition-colors"
-                      >
-                        <div className="flex flex-col items-center gap-2 text-gray-600">
-                          <FileText size={24} />
-                          <span>Нажмите для загрузки PDF</span>
-                          <span className="text-sm text-gray-500">Максимум 25 МБ</span>
-                        </div>
-                      </SimpleFileUploader>
+                          }}
+                          buttonClassName="w-full bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-[#E95D22] hover:bg-gray-50 transition-colors"
+                        >
+                          <div className="flex flex-col items-center gap-2 text-gray-600">
+                            <FileText size={24} />
+                            <span>Нажмите для загрузки PDF</span>
+                            <span className="text-sm text-gray-500">Максимум 25 МБ</span>
+                          </div>
+                        </LocalFileUploader>
+                      )}
                     </div>
 
                     <div>
@@ -2502,6 +2503,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         onClick={() => {
                           setShowCertificateForm(false);
                           setEditingCertificate(null);
+                          setCertificateFileData({});
                           certificateForm.reset();
                         }}
                         className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
@@ -2577,6 +2579,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     onClick={() => {
                       setEditingInstruction(null);
                       setShowInstructionForm(true);
+                      setInstructionFileData({});
                       instructionForm.reset({
                         title: '',
                         category: '',
@@ -2674,79 +2677,66 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-4">Загрузить PDF инструкцию</label>
-                        <SimpleFileUploader
-                          maxFileSize={26214400} // 25MB
-                          allowedFileTypes={['application/pdf']}
-                          onGetUploadParameters={async () => {
-                            const response = await fetch('/api/admin/instructions/upload-url', {
-                              method: 'POST',
-                              headers: {
-                                'Content-Type': 'application/json',
-                              },
-                            });
-                            const data = await response.json();
-                            return {
-                              method: 'PUT' as const,
-                              url: data.uploadURL,
-                            };
-                          }}
-                          onComplete={(result) => {
-                            console.log('Instruction upload result:', result);
-                            if (result.success && result.uploadURL) {
-                              try {
-                                const url = new URL(result.uploadURL);
-                                const objectPath = url.pathname;
-                                console.log('Processing object path:', objectPath);
-                                const pathParts = objectPath.split('/');
-                                const fileId = pathParts[pathParts.length - 1];
-                                console.log('Extracted file ID:', fileId);
+                        <label className="block text-sm font-medium text-gray-700 mb-4">PDF инструкция</label>
+                        
+                        {/* Show current file if editing and has fileUrl */}
+                        {editingInstruction?.fileUrl && (
+                          <div className="mb-4">
+                            <FileDisplay
+                              fileName={instructionFileData.fileName || editingInstruction.fileUrl.split('/').pop()}
+                              fileSize={instructionFileData.fileSize}
+                              fileUrl={editingInstruction.fileUrl}
+                              onReplace={() => {
+                                // Reset file data to show uploader
+                                setInstructionFileData({});
+                              }}
+                            />
+                          </div>
+                        )}
+                        
+                        {/* Show uploader if no current file or replacing */}
+                        {(!editingInstruction?.fileUrl || Object.keys(instructionFileData).length === 0) && (
+                          <LocalFileUploader
+                            maxFileSize={26214400} // 25MB
+                            allowedFileTypes={['application/pdf']}
+                            uploadEndpoint="/api/admin/upload-instruction-pdf"
+                            onUploadComplete={(result) => {
+                              if (result.success && result.fileName) {
+                                const fileUrl = `/api/admin/documents/instructions/${result.fileName}`;
                                 
-                                if (fileId && fileId.length > 0) {
-                                  const fileUrl = `/api/admin/instructions/file/${fileId}`;
-                                  console.log('Setting fileUrl to:', fileUrl);
-                                  
-                                  // Force form update
-                                  instructionForm.setValue('fileUrl', fileUrl, { 
-                                    shouldValidate: true, 
-                                    shouldDirty: true 
-                                  });
-                                  
-                                  // Log current form value to verify
-                                  console.log('Current form fileUrl value:', instructionForm.getValues('fileUrl'));
-                                  
-                                  toast({
-                                    title: 'Успешно',
-                                    description: `PDF инструкция загружена: ${fileUrl}`,
-                                  });
-                                } else {
-                                  throw new Error('Не удалось извлечь ID файла из URL');
-                                }
-                              } catch (error) {
-                                console.error('Error processing upload URL:', error);
+                                // Update form
+                                instructionForm.setValue('fileUrl', fileUrl, { 
+                                  shouldValidate: true, 
+                                  shouldDirty: true 
+                                });
+                                
+                                // Store file data for display
+                                setInstructionFileData({
+                                  fileName: result.fileName,
+                                  fileSize: result.fileSize
+                                });
+                                
+                                toast({
+                                  title: 'Успешно',
+                                  description: 'PDF инструкция загружена',
+                                });
+                              } else {
                                 toast({
                                   title: 'Ошибка',
-                                  description: 'Ошибка обработки ссылки на файл',
+                                  description: result.error || 'Ошибка загрузки файла',
                                   variant: 'destructive',
                                 });
                               }
-                            } else {
-                              console.error('Upload failed or missing URL:', result);
-                              toast({
-                                title: 'Ошибка',
-                                description: result.error || 'Ошибка загрузки файла',
-                                variant: 'destructive',
-                              });
-                            }
-                          }}
-                          buttonClassName="w-full bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-[#E95D22] hover:bg-gray-50 transition-colors"
-                        >
-                          <div className="flex flex-col items-center gap-2 text-gray-600">
-                            <FileText size={24} />
-                            <span>Нажмите для загрузки PDF</span>
-                            <span className="text-sm text-gray-500">Максимум 25 МБ</span>
-                          </div>
-                        </SimpleFileUploader>
+                            }}
+                            buttonClassName="w-full bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-[#E95D22] hover:bg-gray-50 transition-colors"
+                          >
+                            <div className="flex flex-col items-center gap-2 text-gray-600">
+                              <FileText size={24} />
+                              <span>Нажмите для загрузки PDF</span>
+                              <span className="text-sm text-gray-500">Максимум 25 МБ</span>
+                            </div>
+                          </LocalFileUploader>
+                        )}
                       </div>
 
                       <div className="flex gap-4">
@@ -2755,6 +2745,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           onClick={() => {
                             setShowInstructionForm(false);
                             setEditingInstruction(null);
+                            setInstructionFileData({});
                             instructionForm.reset({
                               title: '',
                               category: '',

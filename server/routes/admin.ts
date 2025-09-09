@@ -2,6 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import path from 'path';
 import { promises as fs } from 'fs';
+import * as fsSync from 'fs';
 
 const router = Router();
 
@@ -1174,6 +1175,120 @@ router.post('/salepoints/import', uploadExcel.any(), async (req, res) => {
   } catch (error) {
     console.error('Error importing salepoints:', error);
     res.status(500).json({ error: 'Failed to import salepoints' });
+  }
+});
+
+// Configure multer for PDF uploads
+const uploadPDF = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      const type = req.body.type || 'instructions'; // 'instructions' or 'certificates'
+      const uploadPath = path.join(process.cwd(), 'client', 'src', 'assets', 'documents', type);
+      
+      // Ensure directory exists
+      fs.mkdir(uploadPath, { recursive: true })
+        .then(() => cb(null, uploadPath))
+        .catch((err) => cb(err));
+    },
+    filename: (req, file, cb) => {
+      // Generate unique filename with timestamp
+      const timestamp = Date.now();
+      const extension = path.extname(file.originalname);
+      const basename = path.basename(file.originalname, extension);
+      const filename = `${basename}_${timestamp}${extension}`;
+      cb(null, filename);
+    }
+  }),
+  limits: {
+    fileSize: 25 * 1024 * 1024, // 25MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === 'application/pdf') {
+      cb(null, true);
+    } else {
+      cb(new Error('Only PDF files are allowed'));
+    }
+  }
+});
+
+// Upload certificate PDF
+router.post('/upload-certificate-pdf', uploadPDF.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const fileName = req.file.filename;
+    const fileSize = req.file.size;
+    const filePath = `/src/assets/documents/certificates/${fileName}`;
+
+    res.json({
+      success: true,
+      fileName,
+      fileSize,
+      filePath,
+      message: 'Certificate PDF uploaded successfully'
+    });
+
+  } catch (error) {
+    console.error('Error uploading certificate PDF:', error);
+    res.status(500).json({ error: 'Failed to upload certificate PDF' });
+  }
+});
+
+// Upload instruction PDF
+router.post('/upload-instruction-pdf', uploadPDF.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const fileName = req.file.filename;
+    const fileSize = req.file.size;
+    const filePath = `/src/assets/documents/instructions/${fileName}`;
+
+    res.json({
+      success: true,
+      fileName,
+      fileSize,
+      filePath,
+      message: 'Instruction PDF uploaded successfully'
+    });
+
+  } catch (error) {
+    console.error('Error uploading instruction PDF:', error);
+    res.status(500).json({ error: 'Failed to upload instruction PDF' });
+  }
+});
+
+// Serve PDF files
+router.get('/documents/:type/:filename', (req, res) => {
+  try {
+    const { type, filename } = req.params;
+    
+    // Validate type
+    if (!['certificates', 'instructions'].includes(type)) {
+      return res.status(400).json({ error: 'Invalid document type' });
+    }
+
+    const filePath = path.join(process.cwd(), 'client', 'src', 'assets', 'documents', type, filename);
+    
+    // Check if file exists
+    if (!fsSync.existsSync(filePath)) {
+      return res.status(404).json({ error: 'File not found' });
+    }
+
+    // Set appropriate headers for PDF
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
+    
+    // Stream the file
+    const fileStream = fsSync.createReadStream(filePath);
+    fileStream.pipe(res);
+
+  } catch (error) {
+    console.error('Error serving PDF:', error);
+    res.status(500).json({ error: 'Failed to serve PDF' });
   }
 });
 
