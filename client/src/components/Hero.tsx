@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import altaSlabLogo from "@/assets/alta-slab-logo.png";
-import { heroImages } from '@/assets/hero/heroImages';
+import altaSlabLogo from "../assets/alta-slab-logo.png";
+import { heroImages } from '../assets/hero/heroImages';
 
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
