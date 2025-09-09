@@ -3,15 +3,35 @@ import { ArrowLeft } from 'lucide-react';
 import { Link } from 'wouter';
 import Header from '@/components/Header';
 
+// Panel size options
+const PANEL_SIZES = [
+  {
+    id: '300x600',
+    name: '300×600×2,4мм',
+    areaPerPackage: 4.32,
+    pricePerPackage: 4739,
+    piecesPerPackage: 24
+  },
+  {
+    id: '600x1200', 
+    name: '600×1200×2,4мм',
+    areaPerPackage: 5.04,
+    pricePerPackage: 5529,
+    piecesPerPackage: 7
+  }
+];
+
 export default function Calculator() {
   const [length, setLength] = useState('');
   const [width, setWidth] = useState('');
   const [margin, setMargin] = useState('5');
+  const [selectedPanelSize, setSelectedPanelSize] = useState('300x600');
   const [result, setResult] = useState<{
     area: number;
     areaWithMargin: number;
     packages: number;
     cost: number;
+    panelSize: string;
   } | null>(null);
 
   const calculateMaterial = () => {
@@ -26,18 +46,19 @@ export default function Calculator() {
     const area = lengthNum * widthNum;
     const areaWithMargin = area * (1 + marginNum / 100);
     
-    // Примерные значения для расчета (можно настроить)
-    const areaPerPackage = 1.44; // м² в упаковке
-    const pricePerPackage = 4739; // цена за упаковку
+    // Get selected panel size data
+    const selectedPanel = PANEL_SIZES.find(p => p.id === selectedPanelSize);
+    if (!selectedPanel) return;
 
-    const packages = Math.ceil(areaWithMargin / areaPerPackage);
-    const cost = packages * pricePerPackage;
+    const packages = Math.ceil(areaWithMargin / selectedPanel.areaPerPackage);
+    const cost = packages * selectedPanel.pricePerPackage;
 
     setResult({
       area: Math.round(area * 100) / 100,
       areaWithMargin: Math.round(areaWithMargin * 100) / 100,
       packages,
-      cost
+      cost,
+      panelSize: selectedPanel.name
     });
   };
 
@@ -93,6 +114,20 @@ export default function Calculator() {
                     />
                   </div>
                   <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Размер панели</label>
+                    <select 
+                      value={selectedPanelSize}
+                      onChange={(e) => setSelectedPanelSize(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
+                    >
+                      {PANEL_SIZES.map(panel => (
+                        <option key={panel.id} value={panel.id}>
+                          {panel.name} - {panel.areaPerPackage} м²/уп - {panel.pricePerPackage.toLocaleString()} ₽
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Запас материала (%)</label>
                     <select 
                       value={margin}
@@ -129,6 +164,14 @@ export default function Calculator() {
                       {result ? `${result.areaWithMargin} м²` : '-- м²'}
                     </span>
                   </div>
+                  {result && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Размер панели:</span>
+                      <span className="font-medium text-gray-900">
+                        {result.panelSize}
+                      </span>
+                    </div>
+                  )}
                   <div className="border-t border-gray-200 pt-4">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Количество упаковок:</span>
@@ -157,8 +200,9 @@ export default function Calculator() {
                   <div className="text-blue-800 text-sm space-y-1">
                     <div>• Для помещений сложной формы рекомендуем увеличить запас до 15%</div>
                     <div>• При диагональной укладке добавьте дополнительно 10% к общему количеству</div>
+                    <div>• Панели 300×600 мм подходят для небольших и средних помещений</div>
+                    <div>• Панели 600×1200 мм идеальны для больших пространств</div>
                     <div>• Окончательный расчет уточняйте с менеджером</div>
-                    <div>• Расчет выполнен для стандартной упаковки 1.44 м²</div>
                   </div>
                 </div>
               </div>
