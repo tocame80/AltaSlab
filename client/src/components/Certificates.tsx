@@ -24,9 +24,9 @@ export default function Certificates() {
 
         <div className="text-center mt-8">
           <Link href="/certificates">
-            <a className="inline-flex items-center bg-[#e90039] text-white px-8 py-3 rounded-lg hover:bg-[#c8002f] transition-colors">
+            <button className="inline-flex items-center bg-[#e90039] text-white px-8 py-3 rounded-lg hover:bg-[#c8002f] transition-colors">
               Все сертификаты
-            </a>
+            </button>
           </Link>
         </div>
       </div>
