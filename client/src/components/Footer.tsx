@@ -6,11 +6,11 @@ export default function Footer() {
           <div>
             <h4 className="font-bold text-base lg:text-lg mb-3 lg:mb-4">КАТАЛОГ</h4>
             <ul className="space-y-1 lg:space-y-2 text-xs lg:text-sm text-gray-300">
-              <li><a href="#catalog" className="hover:text-accent transition-colors" onClick={() => window.dispatchEvent(new CustomEvent('navigate-to-collection', { detail: 'concrete' }))}>МАГИЯ БЕТОНА</a></li>
-              <li><a href="#catalog" className="hover:text-accent transition-colors" onClick={() => window.dispatchEvent(new CustomEvent('navigate-to-collection', { detail: 'fabric' }))}>ТКАНЕВАЯ РОСКОШЬ</a></li>
-              <li><a href="#catalog" className="hover:text-accent transition-colors" onClick={() => window.dispatchEvent(new CustomEvent('navigate-to-collection', { detail: 'matte' }))}>МАТОВАЯ ЭСТЕТИКА</a></li>
-              <li><a href="#catalog" className="hover:text-accent transition-colors" onClick={() => window.dispatchEvent(new CustomEvent('navigate-to-collection', { detail: 'marble' }))}>МРАМОРНАЯ ФЕЕРИЯ</a></li>
-              <li><a href="#catalog" className="hover:text-accent transition-colors" onClick={() => window.dispatchEvent(new CustomEvent('navigate-to-collection', { detail: 'accessories' }))}>КОМПЛЕКТУЮЩИЕ</a></li>
+              <li><a href="/#concrete" className="hover:text-accent transition-colors">МАГИЯ БЕТОНА</a></li>
+              <li><a href="/#fabric" className="hover:text-accent transition-colors">ТКАНЕВАЯ РОСКОШЬ</a></li>
+              <li><a href="/#matte" className="hover:text-accent transition-colors">МАТОВАЯ ЭСТЕТИКА</a></li>
+              <li><a href="/#marble" className="hover:text-accent transition-colors">МРАМОРНАЯ ФЕЕРИЯ</a></li>
+              <li><a href="/#accessories" className="hover:text-accent transition-colors">КОМПЛЕКТУЮЩИЕ</a></li>
             </ul>
           </div>
           
