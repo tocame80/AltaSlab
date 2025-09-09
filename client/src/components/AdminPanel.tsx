@@ -285,7 +285,11 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/certificates'] });
-      // Don't close form automatically - let user see the result
+      setShowCertificateForm(false);
+      setEditingCertificate(null);
+      setCertificateFileData({});
+      setIsReplacingCertificateFile(false);
+      certificateForm.reset();
       toast({
         title: 'Успешно',
         description: 'Сертификат сохранен',
@@ -356,7 +360,18 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/installation-instructions'] });
-      // Don't close form automatically - let user see the result
+      setShowInstructionForm(false);
+      setEditingInstruction(null);
+      setInstructionFileData({});
+      setIsReplacingInstructionFile(false);
+      instructionForm.reset({
+        title: '',
+        category: '',
+        description: '',
+        size: '',
+        fileUrl: '',
+        sortOrder: 0,
+      });
       toast({
         title: 'Успешно',
         description: 'Инструкция сохранена',
