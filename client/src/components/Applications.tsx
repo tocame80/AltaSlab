@@ -23,7 +23,7 @@ export default function Applications() {
   ];
 
   return (
-    <section className="py-12 lg:py-20 bg-white">
+    <section id="projects" className="py-12 lg:py-20 bg-white">
       <div className="container mx-auto px-4 lg:px-6">
         <h2 className="text-2xl lg:text-4xl font-bold text-[#2f378b] text-center mb-8 lg:mb-16">ПРИМЕНЕНИЕ</h2>
         
