@@ -911,6 +911,38 @@ router.get('/certificates/file/:objectPath(*)', async (req, res) => {
   }
 });
 
+// Instruction PDF Upload Routes
+router.post('/instructions/upload-url', async (req, res) => {
+  try {
+    const { ObjectStorageService } = await import('../objectStorage');
+    const objectStorageService = new ObjectStorageService();
+    const uploadURL = await objectStorageService.getInstructionPdfUploadURL();
+    res.json({ uploadURL });
+  } catch (error) {
+    console.error('Error getting instruction PDF upload URL:', error);
+    res.status(500).json({ error: 'Failed to get upload URL' });
+  }
+});
+
+// Serve instruction PDFs  
+router.get('/instructions/file/:objectPath(*)', async (req, res) => {
+  try {
+    const { ObjectStorageService } = await import('../objectStorage');
+    const objectStorageService = new ObjectStorageService();
+    
+    const objectPath = `/objects/instructions/${req.params.objectPath}`;
+    const objectFile = await objectStorageService.getObjectEntityFile(objectPath);
+    
+    await objectStorageService.downloadObject(objectFile, res);
+  } catch (error: any) {
+    console.error('Error serving instruction PDF:', error);
+    if (error?.name === 'ObjectNotFoundError') {
+      return res.status(404).json({ error: 'PDF not found' });
+    }
+    res.status(500).json({ error: 'Failed to serve PDF' });
+  }
+});
+
 // Salepoints Import/Export Routes
 router.get('/salepoints/export', async (req, res) => {
   try {

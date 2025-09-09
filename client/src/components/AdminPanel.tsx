@@ -44,13 +44,13 @@ const certificateFormSchema = insertCertificateSchema.extend({
   validUntil: z.string().min(1, 'Срок действия обязателен'),
   issuer: z.string().min(1, 'Орган выдачи обязателен'),
   number: z.string().min(1, 'Номер сертификата обязателен'),
-  size: z.string().min(1, 'Размер файла обязателен'),
+
 });
 
 const instructionFormSchema = insertInstallationInstructionSchema.extend({
   title: z.string().min(1, 'Название обязательно'),
   category: z.string().min(1, 'Категория обязательна'),
-  size: z.string().min(1, 'Размер файла обязателен'),
+
 });
 
 const videoFormSchema = insertVideoInstructionSchema.extend({
@@ -2340,7 +2340,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       )}
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-4">
+                    <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Дата выдачи</label>
                         <input
@@ -2361,17 +2361,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         />
                         {certificateForm.formState.errors.validUntil && (
                           <p className="text-red-500 text-sm mt-1">{certificateForm.formState.errors.validUntil.message}</p>
-                        )}
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Размер файла</label>
-                        <input
-                          {...certificateForm.register('size')}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
-                          placeholder="2.1 МБ"
-                        />
-                        {certificateForm.formState.errors.size && (
-                          <p className="text-red-500 text-sm mt-1">{certificateForm.formState.errors.size.message}</p>
                         )}
                       </div>
                     </div>
@@ -2604,24 +2593,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         />
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Размер файла *
-                          </label>
-                          <input
-                            {...instructionForm.register('size')}
-                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-[#E95D22]"
-                            placeholder="Например: 2.5 MB"
-                          />
-                          {instructionForm.formState.errors.size && (
-                            <p className="text-red-600 text-sm mt-1">{instructionForm.formState.errors.size.message}</p>
-                          )}
-                        </div>
-                        
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            URL файла
+                            URL файла (опционально)
                           </label>
                           <input
                             {...instructionForm.register('fileUrl')}
@@ -2641,6 +2616,47 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             placeholder="0"
                           />
                         </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-4">Загрузить PDF инструкцию</label>
+                        <ObjectUploader
+                          maxNumberOfFiles={1}
+                          maxFileSize={26214400} // 25MB
+                          allowedFileTypes={['application/pdf']}
+                          onGetUploadParameters={async () => {
+                            const response = await fetch('/api/admin/instructions/upload-url', {
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/json',
+                              },
+                            });
+                            const data = await response.json();
+                            return {
+                              method: 'PUT' as const,
+                              url: data.uploadURL,
+                            };
+                          }}
+                          onComplete={(result: UploadResult<Record<string, unknown>, Record<string, unknown>>) => {
+                            if (result.successful && result.successful[0] && result.successful[0].uploadURL) {
+                              const uploadURL = result.successful[0].uploadURL;
+                              const url = new URL(uploadURL);
+                              const objectPath = url.pathname;
+                              instructionForm.setValue('fileUrl', `/api/admin/instructions/file${objectPath.replace('/replit-objstore-5e307c41-ea68-4fae-83da-d89ae74034d8/.private', '')}`);
+                              toast({
+                                title: 'Успешно',
+                                description: 'PDF инструкция загружена',
+                              });
+                            }
+                          }}
+                          buttonClassName="w-full bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-[#E95D22] hover:bg-gray-50 transition-colors"
+                        >
+                          <div className="flex flex-col items-center gap-2 text-gray-600">
+                            <FileText size={24} />
+                            <span>Нажмите для загрузки PDF</span>
+                            <span className="text-sm text-gray-500">Максимум 25 МБ</span>
+                          </div>
+                        </ObjectUploader>
                       </div>
 
                       <div className="flex gap-4">
