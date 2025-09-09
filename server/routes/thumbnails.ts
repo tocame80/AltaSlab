@@ -41,19 +41,35 @@ async function generateThumbnail(
   quality: number
 ): Promise<Buffer> {
   try {
-    const buffer = await sharp(inputPath)
-      .resize(size, size, {
-        fit: 'cover',
-        position: 'center',
-        background: { r: 255, g: 255, b: 255, alpha: 1 } // White background
-      })
-      .flatten({ background: { r: 255, g: 255, b: 255 } }) // Flatten with white background
-      .jpeg({ 
-        quality: Math.round(quality * 100),
-        progressive: true 
-      })
-      .toBuffer();
+    const isPlaceholder = inputPath.includes('placeholder.jpg');
     
+    let sharpInstance = sharp(inputPath);
+    
+    if (isPlaceholder) {
+      // Special handling for placeholder - maintain aspect ratio, no white background
+      sharpInstance = sharpInstance
+        .resize(size, size, {
+          fit: 'contain',
+          position: 'center',
+          background: { r: 0, g: 0, b: 0, alpha: 0 } // Transparent background
+        })
+        .png({ quality: 100 }); // Use PNG to preserve transparency and quality
+    } else {
+      // Regular product images - square crop with white background
+      sharpInstance = sharpInstance
+        .resize(size, size, {
+          fit: 'cover',
+          position: 'center',
+          background: { r: 255, g: 255, b: 255, alpha: 1 }
+        })
+        .flatten({ background: { r: 255, g: 255, b: 255 } })
+        .jpeg({ 
+          quality: Math.round(quality * 100),
+          progressive: true 
+        });
+    }
+    
+    const buffer = await sharpInstance.toBuffer();
     return buffer;
   } catch (error) {
     console.error('Sharp processing error:', error);
@@ -83,8 +99,12 @@ router.get('/thumbnail', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Quality must be between 0.1 and 1' });
     }
 
-    // Generate cache key with white background version
-    const cacheKey = getCacheKey(src, sizeNum, qualityNum, whitebg ? 'whitebg' : '');
+    // Decode URL-encoded characters first
+    const decodedSrc = decodeURIComponent(src);
+    const isPlaceholder = decodedSrc.includes('placeholder.jpg');
+    
+    // Generate cache key with white background version and placeholder flag
+    const cacheKey = getCacheKey(src, sizeNum, qualityNum, whitebg ? 'whitebg' : (isPlaceholder ? 'png' : ''));
     
     // Check cache first
     const cachedPath = getCachedThumbnail(cacheKey);
@@ -95,9 +115,6 @@ router.get('/thumbnail', async (req: Request, res: Response) => {
 
     // Convert src to actual file path
     let filePath: string;
-    
-    // Decode URL-encoded characters first
-    const decodedSrc = decodeURIComponent(src);
     
     if (decodedSrc.startsWith('/assets/')) {
       // Handle frontend URL format like /assets/products/image.jpg
@@ -161,16 +178,20 @@ router.get('/thumbnail', async (req: Request, res: Response) => {
 
     console.log(`Generating thumbnail for: ${filePath} (${sizeNum}x${sizeNum}, quality: ${qualityNum})`);
 
+    // Check if this is placeholder image again
+    const isPlaceholderForResponse = filePath.includes('placeholder.jpg');
+
     // Generate thumbnail
     const thumbnailBuffer = await generateThumbnail(filePath, sizeNum, qualityNum);
 
-    // Save to cache
-    const cachePath = path.join(CACHE_DIR, cacheKey);
+    // Save to cache with appropriate extension
+    const cacheExtension = isPlaceholderForResponse ? '.png' : '.jpg';
+    const cachePath = path.join(CACHE_DIR, cacheKey.replace('.jpg', cacheExtension));
     fs.writeFileSync(cachePath, thumbnailBuffer);
 
-    // Send response
+    // Send response with correct Content-Type
     res.set({
-      'Content-Type': 'image/jpeg',
+      'Content-Type': isPlaceholderForResponse ? 'image/png' : 'image/jpeg',
       'Cache-Control': 'public, max-age=31536000', // 1 year cache
       'Content-Length': thumbnailBuffer.length.toString(),
       'ETag': `"${cacheKey}"` // Add ETag for cache busting
