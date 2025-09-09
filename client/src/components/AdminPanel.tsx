@@ -2449,7 +2449,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           } else {
                             console.error('Certificate upload failed:', result);
                             const errorMessage = result.failed && result.failed.length > 0 
-                              ? (typeof result.failed[0].error === 'string' ? result.failed[0].error : result.failed[0].error?.message) || 'Ошибка загрузки файла'
+                              ? (typeof result.failed[0].error === 'string' ? result.failed[0].error : (result.failed[0].error as any)?.message) || 'Ошибка загрузки файла'
                               : 'Файл не был загружен';
                             toast({
                               title: 'Ошибка',
@@ -2700,7 +2700,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             } else {
                               console.error('Instruction upload failed:', result);
                               const errorMessage = result.failed && result.failed.length > 0 
-                                ? (typeof result.failed[0].error === 'string' ? result.failed[0].error : result.failed[0].error?.message) || 'Ошибка загрузки файла'
+                                ? (typeof result.failed[0].error === 'string' ? result.failed[0].error : (result.failed[0].error as any)?.message) || 'Ошибка загрузки файла'
                                 : 'Файл не был загружен';
                               toast({
                                 title: 'Ошибка',
