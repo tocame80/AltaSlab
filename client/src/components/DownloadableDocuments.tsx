@@ -1,21 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Download, FileText, Award } from 'lucide-react';
 
-// Функция для перевода категорий на русский
-const translateCategory = (category: string): string => {
-  const translations: Record<string, string> = {
-    'installation-guide': 'Руководство по установке',
-    'layout-schemes': 'Схемы раскладки',
-    'care-recommendations': 'Рекомендации по уходу',
-    'warranty-conditions': 'Гарантийные условия',
-    'quality-certificates': 'Сертификаты качества',
-    'test-reports': 'Протоколы испытаний',
-    'compliance-docs': 'Документы соответствия',
-    'standards-certification': 'Сертификация стандартов'
-  };
-  return translations[category] || category;
-};
-
 interface Certificate {
   id: string;
   title: string;
@@ -148,16 +133,10 @@ export default function DownloadableDocuments({
                   <div className="font-medium text-gray-900">
                     {doc.title}
                   </div>
-                  {/* Показываем название файла крупно и заметно */}
-                  {doc.fileUrl && (
-                    <div className="font-semibold text-blue-700 text-base mt-1">
-                      📄 {doc.fileUrl.split('/').pop()?.replace(/\.[^/.]+$/, '') || 'Документ'}
-                    </div>
-                  )}
-                  <div className="text-sm text-gray-600 mt-2">
+                  <div className="text-sm text-gray-600">
                     {doc.type === 'certificate' && doc.description ? (
                       <div>
-                        {doc.size && <div>Размер: {doc.size}</div>}
+                        <div>{doc.size}</div>
                         <div className="text-xs mt-1">{doc.description}</div>
                         {doc.validUntil && (
                           <div className="text-xs text-gray-500">
@@ -166,11 +145,7 @@ export default function DownloadableDocuments({
                         )}
                       </div>
                     ) : (
-                      <div>
-                        {!doc.fileUrl && <span className="text-red-500">Файл не загружен</span>}
-                        {doc.size && doc.fileUrl && <div>Размер: {doc.size}</div>}
-                        <div className="text-xs">Категория: {translateCategory(doc.category)}</div>
-                      </div>
+                      doc.size
                     )}
                   </div>
                 </div>
