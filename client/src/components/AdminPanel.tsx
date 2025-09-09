@@ -2421,10 +2421,17 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             // Extract object path from upload URL and set it as fileUrl
                             const url = new URL(uploadURL);
                             const objectPath = url.pathname;
-                            certificateForm.setValue('fileUrl', `/api/admin/certificates/file${objectPath.replace('/replit-objstore-5e307c41-ea68-4fae-83da-d89ae74034d8/.private', '')}`);
+                            const fileUrl = `/api/admin/certificates/file${objectPath.replace('/replit-objstore-5e307c41-ea68-4fae-83da-d89ae74034d8/.private', '')}`;
+                            certificateForm.setValue('fileUrl', fileUrl);
+                            
+                            // Auto-save the form after file upload
+                            const formData = certificateForm.getValues();
+                            formData.fileUrl = fileUrl;
+                            handleSubmitCertificate(formData);
+                            
                             toast({
                               title: 'Успешно',
-                              description: 'PDF сертификат загружен',
+                              description: 'PDF сертификат загружен и сохранен',
                             });
                           }
                         }}
@@ -2642,10 +2649,17 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                               const uploadURL = result.successful[0].uploadURL;
                               const url = new URL(uploadURL);
                               const objectPath = url.pathname;
-                              instructionForm.setValue('fileUrl', `/api/admin/instructions/file${objectPath.replace('/replit-objstore-5e307c41-ea68-4fae-83da-d89ae74034d8/.private', '')}`);
+                              const fileUrl = `/api/admin/instructions/file${objectPath.replace('/replit-objstore-5e307c41-ea68-4fae-83da-d89ae74034d8/.private', '')}`;
+                              instructionForm.setValue('fileUrl', fileUrl);
+                              
+                              // Auto-save the form after file upload  
+                              const formData = instructionForm.getValues();
+                              formData.fileUrl = fileUrl;
+                              handleSubmitInstruction(formData);
+                              
                               toast({
                                 title: 'Успешно',
-                                description: 'PDF инструкция загружена',
+                                description: 'PDF инструкция загружена и сохранена',
                               });
                             }
                           }}
