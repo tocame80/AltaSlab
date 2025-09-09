@@ -2535,6 +2535,17 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                               <span>До: {cert.validUntil}</span>
                               <span>№: {cert.number}</span>
                             </div>
+                            {cert.fileUrl && (
+                              <div className="flex items-center gap-2 text-sm text-gray-500 mt-2">
+                                <FileText size={16} className="text-red-600" />
+                                <span>
+                                  {cert.fileUrl.split('/').pop()?.replace(/\.[^/.]+$/, '') || 'Документ'} PDF, {cert.size}
+                                </span>
+                                <a href={cert.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 ml-2">
+                                  Скачать
+                                </a>
+                              </div>
+                            )}
                           </div>
                           <div className="flex gap-2">
                             <button
