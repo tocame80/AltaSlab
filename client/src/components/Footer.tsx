@@ -55,24 +55,23 @@ export default function Footer() {
           </div>
           
           <div>
+            <h4 className="font-bold text-base lg:text-lg mb-3 lg:mb-4">РАЗДЕЛЫ</h4>
+            <ul className="space-y-1 lg:space-y-2 text-xs lg:text-sm text-gray-300">
+              <li><a href="/gallery" className="hover:text-accent transition-colors">ГАЛЕРЕЯ</a></li>
+              <li><a href="/calculator" className="hover:text-accent transition-colors">КАЛЬКУЛЯТОР</a></li>
+              <li><a href="/certificates" className="hover:text-accent transition-colors">СЕРТИФИКАТЫ</a></li>
+              <li><a href="/video" className="hover:text-accent transition-colors">ВИДЕО</a></li>
+              <li><a href="/faq" className="hover:text-accent transition-colors">ВОПРОСЫ</a></li>
+            </ul>
+          </div>
+          
+          <div>
             <h4 className="font-bold text-base lg:text-lg mb-3 lg:mb-4">УСЛУГИ</h4>
             <ul className="space-y-1 lg:space-y-2 text-xs lg:text-sm text-gray-300">
               <li><a href="/gallery" className="hover:text-accent transition-colors">ПРОЕКТЫ</a></li>
               <li><button onClick={() => handleSectionClick('installation')} className="hover:text-accent transition-colors text-left">МОНТАЖ</button></li>
               <li><button onClick={() => handleSectionClick('video-instructions')} className="hover:text-accent transition-colors text-left">ОБУЧЕНИЕ</button></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h4 className="font-bold text-base lg:text-lg mb-3 lg:mb-4">О КОМПАНИИ</h4>
-            <ul className="space-y-1 lg:space-y-2 text-xs lg:text-sm text-gray-300">
-              <li><button onClick={handleCatalogClick} className="hover:text-accent transition-colors text-left">КАТАЛОГ</button></li>
-              <li><a href="/gallery" className="hover:text-accent transition-colors">ГАЛЕРЕЯ</a></li>
-              <li><a href="/where-to-buy" className="hover:text-accent transition-colors">ГДЕ КУПИТЬ</a></li>
-              <li><a href="/calculator" className="hover:text-accent transition-colors">КАЛЬКУЛЯТОР</a></li>
-              <li><a href="/certificates" className="hover:text-accent transition-colors">СЕРТИФИКАТЫ</a></li>
-              <li><a href="/video" className="hover:text-accent transition-colors">ВИДЕО</a></li>
-              <li><a href="/faq" className="hover:text-accent transition-colors">ВОПРОСЫ</a></li>
+              <li><button onClick={() => handleSectionClick('material')} className="hover:text-accent transition-colors text-left">О МАТЕРИАЛЕ</button></li>
             </ul>
           </div>
           
