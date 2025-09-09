@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { ReactNode } from "react";
 import Uppy from "@uppy/core";
 import { DashboardModal } from "@uppy/react";
@@ -24,14 +24,10 @@ interface ObjectUploaderProps {
   children: ReactNode;
 }
 
-/**
- * A file upload component that renders as a button and provides a modal interface for
- * file management.
- */
 export function ObjectUploader({
   maxNumberOfFiles = 1,
-  maxFileSize = 10485760, // 10MB default
-  allowedFileTypes = ['image/*'], // Default to images
+  maxFileSize = 10485760,
+  allowedFileTypes = ['image/*'],
   onGetUploadParameters,
   onComplete,
   buttonClassName,
@@ -40,76 +36,87 @@ export function ObjectUploader({
   const [showModal, setShowModal] = useState(false);
   const [uppy, setUppy] = useState<Uppy | null>(null);
 
-  // Create Uppy instance only when modal opens
-  const handleOpenModal = () => {
-    // Destroy old instance if exists
-    if (uppy) {
-      uppy.destroy();
-    }
-    
-    // Create fresh instance with current props
-    const newUppy = new Uppy({
-      restrictions: {
-        maxNumberOfFiles,
-        maxFileSize,
-        allowedFileTypes: allowedFileTypes.length > 0 ? allowedFileTypes : undefined,
-      },
-      autoProceed: false,
-    })
-      .use(AwsS3, {
-        shouldUseMultipart: false,
-        getUploadParameters: onGetUploadParameters,
-      })
-      .on("complete", (result) => {
-        console.log('Uppy complete event:', result);
-        const closeModal = () => {
-          setShowModal(false);
-          // Clean up instance after closing
-          setTimeout(() => {
-            if (newUppy) {
-              newUppy.destroy();
-              setUppy(null);
-            }
-          }, 100);
-        };
-        onComplete?.(result, closeModal);
-      })
-      .on("error", (error) => {
-        console.error('ObjectUploader error:', error);
-      })
-      .on("restriction-failed", (file, error) => {
-        console.error('Restriction failed:', error);
-      })
-      .on("upload-error", (file, error, response) => {
-        console.error('Upload error:', error, response);
-      })
-      .on("upload-success", (file, response) => {
-        console.log('Upload success:', file, response);
-      });
-    
-    setUppy(newUppy);
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    // Clean up Uppy instance when modal closes
-    setTimeout(() => {
+  const handleOpenModal = async () => {
+    try {
+      // Clear previous instance
       if (uppy) {
         uppy.destroy();
         setUppy(null);
       }
-    }, 100);
+
+      console.log('Creating new Uppy instance...');
+      
+      // Create completely fresh instance
+      const newUppy = new Uppy({
+        id: `uppy-${Date.now()}`, // Unique ID each time
+        restrictions: {
+          maxNumberOfFiles,
+          maxFileSize,
+          allowedFileTypes: allowedFileTypes.length > 0 ? allowedFileTypes : undefined,
+        },
+        autoProceed: false,
+        debug: true, // Enable debug mode
+      });
+
+      // Add AWS S3 plugin separately
+      newUppy.use(AwsS3, {
+        shouldUseMultipart: false,
+        getUploadParameters: async (file) => {
+          console.log('Getting upload parameters for file:', file.name);
+          try {
+            const params = await onGetUploadParameters();
+            console.log('Upload parameters received:', params);
+            return params;
+          } catch (error) {
+            console.error('Failed to get upload parameters:', error);
+            throw error;
+          }
+        },
+      });
+
+      // Add event listeners
+      newUppy.on("complete", (result) => {
+        console.log('Upload complete:', result);
+        const closeModal = () => setShowModal(false);
+        if (onComplete) {
+          onComplete(result, closeModal);
+        }
+      });
+
+      newUppy.on("error", (error) => {
+        console.error('Uppy error:', error);
+      });
+
+      newUppy.on("upload-error", (file, error, response) => {
+        console.error('Upload error for file:', file?.name, error, response);
+      });
+
+      newUppy.on("upload-success", (file, response) => {
+        console.log('Upload success for file:', file?.name, response);
+      });
+
+      setUppy(newUppy);
+      setShowModal(true);
+      console.log('Modal opened with new Uppy instance');
+      
+    } catch (error) {
+      console.error('Error creating Uppy instance:', error);
+    }
   };
 
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
+  const handleCloseModal = () => {
+    console.log('Closing modal...');
+    setShowModal(false);
+    
+    // Cleanup with delay
+    setTimeout(() => {
       if (uppy) {
+        console.log('Destroying Uppy instance...');
         uppy.destroy();
+        setUppy(null);
       }
-    };
-  }, [uppy]);
+    }, 200);
+  };
 
   return (
     <div>
@@ -117,12 +124,15 @@ export function ObjectUploader({
         {children}
       </Button>
 
-      {uppy && (
+      {showModal && uppy && (
         <DashboardModal
           uppy={uppy}
           open={showModal}
           onRequestClose={handleCloseModal}
           proudlyDisplayPoweredByUppy={false}
+          closeModalOnClickOutside={false} // Prevent accidental closes
+          showProgressDetails={true}
+          showLinkToFileUploadResult={false}
         />
       )}
     </div>
