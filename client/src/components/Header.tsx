@@ -83,20 +83,20 @@ export default function Header() {
             <Link href="/gallery" className="nav-link">
               ГАЛЕРЕЯ
             </Link>
-            <Link href="/where-to-buy" className="nav-link">
-              ГДЕ КУПИТЬ
-            </Link>
             <Link href="/calculator" className="nav-link">
               КАЛЬКУЛЯТОР
-            </Link>
-            <Link href="/certificates" className="nav-link">
-              СЕРТИФИКАТЫ
             </Link>
             <Link href="/video" className="nav-link">
               ВИДЕО
             </Link>
+            <Link href="/certificates" className="nav-link">
+              СЕРТИФИКАТЫ
+            </Link>
             <Link href="/faq" className="nav-link">
               ВОПРОСЫ
+            </Link>
+            <Link href="/where-to-buy" className="nav-link">
+              ГДЕ КУПИТЬ
             </Link>
           </nav>
 
@@ -138,20 +138,20 @@ export default function Header() {
               <Link href="/gallery" className="nav-link">
                 ГАЛЕРЕЯ
               </Link>
-              <Link href="/where-to-buy" className="nav-link">
-                ГДЕ КУПИТЬ
-              </Link>
               <Link href="/calculator" className="nav-link">
                 КАЛЬКУЛЯТОР
-              </Link>
-              <Link href="/certificates" className="nav-link">
-                СЕРТИФИКАТЫ
               </Link>
               <Link href="/video" className="nav-link">
                 ВИДЕО
               </Link>
+              <Link href="/certificates" className="nav-link">
+                СЕРТИФИКАТЫ
+              </Link>
               <Link href="/faq" className="nav-link">
                 ВОПРОСЫ
+              </Link>
+              <Link href="/where-to-buy" className="nav-link">
+                ГДЕ КУПИТЬ
               </Link>
               
               <div className="flex items-center space-x-4 pt-4">
