@@ -2430,45 +2430,72 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             url: data.uploadURL,
                           };
                         }}
-                        onComplete={(result: UploadResult<Record<string, unknown>, Record<string, unknown>>) => {
+                        onComplete={(result: UploadResult<Record<string, unknown>, Record<string, unknown>>, closeModal: () => void) => {
                           console.log('Certificate upload complete:', result);
+                          
+                          // Check if there are any errors first
+                          if (result.failed && result.failed.length > 0) {
+                            console.error('Certificate upload failed:', result.failed);
+                            const errorMessage = result.failed[0].error 
+                              ? (typeof result.failed[0].error === 'string' ? result.failed[0].error : (result.failed[0].error as any)?.message) || 'Ошибка загрузки файла'
+                              : 'Файл не был загружен';
+                            toast({
+                              title: 'Ошибка загрузки',
+                              description: errorMessage,
+                              variant: 'destructive',
+                            });
+                            return;
+                          }
+                          
+                          // Check for successful uploads
                           if (result.successful && result.successful.length > 0) {
                             const successfulFile = result.successful[0];
                             console.log('Successful file upload:', successfulFile);
                             
-                            if (successfulFile.uploadURL) {
-                              const uploadURL = successfulFile.uploadURL;
-                              console.log('Certificate upload URL:', uploadURL);
-                              // Extract object path from upload URL and set it as fileUrl
-                              const url = new URL(uploadURL);
-                              const objectPath = url.pathname;
-                              // Extract UUID from object path (e.g., from /bucket/.private/certificates/uuid to uuid)
-                              const pathParts = objectPath.split('/');
-                              const fileId = pathParts[pathParts.length - 1];
-                              const fileUrl = `/api/admin/certificates/file/${fileId}`;
-                              console.log('Certificate file URL:', fileUrl);
-                              certificateForm.setValue('fileUrl', fileUrl);
-                              
-                              toast({
-                                title: 'Успешно',
-                                description: 'PDF сертификат загружен. Закройте окно загрузки и сохраните форму.',
-                              });
+                            // Validate upload URL exists
+                            if (successfulFile.uploadURL && typeof successfulFile.uploadURL === 'string') {
+                              try {
+                                const uploadURL = successfulFile.uploadURL;
+                                console.log('Certificate upload URL:', uploadURL);
+                                const url = new URL(uploadURL);
+                                const objectPath = url.pathname;
+                                // Extract UUID from object path (e.g., from /bucket/.private/certificates/uuid to uuid)
+                                const pathParts = objectPath.split('/');
+                                const fileId = pathParts[pathParts.length - 1];
+                                
+                                if (fileId && fileId.length > 0) {
+                                  const fileUrl = `/api/admin/certificates/file/${fileId}`;
+                                  console.log('Certificate file URL:', fileUrl);
+                                  certificateForm.setValue('fileUrl', fileUrl);
+                                  
+                                  toast({
+                                    title: 'Успешно',
+                                    description: 'PDF сертификат загружен. Закройте окно загрузки и сохраните форму.',
+                                  });
+                                } else {
+                                  throw new Error('Не удалось извлечь ID файла из URL');
+                                }
+                              } catch (error) {
+                                console.error('Error processing upload URL:', error);
+                                toast({
+                                  title: 'Ошибка',
+                                  description: 'Ошибка обработки ссылки на файл',
+                                  variant: 'destructive',
+                                });
+                              }
                             } else {
-                              console.error('No upload URL in successful result:', successfulFile);
+                              console.error('No valid upload URL in result:', successfulFile);
                               toast({
                                 title: 'Ошибка',
-                                description: 'Не удалось получить ссылку на загруженный файл',
+                                description: 'Не получена ссылка на загруженный файл',
                                 variant: 'destructive',
                               });
                             }
                           } else {
-                            console.error('Certificate upload failed:', result);
-                            const errorMessage = result.failed && result.failed.length > 0 
-                              ? (typeof result.failed[0].error === 'string' ? result.failed[0].error : (result.failed[0].error as any)?.message) || 'Ошибка загрузки файла'
-                              : 'Файл не был загружен';
+                            console.error('No successful uploads:', result);
                             toast({
                               title: 'Ошибка',
-                              description: errorMessage,
+                              description: 'Файл не был загружен корректно',
                               variant: 'destructive',
                             });
                           }
@@ -2691,42 +2718,70 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           }}
                           onComplete={(result: UploadResult<Record<string, unknown>, Record<string, unknown>>, closeModal: () => void) => {
                             console.log('Instruction upload complete:', result);
+                            
+                            // Check if there are any errors first
+                            if (result.failed && result.failed.length > 0) {
+                              console.error('Instruction upload failed:', result.failed);
+                              const errorMessage = result.failed[0].error 
+                                ? (typeof result.failed[0].error === 'string' ? result.failed[0].error : (result.failed[0].error as any)?.message) || 'Ошибка загрузки файла'
+                                : 'Файл не был загружен';
+                              toast({
+                                title: 'Ошибка загрузки',
+                                description: errorMessage,
+                                variant: 'destructive',
+                              });
+                              return;
+                            }
+                            
+                            // Check for successful uploads
                             if (result.successful && result.successful.length > 0) {
                               const successfulFile = result.successful[0];
                               console.log('Successful file upload:', successfulFile);
                               
-                              if (successfulFile.uploadURL) {
-                                const uploadURL = successfulFile.uploadURL;
-                                console.log('Instruction upload URL:', uploadURL);
-                                const url = new URL(uploadURL);
-                                const objectPath = url.pathname;
-                                // Extract UUID from object path (e.g., from /bucket/.private/instructions/uuid to uuid)
-                                const pathParts = objectPath.split('/');
-                                const fileId = pathParts[pathParts.length - 1];
-                                const fileUrl = `/api/admin/instructions/file/${fileId}`;
-                                console.log('Instruction file URL:', fileUrl);
-                                instructionForm.setValue('fileUrl', fileUrl);
-                                
-                                toast({
-                                  title: 'Успешно',
-                                  description: 'PDF инструкция загружена. Закройте окно загрузки и сохраните форму.',
-                                });
+                              // Validate upload URL exists
+                              if (successfulFile.uploadURL && typeof successfulFile.uploadURL === 'string') {
+                                try {
+                                  const uploadURL = successfulFile.uploadURL;
+                                  console.log('Instruction upload URL:', uploadURL);
+                                  const url = new URL(uploadURL);
+                                  const objectPath = url.pathname;
+                                  // Extract UUID from object path (e.g., from /bucket/.private/instructions/uuid to uuid)
+                                  const pathParts = objectPath.split('/');
+                                  const fileId = pathParts[pathParts.length - 1];
+                                  
+                                  if (fileId && fileId.length > 0) {
+                                    const fileUrl = `/api/admin/instructions/file/${fileId}`;
+                                    console.log('Instruction file URL:', fileUrl);
+                                    instructionForm.setValue('fileUrl', fileUrl);
+                                    
+                                    toast({
+                                      title: 'Успешно',
+                                      description: 'PDF инструкция загружена. Закройте окно загрузки и сохраните форму.',
+                                    });
+                                  } else {
+                                    throw new Error('Не удалось извлечь ID файла из URL');
+                                  }
+                                } catch (error) {
+                                  console.error('Error processing upload URL:', error);
+                                  toast({
+                                    title: 'Ошибка',
+                                    description: 'Ошибка обработки ссылки на файл',
+                                    variant: 'destructive',
+                                  });
+                                }
                               } else {
-                                console.error('No upload URL in successful result:', successfulFile);
+                                console.error('No valid upload URL in result:', successfulFile);
                                 toast({
                                   title: 'Ошибка',
-                                  description: 'Не удалось получить ссылку на загруженный файл',
+                                  description: 'Не получена ссылка на загруженный файл',
                                   variant: 'destructive',
                                 });
                               }
                             } else {
-                              console.error('Instruction upload failed:', result);
-                              const errorMessage = result.failed && result.failed.length > 0 
-                                ? (typeof result.failed[0].error === 'string' ? result.failed[0].error : (result.failed[0].error as any)?.message) || 'Ошибка загрузки файла'
-                                : 'Файл не был загружен';
+                              console.error('No successful uploads:', result);
                               toast({
                                 title: 'Ошибка',
-                                description: errorMessage,
+                                description: 'Файл не был загружен корректно',
                                 variant: 'destructive',
                               });
                             }
