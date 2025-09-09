@@ -29,6 +29,11 @@ export function SimpleFileUploader({
     const file = event.target.files?.[0];
     if (!file) return;
 
+    // Reset file input immediately to prevent issues
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+
     // Validate file size
     if (file.size > maxFileSize) {
       onComplete?.({ success: false, error: `Файл слишком большой. Максимум ${Math.round(maxFileSize / 1024 / 1024)} МБ` });
@@ -65,7 +70,7 @@ export function SimpleFileUploader({
       });
 
       if (response.ok) {
-        console.log('Upload successful');
+        console.log('Upload successful, URL:', url);
         onComplete?.({ success: true, uploadURL: url });
       } else {
         throw new Error(`Upload failed: ${response.status} ${response.statusText}`);
@@ -75,14 +80,11 @@ export function SimpleFileUploader({
       onComplete?.({ success: false, error: error instanceof Error ? error.message : 'Ошибка загрузки' });
     } finally {
       setUploading(false);
-      // Reset file input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
     }
   };
 
   const handleButtonClick = () => {
+    if (uploading) return; // Prevent multiple clicks while uploading
     fileInputRef.current?.click();
   };
 

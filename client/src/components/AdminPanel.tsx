@@ -2429,20 +2429,32 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           };
                         }}
                         onComplete={(result) => {
+                          console.log('Certificate upload result:', result);
                           if (result.success && result.uploadURL) {
                             try {
                               const url = new URL(result.uploadURL);
                               const objectPath = url.pathname;
+                              console.log('Processing object path:', objectPath);
                               const pathParts = objectPath.split('/');
                               const fileId = pathParts[pathParts.length - 1];
+                              console.log('Extracted file ID:', fileId);
                               
                               if (fileId && fileId.length > 0) {
                                 const fileUrl = `/api/admin/certificates/file/${fileId}`;
-                                certificateForm.setValue('fileUrl', fileUrl);
+                                console.log('Setting fileUrl to:', fileUrl);
+                                
+                                // Force form update
+                                certificateForm.setValue('fileUrl', fileUrl, { 
+                                  shouldValidate: true, 
+                                  shouldDirty: true 
+                                });
+                                
+                                // Log current form value to verify
+                                console.log('Current form fileUrl value:', certificateForm.getValues('fileUrl'));
                                 
                                 toast({
                                   title: 'Успешно',
-                                  description: 'PDF сертификат загружен.',
+                                  description: `PDF сертификат загружен: ${fileUrl}`,
                                 });
                               } else {
                                 throw new Error('Не удалось извлечь ID файла из URL');
@@ -2456,6 +2468,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                               });
                             }
                           } else {
+                            console.error('Upload failed or missing URL:', result);
                             toast({
                               title: 'Ошибка',
                               description: result.error || 'Ошибка загрузки файла',
@@ -2679,20 +2692,32 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             };
                           }}
                           onComplete={(result) => {
+                            console.log('Instruction upload result:', result);
                             if (result.success && result.uploadURL) {
                               try {
                                 const url = new URL(result.uploadURL);
                                 const objectPath = url.pathname;
+                                console.log('Processing object path:', objectPath);
                                 const pathParts = objectPath.split('/');
                                 const fileId = pathParts[pathParts.length - 1];
+                                console.log('Extracted file ID:', fileId);
                                 
                                 if (fileId && fileId.length > 0) {
                                   const fileUrl = `/api/admin/instructions/file/${fileId}`;
-                                  instructionForm.setValue('fileUrl', fileUrl);
+                                  console.log('Setting fileUrl to:', fileUrl);
+                                  
+                                  // Force form update
+                                  instructionForm.setValue('fileUrl', fileUrl, { 
+                                    shouldValidate: true, 
+                                    shouldDirty: true 
+                                  });
+                                  
+                                  // Log current form value to verify
+                                  console.log('Current form fileUrl value:', instructionForm.getValues('fileUrl'));
                                   
                                   toast({
                                     title: 'Успешно',
-                                    description: 'PDF инструкция загружена.',
+                                    description: `PDF инструкция загружена: ${fileUrl}`,
                                   });
                                 } else {
                                   throw new Error('Не удалось извлечь ID файла из URL');
@@ -2706,6 +2731,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                 });
                               }
                             } else {
+                              console.error('Upload failed or missing URL:', result);
                               toast({
                                 title: 'Ошибка',
                                 description: result.error || 'Ошибка загрузки файла',
