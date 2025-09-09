@@ -136,7 +136,14 @@ export default function DownloadableDocuments({
                   <div className="text-sm text-gray-600">
                     {doc.type === 'certificate' && doc.description ? (
                       <div>
-                        <div>{doc.size}</div>
+                        <div>
+                          {doc.fileUrl ? (
+                            <span className="font-medium">{doc.fileUrl.split('/').pop()?.replace(/\.[^/.]+$/, '') || doc.size}</span>
+                          ) : (
+                            doc.size
+                          )}
+                          {doc.size && doc.fileUrl && <span>, {doc.size}</span>}
+                        </div>
                         <div className="text-xs mt-1">{doc.description}</div>
                         {doc.validUntil && (
                           <div className="text-xs text-gray-500">
@@ -145,7 +152,14 @@ export default function DownloadableDocuments({
                         )}
                       </div>
                     ) : (
-                      doc.size
+                      <div>
+                        {doc.fileUrl ? (
+                          <span className="font-medium">{doc.fileUrl.split('/').pop()?.replace(/\.[^/.]+$/, '') || 'Файл'}</span>
+                        ) : (
+                          <span>Файл недоступен</span>
+                        )}
+                        {doc.size && doc.fileUrl && <span>, {doc.size}</span>}
+                      </div>
                     )}
                   </div>
                 </div>
