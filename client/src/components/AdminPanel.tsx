@@ -861,14 +861,27 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
     });
   };
 
+  // Format file size from bytes to MB
+  const formatFileSize = (bytes?: number): string => {
+    if (!bytes) return '';
+    const mb = bytes / (1024 * 1024);
+    return `${mb.toFixed(1)} МБ`;
+  };
+
   const handleSubmitCertificate = (data: CertificateFormData) => {
+    // Automatically set size from uploaded file
+    const dataWithSize = {
+      ...data,
+      size: certificateFileData.fileSize ? formatFileSize(certificateFileData.fileSize) : data.size
+    };
+
     if (editingCertificate) {
       updateCertificateMutation.mutate({
         id: editingCertificate.id,
-        data,
+        data: dataWithSize,
       });
     } else {
-      createCertificateMutation.mutate(data);
+      createCertificateMutation.mutate(dataWithSize);
     }
   };
 
@@ -897,13 +910,19 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   };
 
   const handleSubmitInstruction = (data: InstructionFormData) => {
+    // Automatically set size from uploaded file
+    const dataWithSize = {
+      ...data,
+      size: instructionFileData.fileSize ? formatFileSize(instructionFileData.fileSize) : data.size
+    };
+
     if (editingInstruction) {
       updateInstructionMutation.mutate({
         id: editingInstruction.id,
-        data,
+        data: dataWithSize,
       });
     } else {
-      createInstructionMutation.mutate(data);
+      createInstructionMutation.mutate(dataWithSize);
     }
   };
 
@@ -2539,7 +2558,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                               <div className="flex items-center gap-2 text-sm text-gray-500 mt-2">
                                 <FileText size={16} className="text-red-600" />
                                 <span>
-                                  {cert.fileUrl.split('/').pop()?.replace(/\.[^/.]+$/, '') || 'Документ'} PDF, {cert.size}
+                                  {cert.fileUrl.split('/').pop()?.replace(/\.[^/.]+$/, '') || 'Документ'} PDF{cert.size ? `, ${cert.size}` : ''}
                                 </span>
                                 <a href={cert.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 ml-2">
                                   Скачать
@@ -2777,7 +2796,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                 <div className="flex items-center gap-2 text-sm text-gray-500 mt-2">
                                   <FileText size={16} className="text-red-600" />
                                   <span>
-                                    {instruction.fileUrl.split('/').pop()?.replace(/\.[^/.]+$/, '') || 'Документ'} PDF, {instruction.size}
+                                    {instruction.fileUrl.split('/').pop()?.replace(/\.[^/.]+$/, '') || 'Документ'} PDF{instruction.size ? `, ${instruction.size}` : ''}
                                   </span>
                                   <a href={instruction.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 ml-2">
                                     Скачать
