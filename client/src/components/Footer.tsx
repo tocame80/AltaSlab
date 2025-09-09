@@ -88,22 +88,30 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center gap-2">
               <p className="text-xs lg:text-sm text-gray-400">©2025. АЛЬТА СЛЭБ - SPC панели. Разработка сайта</p>
-              <svg 
-                viewBox="0 0 200 45" 
-                className="h-3 lg:h-4 w-auto opacity-60"
-                style={{ filter: 'brightness(0.7)' }}
+              <a 
+                href="https://www.goryacheff.pro/?roistat_visit=6822452" 
+                className="text-xs lg:text-sm text-gray-400 hover:text-gray-300 transition-colors flex items-center gap-1"
+                target="_blank" 
+                rel="noopener noreferrer"
               >
-                <rect x="2" y="2" width="196" height="41" rx="20" ry="20" 
-                      fill="#1a1a1a" stroke="#666" strokeWidth="1"/>
-                <text x="100" y="28" 
-                      fontFamily="Arial, sans-serif" 
-                      fontSize="14" 
-                      fontWeight="bold" 
-                      fill="white" 
-                      textAnchor="middle">
-                  goryacheff.pro
-                </text>
-              </svg>
+                <svg 
+                  viewBox="0 0 120 25" 
+                  className="h-3 lg:h-4 w-auto opacity-60"
+                  style={{ filter: 'brightness(0.7)' }}
+                >
+                  <rect x="1" y="1" width="118" height="23" rx="12" ry="12" 
+                        fill="#1a1a1a" stroke="#666" strokeWidth="0.5"/>
+                  <text x="60" y="16" 
+                        fontFamily="Arial, sans-serif" 
+                        fontSize="10" 
+                        fontWeight="bold" 
+                        fill="white" 
+                        textAnchor="middle">
+                    goryacheff.pro
+                  </text>
+                </svg>
+                Сделано в <span className="font-medium">Completo</span>
+              </a>
             </div>
             <div className="flex space-x-3 lg:space-x-4 lg:mt-4 md:mt-0 mt-[0px] mb-[0px] ml-[100px] mr-[100px] pl-[0px] pr-[0px] pt-[0px] pb-[0px]">
               <a href="https://vk.com/altaprofilru" target="_blank" rel="noopener noreferrer" aria-label="ВКонтакте" className="w-8 h-8 lg:w-9 lg:h-9 rounded-full bg-[#4C75A3] hover:bg-[#3e5f85] transition-colors flex items-center justify-center">
