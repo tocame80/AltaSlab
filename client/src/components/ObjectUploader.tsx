@@ -78,6 +78,18 @@ export function ObjectUploader({
         onComplete?.(result);
         setShowModal(false);
       })
+      .on("error", (error) => {
+        console.error('ObjectUploader error:', error);
+        alert(`Ошибка загрузки: ${error.message}`);
+      })
+      .on("restriction-failed", (file, error) => {
+        console.error('Restriction failed:', error);
+        alert(`Файл не прошел проверку: ${error.message}`);
+      })
+      .on("upload-error", (file, error, response) => {
+        console.error('Upload error:', error, response);
+        alert(`Ошибка загрузки файла: ${error.message}`);
+      })
   );
 
   return (
