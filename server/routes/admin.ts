@@ -1191,11 +1191,7 @@ const uploadPDF = multer({
         .catch((err) => cb(err, ''));
     },
     filename: (req, file, cb) => {
-      // Generate unique filename with timestamp - keep original Cyrillic names
-      const timestamp = Date.now();
-      const extension = path.extname(file.originalname);
-      
-      // Try to fix encoding issues with Buffer conversion
+      // Use original filename as-is, fix encoding issues only
       let originalName;
       try {
         const buffer = Buffer.from(file.originalname, 'latin1');
@@ -1204,12 +1200,7 @@ const uploadPDF = multer({
         originalName = file.originalname;
       }
       
-      // Remove extension and create filename with original name
-      const basename = originalName.replace(extension, '');
-      
-      // Keep original Cyrillic names, just add timestamp for uniqueness
-      const filename = `${basename}_${timestamp}${extension}`;
-      cb(null, filename);
+      cb(null, originalName);
     }
   }),
   limits: {
