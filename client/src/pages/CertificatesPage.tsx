@@ -3,6 +3,7 @@ import Footer from '@/components/Footer';
 import { Download, Award, Shield, Verified, Calendar, MapPin } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { Certificate } from '@shared/schema';
+import DownloadableDocuments from '@/components/DownloadableDocuments';
 
 export default function CertificatesPage() {
   const { data: certificates = [], isLoading } = useQuery<Certificate[]>({
@@ -123,6 +124,15 @@ export default function CertificatesPage() {
                 ))}
               </div>
             )}
+          </div>
+
+          {/* Installation Instructions and Documents */}
+          <div className="mb-16">
+            <DownloadableDocuments 
+              title="Инструкции по монтажу и дополнительные документы"
+              showInstallationDocs={true}
+              showCertificates={false}
+            />
           </div>
 
           {/* Additional Information */}
