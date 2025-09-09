@@ -45,6 +45,23 @@ export default function Home() {
     };
   }, []);
 
+  // Handle URL hash on page load for catalog filtering
+  useEffect(() => {
+    const hash = window.location.hash.slice(1); // Remove the '#' symbol
+    const validCollections: Collection[] = ['concrete', 'fabric', 'matte', 'marble', 'accessories', 'favorites'];
+    
+    if (validCollections.includes(hash as Collection)) {
+      setActiveCollection(hash as Collection);
+      // Scroll to catalog section
+      setTimeout(() => {
+        const catalogElement = document.getElementById('catalog');
+        if (catalogElement) {
+          catalogElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  }, []);
+
   return (
     <>
       <SEOHead 
