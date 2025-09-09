@@ -10,6 +10,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
 import OptimizedThumbnail from './OptimizedThumbnail';
+import { ObjectUploader } from './ObjectUploader';
+import type { UploadResult } from '@uppy/core';
 
 interface AdminPanelProps {
   isOpen: boolean;
@@ -2403,6 +2405,48 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           placeholder="https://example.com/certificate.pdf"
                         />
                       </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-4">Загрузить PDF сертификат</label>
+                      <ObjectUploader
+                        maxNumberOfFiles={1}
+                        maxFileSize={10485760} // 10MB
+                        allowedFileTypes={['application/pdf']}
+                        onGetUploadParameters={async () => {
+                          const response = await fetch('/api/admin/certificates/upload-url', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                            },
+                          });
+                          const data = await response.json();
+                          return {
+                            method: 'PUT' as const,
+                            url: data.uploadURL,
+                          };
+                        }}
+                        onComplete={(result: UploadResult<Record<string, unknown>, Record<string, unknown>>) => {
+                          if (result.successful && result.successful[0]) {
+                            const uploadURL = result.successful[0].uploadURL;
+                            // Extract object path from upload URL and set it as fileUrl
+                            const url = new URL(uploadURL);
+                            const objectPath = url.pathname;
+                            certificateForm.setValue('fileUrl', `/api/admin/certificates/file${objectPath.replace('/replit-objstore-5e307c41-ea68-4fae-83da-d89ae74034d8/.private', '')}`);
+                            toast({
+                              title: 'Успешно',
+                              description: 'PDF сертификат загружен',
+                            });
+                          }
+                        }}
+                        buttonClassName="w-full bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-[#E95D22] hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="flex flex-col items-center gap-2 text-gray-600">
+                          <FileText size={24} />
+                          <span>Нажмите для загрузки PDF</span>
+                          <span className="text-sm text-gray-500">Максимум 10 МБ</span>
+                        </div>
+                      </ObjectUploader>
                     </div>
 
                     <div>

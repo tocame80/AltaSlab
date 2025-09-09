@@ -879,6 +879,38 @@ async function findFileRecursively(dir: string, targetFilename: string): Promise
   return null;
 }
 
+// Certificate PDF Upload Routes
+router.post('/certificates/upload-url', async (req, res) => {
+  try {
+    const { ObjectStorageService } = await import('../objectStorage');
+    const objectStorageService = new ObjectStorageService();
+    const uploadURL = await objectStorageService.getCertificatePdfUploadURL();
+    res.json({ uploadURL });
+  } catch (error) {
+    console.error('Error getting certificate PDF upload URL:', error);
+    res.status(500).json({ error: 'Failed to get upload URL' });
+  }
+});
+
+// Serve certificate PDFs
+router.get('/certificates/file/:objectPath(*)', async (req, res) => {
+  try {
+    const { ObjectStorageService } = await import('../objectStorage');
+    const objectStorageService = new ObjectStorageService();
+    
+    const objectPath = `/objects/certificates/${req.params.objectPath}`;
+    const objectFile = await objectStorageService.getObjectEntityFile(objectPath);
+    
+    await objectStorageService.downloadObject(objectFile, res);
+  } catch (error: any) {
+    console.error('Error serving certificate PDF:', error);
+    if (error?.name === 'ObjectNotFoundError') {
+      return res.status(404).json({ error: 'PDF not found' });
+    }
+    res.status(500).json({ error: 'Failed to serve PDF' });
+  }
+});
+
 // Salepoints Import/Export Routes
 router.get('/salepoints/export', async (req, res) => {
   try {
