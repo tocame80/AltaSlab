@@ -143,7 +143,7 @@ export default function Footer() {
                         fill="#1a1a1a" stroke="#666" strokeWidth="0.5"/>
                   <text x="60" y="16" 
                         fontFamily="Arial, sans-serif" 
-                        fontSize="10" 
+                        fontSize="11" 
                         fontWeight="bold" 
                         fill="white" 
                         textAnchor="middle">
