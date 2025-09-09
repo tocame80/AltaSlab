@@ -2427,7 +2427,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           };
                         }}
                         onComplete={(result: UploadResult<Record<string, unknown>, Record<string, unknown>>) => {
-                          if (result.successful && result.successful[0]) {
+                          if (result.successful && result.successful[0] && result.successful[0].uploadURL) {
                             const uploadURL = result.successful[0].uploadURL;
                             // Extract object path from upload URL and set it as fileUrl
                             const url = new URL(uploadURL);
