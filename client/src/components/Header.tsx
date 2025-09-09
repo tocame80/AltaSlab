@@ -70,7 +70,7 @@ export default function Header() {
             <img 
               src={altaSlabLogo} 
               alt="АЛЬТА СЛЭБ - SPC ПАНЕЛИ" 
-              className="h-8 lg:h-12 w-auto"
+              className="h-6 sm:h-7 md:h-8 lg:h-10 xl:h-12 w-auto min-w-[120px] max-w-[200px] object-contain"
             />
           </Link>
 
