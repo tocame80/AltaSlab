@@ -1,30 +1,8 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Shield, Verified, Award } from 'lucide-react';
 import DownloadableDocuments from '@/components/DownloadableDocuments';
 
 export default function CertificatesPage() {
-
-  const qualityStandards = [
-    {
-      icon: Shield,
-      title: 'Экологическая безопасность',
-      description: 'Отсутствие формальдегида и других вредных веществ',
-      standard: 'ГОСТ 30255-2014'
-    },
-    {
-      icon: Award,
-      title: 'Качество производства',
-      description: 'Международные стандарты управления качеством',
-      standard: 'ISO 9001:2015'
-    },
-    {
-      icon: Verified,
-      title: 'Пожарная безопасность',
-      description: 'Класс пожарной опасности КМ1',
-      standard: 'ФЗ-123 "Технический регламент"'
-    }
-  ];
 
   return (
     <div className="min-h-screen bg-white">
@@ -44,19 +22,6 @@ export default function CertificatesPage() {
             </p>
           </div>
 
-          {/* Quality Standards */}
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
-            {qualityStandards.map((standard, index) => (
-              <div key={index} className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8 border border-gray-100 hover:shadow-lg transition-shadow">
-                <div className="w-16 h-16 bg-[#e90039] bg-opacity-10 rounded-full flex items-center justify-center mb-6">
-                  <standard.icon className="w-8 h-8 text-[#e90039]" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">{standard.title}</h3>
-                <p className="text-gray-600 mb-4">{standard.description}</p>
-                <div className="text-sm text-[#e90039] font-medium">{standard.standard}</div>
-              </div>
-            ))}
-          </div>
 
           {/* Certificates */}
           <div className="mb-16">
