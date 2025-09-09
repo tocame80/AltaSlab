@@ -2762,14 +2762,17 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                               {instruction.description && (
                                 <p className="text-sm text-gray-600 mb-2">{instruction.description}</p>
                               )}
-                              <div className="flex gap-4 text-sm text-gray-500">
-                                <span>Размер: {instruction.size}</span>
-                                {instruction.fileUrl && (
-                                  <a href={instruction.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700">
+                              {instruction.fileUrl && (
+                                <div className="flex items-center gap-2 text-sm text-gray-500 mt-2">
+                                  <FileText size={16} className="text-red-600" />
+                                  <span>
+                                    {instruction.fileUrl.split('/').pop()?.replace(/\.[^/.]+$/, '') || 'Документ'} PDF, {instruction.size}
+                                  </span>
+                                  <a href={instruction.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 ml-2">
                                     Скачать
                                   </a>
-                                )}
-                              </div>
+                                </div>
+                              )}
                             </div>
                             <div className="flex gap-2">
                               <button
