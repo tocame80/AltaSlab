@@ -2453,6 +2453,11 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                 title: 'Успешно',
                                 description: 'PDF сертификат загружен. Сохраните форму для завершения.',
                               });
+                              
+                              // Close the upload modal after a short delay to show success
+                              setTimeout(() => {
+                                // The modal will close automatically via the upload component
+                              }, 2000);
                             } else {
                               console.error('No upload URL in successful result:', successfulFile);
                               toast({
@@ -2673,7 +2678,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-4">Загрузить PDF инструкцию</label>
                         <ObjectUploader
-                          key={editingInstruction ? `edit-${editingInstruction.id}` : 'new-instruction'}
                           maxNumberOfFiles={1}
                           maxFileSize={26214400} // 25MB
                           allowedFileTypes={['application/pdf']}
@@ -2690,7 +2694,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                               url: data.uploadURL,
                             };
                           }}
-                          onComplete={(result: UploadResult<Record<string, unknown>, Record<string, unknown>>) => {
+                          onComplete={(result: UploadResult<Record<string, unknown>, Record<string, unknown>>, closeModal: () => void) => {
                             console.log('Instruction upload complete:', result);
                             if (result.successful && result.successful.length > 0) {
                               const successfulFile = result.successful[0];
@@ -2712,6 +2716,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                   title: 'Успешно',
                                   description: 'PDF инструкция загружена. Сохраните форму для завершения.',
                                 });
+                                
+                                // Modal will close automatically after showing success
                               } else {
                                 console.error('No upload URL in successful result:', successfulFile);
                                 toast({

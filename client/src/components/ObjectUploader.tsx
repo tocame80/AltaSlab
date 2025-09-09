@@ -17,7 +17,8 @@ interface ObjectUploaderProps {
     url: string;
   }>;
   onComplete?: (
-    result: UploadResult<Record<string, unknown>, Record<string, unknown>>
+    result: UploadResult<Record<string, unknown>, Record<string, unknown>>,
+    closeModal: () => void
   ) => void;
   buttonClassName?: string;
   children: ReactNode;
@@ -76,12 +77,11 @@ export function ObjectUploader({
       })
       .on("complete", (result) => {
         console.log('Uppy complete event:', result);
-        onComplete?.(result);
+        const closeModal = () => setShowModal(false);
+        onComplete?.(result, closeModal);
         // Auto-close modal after successful upload
         if (result.successful && result.successful.length > 0) {
-          setTimeout(() => {
-            setShowModal(false);
-          }, 1500); // Close after 1.5 seconds to show success
+          setTimeout(closeModal, 2000); // Close after 2 seconds to show success
         }
       })
       .on("error", (error) => {
