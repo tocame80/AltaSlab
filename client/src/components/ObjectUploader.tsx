@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import Uppy from "@uppy/core";
 import { DashboardModal } from "@uppy/react";
@@ -97,6 +97,15 @@ export function ObjectUploader({
         console.log('Upload success:', file, response);
       })
   );
+
+  // Clear Uppy files when modal opens to ensure clean state
+  useEffect(() => {
+    if (showModal) {
+      uppy.getFiles().forEach(file => {
+        uppy.removeFile(file.id);
+      });
+    }
+  }, [showModal, uppy]);
 
   return (
     <div>

@@ -2673,6 +2673,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-4">Загрузить PDF инструкцию</label>
                         <ObjectUploader
+                          key={editingInstruction ? `edit-${editingInstruction.id}` : 'new-instruction'}
                           maxNumberOfFiles={1}
                           maxFileSize={26214400} // 25MB
                           allowedFileTypes={['application/pdf']}
