@@ -111,68 +111,82 @@ export default function DownloadableDocuments({
     );
   }
 
+  const certificateDocuments = allDocuments.filter(doc => doc.type === 'certificate');
+  const instructionDocuments = allDocuments.filter(doc => doc.type === 'installation');
+
+  const renderDocumentSection = (documents: any[], sectionTitle: string, icon: 'certificate' | 'instruction') => {
+    if (documents.length === 0) return null;
+
+    return (
+      <div className="mb-8">
+        <h5 className="font-semibold text-gray-900 mb-4">{sectionTitle}</h5>
+        <div className="grid md:grid-cols-2 gap-4">
+          {documents.map((doc) => (
+            <div 
+              key={doc.id} 
+              className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-[#e90039] bg-opacity-10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    {icon === 'certificate' ? (
+                      <Award className="w-4 h-4 text-[#e90039]" />
+                    ) : (
+                      <FileText className="w-4 h-4 text-[#e90039]" />
+                    )}
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-900">
+                      {doc.title}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {doc.type === 'certificate' && doc.description ? (
+                        <div>
+                          <div className="text-xs mt-1">{doc.description}</div>
+                          {doc.validUntil && (
+                            <div className="text-xs text-gray-500">
+                              Действует до: {
+                                doc.validUntil.includes('.') 
+                                  ? doc.validUntil 
+                                  : new Date(doc.validUntil).toLocaleDateString('ru-RU')
+                              }
+                            </div>
+                          )}
+                        </div>
+                      ) : doc.description ? (
+                        <div className="text-xs mt-1">{doc.description}</div>
+                      ) : null}
+                    </div>
+                    {doc.fileUrl && (
+                      <div className="flex items-center gap-2 text-sm text-gray-500 mt-2">
+                        <FileText size={16} className="text-red-600" />
+                        <span>
+                          {doc.fileUrl.split('/').pop()?.replace(/\.[^/.]+$/, '') || 'Документ'} PDF{doc.size ? `, ${doc.size}` : ''}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <button 
+                  onClick={() => handleDownload(doc.fileUrl || '', doc.title)}
+                  className="text-[#e90039] hover:text-[#c8002f] transition-colors p-2 hover:bg-gray-50 rounded-full"
+                  title={`Скачать ${doc.title}`}
+                  data-testid={`button-download-${doc.id}`}
+                >
+                  <Download size={20} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="bg-gray-50 rounded-lg p-6">
-      <h5 className="font-semibold text-gray-900 mb-4">{title}</h5>
-      <div className="grid md:grid-cols-2 gap-4">
-        {allDocuments.map((doc) => (
-          <div 
-            key={doc.id} 
-            className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 bg-[#e90039] bg-opacity-10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  {doc.type === 'certificate' ? (
-                    <Award className="w-4 h-4 text-[#e90039]" />
-                  ) : (
-                    <FileText className="w-4 h-4 text-[#e90039]" />
-                  )}
-                </div>
-                <div>
-                  <div className="font-medium text-gray-900">
-                    {doc.title}
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    {doc.type === 'certificate' && doc.description ? (
-                      <div>
-                        <div className="text-xs mt-1">{doc.description}</div>
-                        {doc.validUntil && (
-                          <div className="text-xs text-gray-500">
-                            Действует до: {
-                              doc.validUntil.includes('.') 
-                                ? doc.validUntil 
-                                : new Date(doc.validUntil).toLocaleDateString('ru-RU')
-                            }
-                          </div>
-                        )}
-                      </div>
-                    ) : doc.description ? (
-                      <div className="text-xs mt-1">{doc.description}</div>
-                    ) : null}
-                  </div>
-                  {doc.fileUrl && (
-                    <div className="flex items-center gap-2 text-sm text-gray-500 mt-2">
-                      <FileText size={16} className="text-red-600" />
-                      <span>
-                        {doc.fileUrl.split('/').pop()?.replace(/\.[^/.]+$/, '') || 'Документ'} PDF{doc.size ? `, ${doc.size}` : ''}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <button 
-                onClick={() => handleDownload(doc.fileUrl || '', doc.title)}
-                className="text-[#e90039] hover:text-[#c8002f] transition-colors p-2 hover:bg-gray-50 rounded-full"
-                title={`Скачать ${doc.title}`}
-                data-testid={`button-download-${doc.id}`}
-              >
-                <Download size={20} />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+      {showCertificates && renderDocumentSection(certificateDocuments, 'Официальные сертификаты', 'certificate')}
+      {showInstallationDocs && renderDocumentSection(instructionDocuments, 'Инструкции по монтажу', 'instruction')}
     </div>
   );
 }
