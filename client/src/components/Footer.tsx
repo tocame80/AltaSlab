@@ -134,10 +134,9 @@ export default function Footer() {
                 target="_blank" 
                 rel="noopener noreferrer"
               >
-                Разработка сайта
                 <svg 
                   viewBox="0 0 120 25" 
-                  className="h-3 lg:h-4 w-auto opacity-60"
+                  className="h-4 lg:h-5 w-auto opacity-60"
                   style={{ filter: 'brightness(0.7)' }}
                 >
                   <rect x="1" y="1" width="118" height="23" rx="12" ry="12" 
@@ -151,6 +150,7 @@ export default function Footer() {
                     goryacheff.pro
                   </text>
                 </svg>
+                Разработка сайта
               </a>
             </div>
           </div>
