@@ -50,18 +50,6 @@ export function FileDisplay({ fileName, fileSize, fileUrl, onReplace, className 
         </div>
         
         <div className="flex gap-2">
-          {fileUrl && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => window.open(fileUrl, '_blank')}
-              className="h-8 px-3"
-            >
-              <Download size={14} className="mr-1" />
-              Скачать
-            </Button>
-          )}
-          
           {onReplace && (
             <Button
               variant="outline"

@@ -108,6 +108,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   // File upload states
   const [certificateFileData, setCertificateFileData] = useState<{ fileName?: string; fileSize?: number }>({});
   const [instructionFileData, setInstructionFileData] = useState<{ fileName?: string; fileSize?: number }>({});
+  const [isReplacingCertificateFile, setIsReplacingCertificateFile] = useState(false);
+  const [isReplacingInstructionFile, setIsReplacingInstructionFile] = useState(false);
   const [editingVideo, setEditingVideo] = useState<VideoInstruction | null>(null);
   const [showVideoForm, setShowVideoForm] = useState(false);
   const [editingHeroImage, setEditingHeroImage] = useState<HeroImage | null>(null);
@@ -854,6 +856,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const startEditingCertificate = (certificate: Certificate) => {
     setEditingCertificate(certificate);
     setShowCertificateForm(true);
+    setIsReplacingCertificateFile(false);
     setCertificateFileData({
       fileName: certificate.fileUrl?.split('/').pop() || '',
       fileSize: undefined // We don't store file size, but show filename
@@ -893,6 +896,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const startEditingInstruction = (instruction: InstallationInstruction) => {
     setEditingInstruction(instruction);
     setShowInstructionForm(true);
+    setIsReplacingInstructionFile(false);
     setInstructionFileData({
       fileName: instruction.fileUrl?.split('/').pop() || '',
       fileSize: undefined // We don't store file size, but show filename
@@ -2314,6 +2318,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     setEditingCertificate(null);
                     setShowCertificateForm(true);
                     setCertificateFileData({});
+                    setIsReplacingCertificateFile(false);
                     certificateForm.reset();
                   }}
                   className="bg-[#E95D22] text-white px-4 py-2 rounded-lg hover:bg-[#d54a1a] transition-colors flex items-center gap-2"
@@ -2427,23 +2432,22 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-4">PDF сертификат</label>
                       
-                      {/* Show current file if editing and has fileUrl */}
-                      {editingCertificate?.fileUrl && (
+                      {/* Show current file if editing and has fileUrl and not replacing */}
+                      {editingCertificate?.fileUrl && !isReplacingCertificateFile && (
                         <div className="mb-4">
                           <FileDisplay
                             fileName={certificateFileData.fileName || editingCertificate.fileUrl.split('/').pop()}
                             fileSize={certificateFileData.fileSize}
                             fileUrl={editingCertificate.fileUrl}
                             onReplace={() => {
-                              // Reset file data to show uploader
-                              setCertificateFileData({});
+                              setIsReplacingCertificateFile(true);
                             }}
                           />
                         </div>
                       )}
                       
                       {/* Show uploader if no current file or replacing */}
-                      {(!editingCertificate?.fileUrl || Object.keys(certificateFileData).length === 0) && (
+                      {(!editingCertificate?.fileUrl || isReplacingCertificateFile) && (
                         <LocalFileUploader
                           maxFileSize={26214400} // 25MB
                           allowedFileTypes={['application/pdf']}
@@ -2463,6 +2467,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                 fileName: result.fileName,
                                 fileSize: result.fileSize
                               });
+                              
+                              // Exit replace mode
+                              setIsReplacingCertificateFile(false);
                               
                               toast({
                                 title: 'Успешно',
@@ -2504,6 +2511,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           setShowCertificateForm(false);
                           setEditingCertificate(null);
                           setCertificateFileData({});
+                          setIsReplacingCertificateFile(false);
                           certificateForm.reset();
                         }}
                         className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
@@ -2518,7 +2526,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         {createCertificateMutation.isPending || updateCertificateMutation.isPending
                           ? 'Сохранение...'
                           : editingCertificate
-                          ? 'Обновить'
+                          ? 'Сохранить'
                           : 'Создать'
                         }
                       </button>
@@ -2580,6 +2588,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       setEditingInstruction(null);
                       setShowInstructionForm(true);
                       setInstructionFileData({});
+                      setIsReplacingInstructionFile(false);
                       instructionForm.reset({
                         title: '',
                         category: '',
@@ -2679,23 +2688,22 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-4">PDF инструкция</label>
                         
-                        {/* Show current file if editing and has fileUrl */}
-                        {editingInstruction?.fileUrl && (
+                        {/* Show current file if editing and has fileUrl and not replacing */}
+                        {editingInstruction?.fileUrl && !isReplacingInstructionFile && (
                           <div className="mb-4">
                             <FileDisplay
                               fileName={instructionFileData.fileName || editingInstruction.fileUrl.split('/').pop()}
                               fileSize={instructionFileData.fileSize}
                               fileUrl={editingInstruction.fileUrl}
                               onReplace={() => {
-                                // Reset file data to show uploader
-                                setInstructionFileData({});
+                                setIsReplacingInstructionFile(true);
                               }}
                             />
                           </div>
                         )}
                         
                         {/* Show uploader if no current file or replacing */}
-                        {(!editingInstruction?.fileUrl || Object.keys(instructionFileData).length === 0) && (
+                        {(!editingInstruction?.fileUrl || isReplacingInstructionFile) && (
                           <LocalFileUploader
                             maxFileSize={26214400} // 25MB
                             allowedFileTypes={['application/pdf']}
@@ -2715,6 +2723,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                   fileName: result.fileName,
                                   fileSize: result.fileSize
                                 });
+                                
+                                // Exit replace mode
+                                setIsReplacingInstructionFile(false);
                                 
                                 toast({
                                   title: 'Успешно',
@@ -2746,6 +2757,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             setShowInstructionForm(false);
                             setEditingInstruction(null);
                             setInstructionFileData({});
+                            setIsReplacingInstructionFile(false);
                             instructionForm.reset({
                               title: '',
                               category: '',
@@ -2767,7 +2779,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           {createInstructionMutation.isPending || updateInstructionMutation.isPending
                             ? 'Сохранение...'
                             : editingInstruction
-                            ? 'Обновить'
+                            ? 'Сохранить'
                             : 'Создать'
                           }
                         </button>
