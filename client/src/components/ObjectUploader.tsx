@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import type { ReactNode } from "react";
 import Uppy from "@uppy/core";
-import { DashboardModal } from "@uppy/react";
+import { Dashboard } from "@uppy/react";
 import "@uppy/core/dist/style.min.css";
 import "@uppy/dashboard/dist/style.min.css";
 import AwsS3 from "@uppy/aws-s3";
@@ -33,107 +33,80 @@ export function ObjectUploader({
   buttonClassName,
   children,
 }: ObjectUploaderProps) {
-  const [showModal, setShowModal] = useState(false);
-  const [uppy, setUppy] = useState<Uppy | null>(null);
+  const [showUploader, setShowUploader] = useState(false);
+  const uppyRef = useRef<Uppy | null>(null);
 
-  const handleOpenModal = async () => {
-    try {
-      // Clear previous instance
-      if (uppy) {
-        uppy.destroy();
-        setUppy(null);
-      }
+  const initializeUppy = () => {
+    if (uppyRef.current) {
+      uppyRef.current.destroy();
+    }
 
-      console.log('Creating new Uppy instance...');
-      
-      // Create completely fresh instance
-      const newUppy = new Uppy({
-        id: `uppy-${Date.now()}`, // Unique ID each time
-        restrictions: {
-          maxNumberOfFiles,
-          maxFileSize,
-          allowedFileTypes: allowedFileTypes.length > 0 ? allowedFileTypes : undefined,
-        },
-        autoProceed: false,
-        debug: true, // Enable debug mode
-      });
-
-      // Add AWS S3 plugin separately
-      newUppy.use(AwsS3, {
+    const uppy = new Uppy({
+      restrictions: {
+        maxNumberOfFiles,
+        maxFileSize,
+        allowedFileTypes: allowedFileTypes.length > 0 ? allowedFileTypes : undefined,
+      },
+      autoProceed: false,
+    })
+      .use(AwsS3, {
         shouldUseMultipart: false,
-        getUploadParameters: async (file) => {
-          console.log('Getting upload parameters for file:', file.name);
-          try {
-            const params = await onGetUploadParameters();
-            console.log('Upload parameters received:', params);
-            return params;
-          } catch (error) {
-            console.error('Failed to get upload parameters:', error);
-            throw error;
-          }
-        },
-      });
-
-      // Add event listeners
-      newUppy.on("complete", (result) => {
+        getUploadParameters: onGetUploadParameters,
+      })
+      .on("complete", (result) => {
         console.log('Upload complete:', result);
-        const closeModal = () => setShowModal(false);
+        const closeModal = () => setShowUploader(false);
         if (onComplete) {
           onComplete(result, closeModal);
         }
+      })
+      .on("error", (error) => {
+        console.error('Upload error:', error);
       });
 
-      newUppy.on("error", (error) => {
-        console.error('Uppy error:', error);
-      });
-
-      newUppy.on("upload-error", (file, error, response) => {
-        console.error('Upload error for file:', file?.name, error, response);
-      });
-
-      newUppy.on("upload-success", (file, response) => {
-        console.log('Upload success for file:', file?.name, response);
-      });
-
-      setUppy(newUppy);
-      setShowModal(true);
-      console.log('Modal opened with new Uppy instance');
-      
-    } catch (error) {
-      console.error('Error creating Uppy instance:', error);
-    }
+    uppyRef.current = uppy;
+    return uppy;
   };
 
-  const handleCloseModal = () => {
-    console.log('Closing modal...');
-    setShowModal(false);
-    
-    // Cleanup with delay
-    setTimeout(() => {
-      if (uppy) {
-        console.log('Destroying Uppy instance...');
-        uppy.destroy();
-        setUppy(null);
+  const handleToggleUploader = () => {
+    if (!showUploader) {
+      initializeUppy();
+      setShowUploader(true);
+    } else {
+      setShowUploader(false);
+      if (uppyRef.current) {
+        uppyRef.current.destroy();
+        uppyRef.current = null;
       }
-    }, 200);
+    }
   };
 
   return (
     <div>
-      <Button onClick={handleOpenModal} className={buttonClassName}>
+      <Button onClick={handleToggleUploader} className={buttonClassName}>
         {children}
       </Button>
 
-      {showModal && uppy && (
-        <DashboardModal
-          uppy={uppy}
-          open={showModal}
-          onRequestClose={handleCloseModal}
-          proudlyDisplayPoweredByUppy={false}
-          closeModalOnClickOutside={false} // Prevent accidental closes
-          showProgressDetails={true}
-          showLinkToFileUploadResult={false}
-        />
+      {showUploader && uppyRef.current && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-medium">Загрузка файла</h3>
+              <button
+                onClick={() => setShowUploader(false)}
+                className="text-gray-400 hover:text-gray-600 text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            <Dashboard
+              uppy={uppyRef.current}
+              proudlyDisplayPoweredByUppy={false}
+              height={400}
+              width="100%"
+            />
+          </div>
+        </div>
       )}
     </div>
   );
