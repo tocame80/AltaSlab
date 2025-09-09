@@ -2436,13 +2436,13 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-4">PDF сертификат</label>
                       
-                      {/* Show current file if editing and has fileUrl and not replacing */}
-                      {editingCertificate?.fileUrl && !isReplacingCertificateFile && (
+                      {/* Show current file if has file data and not replacing */}
+                      {certificateFileData.fileName && !isReplacingCertificateFile && (
                         <div className="mb-4">
                           <FileDisplay
-                            fileName={certificateFileData.fileName || editingCertificate.fileUrl.split('/').pop()}
+                            fileName={certificateFileData.fileName}
                             fileSize={certificateFileData.fileSize}
-                            fileUrl={editingCertificate.fileUrl}
+                            fileUrl={editingCertificate?.fileUrl || `/api/admin/documents/certificates/${certificateFileData.fileName}`}
                             onReplace={() => {
                               setIsReplacingCertificateFile(true);
                             }}
@@ -2450,8 +2450,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         </div>
                       )}
                       
-                      {/* Show uploader if no current file or replacing */}
-                      {(!editingCertificate?.fileUrl || isReplacingCertificateFile) && (
+                      {/* Show uploader if no file data or replacing */}
+                      {(!certificateFileData.fileName || isReplacingCertificateFile) && (
                         <LocalFileUploader
                           maxFileSize={26214400} // 25MB
                           allowedFileTypes={['application/pdf']}
@@ -2474,14 +2474,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                               
                               // Exit replace mode
                               setIsReplacingCertificateFile(false);
-                              
-                              // Delay toast to show after interface updates
-                              setTimeout(() => {
-                                toast({
-                                  title: 'Успешно',
-                                  description: 'PDF сертификат загружен',
-                                });
-                              }, 100);
                             } else {
                               toast({
                                 title: 'Ошибка',
@@ -2695,13 +2687,13 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-4">PDF инструкция</label>
                         
-                        {/* Show current file if editing and has fileUrl and not replacing */}
-                        {editingInstruction?.fileUrl && !isReplacingInstructionFile && (
+                        {/* Show current file if has file data and not replacing */}
+                        {instructionFileData.fileName && !isReplacingInstructionFile && (
                           <div className="mb-4">
                             <FileDisplay
-                              fileName={instructionFileData.fileName || editingInstruction.fileUrl.split('/').pop()}
+                              fileName={instructionFileData.fileName}
                               fileSize={instructionFileData.fileSize}
-                              fileUrl={editingInstruction.fileUrl}
+                              fileUrl={editingInstruction?.fileUrl || `/api/admin/documents/instructions/${instructionFileData.fileName}`}
                               onReplace={() => {
                                 setIsReplacingInstructionFile(true);
                               }}
@@ -2709,8 +2701,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           </div>
                         )}
                         
-                        {/* Show uploader if no current file or replacing */}
-                        {(!editingInstruction?.fileUrl || isReplacingInstructionFile) && (
+                        {/* Show uploader if no file data or replacing */}
+                        {(!instructionFileData.fileName || isReplacingInstructionFile) && (
                           <LocalFileUploader
                             maxFileSize={26214400} // 25MB
                             allowedFileTypes={['application/pdf']}
@@ -2733,14 +2725,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                 
                                 // Exit replace mode
                                 setIsReplacingInstructionFile(false);
-                                
-                                // Delay toast to show after interface updates
-                                setTimeout(() => {
-                                  toast({
-                                    title: 'Успешно',
-                                    description: 'PDF инструкция загружена',
-                                  });
-                                }, 100);
                               } else {
                                 toast({
                                   title: 'Ошибка',
