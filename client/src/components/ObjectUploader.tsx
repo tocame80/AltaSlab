@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { ReactNode } from "react";
 import Uppy from "@uppy/core";
 import { DashboardModal } from "@uppy/react";
@@ -62,8 +62,23 @@ export function ObjectUploader({
   children,
 }: ObjectUploaderProps) {
   const [showModal, setShowModal] = useState(false);
-  const [uppy] = useState(() =>
-    new Uppy({
+  const uppyRef = useRef<Uppy | null>(null);
+  const onCompleteRef = useRef(onComplete);
+  
+  // Update the ref when onComplete changes
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
+
+  // Initialize or reinitialize Uppy when key props change
+  useEffect(() => {
+    // Clean up previous instance
+    if (uppyRef.current) {
+      uppyRef.current.destroy();
+    }
+
+    // Create new Uppy instance
+    const uppy = new Uppy({
       restrictions: {
         maxNumberOfFiles,
         maxFileSize,
@@ -78,8 +93,7 @@ export function ObjectUploader({
       .on("complete", (result) => {
         console.log('Uppy complete event:', result);
         const closeModal = () => setShowModal(false);
-        onComplete?.(result, closeModal);
-        // Don't auto-close - let user close manually
+        onCompleteRef.current?.(result, closeModal);
       })
       .on("error", (error) => {
         console.error('ObjectUploader error:', error);
@@ -92,16 +106,37 @@ export function ObjectUploader({
       })
       .on("upload-success", (file, response) => {
         console.log('Upload success:', file, response);
-      })
-  );
+      });
+
+    uppyRef.current = uppy;
+
+    // Cleanup function
+    return () => {
+      if (uppyRef.current) {
+        uppyRef.current.destroy();
+        uppyRef.current = null;
+      }
+    };
+  }, [onGetUploadParameters, maxNumberOfFiles, maxFileSize, allowedFileTypes]);
 
   const handleOpenModal = () => {
+    if (!uppyRef.current) return;
+    
     // Clear any previous files before opening modal
-    uppy.getFiles().forEach(file => {
-      uppy.removeFile(file.id);
+    uppyRef.current.getFiles().forEach(file => {
+      uppyRef.current?.removeFile(file.id);
     });
     setShowModal(true);
   };
+
+  // Don't render if Uppy is not ready
+  if (!uppyRef.current) {
+    return (
+      <Button disabled className={buttonClassName}>
+        {children}
+      </Button>
+    );
+  }
 
   return (
     <div>
@@ -110,11 +145,10 @@ export function ObjectUploader({
       </Button>
 
       <DashboardModal
-        uppy={uppy}
+        uppy={uppyRef.current}
         open={showModal}
         onRequestClose={() => setShowModal(false)}
         proudlyDisplayPoweredByUppy={false}
-
       />
     </div>
   );
