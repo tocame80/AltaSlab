@@ -37,6 +37,9 @@ export default function CertificatesPage() {
 
           {/* Installation Instructions and Documents */}
           <div className="mb-16">
+            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+              Инструкции по монтажу
+            </h2>
             <DownloadableDocuments 
               title="Инструкции по монтажу и дополнительные документы"
               showInstallationDocs={true}
