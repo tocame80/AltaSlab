@@ -44,7 +44,7 @@ export default function Footer() {
           <div>
             <h4 className="font-bold text-base lg:text-lg mb-3 lg:mb-4">УСЛУГИ</h4>
             <ul className="space-y-1 lg:space-y-2 text-xs lg:text-sm text-gray-300">
-              <li><button onClick={() => handleSectionClick('projects')} className="hover:text-accent transition-colors text-left">ПРОЕКТЫ</button></li>
+              <li><a href="/gallery" className="hover:text-accent transition-colors">ПРОЕКТЫ</a></li>
               <li><button onClick={() => handleSectionClick('installation')} className="hover:text-accent transition-colors text-left">МОНТАЖ</button></li>
               <li><button onClick={() => handleSectionClick('video-instructions')} className="hover:text-accent transition-colors text-left">ОБУЧЕНИЕ</button></li>
             </ul>
