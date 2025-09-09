@@ -2,7 +2,7 @@ import { Mail, Search, Menu } from "lucide-react";
 import { useState } from "react";
 import { useScrollDirection } from "@/hooks/useScrollDirection";
 import { Link, useLocation } from "wouter";
-import altaSlabLogo from "@/assets/alta-slab-logo.png";
+import altaSlabLogo from "../assets/alta-slab-logo.png";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
