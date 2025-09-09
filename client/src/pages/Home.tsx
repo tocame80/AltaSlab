@@ -142,7 +142,7 @@ export default function Home() {
         {/* Back to Top Button */}
         <button
           onClick={scrollToTop}
-          className="back-to-top mt-[100px] mb-[100px]"
+          className="back-to-top mt-[100px] mb-[100px] pl-[0px] pr-[0px] pt-[0px] pb-[0px] ml-[-16px] mr-[-16px]"
           aria-label="Вернуться наверх"
           type="button"
         >
