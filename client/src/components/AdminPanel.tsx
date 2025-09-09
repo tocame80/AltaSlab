@@ -2421,7 +2421,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             // Extract object path from upload URL and set it as fileUrl
                             const url = new URL(uploadURL);
                             const objectPath = url.pathname;
-                            const fileUrl = `/api/admin/certificates/file${objectPath.replace('/replit-objstore-5e307c41-ea68-4fae-83da-d89ae74034d8/.private', '')}`;
+                            // Extract UUID from object path (e.g., from /bucket/.private/certificates/uuid to uuid)
+                            const pathParts = objectPath.split('/');
+                            const fileId = pathParts[pathParts.length - 1];
+                            const fileUrl = `/api/admin/certificates/file/${fileId}`;
                             certificateForm.setValue('fileUrl', fileUrl);
                             
                             // Auto-save the form after file upload
@@ -2649,7 +2652,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                               const uploadURL = result.successful[0].uploadURL;
                               const url = new URL(uploadURL);
                               const objectPath = url.pathname;
-                              const fileUrl = `/api/admin/instructions/file${objectPath.replace('/replit-objstore-5e307c41-ea68-4fae-83da-d89ae74034d8/.private', '')}`;
+                              // Extract UUID from object path (e.g., from /bucket/.private/instructions/uuid to uuid)
+                              const pathParts = objectPath.split('/');
+                              const fileId = pathParts[pathParts.length - 1];
+                              const fileUrl = `/api/admin/instructions/file/${fileId}`;
                               instructionForm.setValue('fileUrl', fileUrl);
                               
                               // Auto-save the form after file upload  
