@@ -136,7 +136,6 @@ export default function DownloadableDocuments({
                   <div className="text-sm text-gray-600">
                     {doc.type === 'certificate' && doc.description ? (
                       <div>
-                        <div>{doc.size}</div>
                         <div className="text-xs mt-1">{doc.description}</div>
                         {doc.validUntil && (
                           <div className="text-xs text-gray-500">
@@ -148,10 +147,18 @@ export default function DownloadableDocuments({
                           </div>
                         )}
                       </div>
-                    ) : (
-                      doc.size
-                    )}
+                    ) : doc.description ? (
+                      <div className="text-xs mt-1">{doc.description}</div>
+                    ) : null}
                   </div>
+                  {doc.fileUrl && (
+                    <div className="flex items-center gap-2 text-sm text-gray-500 mt-2">
+                      <FileText size={16} className="text-red-600" />
+                      <span>
+                        {doc.fileUrl.split('/').pop()?.replace(/\.[^/.]+$/, '') || 'Документ'} PDF{doc.size ? `, ${doc.size}` : ''}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
               <button 
