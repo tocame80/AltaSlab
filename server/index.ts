@@ -22,6 +22,11 @@ validateEnvironment();
 
 const app = express();
 
+// Trust proxy for rate limiting (necessary when behind reverse proxy/CDN)
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1); // trust first proxy
+}
+
 // Security middleware - MUST be first
 app.use(helmet({
   contentSecurityPolicy: {
