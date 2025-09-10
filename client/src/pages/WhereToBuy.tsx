@@ -248,7 +248,11 @@ export default function WhereToBuy() {
 
       const script = document.createElement('script');
       const apiKey = import.meta.env.VITE_YANDEX_MAPS_API_KEY || '';
-      script.src = `https://api-maps.yandex.ru/2.1/?apikey=${apiKey}&lang=ru_RU`;
+      // Оптимизация: загружаем только необходимые компоненты для быстрой загрузки
+      script.src = `https://api-maps.yandex.ru/2.1/?apikey=${apiKey}&lang=ru_RU&load=package.full`;
+      script.async = true;
+      script.defer = true;
+      
       script.onload = () => {
         if (window.ymaps && window.ymaps.ready) {
           window.ymaps.ready(() => {
@@ -256,9 +260,13 @@ export default function WhereToBuy() {
           });
         }
       };
+      
       script.onerror = (error) => {
         console.error('Ошибка загрузки Яндекс Карт:', error);
+        // Fallback: показываем сообщение об ошибке вместо карты
+        setMapLoaded(false);
       };
+      
       document.head.appendChild(script);
     };
 
@@ -309,6 +317,11 @@ export default function WhereToBuy() {
         let currentCoords = { ...storedCoordinates };
         let needsUpdate = false;
 
+        // Оптимизация: батч геокодирование и ограничение количества запросов
+        const dealersToGeocode: typeof enhancedDealers = [];
+        const dealersWithCoords: Array<{dealer: typeof enhancedDealers[0], coords: [number, number]}> = [];
+        
+        // Сначала обрабатываем дилеров с готовыми координатами
         for (const dealer of enhancedDealers) {
           let coordinates: [number, number] | null = null;
 
@@ -316,31 +329,90 @@ export default function WhereToBuy() {
           if (dealer.latitude && dealer.longitude && 
               parseFloat(dealer.latitude) !== 0 && parseFloat(dealer.longitude) !== 0) {
             coordinates = [parseFloat(dealer.latitude), parseFloat(dealer.longitude)];
+            dealersWithCoords.push({dealer, coords: coordinates});
           } else if (dealer.address && dealer.city) {
             // Check cached coordinates first
             const cacheKey = `${dealer.city}_${dealer.address}`;
             
             if (currentCoords[cacheKey]) {
               coordinates = currentCoords[cacheKey];
+              dealersWithCoords.push({dealer, coords: coordinates});
             } else {
-              // Try to geocode the address
-              try {
-                const fullAddress = `${dealer.city}, ${dealer.address}`;
-                const geocodeResult = await window.ymaps.geocode(fullAddress);
-                const firstGeoObject = geocodeResult.geoObjects.get(0);
-                if (firstGeoObject) {
-                  const newCoordinates: [number, number] = firstGeoObject.geometry.getCoordinates();
-                  coordinates = newCoordinates;
-                  
-                  // Cache the coordinates
-                  currentCoords[cacheKey] = newCoordinates;
-                  needsUpdate = true;
-                }
-              } catch (error) {
-                console.warn(`Не удалось геокодировать адрес для ${dealer.name}:`, error);
-              }
+              // Добавляем в очередь для геокодирования
+              dealersToGeocode.push(dealer);
             }
           }
+        }
+        
+        // Сразу отображаем дилеров с готовыми координатами
+        for (const {dealer, coords} of dealersWithCoords) {
+          const placemark = new window.ymaps.Placemark(
+            coords,
+            {
+              balloonContentHeader: dealer.name,
+              balloonContentBody: `
+                <div>
+                  <p><strong>Адрес:</strong> ${dealer.address}</p>
+                  <p><strong>Город:</strong> ${dealer.city}</p>
+                  ${dealer.phone ? `<p><strong>Телефон:</strong> ${dealer.phone}</p>` : ''}
+                  ${dealer.workingHours ? `<p><strong>Часы работы:</strong> ${dealer.workingHours}</p>` : ''}
+                </div>
+              `,
+              balloonContentFooter: dealer.dealerType
+            },
+            {
+              preset: 'islands#redDotIcon'
+            }
+          );
+          placemark.dealerId = dealer.id;
+          placemarksRef.current.push(placemark);
+          mapInstance.geoObjects.add(placemark);
+        }
+        
+        // Геокодируем оставшиеся адреса асинхронно (не более 5 за раз)
+        const batchSize = 5;
+        for (let i = 0; i < Math.min(dealersToGeocode.length, batchSize); i++) {
+          const dealer = dealersToGeocode[i];
+          const cacheKey = `${dealer.city}_${dealer.address}`;
+          
+          try {
+            const fullAddress = `${dealer.city}, ${dealer.address}`;
+            const geocodeResult = await window.ymaps.geocode(fullAddress);
+            const firstGeoObject = geocodeResult.geoObjects.get(0);
+            if (firstGeoObject) {
+              const newCoordinates: [number, number] = firstGeoObject.geometry.getCoordinates();
+              
+              // Cache the coordinates
+              currentCoords[cacheKey] = newCoordinates;
+              needsUpdate = true;
+              
+              // Добавляем placemark
+              const placemark = new window.ymaps.Placemark(
+                newCoordinates,
+                {
+                  balloonContentHeader: dealer.name,
+                  balloonContentBody: `
+                    <div>
+                      <p><strong>Адрес:</strong> ${dealer.address}</p>
+                      <p><strong>Город:</strong> ${dealer.city}</p>
+                      ${dealer.phone ? `<p><strong>Телефон:</strong> ${dealer.phone}</p>` : ''}
+                      ${dealer.workingHours ? `<p><strong>Часы работы:</strong> ${dealer.workingHours}</p>` : ''}
+                    </div>
+                  `,
+                  balloonContentFooter: dealer.dealerType
+                },
+                {
+                  preset: 'islands#redDotIcon'
+                }
+              );
+              placemark.dealerId = dealer.id;
+              placemarksRef.current.push(placemark);
+              mapInstance.geoObjects.add(placemark);
+            }
+          } catch (error) {
+            console.warn(`Не удалось геокодировать адрес для ${dealer.name}:`, error);
+          }
+        }
 
           // Add placemark for dealers with coordinates
           if (coordinates) {
