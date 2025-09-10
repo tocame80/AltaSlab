@@ -248,8 +248,8 @@ export default function WhereToBuy() {
 
       const script = document.createElement('script');
       const apiKey = import.meta.env.VITE_YANDEX_MAPS_API_KEY || '';
-      // Оптимизация: загружаем только необходимые компоненты для быстрой загрузки
-      script.src = `https://api-maps.yandex.ru/2.1/?apikey=${apiKey}&lang=ru_RU&load=package.full`;
+      // Load essential components only to avoid bundling issues
+      script.src = `https://api-maps.yandex.ru/2.1/?apikey=${apiKey}&lang=ru_RU&load=Map,Placemark,GeoObjectCollection,geocode,util.bounds`;
       script.async = true;
       script.defer = true;
       
