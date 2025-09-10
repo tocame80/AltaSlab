@@ -116,22 +116,24 @@ router.get('/thumbnail', async (req: Request, res: Response) => {
     // Convert src to actual file path
     let filePath: string;
     
-    if (decodedSrc.startsWith('/assets/')) {
+    // Clean the decoded src from query parameters (like ?t=timestamp)
+    const cleanSrc = decodedSrc.split('?')[0];
+    
+    if (cleanSrc.startsWith('/assets/')) {
       // Handle frontend URL format like /assets/products/image.jpg
       const isDev = process.env.NODE_ENV === 'development';
       if (isDev) {
-        filePath = path.join(process.cwd(), 'client/src', decodedSrc.replace(/^\//, ''));
+        filePath = path.join(process.cwd(), 'client/src', cleanSrc.replace(/^\//, ''));
       } else {
         // In production, assets are in dist/public
-        filePath = path.join(process.cwd(), 'dist/public', decodedSrc.replace(/^\//, ''));
+        filePath = path.join(process.cwd(), 'dist/public', cleanSrc.replace(/^\//, ''));
       }
-    } else if (decodedSrc.startsWith('/src/assets/')) {
+    } else if (cleanSrc.startsWith('/src/assets/')) {
       // Handle webpack format
-      const cleanPath = decodedSrc.replace(/^\/src\/assets\//, '');
+      const cleanPath = cleanSrc.replace(/^\/src\/assets\//, '');
       filePath = path.join(process.cwd(), 'client/src/assets', cleanPath);
-    } else if (decodedSrc.startsWith('/api/admin/static-images/')) {
+    } else if (cleanSrc.startsWith('/api/admin/static-images/')) {
       // Handle admin panel URLs like /api/admin/static-images/concrete/image.png
-      const cleanSrc = decodedSrc.split('?')[0]; // Remove timestamp query params
       const pathParts = cleanSrc.replace('/api/admin/static-images/', '').split('/');
       const folder = pathParts[0]; // concrete, matte, etc.
       const filename = pathParts.slice(1).join('/'); // image filename with possible subdirs
