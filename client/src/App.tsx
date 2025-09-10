@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import Home from "@/pages/Home";
 import ProductDetails from "@/pages/ProductDetails";
 import ProjectDetails from "@/pages/ProjectDetails";
@@ -56,18 +57,20 @@ function App() {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <FavoritesProvider>
-          <Toaster />
-          <Router />
-          <AdminPanel 
-            isOpen={isAdminOpen} 
-            onClose={() => setIsAdminOpen(false)} 
-          />
-        </FavoritesProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <FavoritesProvider>
+            <Toaster />
+            <Router />
+            <AdminPanel 
+              isOpen={isAdminOpen} 
+              onClose={() => setIsAdminOpen(false)} 
+            />
+          </FavoritesProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
