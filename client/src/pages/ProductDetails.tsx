@@ -36,6 +36,7 @@ import OptimizedThumbnail from "@/components/OptimizedThumbnail";
 import DownloadableDocuments from "@/components/DownloadableDocuments";
 import VideoInstructionsComponent from "@/components/VideoInstructionsComponent";
 import FAQComponent from "@/components/FAQComponent";
+import CalculatorComponent from "@/components/Calculator";
 
 interface Product {
   id: string;
@@ -865,122 +866,7 @@ export default function ProductDetails() {
 
             {activeTab === "calculator" && (
               <div className="space-y-8">
-                <div className="bg-white rounded-xl p-6 shadow-sm">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-6">
-                    Калькулятор материала
-                  </h4>
-
-                  <div className="grid md:grid-cols-2 gap-8">
-                    <div>
-                      <h5 className="font-semibold text-gray-900 mb-4">
-                        Параметры помещения
-                      </h5>
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Длина помещения (м)
-                          </label>
-                          <input
-                            type="number"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
-                            placeholder="Введите длину"
-                            step="0.1"
-                            min="0"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Ширина помещения (м)
-                          </label>
-                          <input
-                            type="number"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
-                            placeholder="Введите ширину"
-                            step="0.1"
-                            min="0"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Запас материала (%)
-                          </label>
-                          <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#e90039] focus:border-transparent">
-                            <option value="5">5% - стандартный запас</option>
-                            <option value="10">10% - с учетом подрезки</option>
-                            <option value="15">15% - сложная геометрия</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h5 className="font-semibold text-gray-900 mb-4">
-                        Результат расчета
-                      </h5>
-                      <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">
-                            Площадь помещения:
-                          </span>
-                          <span className="font-medium text-gray-900">
-                            -- м²
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">
-                            С учетом запаса:
-                          </span>
-                          <span className="font-medium text-gray-900">
-                            -- м²
-                          </span>
-                        </div>
-                        <div className="border-t border-gray-200 pt-3">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">
-                              Количество упаковок:
-                            </span>
-                            <span className="font-semibold text-gray-900">
-                              -- шт
-                            </span>
-                          </div>
-                          <div className="flex justify-between mt-2">
-                            <span className="text-gray-600">
-                              Общая стоимость:
-                            </span>
-                            <span className="font-bold text-[#e90039] text-lg">
-                              -- ₽
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <button className="w-full mt-4 bg-[#e90039] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#c8002f] transition-colors">
-                        Рассчитать
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <div className="flex items-start gap-3">
-                      <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-white text-sm font-bold">i</span>
-                      </div>
-                      <div>
-                        <div className="font-semibold text-blue-900 mb-1">
-                          Рекомендации:
-                        </div>
-                        <div className="text-blue-800 text-sm">
-                          • Для помещений сложной формы рекомендуем увеличить
-                          запас до 15%
-                          <br />
-                          • При диагональной укладке добавьте дополнительно 10%
-                          к общему количеству
-                          <br />• Окончательный расчет уточняйте с менеджером
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <CalculatorComponent />
               </div>
             )}
 
