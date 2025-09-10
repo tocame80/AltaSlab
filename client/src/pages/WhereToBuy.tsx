@@ -414,34 +414,6 @@ export default function WhereToBuy() {
           }
         }
 
-          // Add placemark for dealers with coordinates
-          if (coordinates) {
-            const placemark = new window.ymaps.Placemark(
-              coordinates,
-              {
-                balloonContentHeader: dealer.name,
-                balloonContentBody: `
-                  <div>
-                    <p><strong>Адрес:</strong> ${dealer.address}</p>
-                    <p><strong>Город:</strong> ${dealer.city}</p>
-                    ${dealer.phone ? `<p><strong>Телефон:</strong> ${dealer.phone}</p>` : ''}
-                    ${dealer.workingHours ? `<p><strong>Часы работы:</strong> ${dealer.workingHours}</p>` : ''}
-                  </div>
-                `,
-                balloonContentFooter: dealer.dealerType
-              },
-              {
-                preset: 'islands#redDotIcon'
-              }
-            );
-            
-            placemark.dealerId = dealer.id;
-            placemark.dealerData = dealer;
-            placemarksRef.current.push(placemark);
-            // Don't add to map here - will be added by visibility logic
-          }
-        }
-
         // Update stored coordinates if needed
         if (needsUpdate) {
           setStoredCoordinates(currentCoords);
