@@ -1,9 +1,81 @@
 import express, { type Request, Response, NextFunction } from "express";
+import helmet from "helmet";
+import cors from "cors";
+import compression from "compression";
+import rateLimit from "express-rate-limit";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import path from "path";
 
+// Environment variables validation
+function validateEnvironment() {
+  const requiredEnvVars = ['DATABASE_URL'];
+  const missingVars = requiredEnvVars.filter(env => !process.env[env]);
+  
+  if (missingVars.length > 0) {
+    throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
+  }
+}
+
+// Validate environment on startup
+validateEnvironment();
+
 const app = express();
+
+// Security middleware - MUST be first
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "https:", "blob:"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://replit.com", "https://api-maps.yandex.ru"],
+      connectSrc: ["'self'", "wss:", "https:"],
+      frameSrc: ["'none'"],
+      objectSrc: ["'none'"]
+    }
+  },
+  crossOriginEmbedderPolicy: false // Для совместимости с Replit
+}));
+
+// CORS configuration
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://altaslab.ru', 'https://www.altaslab.ru'] // Замените на ваш домен
+    : true, // В development разрешаем все origins
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
+
+// Compression for better performance
+app.use(compression());
+
+// Rate limiting for API routes
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 минут
+  max: 100, // максимум 100 запросов с одного IP за 15 минут
+  message: {
+    error: 'Слишком много запросов с вашего IP. Попробуйте позже.',
+    retryAfter: '15 минут'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use('/api/', apiLimiter);
+
+// Health check endpoint - MUST be before other routes
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    version: '1.0.0'
+  });
+});
+
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: false }));
 
