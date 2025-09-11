@@ -269,21 +269,13 @@ export default function WhereToBuy() {
           return;
         }
 
+        // Try API v3 first, fallback to v2.1 if it fails
         const scriptUrl = `https://api-maps.yandex.ru/v3/?apikey=${apiKey}&lang=ru_RU`;
+        const fallbackUrl = `https://api-maps.yandex.ru/2.1/?apikey=${apiKey}&lang=ru_RU`;
         
-        // Try direct script loading - fetching v3 script is different from v2
         console.log('API Key available:', !!apiKey);
         console.log('API Key length:', apiKey.length);
-        console.log('Script URL will be:', scriptUrl);
-        
-        // Test if the script URL is accessible with a simple fetch
-        try {
-          console.log('Testing script URL accessibility...');
-          const testResponse = await fetch(scriptUrl, { method: 'GET', mode: 'no-cors' });
-          console.log('Test fetch completed (no-cors mode)');
-        } catch (fetchError) {
-          console.error('Script URL fetch test failed:', fetchError);
-        }
+        console.log('Trying API v3 first:', scriptUrl);
 
         // Загружаем скрипт API 3.0
         const script = document.createElement('script');
@@ -293,48 +285,59 @@ export default function WhereToBuy() {
         console.log('Loading Yandex Maps v3 script...');
         
         script.onload = async () => {
-          console.log('Yandex Maps v3 script loaded successfully');
-          console.log('window.ymaps3 after load:', !!window.ymaps3);
-          console.log('Available global properties:', Object.keys(window).filter(key => key.includes('ymap') || key.includes('Ymap')));
+          console.log('API v3 script loaded, checking availability...');
           
-          // Небольшая задержка для инициализации API
           setTimeout(async () => {
             try {
               if (window.ymaps3) {
-                console.log('ymaps3 available, waiting for ready...');
-                console.log('ymaps3 object keys:', Object.keys(window.ymaps3));
+                console.log('API v3 ready!');
                 await window.ymaps3.ready;
-                console.log('ymaps3.ready resolved!');
                 setMapLoaded(true);
               } else {
-                console.error('ymaps3 still not available after script load');
-                console.error('Available window properties:', Object.keys(window).filter(key => key.toLowerCase().includes('ymap')));
-                setMapError('api_initialization_failed');
+                console.warn('API v3 script loaded but ymaps3 not available, trying v2.1...');
+                script.dispatchEvent(new Event('error')); // Trigger fallback
               }
             } catch (error) {
-              console.error('Error waiting for ymaps3.ready:', error);
-              setMapError('api_initialization_failed');
+              console.warn('API v3 initialization failed, trying v2.1...', error);
+              script.dispatchEvent(new Event('error')); // Trigger fallback
             }
           }, 100);
         };
         
         script.onerror = (error) => {
-          console.error('Failed to load Yandex Maps v3 script:', error);
-          console.error('Script URL:', scriptUrl);
-          console.error('Script src:', script.src);
-          console.error('Error event details:', {
-            errorType: typeof error,
-            errorString: String(error),
-            eventType: (error as Event)?.type || 'unknown',
-            hasTarget: !!(error as Event)?.target
-          });
+          console.warn('API v3 failed, trying fallback to API v2.1...');
+          script.remove();
           
-          // Determine error type based on common scenarios
-          if (!apiKey || apiKey.length < 10) {
-            setMapError('api_key_invalid');
-          } else {
-            setMapError('api_key_unauthorized');
-          }
+          // Try API v2.1 fallback
+          const fallbackScript = document.createElement('script');
+          fallbackScript.src = fallbackUrl;
+          fallbackScript.type = 'text/javascript';
+          
+          fallbackScript.onload = () => {
+            console.log('API v2.1 loaded successfully');
+            setTimeout(() => {
+              if (window.ymaps) {
+                window.ymaps.ready(() => {
+                  console.log('ymaps v2.1 ready!');
+                  setMapLoaded(true);
+                });
+              } else {
+                console.error('ymaps v2.1 not available');
+                setMapError('api_initialization_failed');
+              }
+            }, 100);
+          };
+          
+          fallbackScript.onerror = (fallbackError) => {
+            console.error('Both API v3 and v2.1 failed:', fallbackError);
+            if (!apiKey || apiKey.length < 10) {
+              setMapError('api_key_invalid');
+            } else {
+              setMapError('api_key_unauthorized');
+            }
+          };
+          
+          document.head.appendChild(fallbackScript);
         };
         
         document.head.appendChild(script);
@@ -348,38 +351,39 @@ export default function WhereToBuy() {
     loadYandexMaps();
   }, []);
 
-  // Initialize map with API 3.0
+  // Initialize map with either API v3 or v2.1
   useEffect(() => {
     const initMap = async () => {
       console.log('Map initialization effect triggered:', {
         mapLoaded,
         dealerLocationsLength: dealerLocations.length,
         hasMapInstance: !!mapInstance,
-        ymaps3Available: !!window.ymaps3
+        ymaps3Available: !!window.ymaps3,
+        ymapsAvailable: !!window.ymaps
       });
 
       if (mapLoaded && dealerLocations.length > 0 && !mapInstance) {
         try {
-          if (!window.ymaps3) {
-            console.error('ymaps3 not available');
+          const mapElement = document.getElementById('yandex-map');
+          if (!mapElement) {
+            console.error('Map element not found');
             return;
           }
 
-          await window.ymaps3.ready;
-          
-          const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer } = window.ymaps3;
-          const mapElement = document.getElementById('yandex-map');
-          
-          if (mapElement) {
+          // Clear any existing content
+          mapElement.innerHTML = '';
+
+          // Try API v3 first
+          if (window.ymaps3) {
             console.log('Creating Yandex Map v3...');
-            // Clear any existing content
-            mapElement.innerHTML = '';
+            await window.ymaps3.ready;
             
-            // Создаем карту с новым API
+            const { YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer } = window.ymaps3;
+            
             const map = new YMap(mapElement, {
               location: {
                 center: [37.622093, 55.753994], // Moscow coordinates (lng, lat)
-                zoom: 10
+                zoom: 5
               }
             });
 
@@ -393,11 +397,23 @@ export default function WhereToBuy() {
             
             console.log('Map v3 created successfully!');
             setMapInstance(map);
+          }
+          // Fallback to API v2.1
+          else if (window.ymaps) {
+            console.log('Creating Yandex Map v2.1...');
+            
+            const map = new window.ymaps.Map(mapElement, {
+              center: [55.753994, 37.622093], // Moscow coordinates (lat, lng for v2.1)
+              zoom: 5
+            });
+            
+            console.log('Map v2.1 created successfully!');
+            setMapInstance(map);
           } else {
-            console.error('Map element not found');
+            console.error('Neither ymaps3 nor ymaps available');
           }
         } catch (error) {
-          console.error('Error creating map v3:', error);
+          console.error('Error creating map:', error);
         }
       }
     };
