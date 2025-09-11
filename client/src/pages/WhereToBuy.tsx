@@ -495,6 +495,7 @@ export default function WhereToBuy() {
         const zoom = Math.min(Math.max(zoomCalc, zoomMin), zoomMax);
 
         console.log(`Manual map update: center [${centerLng}, ${centerLat}], zoom ${zoom}, ${filtered.length} dealers`);
+        console.log(`Manual coordinates check: lat=${centerLat}, lng=${centerLng}`);
         
         map.update({
           location: {
@@ -535,6 +536,7 @@ export default function WhereToBuy() {
       const zoom = Math.min(Math.max(zoomCalc, zoomMin), zoomMax);
 
       console.log(`Professional map update: center [${centerLng}, ${centerLat}], zoom ${zoom}, ${filtered.length} dealers`);
+      console.log(`Professional coordinates check: lat=${centerLat}, lng=${centerLng}`);
 
       // Устанавливаем центр и зум карты
       map.update({
