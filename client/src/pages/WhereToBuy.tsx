@@ -103,13 +103,28 @@ export default function WhereToBuy() {
       script.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU&load=package.standard';
       script.onload = () => {
         console.log('Yandex Maps 2.1 loaded successfully');
+        console.log('window.ymaps available:', !!window.ymaps);
+        console.log('window.ymaps.ready available:', !!(window.ymaps && window.ymaps.ready));
+        
+        // Пробуем разные подходы для инициализации
         if (window.ymaps && window.ymaps.ready) {
-          window.ymaps.ready(() => {
-            console.log('Yandex Maps ready!');
-            setMapLoaded(true);
-          });
+          console.log('Calling ymaps.ready()...');
+          try {
+            window.ymaps.ready(() => {
+              console.log('Yandex Maps ready callback fired!');
+              setMapLoaded(true);
+            });
+          } catch (error) {
+            console.error('Error in ymaps.ready():', error);
+            // Fallback - просто ставим loaded через таймаут
+            setTimeout(() => {
+              console.log('Using fallback initialization');
+              setMapLoaded(true);
+            }, 2000);
+          }
         } else {
-          setTimeout(() => setMapLoaded(true), 1000);
+          console.log('ymaps.ready not available, using setTimeout fallback');
+          setTimeout(() => setMapLoaded(true), 2000);
         }
       };
       script.onerror = (error) => {
@@ -125,16 +140,33 @@ export default function WhereToBuy() {
   useEffect(() => {
     if (mapLoaded && filteredDealers.length > 0 && !mapInstance && window.ymaps) {
       console.log('Creating Yandex Map...');
-      window.ymaps.ready(() => {
-        const map = new window.ymaps.Map('yandex-map', {
-          center: [55.753994, 37.622093], // Moscow coordinates
-          zoom: 5,
-          controls: [] // Убираем все controls чтобы избежать 'full' bundle
-        });
+      console.log('window.ymaps.Map available:', !!(window.ymaps && window.ymaps.Map));
+      
+      const createMap = () => {
+        try {
+          const map = new window.ymaps.Map('yandex-map', {
+            center: [55.753994, 37.622093], // Moscow coordinates
+            zoom: 5,
+            controls: [] // Убираем все controls чтобы избежать 'full' bundle
+          });
 
-        console.log('Yandex Map created successfully!');
-        setMapInstance(map);
-      });
+          console.log('Yandex Map created successfully!');
+          setMapInstance(map);
+        } catch (error) {
+          console.error('Error creating map:', error);
+        }
+      };
+
+      // Пробуем создать карту напрямую без второго ready()
+      if (window.ymaps.Map) {
+        console.log('Creating map directly...');
+        createMap();
+      } else if (window.ymaps.ready) {
+        console.log('Using ymaps.ready() for map creation...');
+        window.ymaps.ready(createMap);
+      } else {
+        console.error('Neither ymaps.Map nor ymaps.ready available');
+      }
     }
   }, [mapLoaded, filteredDealers, mapInstance]);
 
