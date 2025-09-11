@@ -102,7 +102,7 @@ export default function WhereToBuy() {
       console.log('API Key:', apiKey ? 'Present' : 'Missing', 'Length:', apiKey.length);
       
       const script = document.createElement('script');
-      // Временно работаем без ключа пока не настроим домены
+      // Временно без ключа - работает без ограничений
       script.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU';
       script.onload = () => {
         console.log('Yandex Maps script loaded');
@@ -113,7 +113,7 @@ export default function WhereToBuy() {
           if (window.ymaps && window.ymaps.ready) {
             console.log('Calling ymaps.ready()...');
             window.ymaps.ready(() => {
-              console.log('Yandex Maps ready!');
+              console.log('Yandex Maps ready! API initialized successfully.');
               setMapLoaded(true);
             });
           } else if (window.ymaps) {
@@ -122,7 +122,7 @@ export default function WhereToBuy() {
           } else {
             console.error('ymaps not available after script load');
           }
-        }, 500);
+        }, 100);
       };
       script.onerror = (error) => {
         console.error('Failed to load Yandex Maps script:', error);
