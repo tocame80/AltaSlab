@@ -164,26 +164,37 @@ export default function WhereToBuy() {
 
           console.log('Waiting for ymaps3.ready...');
           await ymaps3.ready;
+          console.log('ymaps3.ready completed!');
+          
+          const mapContainer = document.getElementById('yandex-map');
+          console.log('Map container found:', !!mapContainer);
+          
+          if (!mapContainer) {
+            throw new Error('Map container #yandex-map not found');
+          }
           
           console.log('Creating YMap...');
-          const map = new ymaps3.YMap(
-            document.getElementById('yandex-map'),
-            {
-              location: {
-                center: [37.622093, 55.753994], // Moscow coordinates (lng, lat for v3)
-                zoom: 5
-              }
+          console.log('Available ymaps3 methods:', Object.keys(ymaps3));
+          
+          const map = new ymaps3.YMap(mapContainer, {
+            location: {
+              center: [37.622093, 55.753994], // Moscow coordinates (lng, lat for v3)
+              zoom: 5
             }
-          );
+          });
           
           console.log('Yandex Maps v3 created successfully!');
           setMapInstance(map);
           
         } catch (error) {
           console.error('Error creating Yandex Maps v3:', error);
+          console.error('Error details:', error instanceof Error ? error.message : String(error));
+          console.error('Error stack:', error instanceof Error ? error.stack : 'No stack');
+          
           const mapContainer = document.getElementById('yandex-map');
           if (mapContainer) {
-            mapContainer.innerHTML = '<div class="p-4 text-center text-red-500">Ошибка загрузки карты. Проверьте настройки HTTP Referer в консоли Яндекса.</div>';
+            const errorMsg = error instanceof Error ? error.message : String(error);
+            mapContainer.innerHTML = `<div class="p-4 text-center text-red-500">Ошибка Yandex Maps v3: ${errorMsg}</div>`;
           }
         }
       };
