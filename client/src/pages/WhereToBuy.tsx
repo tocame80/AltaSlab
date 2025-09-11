@@ -480,14 +480,14 @@ export default function WhereToBuy() {
       const lngDiff = paddedMaxLng - paddedMinLng;
       const maxDiff = Math.max(latDiff, lngDiff);
 
-      // Простой и надежный расчет зума (БЛИЖЕ по запросу)
-      let zoom = 12; // Базовый зум увеличен
-      if (maxDiff < 0.01) zoom = 16; // Очень близко (одна точка)
-      else if (maxDiff < 0.05) zoom = 14; // Город
-      else if (maxDiff < 0.2) zoom = 13; // Несколько точек рядом
-      else if (maxDiff < 0.5) zoom = 12; // Область
-      else if (maxDiff < 1.0) zoom = 12; // Большая область
-      else zoom = 12; // Очень большая область
+      // ПРАВИЛЬНЫЙ расчет зума - ВСЕ дилеры видны, но ближе чем zoom 7
+      let zoom = 10; // Компромиссный зум - ближе 7, но все видно
+      if (maxDiff < 0.01) zoom = 15; // Очень близко (одна точка)
+      else if (maxDiff < 0.05) zoom = 13; // Город
+      else if (maxDiff < 0.2) zoom = 11; // Несколько точек рядом
+      else if (maxDiff < 0.5) zoom = 10; // Область - все дилеры видны
+      else if (maxDiff < 1.0) zoom = 9; // Большая область - все дилеры видны
+      else zoom = 8; // Очень большая область - все дилеры точно видны
 
       console.log(`FIXED map update: center [${centerLng}, ${centerLat}], zoom ${zoom}, ${filtered.length} dealers`);
       console.log(`FIXED bounds: lat ${minLat}-${maxLat}, lng ${minLng}-${maxLng}`);
