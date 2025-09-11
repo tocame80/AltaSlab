@@ -462,40 +462,41 @@ export default function WhereToBuy() {
       const minLng = Math.min(...lngs);
       const maxLng = Math.max(...lngs);
       
-      // Добавляем отступы к границам (padding в градусах)
-      const latPadding = (maxLat - minLat) * 0.1; // 10% отступ
-      const lngPadding = (maxLng - minLng) * 0.1; // 10% отступ
+      // БОЛЬШЕ отступов чтобы ВСЕ точки были видны
+      const latPadding = Math.max((maxLat - minLat) * 0.3, 0.05); // 30% отступ или минимум 0.05°
+      const lngPadding = Math.max((maxLng - minLng) * 0.3, 0.05); // 30% отступ или минимум 0.05°
       
       const paddedMinLat = minLat - latPadding;
       const paddedMaxLat = maxLat + latPadding;
       const paddedMinLng = minLng - lngPadding;
       const paddedMaxLng = maxLng + lngPadding;
       
-      // Центр с учетом отступов
-      const centerLat = (paddedMinLat + paddedMaxLat) / 2;
-      const centerLng = (paddedMinLng + paddedMaxLng) / 2;
+      // Центр ТОЧНО между всеми точками
+      const centerLat = (minLat + maxLat) / 2; // Центр без padding для точности
+      const centerLng = (minLng + maxLng) / 2; // Центр без padding для точности
       
-      // Размер области с отступами
+      // Размер области С padding для зума
       const latDiff = paddedMaxLat - paddedMinLat;
       const lngDiff = paddedMaxLng - paddedMinLng;
       const maxDiff = Math.max(latDiff, lngDiff);
 
-      // ПРАВИЛЬНЫЙ расчет зума - ВСЕ дилеры видны, но ближе чем zoom 7
-      let zoom = 10; // Компромиссный зум - ближе 7, но все видно
-      if (maxDiff < 0.01) zoom = 15; // Очень близко (одна точка)
-      else if (maxDiff < 0.05) zoom = 13; // Город
-      else if (maxDiff < 0.2) zoom = 11; // Несколько точек рядом
-      else if (maxDiff < 0.5) zoom = 10; // Область - все дилеры видны
-      else if (maxDiff < 1.0) zoom = 9; // Большая область - все дилеры видны
-      else zoom = 8; // Очень большая область - все дилеры точно видны
+      // КОНСЕРВАТИВНЫЙ зум - гарантируем что ВСЕ точки видны
+      let zoom = 8; // Безопасный базовый зум
+      if (maxDiff < 0.01) zoom = 14; // Одна точка
+      else if (maxDiff < 0.05) zoom = 12; // Город
+      else if (maxDiff < 0.1) zoom = 11; // Близкие точки
+      else if (maxDiff < 0.3) zoom = 10; // Несколько точек
+      else if (maxDiff < 0.6) zoom = 9; // Область
+      else zoom = 8; // Большая область - все точно видны
 
-      console.log(`FIXED map update: center [${centerLng}, ${centerLat}], zoom ${zoom}, ${filtered.length} dealers`);
-      console.log(`FIXED bounds: lat ${minLat}-${maxLat}, lng ${minLng}-${maxLng}`);
-      console.log(`FIXED with padding: center lat=${centerLat}, lng=${centerLng}`);
+      console.log(`CORRECTED map update: center [${centerLng}, ${centerLat}], zoom ${zoom}, ${filtered.length} dealers`);
+      console.log(`CORRECTED exact bounds: lat ${minLat} to ${maxLat}, lng ${minLng} to ${maxLng}`);
+      console.log(`CORRECTED center calculation: exact center lat=${centerLat}, lng=${centerLng}`);
+      console.log(`CORRECTED padding applied: lat ±${latPadding.toFixed(3)}, lng ±${lngPadding.toFixed(3)}`);
       
       map.update({
         location: {
-          center: [centerLng, centerLat], // [lng, lat] for v3
+          center: [centerLng, centerLat], // [lng, lat] for v3 - точный центр всех точек
           zoom: zoom
         }
       });
