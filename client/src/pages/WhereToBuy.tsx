@@ -23,6 +23,7 @@ interface DealerLocation {
 declare global {
   interface Window {
     ymaps?: any;
+    ymaps3?: any;
   }
 }
 
@@ -102,30 +103,59 @@ export default function WhereToBuy() {
       console.log('API Key:', apiKey ? 'Present' : 'Missing', 'Length:', apiKey.length);
       
       const script = document.createElement('script');
-      // Временно без ключа - работает без ограничений
-      script.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU';
+      // Используем API 3.0 с правильным ключом
+      script.src = `https://api-maps.yandex.ru/v3/?apikey=${apiKey}&lang=ru_RU`;
       script.onload = () => {
         console.log('Yandex Maps script loaded');
         console.log('window.ymaps available:', !!window.ymaps);
+        console.log('window.ymaps3 available:', !!window.ymaps3);
         
         // Даем время для инициализации API
-        setTimeout(() => {
-          if (window.ymaps && window.ymaps.ready) {
-            console.log('Calling ymaps.ready()...');
-            window.ymaps.ready(() => {
-              console.log('Yandex Maps ready! API initialized successfully.');
-              setMapLoaded(true);
-            });
-          } else if (window.ymaps) {
-            console.log('ymaps available but no ready method, setting loaded directly');
+        setTimeout(async () => {
+          if (window.ymaps3 && window.ymaps3.ready) {
+            console.log('Calling ymaps3.ready()...');
+            await window.ymaps3.ready;
+            console.log('Yandex Maps 3.0 ready! API initialized successfully.');
+            setMapLoaded(true);
+          } else if (window.ymaps3) {
+            console.log('ymaps3 available but no ready method, setting loaded directly');
             setMapLoaded(true);
           } else {
-            console.error('ymaps not available after script load');
+            console.error('ymaps3 not available after script load');
+            console.log('Available window properties:', Object.keys(window).filter(key => key.includes('ymap')));
           }
         }, 100);
       };
       script.onerror = (error) => {
-        console.error('Failed to load Yandex Maps script:', error);
+        console.warn('API 3.0 failed (likely HTTP Referer restriction), trying API 2.1 fallback...');
+        script.remove();
+        
+        // Fallback to API 2.1 without key
+        const fallbackScript = document.createElement('script');
+        fallbackScript.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU';
+        fallbackScript.onload = () => {
+          console.log('API 2.1 fallback loaded successfully');
+          setTimeout(() => {
+            if (window.ymaps && window.ymaps.ready) {
+              console.log('Calling ymaps.ready() for API 2.1...');
+              window.ymaps.ready(() => {
+                console.log('API 2.1 ready! Map will use fallback version.');
+                setMapLoaded(true);
+              });
+            } else if (window.ymaps) {
+              console.log('API 2.1 available, setting loaded directly');
+              setMapLoaded(true);
+            } else {
+              console.error('API 2.1 also failed to load');
+            }
+          }, 100);
+        };
+        
+        fallbackScript.onerror = (fallbackError) => {
+          console.error('Both API 3.0 and 2.1 failed:', fallbackError);
+        };
+        
+        document.head.appendChild(fallbackScript);
       };
       document.head.appendChild(script);
     };
@@ -133,18 +163,60 @@ export default function WhereToBuy() {
     loadYandexMaps();
   }, []);
 
-  // Initialize map
+  // Initialize map with API 3.0 or 2.1 fallback
   useEffect(() => {
     if (mapLoaded && filteredDealers.length > 0 && !mapInstance) {
-      window.ymaps.ready(() => {
-        const map = new window.ymaps.Map('yandex-map', {
-          center: [55.753994, 37.622093], // Moscow coordinates
-          zoom: 10,
-          controls: ['zoomControl', 'searchControl', 'typeSelector', 'fullscreenControl']
-        });
+      const initMap = async () => {
+        const mapElement = document.getElementById('yandex-map');
+        if (!mapElement) {
+          console.error('Map element not found');
+          return;
+        }
 
-        setMapInstance(map);
-      });
+        // Try API 3.0 first
+        if (window.ymaps3) {
+          try {
+            console.log('Creating Yandex Map 3.0...');
+            await window.ymaps3.ready;
+            
+            const { YMap, YMapDefaultSchemeLayer } = window.ymaps3;
+            
+            const map = new YMap(mapElement, {
+              location: {
+                center: [37.622093, 55.753994], // Moscow coordinates (lng, lat for v3)
+                zoom: 5
+              }
+            });
+
+            map.addChild(new YMapDefaultSchemeLayer());
+            
+            console.log('Map 3.0 created successfully!');
+            setMapInstance(map);
+            return;
+          } catch (error) {
+            console.error('API 3.0 initialization failed:', error);
+          }
+        }
+        
+        // Fallback to API 2.1
+        if (window.ymaps) {
+          console.log('Creating Yandex Map 2.1 (fallback)...');
+          window.ymaps.ready(() => {
+            const map = new window.ymaps.Map('yandex-map', {
+              center: [55.753994, 37.622093], // Moscow coordinates (lat, lng for v2.1)
+              zoom: 5,
+              controls: ['zoomControl', 'searchControl', 'typeSelector', 'fullscreenControl']
+            });
+
+            console.log('Map 2.1 created successfully!');
+            setMapInstance(map);
+          });
+        } else {
+          console.error('Neither ymaps3 nor ymaps available');
+        }
+      };
+
+      initMap();
     }
   }, [mapLoaded, filteredDealers, mapInstance]);
 
