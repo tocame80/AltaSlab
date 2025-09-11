@@ -293,8 +293,11 @@ export default function WhereToBuy() {
           console.log('Creating YMap...');
           console.log('Available ymaps3 methods:', Object.keys(ymaps3));
           
-          // Calculate optimal view for all dealers
-          const { center, zoom } = calculateOptimalMapView(dealerLocations);
+          // Calculate optimal view for all dealers (fallback for initial load)
+          const avgLat = dealerLocations.reduce((sum, d) => sum + parseFloat(d.latitude), 0) / dealerLocations.length;
+          const avgLng = dealerLocations.reduce((sum, d) => sum + parseFloat(d.longitude), 0) / dealerLocations.length;
+          const center = [avgLng, avgLat];
+          const zoom = 8; // Initial zoom, will be optimized after map loads
           console.log('Initial map center and zoom:', center, zoom);
           
           const map = new ymaps3.YMap(mapContainer, {
@@ -316,6 +319,11 @@ export default function WhereToBuy() {
           
           console.log('Yandex Maps v3 created successfully with layers!');
           setMapInstance(map);
+          
+          // Apply professional map view after initialization
+          setTimeout(() => {
+            updateMapView(map, dealerLocations, selectedCity, selectedRegion, searchQuery);
+          }, 100);
           
         } catch (error) {
           console.error('Error creating Yandex Maps v3:', error);
@@ -398,55 +406,144 @@ export default function WhereToBuy() {
 
   // Auto-adjust map view when filtered dealers change
   useEffect(() => {
-    if (!mapInstance || !filteredDealers.length) return;
+    if (!mapInstance || !dealerLocations.length) return;
     
-    // Only auto-adjust if we have active filters (not showing all dealers)
-    const hasActiveFilters = searchQuery || selectedCity || selectedRegion;
-    
-    if (hasActiveFilters) {
-      const { center, zoom } = calculateOptimalMapView(filteredDealers);
-      console.log(`Auto-adjusting map for ${filteredDealers.length} visible dealers:`, center, `zoom: ${zoom}`);
+    // Always update map view to show optimal view of visible dealers
+    updateMapView(mapInstance, dealerLocations, selectedCity, selectedRegion, searchQuery);
+  }, [mapInstance, dealerLocations, selectedCity, selectedRegion, searchQuery]);
+
+  /**
+   * Обновляет вид карты Yandex Maps v3 с учётом дилеров и фильтров,
+   * показывая точки максимально близко, чтобы все умещались.
+   */
+  const updateMapView = (
+    map: any,
+    dealers: DealerLocation[],
+    selectedCity?: string,
+    selectedRegion?: string,
+    searchQuery?: string
+  ) => {
+    if (!map || !dealers.length) return;
+
+    try {
+      const ymaps3 = (window as any).ymaps3;
+      if (!ymaps3) return;
+
+      // Фильтруем дилеров по выбранным фильтрам
+      let filtered = dealers;
+      if (selectedCity && selectedCity !== '') {
+        filtered = dealers.filter(d => d.city === selectedCity);
+      } else if (selectedRegion && selectedRegion !== '') {
+        filtered = dealers.filter(d => d.region === selectedRegion);
+      } else if (searchQuery && searchQuery !== '') {
+        const query = searchQuery.toLowerCase();
+        filtered = dealers.filter(d =>
+          d.name.toLowerCase().includes(query) ||
+          d.city.toLowerCase().includes(query) ||
+          d.address.toLowerCase().includes(query)
+        );
+      }
+
+      if (filtered.length === 0) return;
+
+      // Преобразуем координаты в массив [lat, lng] для ymaps3.util.bounds
+      const points = filtered.map(d => [
+        parseFloat(d.latitude),
+        parseFloat(d.longitude),
+      ]).filter(point => point[0] !== 0 && point[1] !== 0);
+
+      if (points.length === 0) return;
+
+      // Вычисляем границы по точкам
+      const bounds = ymaps3.util?.bounds?.fromPoints ? ymaps3.util.bounds.fromPoints(points) : null;
       
-      mapInstance.update({
+      if (!bounds) {
+        // Fallback to manual calculation if util.bounds is not available
+        const lats = points.map(p => p[0]);
+        const lngs = points.map(p => p[1]);
+        const minLat = Math.min(...lats);
+        const maxLat = Math.max(...lats);
+        const minLng = Math.min(...lngs);
+        const maxLng = Math.max(...lngs);
+        
+        const centerLat = (minLat + maxLat) / 2;
+        const centerLng = (minLng + maxLng) / 2;
+        
+        // Вычисляем максимальный разброс координат
+        const latDiff = maxLat - minLat;
+        const lngDiff = maxLng - minLng;
+        const maxDiff = Math.max(latDiff, lngDiff);
+
+        // Настройки зума
+        const C = 0.3;       // константа подгонки
+        const zoomMax = 14;  // максимальный зум
+        const zoomMin = 6;   // минимальный зум
+
+        // Формула расчёта зума с ограничениями
+        const zoomCalc = Math.floor(Math.log2(C / maxDiff));
+        const zoom = Math.min(Math.max(zoomCalc, zoomMin), zoomMax);
+
+        console.log(`Manual map update: center [${centerLng}, ${centerLat}], zoom ${zoom}, ${filtered.length} dealers`);
+        
+        map.update({
+          location: {
+            center: [centerLng, centerLat], // [lng, lat] for v3
+            zoom: zoom
+          }
+        });
+        return;
+      }
+
+      // Вычисляем центр из bounds
+      const centerLat = (bounds[0][0] + bounds[1][0]) / 2;
+      const centerLng = (bounds[0][1] + bounds[1][1]) / 2;
+
+      // Вычисляем максимальный разброс координат
+      const latDiff = bounds[1][0] - bounds[0][0];
+      const lngDiff = bounds[1][1] - bounds[0][1];
+      const maxDiff = Math.max(latDiff, lngDiff);
+
+      // Настройки зума
+      const C = 0.3;       // константа подгонки, можно подкорректировать
+      const zoomMax = 14;  // максимальный зум (максимальное приближение)
+      const zoomMin = 6;   // минимальный зум (минимальное приближение)
+
+      // Формула расчёта зума с ограничениями на минимум и максимум
+      const zoomCalc = Math.floor(Math.log2(C / maxDiff));
+      const zoom = Math.min(Math.max(zoomCalc, zoomMin), zoomMax);
+
+      console.log(`Professional map update: center [${centerLng}, ${centerLat}], zoom ${zoom}, ${filtered.length} dealers`);
+
+      // Устанавливаем центр и зум карты
+      map.update({
         location: {
-          center,
-          zoom
+          center: [centerLng, centerLat], // [lng, lat] for v3
+          zoom: zoom
         }
       });
-    }
-  }, [mapInstance, filteredDealers, searchQuery, selectedCity, selectedRegion]);
 
-  // Calculate optimal center and zoom for dealers
-  const calculateOptimalMapView = (dealers: DealerLocation[]) => {
-    if (!dealers.length) return { center: [37.622093, 55.753994], zoom: 5 };
-    
-    // Calculate bounds of all dealers
-    const lats = dealers.map(d => parseFloat(d.latitude)).filter(lat => lat !== 0);
-    const lngs = dealers.map(d => parseFloat(d.longitude)).filter(lng => lng !== 0);
-    
-    if (!lats.length || !lngs.length) return { center: [37.622093, 55.753994], zoom: 5 };
-    
-    const minLat = Math.min(...lats);
-    const maxLat = Math.max(...lats);
-    const minLng = Math.min(...lngs);
-    const maxLng = Math.max(...lngs);
-    
-    // Calculate center
-    const centerLat = (minLat + maxLat) / 2;
-    const centerLng = (minLng + maxLng) / 2;
-    
-    // Calculate zoom based on bounds
-    const latDiff = maxLat - minLat;
-    const lngDiff = maxLng - minLng;
-    const maxDiff = Math.max(latDiff, lngDiff);
-    
-    let zoom = 9; // Default for region view
-    if (maxDiff < 0.05) zoom = 12; // City level
-    else if (maxDiff < 0.5) zoom = 10; // Close region
-    else if (maxDiff < 2) zoom = 8; // Wide region
-    else zoom = 6; // Multiple regions
-    
-    return { center: [centerLng, centerLat], zoom };
+      // Попытка использовать setBounds с padding если доступно
+      if (map.setBounds && typeof map.setBounds === 'function') {
+        try {
+          // Преобразуем bounds в формат для setBounds [lng, lat]
+          const mapBounds = [
+            [bounds[0][1], bounds[0][0]], // [minLng, minLat]
+            [bounds[1][1], bounds[1][0]]  // [maxLng, maxLat]
+          ];
+          
+          map.setBounds(mapBounds, {
+            checkZoomRange: true,
+            padding: [50, 50, 50, 50], // в пикселях: отступы (верх, право, низ, лево)
+          });
+          console.log('Applied bounds with padding');
+        } catch (boundsError) {
+          console.log('setBounds not available, using update method');
+        }
+      }
+
+    } catch (error) {
+      console.error('Error in updateMapView:', error);
+    }
   };
 
   // Center map when region or city is selected
@@ -454,27 +551,8 @@ export default function WhereToBuy() {
     if (!mapInstance) return;
     
     try {
-      let dealersToShow = dealerLocations;
-      
-      if (city) {
-        // Show specific city
-        dealersToShow = dealerLocations.filter(d => d.city === city);
-      } else if (region) {
-        // Show specific region
-        dealersToShow = dealerLocations.filter(d => d.region === region);
-      }
-      // If no filters, show all dealers
-      
-      const { center, zoom } = calculateOptimalMapView(dealersToShow);
-      
-      console.log(`Centering map on ${dealersToShow.length} dealers:`, center, `zoom: ${zoom}`);
-      
-      mapInstance.update({
-        location: {
-          center,
-          zoom
-        }
-      });
+      console.log(`Manual centering on city: ${city}, region: ${region}`);
+      updateMapView(mapInstance, dealerLocations, city, region);
     } catch (error) {
       console.error('Error centering map:', error);
     }

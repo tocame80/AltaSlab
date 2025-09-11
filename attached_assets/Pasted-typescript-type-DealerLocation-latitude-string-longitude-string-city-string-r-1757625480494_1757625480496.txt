@@ -1,0 +1,81 @@
+typescript
+type DealerLocation = {
+  latitude: string;
+  longitude: string;
+  city: string;
+  region: string;
+  // другие поля...
+};
+
+/**
+ * Обновляет вид карты Yandex Maps v3 с учётом дилеров и фильтров,
+ * показывая точки максимально близко, чтобы все умещались.
+ * 
+ * @param map - объект карты ymaps3.YMap
+ * @param dealers - массив дилеров с координатами
+ * @param selectedCity - выбранный город или пустая строка/undefined
+ * @param selectedRegion - выбранная область или пустая строка/undefined
+ */
+function updateMapView(
+  map: any,
+  dealers: DealerLocation[],
+  selectedCity?: string,
+  selectedRegion?: string
+) {
+  // Фильтруем дилеров по выбранным фильтрам
+  let filtered = dealers;
+  if (selectedCity && selectedCity !== '') {
+    filtered = dealers.filter(d => d.city === selectedCity);
+  } else if (selectedRegion && selectedRegion !== '') {
+    filtered = dealers.filter(d => d.region === selectedRegion);
+  }
+
+  if (filtered.length === 0) return;
+
+  // Преобразуем координаты в массив [lat, lng]
+  const points = filtered.map(d => [
+    parseFloat(d.latitude),
+    parseFloat(d.longitude),
+  ]);
+
+  // Вычисляем границы по точкам
+  const bounds = ymaps3.util.bounds.fromPoints(points);
+  if (!bounds) return;
+
+  // Вычисляем центр
+  const centerLat = (bounds[0][0] + bounds[1][0]) / 2;
+  const centerLng = (bounds[0][1] + bounds[1][1]) / 2;
+  const center = [centerLat, centerLng];
+
+  // Вычисляем максимальный разброс координат
+  const latDiff = bounds[1][0] - bounds[0][0];
+  const lngDiff = bounds[1][1] - bounds[0][1];
+  const maxDiff = Math.max(latDiff, lngDiff);
+
+  // Настройки зума
+  const C = 0.3;       // константа подгонки, можно подкорректировать
+  const zoomMax = 14;  // максимальный зум (максимальное приближение)
+  const zoomMin = 6;   // минимальный зум (минимальное приближение)
+
+  // Формула расчёта зума с ограничениями на минимум и максимум
+  const zoomCalc = Math.floor(Math.log2(C / maxDiff));
+  const zoom = Math.min(Math.max(zoomCalc, zoomMin), zoomMax);
+
+  // Устанавливаем центр и зум карты
+  map.setCenter(center);
+  map.setZoom(zoom);
+
+  // Устанавливаем bounds с padding для уверенности, что все точки видны с отступом
+  map.setBounds(bounds, {
+    checkZoomRange: true,
+    padding: [50, 50, 50, 50], // в пикселях: отступы (верх, право, низ, лево)
+  });
+
+  console.log(`Map centered at ${center}, zoom set to ${zoom}`);
+}
+Как использовать
+Вызывать updateMapView(map, dealers, selectedCity, selectedRegion) после инициализации карты и загрузки дилеров.
+
+При изменении фильтров (города, области) вызывать функцию с актуальными параметрами.
+
+Убедиться, что ymaps3 и map готовы к использованию
