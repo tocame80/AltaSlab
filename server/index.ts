@@ -27,28 +27,34 @@ if (process.env.NODE_ENV === 'production') {
   app.set('trust proxy', 1); // trust first proxy
 }
 
-// Security middleware - MUST be first
+// Disable Helmet CSP completely and set our own
 app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'", "blob:", "data:"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://*.yastatic.net"],
-      fontSrc: ["'self'", "data:", "https://fonts.gstatic.com", "https://*.yastatic.net"],
-      imgSrc: ["'self'", "data:", "blob:", "https:", "https://*.yandex.ru", "https://*.yandex.net", "https://*.maps.yandex.net", "https://*.yastatic.net"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "blob:", "https://replit.com", "https://api-maps.yandex.ru", "https://*.yandex.ru", "https://*.yandex.net", "https://*.yastatic.net"],
-      scriptSrcElem: ["'self'", "'unsafe-inline'", "https://api-maps.yandex.ru", "https://*.yastatic.net", "https://replit.com"],
-      connectSrc: ["'self'", "ws:", "wss:", "https:", "data:", "https://api-maps.yandex.ru", "https://*.yandex.ru", "https://*.yandex.net", "https://*.maps.yandex.net", "https://*.yastatic.net", "https://geocode-maps.yandex.ru", "https://ipinfo.io"],
-      frameSrc: ["'self'", "https://*.yandex.ru", "https://*.yandex.net"],
-      objectSrc: ["'none'"],
-      workerSrc: ["'self'", "blob:", "https://*.yandex.ru", "https://*.yandex.net", "https://*.yastatic.net", "https://api-maps.yandex.ru"],
-      childSrc: ["'self'", "blob:"]
-    }
-  },
+  contentSecurityPolicy: false, // Disable helmet CSP 
   referrerPolicy: {
     policy: 'origin-when-cross-origin'
   },
   crossOriginEmbedderPolicy: false // Для совместимости с Replit
 }));
+
+// Custom CSP middleware for Yandex Maps v3
+app.use((req, res, next) => {
+  const csp = [
+    "default-src 'self' blob: data:",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://*.yastatic.net",
+    "font-src 'self' data: https://fonts.gstatic.com https://*.yastatic.net",
+    "img-src 'self' data: blob: https: https://*.yandex.ru https://*.yandex.net https://*.maps.yandex.net https://*.yastatic.net",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://replit.com https://api-maps.yandex.ru https://*.yandex.ru https://*.yandex.net https://*.yastatic.net",
+    "script-src-elem 'self' 'unsafe-inline' https://api-maps.yandex.ru https://*.yastatic.net https://replit.com",
+    "connect-src 'self' ws: wss: https: data: https://api-maps.yandex.ru https://*.yandex.ru https://*.yandex.net https://*.maps.yandex.net https://*.yastatic.net https://geocode-maps.yandex.ru https://sp.replit.com https://analytics.google.com https://stats.g.doubleclick.net https://logs.browser-intake-us5-datadoghq.com",
+    "frame-src 'self' https://*.yandex.ru https://*.yandex.net",
+    "object-src 'none'",
+    "worker-src 'self' blob: https://*.yandex.ru https://*.yandex.net https://*.yastatic.net https://api-maps.yandex.ru",
+    "child-src 'self' blob:"
+  ].join('; ');
+  
+  res.setHeader('Content-Security-Policy', csp);
+  next();
+});
 
 // CORS configuration
 app.use(cors({
