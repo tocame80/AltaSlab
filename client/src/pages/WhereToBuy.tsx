@@ -30,6 +30,7 @@ declare global {
 
 export default function WhereToBuy() {
   const [selectedRegion, setSelectedRegion] = useState<string>('');
+  const [selectedCity, setSelectedCity] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [detectedRegion, setDetectedRegion] = useState<string>('');
   const [showRegionDialog, setShowRegionDialog] = useState<boolean>(false);
@@ -43,7 +44,12 @@ export default function WhereToBuy() {
 
   // No dealer type filters - removed as requested
 
-  // No city filter needed anymore
+  // Get unique cities from dealers data
+  const cityOptions = useMemo(() => {
+    if (!dealerLocations.length) return [];
+    const cities = dealerLocations.map(dealer => dealer.city);
+    return Array.from(new Set(cities)).sort();
+  }, [dealerLocations]);
 
   // Get unique regions
   const regions = useMemo(() => {
@@ -51,12 +57,16 @@ export default function WhereToBuy() {
     return [{ key: '', label: 'Все регионы' }, ...uniqueRegions.map(region => ({ key: region, label: region }))];
   }, [dealerLocations]);
 
-  // Filter dealers (removed type and city filters)
+  // Filter dealers by region, city and search
   const filteredDealers = useMemo(() => {
     let filtered = dealerLocations;
 
     if (selectedRegion) {
       filtered = filtered.filter(dealer => dealer.region === selectedRegion);
+    }
+
+    if (selectedCity) {
+      filtered = filtered.filter(dealer => dealer.city === selectedCity);
     }
 
     if (searchQuery) {
@@ -69,7 +79,7 @@ export default function WhereToBuy() {
     }
 
     return filtered;
-  }, [dealerLocations, selectedRegion, searchQuery]);
+  }, [dealerLocations, selectedRegion, selectedCity, searchQuery]);
 
   // Detect user's region by IP
   useEffect(() => {
@@ -469,13 +479,30 @@ export default function WhereToBuy() {
               <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             </div>
 
+            {/* City Filter */}
+            <select
+              value={selectedCity}
+              onChange={(e) => {
+                setSelectedCity(e.target.value);
+                centerMapOnLocation(e.target.value);
+              }}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
+              data-testid="select-city"
+            >
+              <option value="">Все города</option>
+              {cityOptions.map(city => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
+              ))}
+            </select>
 
             {/* Region Filter */}
             <select
               value={selectedRegion}
               onChange={(e) => {
                 setSelectedRegion(e.target.value);
-                centerMapOnLocation(e.target.value);
+                centerMapOnLocation(undefined, e.target.value);
               }}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
               data-testid="select-region"
@@ -609,14 +636,14 @@ export default function WhereToBuy() {
       
       {/* Region Confirmation Dialog */}
       <Dialog open={showRegionDialog} onOpenChange={setShowRegionDialog}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md bg-white border border-gray-200 shadow-xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="flex items-center gap-2 text-[#2f378b]">
               <MapPin className="w-5 h-5 text-[#e90039]" />
               Определение региона
             </DialogTitle>
-            <DialogDescription>
-              Мы определили ваш регион как <strong>{detectedRegion}</strong>. 
+            <DialogDescription className="text-gray-700 bg-gray-50 p-3 rounded-lg">
+              Мы определили ваш регион как <strong className="text-[#e90039]">{detectedRegion}</strong>. 
               Это правильно?
             </DialogDescription>
           </DialogHeader>
