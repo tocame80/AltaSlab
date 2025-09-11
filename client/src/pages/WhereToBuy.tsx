@@ -1,8 +1,10 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Phone, Mail, Globe, MapPin, Clock, Filter, Search } from 'lucide-react';
+import { Phone, Mail, Globe, MapPin, Clock, Filter, Search, CheckCircle, XCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 interface DealerLocation {
   id: string;
@@ -27,10 +29,11 @@ declare global {
 }
 
 export default function WhereToBuy() {
-  const [selectedType, setSelectedType] = useState<string>('');
   const [selectedRegion, setSelectedRegion] = useState<string>('');
   const [selectedCity, setSelectedCity] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [detectedRegion, setDetectedRegion] = useState<string>('');
+  const [showRegionDialog, setShowRegionDialog] = useState<boolean>(false);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapInstance, setMapInstance] = useState<any>(null);
 
@@ -39,13 +42,7 @@ export default function WhereToBuy() {
     queryKey: ['/api/dealer-locations'],
   });
 
-  // Filter options
-  const dealerTypeFilters = [
-    { key: '', label: 'Все типы' },
-    { key: 'retail', label: 'Розничные' },
-    { key: 'wholesale', label: 'Оптовые' },
-    { key: 'authorized', label: 'Авторизованные' }
-  ];
+  // No dealer type filters - removed as requested
 
   // Get unique cities from dealers data
   const cityOptions = useMemo(() => {
@@ -60,13 +57,9 @@ export default function WhereToBuy() {
     return [{ key: '', label: 'Все регионы' }, ...uniqueRegions.map(region => ({ key: region, label: region }))];
   }, [dealerLocations]);
 
-  // Filter dealers
+  // Filter dealers (removed type filter)
   const filteredDealers = useMemo(() => {
     let filtered = dealerLocations;
-
-    if (selectedType) {
-      filtered = filtered.filter(dealer => dealer.dealerType === selectedType);
-    }
 
     if (selectedRegion) {
       filtered = filtered.filter(dealer => dealer.region === selectedRegion);
@@ -86,7 +79,84 @@ export default function WhereToBuy() {
     }
 
     return filtered;
-  }, [dealerLocations, selectedType, selectedRegion, selectedCity, searchQuery]);
+  }, [dealerLocations, selectedRegion, selectedCity, searchQuery]);
+
+  // Detect user's region by IP
+  useEffect(() => {
+    const detectRegion = async () => {
+      try {
+        // Use ipapi.co for region detection (free service)
+        const response = await fetch('https://ipapi.co/json/');
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Detected location:', data);
+          
+          // Map country/region to our regions
+          let detectedRegionName = '';
+          if (data.country_code === 'RU') {
+            // For Russia, try to map region
+            if (data.region === 'Moscow' || data.city === 'Moscow') {
+              detectedRegionName = 'Московская область';
+            } else {
+              detectedRegionName = 'Московская область'; // Default for Russia
+            }
+          } else {
+            // For other countries, default to Moscow region
+            detectedRegionName = 'Московская область';
+          }
+          
+          setDetectedRegion(detectedRegionName);
+          setShowRegionDialog(true);
+        }
+      } catch (error) {
+        console.warn('Could not detect region:', error);
+        // Silently fail - user can select region manually
+      }
+    };
+
+    detectRegion();
+  }, []);
+
+  // Handle region confirmation
+  const handleRegionConfirm = (confirmed: boolean) => {
+    setShowRegionDialog(false);
+    if (confirmed && detectedRegion) {
+      setSelectedRegion(detectedRegion);
+      // Center map on detected region
+      centerMapOnRegion(detectedRegion);
+    }
+  };
+
+  // Center map on region or city
+  const centerMapOnRegion = (regionOrCity: string) => {
+    if (!mapInstance) return;
+
+    // Coordinates for regions/cities
+    const regionCoordinates: { [key: string]: [number, number] } = {
+      'Московская область': [55.7558, 37.6176], // Moscow
+      'Клин': [56.3324, 36.7277],
+      'Мытищи': [55.9116, 37.7307],
+      'Хотьково': [56.2527, 37.9986],
+      'Талдом': [56.7319, 37.5319],
+      'Дубна': [56.7332, 37.1711],
+      'Дмитров': [56.3439, 37.5196],
+      'Коломна': [55.0783, 38.7782],
+      'Сергиев Посад': [56.3000, 38.1333]
+    };
+
+    const coords = regionCoordinates[regionOrCity];
+    if (coords && mapInstance) {
+      console.log(`Centering map on ${regionOrCity}:`, coords);
+      try {
+        mapInstance.setLocation({
+          center: coords,
+          zoom: regionOrCity === 'Московская область' ? 8 : 12
+        });
+      } catch (error) {
+        console.error('Error centering map:', error);
+      }
+    }
+  };
 
   // Load Yandex Maps v3 (для России)
   useEffect(() => {
@@ -409,16 +479,17 @@ export default function WhereToBuy() {
               <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             </div>
 
-            {/* Dealer Type Filter */}
+            {/* City Filter */}
             <select
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
+              value={selectedCity}
+              onChange={(e) => setSelectedCity(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
-              data-testid="select-dealer-type"
+              data-testid="select-city"
             >
-              {dealerTypeFilters.map(type => (
-                <option key={type.key} value={type.key}>
-                  {type.label}
+              <option value="">Все города</option>
+              {cityOptions.map(city => (
+                <option key={city} value={city}>
+                  {city}
                 </option>
               ))}
             </select>
@@ -555,10 +626,10 @@ export default function WhereToBuy() {
                               dealer.dealerType}
                       </div>
                       
-                      {/* Dealer Type */}
+                      {/* Location */}
                       <div className="mt-2">
                         <span className="px-2 py-1 text-xs bg-[#e90039] text-white rounded">
-                          {dealerTypeFilters.find(t => t.key === dealer.dealerType)?.label || dealer.dealerType}
+                          {dealer.city}, {dealer.region}
                         </span>
                       </div>
                     </div>
@@ -576,6 +647,42 @@ export default function WhereToBuy() {
         </div>
       </div>
       </div>
+      
+      {/* Region Confirmation Dialog */}
+      <Dialog open={showRegionDialog} onOpenChange={setShowRegionDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-[#e90039]" />
+              Определение региона
+            </DialogTitle>
+            <DialogDescription>
+              Мы определили ваш регион как <strong>{detectedRegion}</strong>. 
+              Это правильно?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-3 mt-6">
+            <Button
+              onClick={() => handleRegionConfirm(true)}
+              className="flex-1 bg-[#e90039] hover:bg-[#c7003a] text-white"
+              data-testid="button-confirm-region"
+            >
+              <CheckCircle className="w-4 h-4 mr-2" />
+              Да, правильно
+            </Button>
+            <Button
+              onClick={() => handleRegionConfirm(false)}
+              variant="outline"
+              className="flex-1"
+              data-testid="button-decline-region"
+            >
+              <XCircle className="w-4 h-4 mr-2" />
+              Нет, выберу сам
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+      
       <Footer />
     </div>
   );
