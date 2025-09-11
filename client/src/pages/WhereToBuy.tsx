@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Phone, Mail, Globe, MapPin, Clock, Filter, Search, X, Check } from 'lucide-react';
+import { Phone, Mail, Globe, MapPin, Clock, Filter, Search, X, Check, AlertTriangle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
@@ -271,17 +271,18 @@ export default function WhereToBuy() {
 
         const scriptUrl = `https://api-maps.yandex.ru/v3/?apikey=${apiKey}&lang=ru_RU`;
         
-        // Preflight check using fetch HEAD request
+        // Try direct script loading - fetching v3 script is different from v2
+        console.log('API Key available:', !!apiKey);
+        console.log('API Key length:', apiKey.length);
+        console.log('Script URL will be:', scriptUrl);
+        
+        // Test if the script URL is accessible with a simple fetch
         try {
-          console.log('Performing preflight check for Yandex Maps API...');
-          const preflightResponse = await fetch(scriptUrl, { 
-            method: 'HEAD',
-            mode: 'no-cors' // Use no-cors to avoid CORS issues for preflight
-          });
-          console.log('Preflight check completed');
-        } catch (preflightError) {
-          console.warn('Preflight check failed, proceeding with script loading:', preflightError);
-          // Continue with script loading even if preflight fails
+          console.log('Testing script URL accessibility...');
+          const testResponse = await fetch(scriptUrl, { method: 'GET', mode: 'no-cors' });
+          console.log('Test fetch completed (no-cors mode)');
+        } catch (fetchError) {
+          console.error('Script URL fetch test failed:', fetchError);
         }
 
         // Загружаем скрипт API 3.0
@@ -293,17 +294,21 @@ export default function WhereToBuy() {
         
         script.onload = async () => {
           console.log('Yandex Maps v3 script loaded successfully');
+          console.log('window.ymaps3 after load:', !!window.ymaps3);
+          console.log('Available global properties:', Object.keys(window).filter(key => key.includes('ymap') || key.includes('Ymap')));
           
           // Небольшая задержка для инициализации API
           setTimeout(async () => {
             try {
               if (window.ymaps3) {
                 console.log('ymaps3 available, waiting for ready...');
+                console.log('ymaps3 object keys:', Object.keys(window.ymaps3));
                 await window.ymaps3.ready;
                 console.log('ymaps3.ready resolved!');
                 setMapLoaded(true);
               } else {
                 console.error('ymaps3 still not available after script load');
+                console.error('Available window properties:', Object.keys(window).filter(key => key.toLowerCase().includes('ymap')));
                 setMapError('api_initialization_failed');
               }
             } catch (error) {
@@ -315,8 +320,17 @@ export default function WhereToBuy() {
         
         script.onerror = (error) => {
           console.error('Failed to load Yandex Maps v3 script:', error);
+          console.error('Script URL:', scriptUrl);
+          console.error('Script src:', script.src);
+          console.error('Error event details:', {
+            errorType: typeof error,
+            errorString: String(error),
+            eventType: (error as Event)?.type || 'unknown',
+            hasTarget: !!(error as Event)?.target
+          });
+          
           // Determine error type based on common scenarios
-          if (apiKey.length < 10) {
+          if (!apiKey || apiKey.length < 10) {
             setMapError('api_key_invalid');
           } else {
             setMapError('api_key_unauthorized');
@@ -875,23 +889,25 @@ export default function WhereToBuy() {
                         
                         {mapError === 'api_key_unauthorized' && (
                           <div className="space-y-3">
-                            <p className="text-red-600 text-sm">
-                              API ключ не авторизован для Yandex Maps API v3.
-                            </p>
-                            <div className="bg-white border border-red-200 rounded-lg p-3 text-left">
-                              <p className="text-xs text-gray-600 mb-2 font-medium">Для администратора:</p>
-                              <div className="text-xs text-gray-700 space-y-1">
-                                <p>1. Перейдите в <a href="https://developer.tech.yandex.ru/" target="_blank" className="text-blue-600 hover:underline">Yandex Developer Console</a></p>
-                                <p>2. Выберите ваш проект и убедитесь, что активирован <strong>"JavaScript API 3.0"</strong></p>
-                                <p>3. Выберите ваш API-ключ и нажмите <strong>"Изменить"</strong></p>
-                                <p>4. В поле <strong>"Ограничение по HTTP Referer"</strong> добавьте домены (по одному в строке):</p>
-                                <div className="bg-gray-50 p-2 rounded text-xs font-mono">
-                                  <div>localhost</div>
-                                  <div>replit.com</div>
-                                  <div>вашproj-name.username.repl.co</div>
+                            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                              <div className="flex items-start space-x-3">
+                                <AlertTriangle className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                                <div className="space-y-3">
+                                  <p className="text-amber-800 text-sm font-medium">
+                                    API ключ не настроен для JavaScript API 3.0
+                                  </p>
+                                  <div className="text-sm text-amber-700">
+                                    <p className="mb-2"><strong>Что произошло:</strong> Ключ работает, но не авторизован для загрузки карт v3</p>
+                                    <p className="font-medium mb-2">Решение:</p>
+                                    <ol className="list-decimal list-inside space-y-1 ml-2">
+                                      <li>Откройте <a href="https://developer.tech.yandex.ru/" target="_blank" className="text-blue-600 hover:underline font-medium">Яндекс.Консоль разработчика</a></li>
+                                      <li>Найдите ваш API ключ</li>
+                                      <li><strong>Включите услугу "JavaScript API 3.0"</strong></li>
+                                      <li>В HTTP Referer добавьте: <code className="bg-amber-100 px-1 rounded text-xs">localhost, replit.com, *.repl.co, *.replit.app</code></li>
+                                      <li>Сохраните и подождите 2-3 минуты</li>
+                                    </ol>
+                                  </div>
                                 </div>
-                                <p><strong>Важно:</strong> без протокола, портов и URL. Только домен. Замените вашproj-name на реальное имя проекта.</p>
-                                <p>5. Подождите 15 минут - изменения вступают в силу через 15 минут</p>
                               </div>
                             </div>
                           </div>
