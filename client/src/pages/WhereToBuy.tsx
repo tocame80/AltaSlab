@@ -30,7 +30,6 @@ declare global {
 
 export default function WhereToBuy() {
   const [selectedRegion, setSelectedRegion] = useState<string>('');
-  const [selectedCity, setSelectedCity] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [detectedRegion, setDetectedRegion] = useState<string>('');
   const [showRegionDialog, setShowRegionDialog] = useState<boolean>(false);
@@ -44,12 +43,7 @@ export default function WhereToBuy() {
 
   // No dealer type filters - removed as requested
 
-  // Get unique cities from dealers data
-  const cityOptions = useMemo(() => {
-    if (!dealerLocations.length) return [];
-    const cities = dealerLocations.map(dealer => dealer.city);
-    return Array.from(new Set(cities)).sort();
-  }, [dealerLocations]);
+  // No city filter needed anymore
 
   // Get unique regions
   const regions = useMemo(() => {
@@ -57,16 +51,12 @@ export default function WhereToBuy() {
     return [{ key: '', label: 'Все регионы' }, ...uniqueRegions.map(region => ({ key: region, label: region }))];
   }, [dealerLocations]);
 
-  // Filter dealers (removed type filter)
+  // Filter dealers (removed type and city filters)
   const filteredDealers = useMemo(() => {
     let filtered = dealerLocations;
 
     if (selectedRegion) {
       filtered = filtered.filter(dealer => dealer.region === selectedRegion);
-    }
-
-    if (selectedCity) {
-      filtered = filtered.filter(dealer => dealer.city === selectedCity);
     }
 
     if (searchQuery) {
@@ -79,7 +69,7 @@ export default function WhereToBuy() {
     }
 
     return filtered;
-  }, [dealerLocations, selectedRegion, selectedCity, searchQuery]);
+  }, [dealerLocations, selectedRegion, searchQuery]);
 
   // Detect user's region by IP
   useEffect(() => {
@@ -479,27 +469,13 @@ export default function WhereToBuy() {
               <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             </div>
 
-            {/* City Filter */}
-            <select
-              value={selectedCity}
-              onChange={(e) => setSelectedCity(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
-              data-testid="select-city"
-            >
-              <option value="">Все города</option>
-              {cityOptions.map(city => (
-                <option key={city} value={city}>
-                  {city}
-                </option>
-              ))}
-            </select>
 
             {/* Region Filter */}
             <select
               value={selectedRegion}
               onChange={(e) => {
                 setSelectedRegion(e.target.value);
-                centerMapOnLocation(undefined, e.target.value);
+                centerMapOnLocation(e.target.value);
               }}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
               data-testid="select-region"
@@ -511,23 +487,6 @@ export default function WhereToBuy() {
               ))}
             </select>
 
-            {/* Cities Filter */}
-            <select
-              value={selectedCity}
-              onChange={(e) => {
-                setSelectedCity(e.target.value);
-                centerMapOnLocation(e.target.value);
-              }}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
-              data-testid="select-city"
-            >
-              <option value="">Все города</option>
-              {cityOptions.map(city => (
-                <option key={city} value={city}>
-                  {city}
-                </option>
-              ))}
-            </select>
           </div>
         </div>
 
