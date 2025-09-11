@@ -36,7 +36,7 @@ app.use(helmet({
       fontSrc: ["'self'", "data:", "https://fonts.gstatic.com", "https://*.yastatic.net"],
       imgSrc: ["'self'", "data:", "blob:", "https:", "https://*.yandex.ru", "https://*.yandex.net", "https://*.maps.yandex.net", "https://*.yastatic.net"],
       scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "blob:", "https://replit.com", "https://api-maps.yandex.ru", "https://*.yandex.ru", "https://*.yandex.net", "https://*.yastatic.net"],
-      scriptSrcElem: ["'self'", "https://api-maps.yandex.ru", "https://*.yastatic.net", "https://replit.com"],
+      scriptSrcElem: ["'self'", "'unsafe-inline'", "https://api-maps.yandex.ru", "https://*.yastatic.net", "https://replit.com"],
       connectSrc: ["'self'", "ws:", "wss:", "https:", "data:", "https://api-maps.yandex.ru", "https://*.yandex.ru", "https://*.yandex.net", "https://*.maps.yandex.net", "https://*.yastatic.net", "https://geocode-maps.yandex.ru", "https://ipinfo.io"],
       frameSrc: ["'self'", "https://*.yandex.ru", "https://*.yandex.net"],
       objectSrc: ["'none'"],

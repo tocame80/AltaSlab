@@ -1,4 +1,5 @@
-import * as React from "react"
+// Fix for @vitejs/plugin-react preamble detection
+import React from "react"
 import * as ToastPrimitives from "@radix-ui/react-toast"
 import { cva, type VariantProps } from "class-variance-authority"
 import { X } from "lucide-react"
