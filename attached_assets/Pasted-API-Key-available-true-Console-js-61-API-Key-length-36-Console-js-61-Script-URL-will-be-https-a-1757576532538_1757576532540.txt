@@ -1,0 +1,301 @@
+API Key available: true
+Console.js:61 API Key length: 36
+Console.js:61 Script URL will be: https://api-maps.yandex.ru/v3/?apikey=30d565ae-faed-4bfe-9fbd-c5d7a5c43be5&lang=ru_RU
+Console.js:61 Testing script URL accessibility...
+Console.js:61 Map initialization effect triggered: {mapLoaded: false, dealerLocationsLength: 0, hasMapInstance: false, ymaps3Available: false}
+_app-146032cf3fe9140a.js:38 [Report Only] Refused to connect to 'https://replit.com/graphql' because it violates the following Content Security Policy directive: "connect-src 'none'".
+
+_app-146032cf3fe9140a.js:38 [Report Only] Refused to connect to 'https://replit.com/graphql' because it violates the following Content Security Policy directive: "connect-src 'none'".
+
+chunk-XQLYTHWV.js?v=6188a326:377 [Violation] 'message' handler took 262ms
+injected.js:278  GET https://api-maps.yandex.ru/v3/?apikey=30d565ae-faed-4bfe-9fbd-c5d7a5c43be5&lang=ru_RU 403 (Forbidden)
+window.fetch @ Network.js:219
+apply @ injected.js:278
+loadYandexMaps @ WhereToBuy.tsx:282
+(anonymous) @ WhereToBuy.tsx:348
+commitHookEffectListMount @ chunk-XQLYTHWV.js?v=6188a326:16915
+commitPassiveMountOnFiber @ chunk-XQLYTHWV.js?v=6188a326:18156
+commitPassiveMountEffects_complete @ chunk-XQLYTHWV.js?v=6188a326:18129
+commitPassiveMountEffects_begin @ chunk-XQLYTHWV.js?v=6188a326:18119
+commitPassiveMountEffects @ chunk-XQLYTHWV.js?v=6188a326:18109
+flushPassiveEffectsImpl @ chunk-XQLYTHWV.js?v=6188a326:19490
+flushPassiveEffects @ chunk-XQLYTHWV.js?v=6188a326:19447
+performSyncWorkOnRoot @ chunk-XQLYTHWV.js?v=6188a326:18868
+flushSyncCallbacks @ chunk-XQLYTHWV.js?v=6188a326:9119
+commitRootImpl @ chunk-XQLYTHWV.js?v=6188a326:19432
+commitRoot @ chunk-XQLYTHWV.js?v=6188a326:19277
+finishConcurrentRender @ chunk-XQLYTHWV.js?v=6188a326:18805
+performConcurrentWorkOnRoot @ chunk-XQLYTHWV.js?v=6188a326:18718
+workLoop @ chunk-XQLYTHWV.js?v=6188a326:197
+flushWork @ chunk-XQLYTHWV.js?v=6188a326:176
+performWorkUntilDeadline @ chunk-XQLYTHWV.js?v=6188a326:384
+Console.js:61 Test fetch completed (no-cors mode)
+Console.js:61 Loading Yandex Maps v3 script...
+Console.js:61 Failed to load Yandex Maps v3 script: Event {isTrusted: true, type: 'error', target: script, currentTarget: script, eventPhase: 2, …}
+Mt.forEach.n.<computed> @ Console.js:61
+script.onerror @ WhereToBuy.tsx:322
+script
+loadYandexMaps @ WhereToBuy.tsx:289
+await in loadYandexMaps
+(anonymous) @ WhereToBuy.tsx:348
+commitHookEffectListMount @ chunk-XQLYTHWV.js?v=6188a326:16915
+commitPassiveMountOnFiber @ chunk-XQLYTHWV.js?v=6188a326:18156
+commitPassiveMountEffects_complete @ chunk-XQLYTHWV.js?v=6188a326:18129
+commitPassiveMountEffects_begin @ chunk-XQLYTHWV.js?v=6188a326:18119
+commitPassiveMountEffects @ chunk-XQLYTHWV.js?v=6188a326:18109
+flushPassiveEffectsImpl @ chunk-XQLYTHWV.js?v=6188a326:19490
+flushPassiveEffects @ chunk-XQLYTHWV.js?v=6188a326:19447
+performSyncWorkOnRoot @ chunk-XQLYTHWV.js?v=6188a326:18868
+flushSyncCallbacks @ chunk-XQLYTHWV.js?v=6188a326:9119
+commitRootImpl @ chunk-XQLYTHWV.js?v=6188a326:19432
+commitRoot @ chunk-XQLYTHWV.js?v=6188a326:19277
+finishConcurrentRender @ chunk-XQLYTHWV.js?v=6188a326:18805
+performConcurrentWorkOnRoot @ chunk-XQLYTHWV.js?v=6188a326:18718
+workLoop @ chunk-XQLYTHWV.js?v=6188a326:197
+flushWork @ chunk-XQLYTHWV.js?v=6188a326:176
+performWorkUntilDeadline @ chunk-XQLYTHWV.js?v=6188a326:384
+Console.js:61 Script URL: https://api-maps.yandex.ru/v3/?apikey=30d565ae-faed-4bfe-9fbd-c5d7a5c43be5&lang=ru_RU
+Mt.forEach.n.<computed> @ Console.js:61
+script.onerror @ WhereToBuy.tsx:323
+script
+loadYandexMaps @ WhereToBuy.tsx:289
+await in loadYandexMaps
+(anonymous) @ WhereToBuy.tsx:348
+commitHookEffectListMount @ chunk-XQLYTHWV.js?v=6188a326:16915
+commitPassiveMountOnFiber @ chunk-XQLYTHWV.js?v=6188a326:18156
+commitPassiveMountEffects_complete @ chunk-XQLYTHWV.js?v=6188a326:18129
+commitPassiveMountEffects_begin @ chunk-XQLYTHWV.js?v=6188a326:18119
+commitPassiveMountEffects @ chunk-XQLYTHWV.js?v=6188a326:18109
+flushPassiveEffectsImpl @ chunk-XQLYTHWV.js?v=6188a326:19490
+flushPassiveEffects @ chunk-XQLYTHWV.js?v=6188a326:19447
+performSyncWorkOnRoot @ chunk-XQLYTHWV.js?v=6188a326:18868
+flushSyncCallbacks @ chunk-XQLYTHWV.js?v=6188a326:9119
+commitRootImpl @ chunk-XQLYTHWV.js?v=6188a326:19432
+commitRoot @ chunk-XQLYTHWV.js?v=6188a326:19277
+finishConcurrentRender @ chunk-XQLYTHWV.js?v=6188a326:18805
+performConcurrentWorkOnRoot @ chunk-XQLYTHWV.js?v=6188a326:18718
+workLoop @ chunk-XQLYTHWV.js?v=6188a326:197
+flushWork @ chunk-XQLYTHWV.js?v=6188a326:176
+performWorkUntilDeadline @ chunk-XQLYTHWV.js?v=6188a326:384
+Console.js:61 Script src: https://api-maps.yandex.ru/v3/?apikey=30d565ae-faed-4bfe-9fbd-c5d7a5c43be5&lang=ru_RU
+Mt.forEach.n.<computed> @ Console.js:61
+script.onerror @ WhereToBuy.tsx:324
+script
+loadYandexMaps @ WhereToBuy.tsx:289
+await in loadYandexMaps
+(anonymous) @ WhereToBuy.tsx:348
+commitHookEffectListMount @ chunk-XQLYTHWV.js?v=6188a326:16915
+commitPassiveMountOnFiber @ chunk-XQLYTHWV.js?v=6188a326:18156
+commitPassiveMountEffects_complete @ chunk-XQLYTHWV.js?v=6188a326:18129
+commitPassiveMountEffects_begin @ chunk-XQLYTHWV.js?v=6188a326:18119
+commitPassiveMountEffects @ chunk-XQLYTHWV.js?v=6188a326:18109
+flushPassiveEffectsImpl @ chunk-XQLYTHWV.js?v=6188a326:19490
+flushPassiveEffects @ chunk-XQLYTHWV.js?v=6188a326:19447
+performSyncWorkOnRoot @ chunk-XQLYTHWV.js?v=6188a326:18868
+flushSyncCallbacks @ chunk-XQLYTHWV.js?v=6188a326:9119
+commitRootImpl @ chunk-XQLYTHWV.js?v=6188a326:19432
+commitRoot @ chunk-XQLYTHWV.js?v=6188a326:19277
+finishConcurrentRender @ chunk-XQLYTHWV.js?v=6188a326:18805
+performConcurrentWorkOnRoot @ chunk-XQLYTHWV.js?v=6188a326:18718
+workLoop @ chunk-XQLYTHWV.js?v=6188a326:197
+flushWork @ chunk-XQLYTHWV.js?v=6188a326:176
+performWorkUntilDeadline @ chunk-XQLYTHWV.js?v=6188a326:384
+Console.js:61 Error event details: {errorType: 'object', errorString: '[object Event]', eventType: 'error', hasTarget: true}
+Mt.forEach.n.<computed> @ Console.js:61
+script.onerror @ WhereToBuy.tsx:325
+script
+loadYandexMaps @ WhereToBuy.tsx:289
+await in loadYandexMaps
+(anonymous) @ WhereToBuy.tsx:348
+commitHookEffectListMount @ chunk-XQLYTHWV.js?v=6188a326:16915
+commitPassiveMountOnFiber @ chunk-XQLYTHWV.js?v=6188a326:18156
+commitPassiveMountEffects_complete @ chunk-XQLYTHWV.js?v=6188a326:18129
+commitPassiveMountEffects_begin @ chunk-XQLYTHWV.js?v=6188a326:18119
+commitPassiveMountEffects @ chunk-XQLYTHWV.js?v=6188a326:18109
+flushPassiveEffectsImpl @ chunk-XQLYTHWV.js?v=6188a326:19490
+flushPassiveEffects @ chunk-XQLYTHWV.js?v=6188a326:19447
+performSyncWorkOnRoot @ chunk-XQLYTHWV.js?v=6188a326:18868
+flushSyncCallbacks @ chunk-XQLYTHWV.js?v=6188a326:9119
+commitRootImpl @ chunk-XQLYTHWV.js?v=6188a326:19432
+commitRoot @ chunk-XQLYTHWV.js?v=6188a326:19277
+finishConcurrentRender @ chunk-XQLYTHWV.js?v=6188a326:18805
+performConcurrentWorkOnRoot @ chunk-XQLYTHWV.js?v=6188a326:18718
+workLoop @ chunk-XQLYTHWV.js?v=6188a326:197
+flushWork @ chunk-XQLYTHWV.js?v=6188a326:176
+performWorkUntilDeadline @ chunk-XQLYTHWV.js?v=6188a326:384
+Console.js:61 Map initialization effect triggered: {mapLoaded: false, dealerLocationsLength: 0, hasMapInstance: false, ymaps3Available: false}
+Console.js:61 Map initialization effect triggered: {mapLoaded: false, dealerLocationsLength: 0, hasMapInstance: false, ymaps3Available: false}
+[Violation] Forced reflow while executing JavaScript took 32ms
+framework-1ed4238a3538f12d.js:1 [Violation] 'pointerup' handler took 428ms
+[Violation] Forced reflow while executing JavaScript took 290ms
+_app-146032cf3fe9140a.js:38 [Report Only] Refused to connect to 'https://sp.replit.com/v1/t' because it violates the following Content Security Policy directive: "connect-src 'none'".
+
+_app-146032cf3fe9140a.js:38 [Report Only] Refused to connect to 'https://sp.replit.com/v1/t' because it violates the following Content Security Policy directive: "connect-src 'none'".
+
+_app-146032cf3fe9140a.js:38 [Report Only] Refused to connect to 'https://replit.com/graphql' because it violates the following Content Security Policy directive: "connect-src 'none'".
+
+_app-146032cf3fe9140a.js:38 [Report Only] Refused to connect to 'https://replit.com/graphql' because it violates the following Content Security Policy directive: "connect-src 'none'".
+
+Console.js:61 Map initialization effect triggered: {mapLoaded: false, dealerLocationsLength: 9, hasMapInstance: false, ymaps3Available: false}
+chunk-XQLYTHWV.js?v=6188a326:18625 [Violation] 'setTimeout' handler took 133ms
+[Violation] Forced reflow while executing JavaScript took 37ms
+_app-146032cf3fe9140a.js:38 [Report Only] Refused to connect to 'https://analytics.google.com/g/collect?v=2&tid=G-MPJY3F1YEL&gtm=45je5991v9135634466za200&_p=1757570632347&gcd=13l3l3l3l2l1&npa=0&dma=0&ul=ru-ru&sr=3440x1440&cid=1960356758.1757570604&ecid=68304497&ir=1&uaa=x86&uab=64&uafvl=Chromium%3B140.0.7339.80%7CNot%253DA%253FBrand%3B24.0.0.0%7CGoogle%2520Chrome%3B140.0.7339.80&uamb=0&uam=&uap=Windows&uapv=10.0.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=EBAIAAQ&_s=93&tag_exp=101509157~103116026~103200004~103233427~104527906~104528500~104684208~104684211~104948813~105367987~105367989~105426769~105426771~115616986&dl=https%3A%2F%2Freplit.com%2F~&dp=%2F%40goryacheff%2FAltaSlab&dt=replEnvironmentDesktop&sid=1757570604&sct=1&seg=1&_tu=wAQ&en=Agent%20Used&_ee=1&ep.event_category=All&ep.value=0&_et=2723&tfd=5894473' because it violates the following Content Security Policy directive: "connect-src 'none'".
+
+_app-146032cf3fe9140a.js:38 [Report Only] Refused to connect to 'https://analytics.google.com/g/collect?v=2&tid=G-MPJY3F1YEL&gtm=45je5991v9135634466za200&_p=1757570632347&gcd=13l3l3l3l2l1&npa=0&dma=0&ul=ru-ru&sr=3440x1440&cid=1960356758.1757570604&ecid=68304497&ir=1&uaa=x86&uab=64&uafvl=Chromium%3B140.0.7339.80%7CNot%253DA%253FBrand%3B24.0.0.0%7CGoogle%2520Chrome%3B140.0.7339.80&uamb=0&uam=&uap=Windows&uapv=10.0.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=EBAIAAQ&_s=93&tag_exp=101509157~103116026~103200004~103233427~104527906~104528500~104684208~104684211~104948813~105367987~105367989~105426769~105426771~115616986&dl=https%3A%2F%2Freplit.com%2F~&dp=%2F%40goryacheff%2FAltaSlab&dt=replEnvironmentDesktop&sid=1757570604&sct=1&seg=1&_tu=wAQ&en=Agent%20Used&_ee=1&ep.event_category=All&ep.value=0&_et=2723&tfd=5894473' because it violates the following Content Security Policy directive: "connect-src 'none'".
+
+_app-146032cf3fe9140a.js:38  POST https://analytics.google.com/g/collect?v=2&tid=G-MPJY3F1YEL&gtm=45je5991v9135634466za200&_p=1757570632347&gcd=13l3l3l3l2l1&npa=0&dma=0&ul=ru-ru&sr=3440x1440&cid=1960356758.1757570604&ecid=68304497&ir=1&uaa=x86&uab=64&uafvl=Chromium%3B140.0.7339.80%7CNot%253DA%253FBrand%3B24.0.0.0%7CGoogle%2520Chrome%3B140.0.7339.80&uamb=0&uam=&uap=Windows&uapv=10.0.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=EBAIAAQ&_s=93&tag_exp=101509157~103116026~103200004~103233427~104527906~104528500~104684208~104684211~104948813~105367987~105367989~105426769~105426771~115616986&dl=https%3A%2F%2Freplit.com%2F~&dp=%2F%40goryacheff%2FAltaSlab&dt=replEnvironmentDesktop&sid=1757570604&sct=1&seg=1&_tu=wAQ&en=Agent%20Used&_ee=1&ep.event_category=All&ep.value=0&_et=2723&tfd=5894473 net::ERR_CONNECTION_CLOSED
+(anonymous) @ _app-146032cf3fe9140a.js:38
+(anonymous) @ _app-146032cf3fe9140a.js:1
+o @ _app-146032cf3fe9140a.js:1
+Zc @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:250
+bl @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:406
+bN @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:903
+k.flush @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:910
+(anonymous) @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:908
+n @ _app-146032cf3fe9140a.js:38
+setTimeout
+(anonymous) @ _app-146032cf3fe9140a.js:38
+k.Lb @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:908
+k.add @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:910
+k.Bm @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:925
+k.ar @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:925
+(anonymous) @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:922
+vl @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:416
+yn @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:436
+(anonymous) @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:922
+c @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:852
+mJ @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:852
+k.Zq @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:922
+c @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:936
+v @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:477
+El @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:418
+Gp @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:477
+Fp.flush @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:481
+Fp.push @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:479
+xp @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:474
+event @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:732
+FB @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:738
+IB.b.push @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:744
+BB @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:744
+JB @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:744
+mC @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:757
+b.push @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:758
+Sa @ analytics.js:51
+(anonymous) @ analytics.js:83
+(anonymous) @ analytics.js:47
+(anonymous) @ analytics.js:87
+(anonymous) @ analytics.js:68
+(anonymous) @ analytics.js:102
+(anonymous) @ analytics.js:101
+N @ analytics.js:103
+(anonymous) @ index.js:360
+(anonymous) @ protos.js:372
+(anonymous) @ protos.js:178
+(anonymous) @ index.ts:270
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+s @ tslib.es6.js:73
+Promise.then
+a @ tslib.es6.js:76
+(anonymous) @ tslib.es6.js:76
+u @ tslib.es6.js:72
+(anonymous) @ ajs-destination.bundle.8e6b895db75187c55313.js:1
+(anonymous) @ index.ts:286
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+(anonymous) @ tslib.es6.js:80
+u @ tslib.es6.js:72
+(anonymous) @ ajs-destination.bundle.8e6b895db75187c55313.js:1
+(anonymous) @ delivery.js:28
+(anonymous) @ delivery.js:11
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+(anonymous) @ tslib.es6.js:80
+u @ tslib.es6.js:72
+(anonymous) @ delivery.js:4
+o @ delivery.js:27
+(anonymous) @ event-queue.js:325
+(anonymous) @ event-queue.js:323
+n @ _app-146032cf3fe9140a.js:38
+setTimeout
+(anonymous) @ _app-146032cf3fe9140a.js:38
+(anonymous) @ event-queue.js:321
+(anonymous) @ event-queue.js:320
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+s @ tslib.es6.js:73
+Promise.then
+a @ tslib.es6.js:76
+s @ tslib.es6.js:73
+Promise.then
+a @ tslib.es6.js:76
+(anonymous) @ tslib.es6.js:76
+u @ tslib.es6.js:72
+(anonymous) @ event-queue.js:273
+(anonymous) @ event-queue.js:181
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+s @ tslib.es6.js:73
+Promise.then
+a @ tslib.es6.js:76
+(anonymous) @ tslib.es6.js:76
+u @ tslib.es6.js:72
+(anonymous) @ event-queue.js:169
+(anonymous) @ event-queue.js:135
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+(anonymous) @ tslib.es6.js:80
+u @ tslib.es6.js:72
+(anonymous) @ event-queue.js:128
+(anonymous) @ dispatch.js:25
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+(anonymous) @ tslib.es6.js:80
+u @ tslib.es6.js:72
+p @ dispatch.js:18
+(anonymous) @ index.ts:460
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+(anonymous) @ tslib.es6.js:80
+u @ tslib.es6.js:72
+(anonymous) @ index.ts:454
+(anonymous) @ index.ts:253
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+(anonymous) @ tslib.es6.js:80
+u @ tslib.es6.js:72
+(anonymous) @ index.ts:241
+A @ _app-146032cf3fe9140a.js:1
+f @ 9949-dffd145663595737.js:1
+(anonymous) @ 4418-5f25ba2c30062986.js:1
+(anonymous) @ main-d277c531a33c43ad.js:1
+n @ main-d277c531a33c43ad.js:1
+u @ main-d277c531a33c43ad.js:1
+(anonymous) @ main-d277c531a33c43ad.js:1
+(anonymous) @ main-d277c531a33c43ad.js:1
+(anonymous) @ 4418-5f25ba2c30062986.js:1
+onSelectionChange @ 3669-ae3cad92b7f2a2a4.js:1
+n @ _app-146032cf3fe9140a.js:40
+(anonymous) @ _app-146032cf3fe9140a.js:40
+onSelectionChange @ 2634-79106a46c39d8145.js:1
+n @ _app-146032cf3fe9140a.js:40
+(anonymous) @ _app-146032cf3fe9140a.js:40
+setSelectedKeys @ 1938-be06e45ba9590f0b.js:1
+replaceSelection @ 1938-be06e45ba9590f0b.js:1
+E @ 1938-be06e45ba9590f0b.js:1
+z.onPressUp @ 1938-be06e45ba9590f0b.js:1
+(anonymous) @ _app-146032cf3fe9140a.js:9
+(anonymous) @ _app-146032cf3fe9140a.js:9
+t.onPointerUp @ _app-146032cf3fe9140a.js:9
+eB @ framework-1ed4238a3538f12d.js:1
+eH @ framework-1ed4238a3538f12d.js:1
+(anonymous) @ framework-1ed4238a3538f12d.js:1
+re @ framework-1ed4238a3538f12d.js:1
+rt @ framework-1ed4238a3538f12d.js:1
+(anonymous) @ framework-1ed4238a3538f12d.js:1
+uT @ framework-1ed4238a3538f12d.js:1
+eM @ framework-1ed4238a3538f12d.js:1
+ru @ framework-1ed4238a3538f12d.js:1
+tB @ framework-1ed4238a3538f12d.js:1
+tD @ framework-1ed4238a3538f12d.js:1
+n @ _app-146032cf3fe9140a.js:38
