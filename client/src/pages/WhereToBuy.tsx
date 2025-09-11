@@ -3,8 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import { Phone, Mail, Globe, MapPin, Clock, Filter, Search } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
 
 interface DealerLocation {
   id: string;
@@ -22,18 +20,11 @@ interface DealerLocation {
   workingHours?: string;
 }
 
-// Настройка иконок Leaflet (исправление путей к иконкам)
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-import markerIconRetina from 'leaflet/dist/images/marker-icon-2x.png';
-
-const DefaultIcon = L.divIcon({
-  html: `<div style="background-color: #e90039; width: 25px; height: 25px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>`,
-  iconSize: [25, 25],
-  iconAnchor: [12, 25],
-});
-
-L.Marker.prototype.options.icon = DefaultIcon;
+declare global {
+  interface Window {
+    ymaps?: any;
+  }
+}
 
 export default function WhereToBuy() {
   const [selectedType, setSelectedType] = useState<string>('');
@@ -99,77 +90,96 @@ export default function WhereToBuy() {
     return filtered;
   }, [dealerLocations, selectedType, selectedRegion, selectedServices, searchQuery]);
 
-  // Initialize Leaflet (локально установленная библиотека)
+  // Load Yandex Maps
   useEffect(() => {
-    console.log('Leaflet available locally:', !!L);
-    setMapLoaded(true);
-  }, []);
-
-  // Initialize Leaflet map
-  useEffect(() => {
-    if (mapLoaded && filteredDealers.length > 0 && !mapInstance) {
-      const mapElement = document.getElementById('yandex-map');
-      if (!mapElement) {
-        console.error('Map element not found');
+    const loadYandexMaps = () => {
+      if (window.ymaps) {
+        setMapLoaded(true);
         return;
       }
 
-      console.log('Creating Leaflet map...');
-      try {
-        // Создаем карту с центром в Москве
-        const map = L.map('yandex-map').setView([55.753994, 37.622093], 5);
+      const script = document.createElement('script');
+      // Загружаем без ключа для быстрого тестирования
+      script.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU&load=package.standard';
+      script.onload = () => {
+        console.log('Yandex Maps 2.1 loaded successfully');
+        if (window.ymaps && window.ymaps.ready) {
+          window.ymaps.ready(() => {
+            console.log('Yandex Maps ready!');
+            setMapLoaded(true);
+          });
+        } else {
+          setTimeout(() => setMapLoaded(true), 1000);
+        }
+      };
+      script.onerror = (error) => {
+        console.error('Failed to load Yandex Maps:', error);
+      };
+      document.head.appendChild(script);
+    };
 
-        // Добавляем OpenStreetMap слой
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+    loadYandexMaps();
+  }, []);
 
-        console.log('Leaflet map created successfully!');
+  // Initialize Yandex map
+  useEffect(() => {
+    if (mapLoaded && filteredDealers.length > 0 && !mapInstance && window.ymaps) {
+      console.log('Creating Yandex Map...');
+      window.ymaps.ready(() => {
+        const map = new window.ymaps.Map('yandex-map', {
+          center: [55.753994, 37.622093], // Moscow coordinates
+          zoom: 5,
+          controls: ['zoomControl'] // Только базовые controls
+        });
+
+        console.log('Yandex Map created successfully!');
         setMapInstance(map);
-      } catch (error) {
-        console.error('Failed to create Leaflet map:', error);
-      }
+      });
     }
   }, [mapLoaded, filteredDealers, mapInstance]);
 
-  // Update map markers when filters change (Leaflet version)
+  // Update map markers when filters change
   useEffect(() => {
-    if (mapInstance && filteredDealers.length > 0) {
+    if (mapInstance && filteredDealers.length > 0 && window.ymaps) {
       // Clear existing markers
-      mapInstance.eachLayer((layer: any) => {
-        if (layer instanceof L.Marker) {
-          mapInstance.removeLayer(layer);
-        }
-      });
+      mapInstance.geoObjects.removeAll();
 
-      const markers: any[] = [];
+      const placemarks: any[] = [];
 
       filteredDealers.forEach(dealer => {
         if (dealer.latitude && dealer.longitude) {
-          const marker = L.marker([parseFloat(dealer.latitude), parseFloat(dealer.longitude)])
-            .bindPopup(`
-              <div>
-                <h3>${dealer.name}</h3>
-                <p><strong>Адрес:</strong> ${dealer.address}</p>
-                <p><strong>Город:</strong> ${dealer.city}</p>
-                ${dealer.phone ? `<p><strong>Телефон:</strong> ${dealer.phone}</p>` : ''}
-                ${dealer.workingHours ? `<p><strong>Часы работы:</strong> ${dealer.workingHours}</p>` : ''}
-                <p><strong>Тип:</strong> ${dealer.dealerType}</p>
-              </div>
-            `)
-            .addTo(mapInstance);
-          markers.push(marker);
+          const placemark = new window.ymaps.Placemark(
+            [parseFloat(dealer.latitude), parseFloat(dealer.longitude)],
+            {
+              balloonContentHeader: dealer.name,
+              balloonContentBody: `
+                <div>
+                  <p><strong>Адрес:</strong> ${dealer.address}</p>
+                  <p><strong>Город:</strong> ${dealer.city}</p>
+                  ${dealer.phone ? `<p><strong>Телефон:</strong> ${dealer.phone}</p>` : ''}
+                  ${dealer.workingHours ? `<p><strong>Часы работы:</strong> ${dealer.workingHours}</p>` : ''}
+                </div>
+              `,
+              balloonContentFooter: dealer.dealerType
+            },
+            {
+              preset: 'islands#redDotIcon'
+            }
+          );
+          placemarks.push(placemark);
+          mapInstance.geoObjects.add(placemark);
         }
       });
 
-      // Fit map to show all markers
-      if (markers.length > 1) {
-        const group = new L.featureGroup(markers);
-        mapInstance.fitBounds(group.getBounds(), { padding: [20, 20] });
-      } else if (markers.length === 1) {
+      // Fit map to show all placemarks
+      if (placemarks.length > 1) {
+        const group = new window.ymaps.GeoObjectCollection({}, {});
+        placemarks.forEach(placemark => group.add(placemark));
+        mapInstance.setBounds(group.getBounds(), { checkZoomRange: true, zoomMargin: 20 });
+      } else if (placemarks.length === 1) {
         // Center on single marker
         const dealer = filteredDealers[0];
-        mapInstance.setView([parseFloat(dealer.latitude), parseFloat(dealer.longitude)], 12);
+        mapInstance.setCenter([parseFloat(dealer.latitude), parseFloat(dealer.longitude)], 12);
       }
     }
   }, [mapInstance, filteredDealers]);
