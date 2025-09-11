@@ -99,33 +99,19 @@ export default function WhereToBuy() {
       }
 
       const script = document.createElement('script');
-      // Загружаем без ключа для быстрого тестирования
-      script.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU&load=package.standard';
+      // Используем package.lite чтобы избежать проблем с 'full' bundle
+      script.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU&load=package.lite';
       script.onload = () => {
         console.log('Yandex Maps 2.1 loaded successfully');
         console.log('window.ymaps available:', !!window.ymaps);
         console.log('window.ymaps.ready available:', !!(window.ymaps && window.ymaps.ready));
         
-        // Пробуем разные подходы для инициализации
-        if (window.ymaps && window.ymaps.ready) {
-          console.log('Calling ymaps.ready()...');
-          try {
-            window.ymaps.ready(() => {
-              console.log('Yandex Maps ready callback fired!');
-              setMapLoaded(true);
-            });
-          } catch (error) {
-            console.error('Error in ymaps.ready():', error);
-            // Fallback - просто ставим loaded через таймаут
-            setTimeout(() => {
-              console.log('Using fallback initialization');
-              setMapLoaded(true);
-            }, 2000);
-          }
-        } else {
-          console.log('ymaps.ready not available, using setTimeout fallback');
-          setTimeout(() => setMapLoaded(true), 2000);
-        }
+        // Убираем ymaps.ready() полностью и используем простой timeout
+        console.log('Skipping ymaps.ready(), using direct timeout');
+        setTimeout(() => {
+          console.log('Direct timeout fired, setting mapLoaded=true');
+          setMapLoaded(true);
+        }, 1500);
       };
       script.onerror = (error) => {
         console.error('Failed to load Yandex Maps:', error);
@@ -157,16 +143,9 @@ export default function WhereToBuy() {
         }
       };
 
-      // Пробуем создать карту напрямую без второго ready()
-      if (window.ymaps.Map) {
-        console.log('Creating map directly...');
-        createMap();
-      } else if (window.ymaps.ready) {
-        console.log('Using ymaps.ready() for map creation...');
-        window.ymaps.ready(createMap);
-      } else {
-        console.error('Neither ymaps.Map nor ymaps.ready available');
-      }
+      // Создаем карту напрямую без ymaps.ready()
+      console.log('Creating map directly without ready()...');
+      createMap();
     }
   }, [mapLoaded, filteredDealers, mapInstance]);
 
