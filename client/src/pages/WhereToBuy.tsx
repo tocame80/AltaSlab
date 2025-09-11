@@ -90,121 +90,98 @@ export default function WhereToBuy() {
     return filtered;
   }, [dealerLocations, selectedType, selectedRegion, selectedServices, searchQuery]);
 
-  // Load Maps with dual-loader strategy: Yandex Maps v3 first, Leaflet fallback
+  // Load Yandex Maps v3 (для России)
   useEffect(() => {
-    const loadMaps = async () => {
-      console.log('Starting dual-loader: trying Yandex Maps v3 first...');
+    const loadYandexMapsV3 = async () => {
+      console.log('Loading Yandex Maps v3 for Russia...');
       
-      // Try Yandex Maps v3 first
-      try {
-        await loadYandexMapsV3();
-        console.log('Yandex Maps v3 loaded successfully');
+      // Check if already loaded
+      if ((window as any).ymaps3) {
+        console.log('Yandex Maps v3 already loaded');
         setMapLoaded(true);
-      } catch (error) {
-        console.warn('Yandex Maps v3 failed, falling back to Leaflet:', error);
-        await loadLeafletMap();
-        console.log('Leaflet fallback loaded successfully');  
-        setMapLoaded(true);
+        return;
       }
-    };
 
-    const loadYandexMapsV3 = () => {
-      return new Promise((resolve, reject) => {
-        if ((window as any).ymaps3) {
-          resolve(true);
-          return;
-        }
-
+      try {
         const script = document.createElement('script');
         script.src = 'https://api-maps.yandex.ru/v3/?apikey=0e8aff63-579c-4dd3-b4cb-c2b48b0d4b93&lang=ru_RU';
         
         const timeout = setTimeout(() => {
-          reject(new Error('Yandex Maps v3 timeout'));
-        }, 3000);
+          console.error('Yandex Maps v3 timeout - check API key and HTTP Referer settings');
+          setMapLoaded(false);
+        }, 10000); // Увеличим timeout до 10 секунд
         
         script.onload = () => {
           clearTimeout(timeout);
+          console.log('Yandex Maps v3 script loaded');
+          
+          // Проверим что ymaps3 доступен
           if ((window as any).ymaps3) {
-            resolve(true);
+            console.log('ymaps3 object available');
+            setMapLoaded(true);
           } else {
-            reject(new Error('ymaps3 not available'));
+            console.error('ymaps3 object not available after script load');
+            setMapLoaded(false);
           }
         };
         
-        script.onerror = () => {
+        script.onerror = (error) => {
           clearTimeout(timeout);
-          reject(new Error('Failed to load Yandex Maps v3'));
+          console.error('Failed to load Yandex Maps v3 script:', error);
+          setMapLoaded(false);
         };
         
         document.head.appendChild(script);
-      });
+      } catch (error) {
+        console.error('Error loading Yandex Maps v3:', error);
+        setMapLoaded(false);
+      }
     };
 
-    const loadLeafletMap = () => {
-      return new Promise((resolve) => {
-        console.log('Loading Leaflet as fallback...');
-        // For now just resolve - we'll implement Leaflet in next step
-        resolve(true);
-      });
-    };
-
-    loadMaps();
+    loadYandexMapsV3();
   }, []);
 
-  // Initialize map (ymaps3 or Leaflet)
+  // Initialize Yandex Maps v3
   useEffect(() => {
     if (mapLoaded && filteredDealers.length > 0 && !mapInstance) {
-      console.log('Initializing map with loaded system...');
+      console.log('Initializing Yandex Maps v3...');
       
-      const initializeMap = async () => {
+      const initializeYandexMapsV3 = async () => {
         try {
-          // Check if ymaps3 is available
-          if ((window as any).ymaps3) {
-            console.log('Creating Yandex Maps v3...');
-            await initYandexMapsV3();
-          } else {
-            console.log('Creating Leaflet map...');
-            await initLeafletMap();
+          const ymaps3 = (window as any).ymaps3;
+          
+          if (!ymaps3) {
+            console.error('ymaps3 not available');
+            return;
           }
+
+          console.log('Waiting for ymaps3.ready...');
+          await ymaps3.ready;
+          
+          console.log('Creating YMap...');
+          const map = new ymaps3.YMap(
+            document.getElementById('yandex-map'),
+            {
+              location: {
+                center: [37.622093, 55.753994], // Moscow coordinates (lng, lat for v3)
+                zoom: 5
+              }
+            }
+          );
+          
+          console.log('Yandex Maps v3 created successfully!');
+          setMapInstance(map);
+          
         } catch (error) {
-          console.error('Error initializing map:', error);
-          // Final fallback - create simple div placeholder
+          console.error('Error creating Yandex Maps v3:', error);
           const mapContainer = document.getElementById('yandex-map');
           if (mapContainer) {
-            mapContainer.innerHTML = '<div class="p-4 text-center text-gray-500">Карта временно недоступна</div>';
+            mapContainer.innerHTML = '<div class="p-4 text-center text-red-500">Ошибка загрузки карты. Проверьте настройки HTTP Referer в консоли Яндекса.</div>';
           }
         }
       };
 
-      const initYandexMapsV3 = async () => {
-        const ymaps3 = (window as any).ymaps3;
-        await ymaps3.ready;
-        
-        const map = new ymaps3.YMap(
-          document.getElementById('yandex-map'),
-          {
-            location: {
-              center: [37.622093, 55.753994], // Moscow coordinates (lng, lat for v3)
-              zoom: 5
-            }
-          }
-        );
-        
-        console.log('Yandex Maps v3 created successfully!');
-        setMapInstance(map);
-      };
-
-      const initLeafletMap = async () => {
-        console.log('Leaflet initialization - creating placeholder for now');
-        const mapContainer = document.getElementById('yandex-map');
-        if (mapContainer) {
-          mapContainer.innerHTML = '<div class="w-full h-full bg-gray-100 flex items-center justify-center text-gray-600">Leaflet карта (в разработке)</div>';
-        }
-        // Set a placeholder map instance
-        setMapInstance({ type: 'leaflet', placeholder: true });
-      };
-
-      initializeMap();
+      initializeYandexMapsV3();
     }
   }, [mapLoaded, filteredDealers, mapInstance]);
 
