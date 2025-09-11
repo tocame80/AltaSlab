@@ -474,10 +474,21 @@ export default function WhereToBuy() {
         const lngDiff = maxLng - minLng;
         const maxDiff = Math.max(latDiff, lngDiff);
 
-        // Настройки зума
-        const C = 0.3;       // константа подгонки
+        // Настройки зума с учетом типа фильтрации
+        let C = 0.3;         // константа подгонки
         const zoomMax = 14;  // максимальный зум
-        const zoomMin = 6;   // минимальный зум
+        let zoomMin = 6;     // минимальный зум
+        
+        // Специальные настройки для разных фильтров
+        if (selectedCity && selectedCity !== '') {
+          // Для города - ближе
+          C = 0.1;
+          zoomMin = 10;
+        } else if (selectedRegion && selectedRegion !== '') {
+          // Для области - средний зум
+          C = 0.2;
+          zoomMin = 8;
+        }
 
         // Формула расчёта зума с ограничениями
         const zoomCalc = Math.floor(Math.log2(C / maxDiff));
@@ -503,10 +514,21 @@ export default function WhereToBuy() {
       const lngDiff = bounds[1][1] - bounds[0][1];
       const maxDiff = Math.max(latDiff, lngDiff);
 
-      // Настройки зума
-      const C = 0.3;       // константа подгонки, можно подкорректировать
+      // Настройки зума с учетом типа фильтрации
+      let C = 0.3;         // константа подгонки, можно подкорректировать
       const zoomMax = 14;  // максимальный зум (максимальное приближение)
-      const zoomMin = 6;   // минимальный зум (минимальное приближение)
+      let zoomMin = 6;     // минимальный зум (минимальное приближение)
+      
+      // Специальные настройки для разных фильтров
+      if (selectedCity && selectedCity !== '') {
+        // Для города - ближе
+        C = 0.1;
+        zoomMin = 10;
+      } else if (selectedRegion && selectedRegion !== '') {
+        // Для области - средний зум
+        C = 0.2;
+        zoomMin = 8;
+      }
 
       // Формула расчёта зума с ограничениями на минимум и максимум
       const zoomCalc = Math.floor(Math.log2(C / maxDiff));
