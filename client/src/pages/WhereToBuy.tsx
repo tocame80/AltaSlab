@@ -98,12 +98,21 @@ export default function WhereToBuy() {
         return;
       }
 
+      const apiKey = import.meta.env.VITE_YANDEX_MAPS_API_KEY || '';
+      console.log('API Key:', apiKey ? 'Present' : 'Missing', 'Length:', apiKey.length);
+      
       const script = document.createElement('script');
+      // Временно работаем без ключа пока не настроим домены
       script.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU';
       script.onload = () => {
+        console.log('Yandex Maps script loaded');
         window.ymaps?.ready(() => {
+          console.log('Yandex Maps ready');
           setMapLoaded(true);
         });
+      };
+      script.onerror = (error) => {
+        console.error('Failed to load Yandex Maps script:', error);
       };
       document.head.appendChild(script);
     };
