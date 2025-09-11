@@ -129,7 +129,7 @@ export default function WhereToBuy() {
         const map = new window.ymaps.Map('yandex-map', {
           center: [55.753994, 37.622093], // Moscow coordinates
           zoom: 5,
-          controls: ['zoomControl'] // Только базовые controls
+          controls: [] // Убираем все controls чтобы избежать 'full' bundle
         });
 
         console.log('Yandex Map created successfully!');
@@ -142,7 +142,9 @@ export default function WhereToBuy() {
   useEffect(() => {
     if (mapInstance && filteredDealers.length > 0 && window.ymaps) {
       // Clear existing markers
-      mapInstance.geoObjects.removeAll();
+      if (mapInstance.geoObjects && mapInstance.geoObjects.removeAll) {
+        mapInstance.geoObjects.removeAll();
+      }
 
       const placemarks: any[] = [];
 
@@ -167,19 +169,29 @@ export default function WhereToBuy() {
             }
           );
           placemarks.push(placemark);
-          mapInstance.geoObjects.add(placemark);
+          if (mapInstance.geoObjects && mapInstance.geoObjects.add) {
+            mapInstance.geoObjects.add(placemark);
+          }
         }
       });
 
       // Fit map to show all placemarks
-      if (placemarks.length > 1) {
-        const group = new window.ymaps.GeoObjectCollection({}, {});
-        placemarks.forEach(placemark => group.add(placemark));
-        mapInstance.setBounds(group.getBounds(), { checkZoomRange: true, zoomMargin: 20 });
+      if (placemarks.length > 1 && window.ymaps.GeoObjectCollection) {
+        try {
+          const group = new window.ymaps.GeoObjectCollection({}, {});
+          placemarks.forEach(placemark => group.add(placemark));
+          if (mapInstance.setBounds && group.getBounds) {
+            mapInstance.setBounds(group.getBounds(), { checkZoomRange: true, zoomMargin: 20 });
+          }
+        } catch (error) {
+          console.log('Could not fit bounds, using default view');
+        }
       } else if (placemarks.length === 1) {
         // Center on single marker
         const dealer = filteredDealers[0];
-        mapInstance.setCenter([parseFloat(dealer.latitude), parseFloat(dealer.longitude)], 12);
+        if (mapInstance.setCenter) {
+          mapInstance.setCenter([parseFloat(dealer.latitude), parseFloat(dealer.longitude)], 12);
+        }
       }
     }
   }, [mapInstance, filteredDealers]);
