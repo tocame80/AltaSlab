@@ -3,6 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Phone, Mail, Globe, MapPin, Clock, Filter, Search } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 
 interface DealerLocation {
   id: string;
@@ -20,12 +22,18 @@ interface DealerLocation {
   workingHours?: string;
 }
 
-declare global {
-  interface Window {
-    ymaps?: any;
-    ymaps3?: any;
-  }
-}
+// Настройка иконок Leaflet (исправление путей к иконкам)
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import markerIconRetina from 'leaflet/dist/images/marker-icon-2x.png';
+
+const DefaultIcon = L.divIcon({
+  html: `<div style="background-color: #e90039; width: 25px; height: 25px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>`,
+  iconSize: [25, 25],
+  iconAnchor: [12, 25],
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
 
 export default function WhereToBuy() {
   const [selectedType, setSelectedType] = useState<string>('');
@@ -91,181 +99,77 @@ export default function WhereToBuy() {
     return filtered;
   }, [dealerLocations, selectedType, selectedRegion, selectedServices, searchQuery]);
 
-  // Load Yandex Maps
+  // Initialize Leaflet (локально установленная библиотека)
   useEffect(() => {
-    const loadYandexMaps = () => {
-      if (window.ymaps) {
-        setMapLoaded(true);
+    console.log('Leaflet available locally:', !!L);
+    setMapLoaded(true);
+  }, []);
+
+  // Initialize Leaflet map
+  useEffect(() => {
+    if (mapLoaded && filteredDealers.length > 0 && !mapInstance) {
+      const mapElement = document.getElementById('yandex-map');
+      if (!mapElement) {
+        console.error('Map element not found');
         return;
       }
 
-      const apiKey = import.meta.env.VITE_YANDEX_MAPS_API_KEY || '';
-      console.log('API Key:', apiKey ? 'Present' : 'Missing', 'Length:', apiKey.length);
-      
-      const script = document.createElement('script');
-      // Используем API 3.0 с правильным ключом
-      script.src = `https://api-maps.yandex.ru/v3/?apikey=${apiKey}&lang=ru_RU`;
-      script.onload = () => {
-        console.log('Yandex Maps script loaded');
-        console.log('window.ymaps available:', !!window.ymaps);
-        console.log('window.ymaps3 available:', !!window.ymaps3);
-        
-        // Даем время для инициализации API
-        setTimeout(async () => {
-          if (window.ymaps3 && window.ymaps3.ready) {
-            console.log('Calling ymaps3.ready()...');
-            await window.ymaps3.ready;
-            console.log('Yandex Maps 3.0 ready! API initialized successfully.');
-            setMapLoaded(true);
-          } else if (window.ymaps3) {
-            console.log('ymaps3 available but no ready method, setting loaded directly');
-            setMapLoaded(true);
-          } else {
-            console.error('ymaps3 not available after script load');
-            console.log('Available window properties:', Object.keys(window).filter(key => key.includes('ymap')));
-          }
-        }, 100);
-      };
-      script.onerror = (error) => {
-        console.warn('API 3.0 failed (likely HTTP Referer restriction), trying API 2.1 fallback...');
-        script.remove();
-        
-        // Fallback to API 2.1 with standard package (избегаем проблем с 'full' bundle)
-        const fallbackScript = document.createElement('script');
-        fallbackScript.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU&load=package.standard';
-        fallbackScript.onload = () => {
-          console.log('API 2.1 fallback loaded successfully');
-          // Пытаемся инициализировать без ymaps.ready() чтобы обойти bundle проблемы
-          let attempts = 0;
-          const tryInitialize = () => {
-            attempts++;
-            console.log(`Initialization attempt ${attempts}: ymaps available: ${!!window.ymaps}, Map available: ${!!(window.ymaps && window.ymaps.Map)}`);
-            
-            if (window.ymaps && window.ymaps.Map) {
-              console.log('API 2.1 Map constructor available! Setting loaded state.');
-              setMapLoaded(true);
-              return;
-            }
-            
-            if (attempts < 10) {
-              setTimeout(tryInitialize, 200 * attempts); // Увеличиваем интервал
-            } else {
-              console.error('Failed to initialize API 2.1 after 10 attempts');
-            }
-          };
-          
-          setTimeout(tryInitialize, 500); // Даем больше времени для инициализации
-        };
-        
-        fallbackScript.onerror = (fallbackError) => {
-          console.error('Both API 3.0 and 2.1 failed:', fallbackError);
-        };
-        
-        document.head.appendChild(fallbackScript);
-      };
-      document.head.appendChild(script);
-    };
+      console.log('Creating Leaflet map...');
+      try {
+        // Создаем карту с центром в Москве
+        const map = L.map('yandex-map').setView([55.753994, 37.622093], 5);
 
-    loadYandexMaps();
-  }, []);
+        // Добавляем OpenStreetMap слой
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
 
-  // Initialize map with API 3.0 or 2.1 fallback
-  useEffect(() => {
-    if (mapLoaded && filteredDealers.length > 0 && !mapInstance) {
-      const initMap = async () => {
-        const mapElement = document.getElementById('yandex-map');
-        if (!mapElement) {
-          console.error('Map element not found');
-          return;
-        }
-
-        // Try API 3.0 first
-        if (window.ymaps3) {
-          try {
-            console.log('Creating Yandex Map 3.0...');
-            await window.ymaps3.ready;
-            
-            const { YMap, YMapDefaultSchemeLayer } = window.ymaps3;
-            
-            const map = new YMap(mapElement, {
-              location: {
-                center: [37.622093, 55.753994], // Moscow coordinates (lng, lat for v3)
-                zoom: 5
-              }
-            });
-
-            map.addChild(new YMapDefaultSchemeLayer());
-            
-            console.log('Map 3.0 created successfully!');
-            setMapInstance(map);
-            return;
-          } catch (error) {
-            console.error('API 3.0 initialization failed:', error);
-          }
-        }
-        
-        // Fallback to API 2.1 - прямая инициализация без ready()
-        if (window.ymaps && window.ymaps.Map) {
-          console.log('Creating Yandex Map 2.1 (fallback) without ready()...');
-          try {
-            const map = new window.ymaps.Map('yandex-map', {
-              center: [55.753994, 37.622093], // Moscow coordinates (lat, lng for v2.1)
-              zoom: 5,
-              controls: [] // Убираем все controls чтобы избежать bundle проблем
-            });
-
-            console.log('Map 2.1 created successfully!');
-            setMapInstance(map);
-          } catch (error) {
-            console.error('Failed to create map directly:', error);
-          }
-        } else {
-          console.error('ymaps.Map not available:', !!window.ymaps, !!(window.ymaps && window.ymaps.Map));
-        }
-      };
-
-      initMap();
+        console.log('Leaflet map created successfully!');
+        setMapInstance(map);
+      } catch (error) {
+        console.error('Failed to create Leaflet map:', error);
+      }
     }
   }, [mapLoaded, filteredDealers, mapInstance]);
 
-  // Update map markers when filters change
+  // Update map markers when filters change (Leaflet version)
   useEffect(() => {
     if (mapInstance && filteredDealers.length > 0) {
-      // Clear existing placemarks
-      mapInstance.geoObjects.removeAll();
-
-      const placemarks: any[] = [];
-
-      filteredDealers.forEach(dealer => {
-        if (dealer.latitude && dealer.longitude) {
-          const placemark = new window.ymaps.Placemark(
-            [parseFloat(dealer.latitude), parseFloat(dealer.longitude)],
-            {
-              balloonContentHeader: dealer.name,
-              balloonContentBody: `
-                <div>
-                  <p><strong>Адрес:</strong> ${dealer.address}</p>
-                  <p><strong>Город:</strong> ${dealer.city}</p>
-                  ${dealer.phone ? `<p><strong>Телефон:</strong> ${dealer.phone}</p>` : ''}
-                  ${dealer.workingHours ? `<p><strong>Часы работы:</strong> ${dealer.workingHours}</p>` : ''}
-                </div>
-              `,
-              balloonContentFooter: dealer.dealerType
-            },
-            {
-              preset: 'islands#redDotIcon'
-            }
-          );
-          placemarks.push(placemark);
-          mapInstance.geoObjects.add(placemark);
+      // Clear existing markers
+      mapInstance.eachLayer((layer: any) => {
+        if (layer instanceof L.Marker) {
+          mapInstance.removeLayer(layer);
         }
       });
 
-      // Fit map to show all placemarks
-      if (placemarks.length > 0) {
-        const group = new window.ymaps.GeoObjectCollection({}, {});
-        placemarks.forEach(placemark => group.add(placemark));
-        mapInstance.setBounds(group.getBounds(), { checkZoomRange: true, zoomMargin: 20 });
+      const markers: any[] = [];
+
+      filteredDealers.forEach(dealer => {
+        if (dealer.latitude && dealer.longitude) {
+          const marker = L.marker([parseFloat(dealer.latitude), parseFloat(dealer.longitude)])
+            .bindPopup(`
+              <div>
+                <h3>${dealer.name}</h3>
+                <p><strong>Адрес:</strong> ${dealer.address}</p>
+                <p><strong>Город:</strong> ${dealer.city}</p>
+                ${dealer.phone ? `<p><strong>Телефон:</strong> ${dealer.phone}</p>` : ''}
+                ${dealer.workingHours ? `<p><strong>Часы работы:</strong> ${dealer.workingHours}</p>` : ''}
+                <p><strong>Тип:</strong> ${dealer.dealerType}</p>
+              </div>
+            `)
+            .addTo(mapInstance);
+          markers.push(marker);
+        }
+      });
+
+      // Fit map to show all markers
+      if (markers.length > 1) {
+        const group = new L.featureGroup(markers);
+        mapInstance.fitBounds(group.getBounds(), { padding: [20, 20] });
+      } else if (markers.length === 1) {
+        // Center on single marker
+        const dealer = filteredDealers[0];
+        mapInstance.setView([parseFloat(dealer.latitude), parseFloat(dealer.longitude)], 12);
       }
     }
   }, [mapInstance, filteredDealers]);
