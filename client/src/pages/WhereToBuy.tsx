@@ -779,10 +779,16 @@ export default function WhereToBuy() {
                               <p className="text-xs text-gray-600 mb-2 font-medium">Для администратора:</p>
                               <div className="text-xs text-gray-700 space-y-1">
                                 <p>1. Перейдите в <a href="https://developer.tech.yandex.ru/" target="_blank" className="text-blue-600 hover:underline">Yandex Developer Console</a></p>
-                                <p>2. Выберите ваш проект или создайте новый</p>
-                                <p>3. В разделе "API" активируйте <strong>"JavaScript API 3.0"</strong></p>
-                                <p>4. В настройках API добавьте домен сайта в разрешенные домены</p>
-                                <p>5. Убедитесь, что ключ имеет права на JavaScript API 3.0</p>
+                                <p>2. Выберите ваш проект и убедитесь, что активирован <strong>"JavaScript API 3.0"</strong></p>
+                                <p>3. Выберите ваш API-ключ и нажмите <strong>"Изменить"</strong></p>
+                                <p>4. В поле <strong>"Ограничение по HTTP Referer"</strong> добавьте домены (по одному в строке):</p>
+                                <div className="bg-gray-50 p-2 rounded text-xs font-mono">
+                                  <div>localhost</div>
+                                  <div>replit.com</div>
+                                  <div>вашproj-name.username.repl.co</div>
+                                </div>
+                                <p><strong>Важно:</strong> без протокола, портов и URL. Только домен. Замените вашproj-name на реальное имя проекта.</p>
+                                <p>5. Подождите 15 минут - изменения вступают в силу через 15 минут</p>
                               </div>
                             </div>
                           </div>
