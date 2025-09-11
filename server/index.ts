@@ -31,15 +31,15 @@ if (process.env.NODE_ENV === 'production') {
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "blob:", "https:", "https://*.yandex.net", "https://*.maps.yandex.net", "https://*.yandex.ru"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://replit.com", "https://api-maps.yandex.ru", "https://*.maps.yandex.net"],
-      connectSrc: ["'self'", "wss:", "https:", "https://api-maps.yandex.ru", "https://*.maps.yandex.net", "https://ipinfo.io"],
-      frameSrc: ["'self'", "https://yandex.ru", "https://*.yandex.ru"],
+      defaultSrc: ["'self'", "blob:", "data:"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://*.yastatic.net"],
+      fontSrc: ["'self'", "data:", "https://fonts.gstatic.com", "https://*.yastatic.net"],
+      imgSrc: ["'self'", "data:", "blob:", "https:", "https://*.yandex.ru", "https://*.yandex.net", "https://*.maps.yandex.net", "https://*.yastatic.net"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "blob:", "https://replit.com", "https://api-maps.yandex.ru", "https://*.yandex.ru", "https://*.yandex.net", "https://*.yastatic.net"],
+      connectSrc: ["'self'", "wss:", "https:", "data:", "https://api-maps.yandex.ru", "https://*.yandex.ru", "https://*.yandex.net", "https://*.maps.yandex.net", "https://*.yastatic.net", "https://geocode-maps.yandex.ru", "https://ipinfo.io"],
+      frameSrc: ["'self'", "https://*.yandex.ru", "https://*.yandex.net"],
       objectSrc: ["'none'"],
-      workerSrc: ["'self'", "blob:"]
+      workerSrc: ["'self'", "blob:", "https://*.yandex.ru", "https://*.yandex.net"]
     }
   },
   crossOriginEmbedderPolicy: false // Для совместимости с Replit
