@@ -40,15 +40,15 @@ app.use(helmet({
 app.use((req, res, next) => {
   const csp = [
     "default-src 'self' blob: data:",
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://*.yastatic.net",
-    "font-src 'self' data: https://fonts.gstatic.com https://*.yastatic.net",
-    "img-src 'self' data: blob: https: https://*.yandex.ru https://*.yandex.net https://*.maps.yandex.net https://*.yastatic.net",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://replit.com https://api-maps.yandex.ru https://*.yandex.ru https://*.yandex.net https://*.yastatic.net",
-    "script-src-elem 'self' 'unsafe-inline' https://api-maps.yandex.ru https://*.yastatic.net https://replit.com",
-    "connect-src 'self' ws: wss: https: data: https://api-maps.yandex.ru https://*.yandex.ru https://*.yandex.net https://*.maps.yandex.net https://*.yastatic.net https://geocode-maps.yandex.ru https://sp.replit.com https://analytics.google.com https://stats.g.doubleclick.net https://logs.browser-intake-us5-datadoghq.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://yastatic.net https://*.yastatic.net",
+    "font-src 'self' data: https://fonts.gstatic.com https://yastatic.net https://*.yastatic.net",
+    "img-src 'self' data: blob: https: https://*.yandex.ru https://*.yandex.net https://*.maps.yandex.net https://yastatic.net https://*.yastatic.net",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://replit.com https://api-maps.yandex.ru https://*.yandex.ru https://*.yandex.net https://yastatic.net https://*.yastatic.net",
+    "script-src-elem 'self' 'unsafe-inline' https://api-maps.yandex.ru https://yastatic.net https://*.yastatic.net https://replit.com",
+    "connect-src 'self' ws: wss: https: data: https://api-maps.yandex.ru https://*.yandex.ru https://*.yandex.net https://*.maps.yandex.net https://yastatic.net https://*.yastatic.net https://geocode-maps.yandex.ru https://sp.replit.com https://analytics.google.com https://stats.g.doubleclick.net https://logs.browser-intake-us5-datadoghq.com",
     "frame-src 'self' https://*.yandex.ru https://*.yandex.net",
     "object-src 'none'",
-    "worker-src 'self' blob: https://*.yandex.ru https://*.yandex.net https://*.yastatic.net https://api-maps.yandex.ru",
+    "worker-src 'self' blob: https://*.yandex.ru https://*.yandex.net https://yastatic.net https://*.yastatic.net https://api-maps.yandex.ru",
     "child-src 'self' blob:"
   ].join('; ');
   

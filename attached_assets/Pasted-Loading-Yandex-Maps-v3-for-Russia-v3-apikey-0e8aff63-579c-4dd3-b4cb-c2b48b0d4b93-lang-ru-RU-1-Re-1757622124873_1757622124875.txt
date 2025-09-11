@@ -1,0 +1,155 @@
+Loading Yandex Maps v3 for Russia...
+v3/?apikey=0e8aff63-579c-4dd3-b4cb-c2b48b0d4b93&lang=ru_RU:1 Refused to load the script 'https://yastatic.net/s3/front-maps-static/maps-front-jsapi-3/3.0.17422578/build/static/bundles/main.js' because it violates the following Content Security Policy directive: "script-src-elem 'self' 'unsafe-inline' https://api-maps.yandex.ru https://*.yastatic.net https://replit.com".
+
+(anonymous) @ v3/?apikey=0e8aff63-579c-4dd3-b4cb-c2b48b0d4b93&lang=ru_RU:1
+h @ v3/?apikey=0e8aff63-579c-4dd3-b4cb-c2b48b0d4b93&lang=ru_RU:1
+l.script @ v3/?apikey=0e8aff63-579c-4dd3-b4cb-c2b48b0d4b93&lang=ru_RU:1
+(anonymous) @ v3/?apikey=0e8aff63-579c-4dd3-b4cb-c2b48b0d4b93&lang=ru_RU:1
+(anonymous) @ v3/?apikey=0e8aff63-579c-4dd3-b4cb-c2b48b0d4b93&lang=ru_RU:1
+(anonymous) @ v3/?apikey=0e8aff63-579c-4dd3-b4cb-c2b48b0d4b93&lang=ru_RU:1
+Console.js:61 Yandex Maps v3 script loaded
+Console.js:61 ymaps3 object available
+2cc53e8d-20ae-45b9-8….dev/where-to-buy:1 Uncaught (in promise) Event {isTrusted: true, type: 'error', target: script, currentTarget: null, eventPhase: 0, …}
+[Violation] Forced reflow while executing JavaScript took 44ms
+Console.js:61 Initializing Yandex Maps v3...
+Console.js:61 Waiting for ymaps3.ready...
+Console.js:61 Error creating Yandex Maps v3: Event {isTrusted: true, type: 'error', target: script, currentTarget: null, eventPhase: 0, …}
+Mt.forEach.n.<computed> @ Console.js:61
+initializeYandexMapsV3 @ WhereToBuy.tsx:190
+await in initializeYandexMapsV3
+(anonymous) @ WhereToBuy.tsx:202
+commitHookEffectListMount @ chunk-XQLYTHWV.js?v=6188a326:16915
+commitPassiveMountOnFiber @ chunk-XQLYTHWV.js?v=6188a326:18156
+commitPassiveMountEffects_complete @ chunk-XQLYTHWV.js?v=6188a326:18129
+commitPassiveMountEffects_begin @ chunk-XQLYTHWV.js?v=6188a326:18119
+commitPassiveMountEffects @ chunk-XQLYTHWV.js?v=6188a326:18109
+flushPassiveEffectsImpl @ chunk-XQLYTHWV.js?v=6188a326:19490
+flushPassiveEffects @ chunk-XQLYTHWV.js?v=6188a326:19447
+commitRootImpl @ chunk-XQLYTHWV.js?v=6188a326:19416
+commitRoot @ chunk-XQLYTHWV.js?v=6188a326:19277
+performSyncWorkOnRoot @ chunk-XQLYTHWV.js?v=6188a326:18895
+flushSyncCallbacks @ chunk-XQLYTHWV.js?v=6188a326:9119
+(anonymous) @ chunk-XQLYTHWV.js?v=6188a326:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=6188a326:555
+flush @ @tanstack_react-query.js?v=6188a326:569
+batch @ @tanstack_react-query.js?v=6188a326:587
+dispatch_fn @ @tanstack_react-query.js?v=6188a326:996
+setData @ @tanstack_react-query.js?v=6188a326:696
+onSuccess @ @tanstack_react-query.js?v=6188a326:897
+resolve @ @tanstack_react-query.js?v=6188a326:456
+Promise.then
+run @ @tanstack_react-query.js?v=6188a326:498
+start @ @tanstack_react-query.js?v=6188a326:536
+fetch @ @tanstack_react-query.js?v=6188a326:926
+executeFetch_fn @ @tanstack_react-query.js?v=6188a326:2211
+onSubscribe @ @tanstack_react-query.js?v=6188a326:1898
+subscribe @ @tanstack_react-query.js?v=6188a326:24
+(anonymous) @ @tanstack_react-query.js?v=6188a326:3022
+subscribeToStore @ chunk-XQLYTHWV.js?v=6188a326:11984
+commitHookEffectListMount @ chunk-XQLYTHWV.js?v=6188a326:16915
+commitPassiveMountOnFiber @ chunk-XQLYTHWV.js?v=6188a326:18156
+commitPassiveMountEffects_complete @ chunk-XQLYTHWV.js?v=6188a326:18129
+commitPassiveMountEffects_begin @ chunk-XQLYTHWV.js?v=6188a326:18119
+commitPassiveMountEffects @ chunk-XQLYTHWV.js?v=6188a326:18109
+flushPassiveEffectsImpl @ chunk-XQLYTHWV.js?v=6188a326:19490
+flushPassiveEffects @ chunk-XQLYTHWV.js?v=6188a326:19447
+commitRootImpl @ chunk-XQLYTHWV.js?v=6188a326:19416
+commitRoot @ chunk-XQLYTHWV.js?v=6188a326:19277
+performSyncWorkOnRoot @ chunk-XQLYTHWV.js?v=6188a326:18895
+flushSyncCallbacks @ chunk-XQLYTHWV.js?v=6188a326:9119
+(anonymous) @ chunk-XQLYTHWV.js?v=6188a326:18627
+Console.js:61 Error details: [object Event]
+Mt.forEach.n.<computed> @ Console.js:61
+initializeYandexMapsV3 @ WhereToBuy.tsx:191
+await in initializeYandexMapsV3
+(anonymous) @ WhereToBuy.tsx:202
+commitHookEffectListMount @ chunk-XQLYTHWV.js?v=6188a326:16915
+commitPassiveMountOnFiber @ chunk-XQLYTHWV.js?v=6188a326:18156
+commitPassiveMountEffects_complete @ chunk-XQLYTHWV.js?v=6188a326:18129
+commitPassiveMountEffects_begin @ chunk-XQLYTHWV.js?v=6188a326:18119
+commitPassiveMountEffects @ chunk-XQLYTHWV.js?v=6188a326:18109
+flushPassiveEffectsImpl @ chunk-XQLYTHWV.js?v=6188a326:19490
+flushPassiveEffects @ chunk-XQLYTHWV.js?v=6188a326:19447
+commitRootImpl @ chunk-XQLYTHWV.js?v=6188a326:19416
+commitRoot @ chunk-XQLYTHWV.js?v=6188a326:19277
+performSyncWorkOnRoot @ chunk-XQLYTHWV.js?v=6188a326:18895
+flushSyncCallbacks @ chunk-XQLYTHWV.js?v=6188a326:9119
+(anonymous) @ chunk-XQLYTHWV.js?v=6188a326:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=6188a326:555
+flush @ @tanstack_react-query.js?v=6188a326:569
+batch @ @tanstack_react-query.js?v=6188a326:587
+dispatch_fn @ @tanstack_react-query.js?v=6188a326:996
+setData @ @tanstack_react-query.js?v=6188a326:696
+onSuccess @ @tanstack_react-query.js?v=6188a326:897
+resolve @ @tanstack_react-query.js?v=6188a326:456
+Promise.then
+run @ @tanstack_react-query.js?v=6188a326:498
+start @ @tanstack_react-query.js?v=6188a326:536
+fetch @ @tanstack_react-query.js?v=6188a326:926
+executeFetch_fn @ @tanstack_react-query.js?v=6188a326:2211
+onSubscribe @ @tanstack_react-query.js?v=6188a326:1898
+subscribe @ @tanstack_react-query.js?v=6188a326:24
+(anonymous) @ @tanstack_react-query.js?v=6188a326:3022
+subscribeToStore @ chunk-XQLYTHWV.js?v=6188a326:11984
+commitHookEffectListMount @ chunk-XQLYTHWV.js?v=6188a326:16915
+commitPassiveMountOnFiber @ chunk-XQLYTHWV.js?v=6188a326:18156
+commitPassiveMountEffects_complete @ chunk-XQLYTHWV.js?v=6188a326:18129
+commitPassiveMountEffects_begin @ chunk-XQLYTHWV.js?v=6188a326:18119
+commitPassiveMountEffects @ chunk-XQLYTHWV.js?v=6188a326:18109
+flushPassiveEffectsImpl @ chunk-XQLYTHWV.js?v=6188a326:19490
+flushPassiveEffects @ chunk-XQLYTHWV.js?v=6188a326:19447
+commitRootImpl @ chunk-XQLYTHWV.js?v=6188a326:19416
+commitRoot @ chunk-XQLYTHWV.js?v=6188a326:19277
+performSyncWorkOnRoot @ chunk-XQLYTHWV.js?v=6188a326:18895
+flushSyncCallbacks @ chunk-XQLYTHWV.js?v=6188a326:9119
+(anonymous) @ chunk-XQLYTHWV.js?v=6188a326:18627
+Console.js:61 Error stack: No stack
+Mt.forEach.n.<computed> @ Console.js:61
+initializeYandexMapsV3 @ WhereToBuy.tsx:192
+await in initializeYandexMapsV3
+(anonymous) @ WhereToBuy.tsx:202
+commitHookEffectListMount @ chunk-XQLYTHWV.js?v=6188a326:16915
+commitPassiveMountOnFiber @ chunk-XQLYTHWV.js?v=6188a326:18156
+commitPassiveMountEffects_complete @ chunk-XQLYTHWV.js?v=6188a326:18129
+commitPassiveMountEffects_begin @ chunk-XQLYTHWV.js?v=6188a326:18119
+commitPassiveMountEffects @ chunk-XQLYTHWV.js?v=6188a326:18109
+flushPassiveEffectsImpl @ chunk-XQLYTHWV.js?v=6188a326:19490
+flushPassiveEffects @ chunk-XQLYTHWV.js?v=6188a326:19447
+commitRootImpl @ chunk-XQLYTHWV.js?v=6188a326:19416
+commitRoot @ chunk-XQLYTHWV.js?v=6188a326:19277
+performSyncWorkOnRoot @ chunk-XQLYTHWV.js?v=6188a326:18895
+flushSyncCallbacks @ chunk-XQLYTHWV.js?v=6188a326:9119
+(anonymous) @ chunk-XQLYTHWV.js?v=6188a326:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=6188a326:555
+flush @ @tanstack_react-query.js?v=6188a326:569
+batch @ @tanstack_react-query.js?v=6188a326:587
+dispatch_fn @ @tanstack_react-query.js?v=6188a326:996
+setData @ @tanstack_react-query.js?v=6188a326:696
+onSuccess @ @tanstack_react-query.js?v=6188a326:897
+resolve @ @tanstack_react-query.js?v=6188a326:456
+Promise.then
+run @ @tanstack_react-query.js?v=6188a326:498
+start @ @tanstack_react-query.js?v=6188a326:536
+fetch @ @tanstack_react-query.js?v=6188a326:926
+executeFetch_fn @ @tanstack_react-query.js?v=6188a326:2211
+onSubscribe @ @tanstack_react-query.js?v=6188a326:1898
+subscribe @ @tanstack_react-query.js?v=6188a326:24
+(anonymous) @ @tanstack_react-query.js?v=6188a326:3022
+subscribeToStore @ chunk-XQLYTHWV.js?v=6188a326:11984
+commitHookEffectListMount @ chunk-XQLYTHWV.js?v=6188a326:16915
+commitPassiveMountOnFiber @ chunk-XQLYTHWV.js?v=6188a326:18156
+commitPassiveMountEffects_complete @ chunk-XQLYTHWV.js?v=6188a326:18129
+commitPassiveMountEffects_begin @ chunk-XQLYTHWV.js?v=6188a326:18119
+commitPassiveMountEffects @ chunk-XQLYTHWV.js?v=6188a326:18109
+flushPassiveEffectsImpl @ chunk-XQLYTHWV.js?v=6188a326:19490
+flushPassiveEffects @ chunk-XQLYTHWV.js?v=6188a326:19447
+commitRootImpl @ chunk-XQLYTHWV.js?v=6188a326:19416
+commitRoot @ chunk-XQLYTHWV.js?v=6188a326:19277
+performSyncWorkOnRoot @ chunk-XQLYTHWV.js?v=6188a326:18895
+flushSyncCallbacks @ chunk-XQLYTHWV.js?v=6188a326:9119
+(anonymous) @ chunk-XQLYTHWV.js?v=6188a326:18627
+eruda.js:2 [Violation] 'setTimeout' handler took 72ms
+[Violation] Forced reflow while executing JavaScript took 69ms
