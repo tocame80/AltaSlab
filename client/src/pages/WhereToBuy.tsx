@@ -293,10 +293,14 @@ export default function WhereToBuy() {
           console.log('Creating YMap...');
           console.log('Available ymaps3 methods:', Object.keys(ymaps3));
           
+          // Calculate optimal view for all dealers
+          const { center, zoom } = calculateOptimalMapView(dealerLocations);
+          console.log('Initial map center and zoom:', center, zoom);
+          
           const map = new ymaps3.YMap(mapContainer, {
             location: {
-              center: [37.622093, 55.753994], // Moscow coordinates (lng, lat for v3)
-              zoom: 5
+              center, // Optimized center based on all dealers
+              zoom
             }
           });
           
@@ -392,40 +396,63 @@ export default function WhereToBuy() {
     }
   }, [mapInstance, filteredDealers]);
 
+  // Calculate optimal center and zoom for dealers
+  const calculateOptimalMapView = (dealers: DealerLocation[]) => {
+    if (!dealers.length) return { center: [37.622093, 55.753994], zoom: 5 };
+    
+    // Calculate bounds of all dealers
+    const lats = dealers.map(d => parseFloat(d.latitude)).filter(lat => lat !== 0);
+    const lngs = dealers.map(d => parseFloat(d.longitude)).filter(lng => lng !== 0);
+    
+    if (!lats.length || !lngs.length) return { center: [37.622093, 55.753994], zoom: 5 };
+    
+    const minLat = Math.min(...lats);
+    const maxLat = Math.max(...lats);
+    const minLng = Math.min(...lngs);
+    const maxLng = Math.max(...lngs);
+    
+    // Calculate center
+    const centerLat = (minLat + maxLat) / 2;
+    const centerLng = (minLng + maxLng) / 2;
+    
+    // Calculate zoom based on bounds
+    const latDiff = maxLat - minLat;
+    const lngDiff = maxLng - minLng;
+    const maxDiff = Math.max(latDiff, lngDiff);
+    
+    let zoom = 9; // Default for region view
+    if (maxDiff < 0.05) zoom = 12; // City level
+    else if (maxDiff < 0.5) zoom = 10; // Close region
+    else if (maxDiff < 2) zoom = 8; // Wide region
+    else zoom = 6; // Multiple regions
+    
+    return { center: [centerLng, centerLat], zoom };
+  };
+
   // Center map when region or city is selected
   const centerMapOnLocation = async (city?: string, region?: string) => {
     if (!mapInstance) return;
     
     try {
-      const ymaps3 = (window as any).ymaps3;
-      let coordinates = [37.622093, 55.753994]; // Default: Moscow
-      let zoom = 5;
+      let dealersToShow = dealerLocations;
       
       if (city) {
-        // Find dealer by city and use its coordinates
-        const dealer = filteredDealers.find(d => d.city === city);
-        if (dealer && parseFloat(dealer.latitude) !== 0 && parseFloat(dealer.longitude) !== 0) {
-          coordinates = [parseFloat(dealer.longitude), parseFloat(dealer.latitude)];
-          zoom = 12; // Close zoom for city
-        }
+        // Show specific city
+        dealersToShow = dealerLocations.filter(d => d.city === city);
       } else if (region) {
-        // For region, show all dealers in region with appropriate zoom
-        const regionDealers = filteredDealers.filter(d => d.region === region);
-        if (regionDealers.length > 0) {
-          // Calculate center point of region dealers
-          const avgLat = regionDealers.reduce((sum, d) => sum + parseFloat(d.latitude), 0) / regionDealers.length;
-          const avgLng = regionDealers.reduce((sum, d) => sum + parseFloat(d.longitude), 0) / regionDealers.length;
-          coordinates = [avgLng, avgLat];
-          zoom = 8; // Medium zoom for region
-        }
+        // Show specific region
+        dealersToShow = dealerLocations.filter(d => d.region === region);
       }
+      // If no filters, show all dealers
       
-      console.log(`Centering map on coordinates: ${coordinates}, zoom: ${zoom}`);
+      const { center, zoom } = calculateOptimalMapView(dealersToShow);
+      
+      console.log(`Centering map on ${dealersToShow.length} dealers:`, center, `zoom: ${zoom}`);
       
       mapInstance.update({
         location: {
-          center: coordinates,
-          zoom: zoom
+          center,
+          zoom
         }
       });
     } catch (error) {
