@@ -130,25 +130,31 @@ export default function WhereToBuy() {
         console.warn('API 3.0 failed (likely HTTP Referer restriction), trying API 2.1 fallback...');
         script.remove();
         
-        // Fallback to API 2.1 without key
+        // Fallback to API 2.1 with standard package (избегаем проблем с 'full' bundle)
         const fallbackScript = document.createElement('script');
-        fallbackScript.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU';
+        fallbackScript.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU&load=package.standard';
         fallbackScript.onload = () => {
           console.log('API 2.1 fallback loaded successfully');
-          setTimeout(() => {
-            if (window.ymaps && window.ymaps.ready) {
-              console.log('Calling ymaps.ready() for API 2.1...');
-              window.ymaps.ready(() => {
-                console.log('API 2.1 ready! Map will use fallback version.');
-                setMapLoaded(true);
-              });
-            } else if (window.ymaps) {
-              console.log('API 2.1 available, setting loaded directly');
+          // Пытаемся инициализировать без ymaps.ready() чтобы обойти bundle проблемы
+          let attempts = 0;
+          const tryInitialize = () => {
+            attempts++;
+            console.log(`Initialization attempt ${attempts}: ymaps available: ${!!window.ymaps}, Map available: ${!!(window.ymaps && window.ymaps.Map)}`);
+            
+            if (window.ymaps && window.ymaps.Map) {
+              console.log('API 2.1 Map constructor available! Setting loaded state.');
               setMapLoaded(true);
-            } else {
-              console.error('API 2.1 also failed to load');
+              return;
             }
-          }, 100);
+            
+            if (attempts < 10) {
+              setTimeout(tryInitialize, 200 * attempts); // Увеличиваем интервал
+            } else {
+              console.error('Failed to initialize API 2.1 after 10 attempts');
+            }
+          };
+          
+          setTimeout(tryInitialize, 500); // Даем больше времени для инициализации
         };
         
         fallbackScript.onerror = (fallbackError) => {
@@ -198,21 +204,23 @@ export default function WhereToBuy() {
           }
         }
         
-        // Fallback to API 2.1
-        if (window.ymaps) {
-          console.log('Creating Yandex Map 2.1 (fallback)...');
-          window.ymaps.ready(() => {
+        // Fallback to API 2.1 - прямая инициализация без ready()
+        if (window.ymaps && window.ymaps.Map) {
+          console.log('Creating Yandex Map 2.1 (fallback) without ready()...');
+          try {
             const map = new window.ymaps.Map('yandex-map', {
               center: [55.753994, 37.622093], // Moscow coordinates (lat, lng for v2.1)
               zoom: 5,
-              controls: ['zoomControl', 'searchControl', 'typeSelector', 'fullscreenControl']
+              controls: [] // Убираем все controls чтобы избежать bundle проблем
             });
 
             console.log('Map 2.1 created successfully!');
             setMapInstance(map);
-          });
+          } catch (error) {
+            console.error('Failed to create map directly:', error);
+          }
         } else {
-          console.error('Neither ymaps3 nor ymaps available');
+          console.error('ymaps.Map not available:', !!window.ymaps, !!(window.ymaps && window.ymaps.Map));
         }
       };
 
