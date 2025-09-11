@@ -29,7 +29,7 @@ declare global {
 export default function WhereToBuy() {
   const [selectedType, setSelectedType] = useState<string>('');
   const [selectedRegion, setSelectedRegion] = useState<string>('');
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [selectedCity, setSelectedCity] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapInstance, setMapInstance] = useState<any>(null);
@@ -47,12 +47,12 @@ export default function WhereToBuy() {
     { key: 'authorized', label: 'Авторизованные' }
   ];
 
-  const serviceOptions = ['installation', 'delivery', 'consultation'];
-  const serviceLabels = {
-    installation: 'Монтаж',
-    delivery: 'Доставка',
-    consultation: 'Консультация'
-  };
+  // Get unique cities from dealers data
+  const cityOptions = useMemo(() => {
+    if (!dealerLocations.length) return [];
+    const cities = dealerLocations.map(dealer => dealer.city);
+    return Array.from(new Set(cities)).sort();
+  }, [dealerLocations]);
 
   // Get unique regions
   const regions = useMemo(() => {
@@ -72,10 +72,8 @@ export default function WhereToBuy() {
       filtered = filtered.filter(dealer => dealer.region === selectedRegion);
     }
 
-    if (selectedServices.length > 0) {
-      filtered = filtered.filter(dealer =>
-        selectedServices.some(service => dealer.services.includes(service))
-      );
+    if (selectedCity) {
+      filtered = filtered.filter(dealer => dealer.city === selectedCity);
     }
 
     if (searchQuery) {
@@ -88,7 +86,7 @@ export default function WhereToBuy() {
     }
 
     return filtered;
-  }, [dealerLocations, selectedType, selectedRegion, selectedServices, searchQuery]);
+  }, [dealerLocations, selectedType, selectedRegion, selectedCity, searchQuery]);
 
   // Load Yandex Maps v3 (для России)
   useEffect(() => {
@@ -315,21 +313,54 @@ export default function WhereToBuy() {
             console.log(`✅ Marker added for ${dealer.name}`);
           } catch (markerError) {
             console.error(`❌ Failed to add marker for ${dealer.name}:`, markerError);
-            console.error('Error details:', markerError.message);
-            console.error('Error name:', markerError.name);
-            console.error('Error stack:', markerError.stack);
+            console.error('Error details:', markerError instanceof Error ? markerError.message : String(markerError));
+            console.error('Error name:', markerError instanceof Error ? markerError.name : 'Unknown');
+            console.error('Error stack:', markerError instanceof Error ? markerError.stack : 'No stack');
           }
         }
       });
     }
   }, [mapInstance, filteredDealers]);
 
-  const handleServiceToggle = (service: string) => {
-    setSelectedServices(prev =>
-      prev.includes(service)
-        ? prev.filter(s => s !== service)
-        : [...prev, service]
-    );
+  // Center map when region or city is selected
+  const centerMapOnLocation = async (city?: string, region?: string) => {
+    if (!mapInstance) return;
+    
+    try {
+      const ymaps3 = (window as any).ymaps3;
+      let coordinates = [37.622093, 55.753994]; // Default: Moscow
+      let zoom = 5;
+      
+      if (city) {
+        // Find dealer by city and use its coordinates
+        const dealer = filteredDealers.find(d => d.city === city);
+        if (dealer && parseFloat(dealer.latitude) !== 0 && parseFloat(dealer.longitude) !== 0) {
+          coordinates = [parseFloat(dealer.longitude), parseFloat(dealer.latitude)];
+          zoom = 12; // Close zoom for city
+        }
+      } else if (region) {
+        // For region, show all dealers in region with appropriate zoom
+        const regionDealers = filteredDealers.filter(d => d.region === region);
+        if (regionDealers.length > 0) {
+          // Calculate center point of region dealers
+          const avgLat = regionDealers.reduce((sum, d) => sum + parseFloat(d.latitude), 0) / regionDealers.length;
+          const avgLng = regionDealers.reduce((sum, d) => sum + parseFloat(d.longitude), 0) / regionDealers.length;
+          coordinates = [avgLng, avgLat];
+          zoom = 8; // Medium zoom for region
+        }
+      }
+      
+      console.log(`Centering map on coordinates: ${coordinates}, zoom: ${zoom}`);
+      
+      mapInstance.update({
+        location: {
+          center: coordinates,
+          zoom: zoom
+        }
+      });
+    } catch (error) {
+      console.error('Error centering map:', error);
+    }
   };
 
   if (isLoading) {
@@ -395,7 +426,10 @@ export default function WhereToBuy() {
             {/* Region Filter */}
             <select
               value={selectedRegion}
-              onChange={(e) => setSelectedRegion(e.target.value)}
+              onChange={(e) => {
+                setSelectedRegion(e.target.value);
+                centerMapOnLocation(undefined, e.target.value);
+              }}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
               data-testid="select-region"
             >
@@ -406,23 +440,23 @@ export default function WhereToBuy() {
               ))}
             </select>
 
-            {/* Services Filter */}
-            <div className="flex flex-wrap gap-2">
-              {serviceOptions.map(service => (
-                <button
-                  key={service}
-                  onClick={() => handleServiceToggle(service)}
-                  className={`px-3 py-1 text-sm rounded-lg font-medium transition-colors ${
-                    selectedServices.includes(service)
-                      ? 'bg-[#e90039] text-white'
-                      : 'bg-gray-100 text-secondary hover:bg-gray-200'
-                  }`}
-                  data-testid={`button-service-${service}`}
-                >
-                  {serviceLabels[service as keyof typeof serviceLabels]}
-                </button>
+            {/* Cities Filter */}
+            <select
+              value={selectedCity}
+              onChange={(e) => {
+                setSelectedCity(e.target.value);
+                centerMapOnLocation(e.target.value);
+              }}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
+              data-testid="select-city"
+            >
+              <option value="">Все города</option>
+              {cityOptions.map(city => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
               ))}
-            </div>
+            </select>
           </div>
         </div>
 
@@ -513,19 +547,13 @@ export default function WhereToBuy() {
                         </div>
                       )}
                       
-                      {/* Services */}
-                      {dealer.services.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mt-2">
-                          {dealer.services.map(service => (
-                            <span
-                              key={service}
-                              className="px-2 py-1 text-xs bg-gray-100 text-secondary rounded"
-                            >
-                              {serviceLabels[service as keyof typeof serviceLabels] || service}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+                      {/* Contact Info */}
+                      <div className="text-sm text-secondary mt-2">
+                        Тип: {dealer.dealerType === 'retail' ? 'Розничный' : 
+                              dealer.dealerType === 'wholesale' ? 'Оптовый' : 
+                              dealer.dealerType === 'authorized' ? 'Авторизованный' : 
+                              dealer.dealerType}
+                      </div>
                       
                       {/* Dealer Type */}
                       <div className="mt-2">
