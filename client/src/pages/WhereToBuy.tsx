@@ -99,6 +99,12 @@ export default function WhereToBuy() {
       if ((window as any).ymaps3) {
         console.log('Yandex Maps v3 already loaded');
         setMapLoaded(true);
+        
+        // Force reinitialize map with layers if missing
+        if (mapInstance && !(mapInstance as any).hasLayers) {
+          console.log('Forcing map layers update...');
+          setMapInstance(null); // Reset to force recreation
+        }
         return;
       }
 
@@ -133,8 +139,19 @@ export default function WhereToBuy() {
           console.error('Current domain:', window.location.hostname);
           console.error('Current referer:', document.referrer);
           
-          // Попробуем открыть URL напрямую в браузере для диагностики
-          console.log('Проверьте URL напрямую:', script.src);
+          // Попробуем проверить API URL fetch запросом
+          fetch(script.src)
+            .then(response => {
+              console.log('API URL fetch status:', response.status);
+              console.log('API URL fetch ok:', response.ok);
+              if (!response.ok) {
+                console.error('API key может быть недействительным или домен не авторизован');
+              }
+            })
+            .catch(fetchError => {
+              console.error('API URL fetch failed:', fetchError);
+            });
+          
           setMapLoaded(false);
         };
         
@@ -163,8 +180,40 @@ export default function WhereToBuy() {
           }
 
           console.log('Waiting for ymaps3.ready...');
-          await ymaps3.ready;
-          console.log('ymaps3.ready completed!');
+          console.log('Current domain:', window.location.hostname);
+          console.log('Full URL:', window.location.href);
+          console.log('ymaps3 object:', ymaps3);
+          
+          // Retry logic for ymaps3.ready (иногда первый раз падает)
+          let retryCount = 0;
+          const maxRetries = 3;
+          
+          while (retryCount < maxRetries) {
+            try {
+              await ymaps3.ready;
+              console.log('ymaps3.ready completed!');
+              break; // Success, exit retry loop
+            } catch (readyError) {
+              retryCount++;
+              console.warn(`ymaps3.ready attempt ${retryCount} failed:`, readyError);
+              
+              if (retryCount >= maxRetries) {
+                console.error('ymaps3.ready failed after', maxRetries, 'attempts');
+                console.error('readyError type:', typeof readyError);
+                console.error('readyError constructor:', readyError?.constructor?.name);
+                
+                if (readyError instanceof Event) {
+                  console.error('Event type:', readyError.type);
+                  console.error('Event target:', readyError.target);
+                }
+                
+                throw new Error(`Yandex Maps v3 ready failed after ${maxRetries} attempts: ${readyError instanceof Event ? readyError.type : String(readyError)}`);
+              } else {
+                console.log(`Retrying ymaps3.ready in 1 second... (${retryCount}/${maxRetries})`);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+              }
+            }
+          }
           
           const mapContainer = document.getElementById('yandex-map');
           console.log('Map container found:', !!mapContainer);
@@ -183,7 +232,17 @@ export default function WhereToBuy() {
             }
           });
           
-          console.log('Yandex Maps v3 created successfully!');
+          // Add required layers for markers
+          const defaultScheme = new ymaps3.YMapDefaultSchemeLayer();
+          const defaultFeatures = new ymaps3.YMapDefaultFeaturesLayer();
+          
+          map.addChild(defaultScheme);
+          map.addChild(defaultFeatures);
+          
+          // Mark that this map has layers
+          (map as any).hasLayers = true;
+          
+          console.log('Yandex Maps v3 created successfully with layers!');
           setMapInstance(map);
           
         } catch (error) {
@@ -208,13 +267,58 @@ export default function WhereToBuy() {
     if (mapInstance && filteredDealers.length > 0) {
       console.log('Updating map markers...');
       
-      // For now, just log the dealers - we'll implement marker logic next
       console.log(`Adding ${filteredDealers.length} dealer markers to map`);
       
-      // TODO: Implement marker logic for both ymaps3 and Leaflet
+      // Clear existing markers
+      if ((mapInstance as any).currentMarkers) {
+        (mapInstance as any).currentMarkers.forEach((marker: any) => {
+          mapInstance.removeChild(marker);
+        });
+      }
+      (mapInstance as any).currentMarkers = [];
+      
+      // Add markers for each dealer
       filteredDealers.forEach(dealer => {
-        if (dealer.latitude && dealer.longitude) {
-          console.log(`Dealer: ${dealer.name} at ${dealer.latitude}, ${dealer.longitude}`);
+        if (dealer.latitude && dealer.longitude && parseFloat(dealer.latitude) !== 0 && parseFloat(dealer.longitude) !== 0) {
+          console.log(`Adding marker: ${dealer.name} at ${dealer.latitude}, ${dealer.longitude}`);
+          
+          try {
+            const ymaps3 = (window as any).ymaps3;
+            
+            const coordinates = [parseFloat(dealer.longitude), parseFloat(dealer.latitude)];
+            console.log(`Creating marker for ${dealer.name} at coordinates:`, coordinates);
+            
+            // Create simple div marker element
+            const markerContent = document.createElement('div');
+            markerContent.style.cssText = `
+              width: 20px; 
+              height: 20px; 
+              background: #e90039; 
+              border: 2px solid white;
+              border-radius: 50%; 
+              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+              cursor: pointer;
+            `;
+            markerContent.title = `${dealer.name}\n${dealer.city}`;
+            
+            const marker = new ymaps3.YMapMarker(
+              {
+                coordinates: coordinates, // [lng, lat] for v3
+                draggable: false
+              },
+              markerContent
+            );
+            
+            mapInstance.addChild(marker);
+            (mapInstance as any).currentMarkers.push(marker);
+            
+            console.log(`✅ Marker added for ${dealer.name}`);
+          } catch (markerError) {
+            console.error(`❌ Failed to add marker for ${dealer.name}:`, markerError);
+            console.error('Error details:', markerError.message);
+            console.error('Error name:', markerError.name);
+            console.error('Error stack:', markerError.stack);
+          }
         }
       });
     }
