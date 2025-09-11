@@ -99,19 +99,38 @@ export default function WhereToBuy() {
       }
 
       const script = document.createElement('script');
-      // Используем package.lite чтобы избежать проблем с 'full' bundle
-      script.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU&load=package.lite';
+      // CSP-совместимый режим с явными модулями (решает проблему с bundle 'full')
+      script.src = 'https://api-maps.yandex.ru/2.1/?lang=ru_RU&csp=1&load=Map,Placemark,GeoObjectCollection';
       script.onload = () => {
         console.log('Yandex Maps 2.1 loaded successfully');
         console.log('window.ymaps available:', !!window.ymaps);
         console.log('window.ymaps.ready available:', !!(window.ymaps && window.ymaps.ready));
         
-        // Убираем ymaps.ready() полностью и используем простой timeout
-        console.log('Skipping ymaps.ready(), using direct timeout');
-        setTimeout(() => {
-          console.log('Direct timeout fired, setting mapLoaded=true');
-          setMapLoaded(true);
-        }, 1500);
+        // Проверяем что доступно в ymaps
+        console.log('Available ymaps properties:', Object.keys(window.ymaps || {}));
+        
+        if (window.ymaps && window.ymaps.ready) {
+          console.log('Using ymaps.ready() with CSP mode');
+          let readyExecuted = false;
+          
+          window.ymaps.ready(() => {
+            console.log('ymaps.ready() callback executed!');
+            console.log('ymaps.Map available after ready:', !!(window.ymaps && window.ymaps.Map));
+            readyExecuted = true;
+            setMapLoaded(true);
+          });
+          
+          // Fallback timeout если ready() не сработает за 5 секунд
+          setTimeout(() => {
+            if (!readyExecuted) {
+              console.warn('ymaps.ready() timeout, using fallback');
+              setMapLoaded(true);
+            }
+          }, 5000);
+        } else {
+          console.log('ymaps.ready not available, using timeout fallback');
+          setTimeout(() => setMapLoaded(true), 2000);
+        }
       };
       script.onerror = (error) => {
         console.error('Failed to load Yandex Maps:', error);
@@ -130,22 +149,38 @@ export default function WhereToBuy() {
       
       const createMap = () => {
         try {
+          if (!window.ymaps || !window.ymaps.Map) {
+            console.error('ymaps.Map still not available!');
+            return;
+          }
+          
           const map = new window.ymaps.Map('yandex-map', {
             center: [55.753994, 37.622093], // Moscow coordinates
             zoom: 5,
-            controls: [] // Убираем все controls чтобы избежать 'full' bundle
+            controls: [] // Оставляем пустые controls
           });
 
           console.log('Yandex Map created successfully!');
           setMapInstance(map);
         } catch (error) {
           console.error('Error creating map:', error);
+          console.error('Error details:', error instanceof Error ? error.message : String(error));
         }
       };
 
-      // Создаем карту напрямую без ymaps.ready()
-      console.log('Creating map directly without ready()...');
-      createMap();
+      // Создаем карту с дополнительными проверками
+      console.log('Creating map with full checks...');
+      console.log('Available in window.ymaps:', Object.keys(window.ymaps || {}));
+      
+      if (window.ymaps && window.ymaps.Map) {
+        console.log('ymaps.Map found, creating directly');
+        createMap();
+      } else if (window.ymaps && window.ymaps.ready) {
+        console.log('ymaps.Map not found, using ready() callback');
+        window.ymaps.ready(createMap);
+      } else {
+        console.error('Neither ymaps.Map nor ymaps.ready available');
+      }
     }
   }, [mapLoaded, filteredDealers, mapInstance]);
 
