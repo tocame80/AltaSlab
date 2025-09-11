@@ -128,6 +128,12 @@ export default function WhereToBuy() {
         script.onerror = (error) => {
           clearTimeout(timeout);
           console.error('Failed to load Yandex Maps v3 script:', error);
+          console.error('Script URL:', script.src);
+          console.error('Current domain:', window.location.hostname);
+          console.error('Current referer:', document.referrer);
+          
+          // Попробуем открыть URL напрямую в браузере для диагностики
+          console.log('Проверьте URL напрямую:', script.src);
           setMapLoaded(false);
         };
         
