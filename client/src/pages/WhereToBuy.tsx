@@ -396,6 +396,26 @@ export default function WhereToBuy() {
     }
   }, [mapInstance, filteredDealers]);
 
+  // Auto-adjust map view when filtered dealers change
+  useEffect(() => {
+    if (!mapInstance || !filteredDealers.length) return;
+    
+    // Only auto-adjust if we have active filters (not showing all dealers)
+    const hasActiveFilters = searchQuery || selectedCity || selectedRegion;
+    
+    if (hasActiveFilters) {
+      const { center, zoom } = calculateOptimalMapView(filteredDealers);
+      console.log(`Auto-adjusting map for ${filteredDealers.length} visible dealers:`, center, `zoom: ${zoom}`);
+      
+      mapInstance.update({
+        location: {
+          center,
+          zoom
+        }
+      });
+    }
+  }, [mapInstance, filteredDealers, searchQuery, selectedCity, selectedRegion]);
+
   // Calculate optimal center and zoom for dealers
   const calculateOptimalMapView = (dealers: DealerLocation[]) => {
     if (!dealers.length) return { center: [37.622093, 55.753994], zoom: 5 };
