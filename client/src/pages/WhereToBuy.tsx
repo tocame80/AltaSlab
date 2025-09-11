@@ -74,6 +74,7 @@ export default function WhereToBuy() {
   const [detectedRegion, setDetectedRegion] = useState<string>('');
   const [ipDetectionDone, setIpDetectionDone] = useState<boolean>(false);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapError, setMapError] = useState<string | null>(null);
   const [mapInstance, setMapInstance] = useState<any>(null);
   
   // Use localStorage to persist coordinates between sessions
@@ -237,57 +238,96 @@ export default function WhereToBuy() {
     }
   };
 
-  // Load Yandex Maps API 3.0 - новый синтаксис
+  // Load Yandex Maps API 3.0 with enhanced error handling
   useEffect(() => {
     const loadYandexMaps = async () => {
-      // Удаляем все старые скрипты Yandex Maps
-      const oldScripts = document.querySelectorAll('script[src*="api-maps.yandex.ru"]');
-      oldScripts.forEach(script => {
-        console.log('Removing old Yandex Maps script:', script.src);
-        script.remove();
-      });
-
-      // Очищаем старые глобальные переменные
-      if (window.ymaps) {
-        delete window.ymaps;
-      }
-      if (window.ymaps3) {
-        delete window.ymaps3;
-      }
-
-      // Загружаем скрипт API 3.0
-      const script = document.createElement('script');
-      const apiKey = import.meta.env.VITE_YANDEX_MAPS_API_KEY || '';
-      script.src = `https://api-maps.yandex.ru/v3/?apikey=${apiKey}&lang=ru_RU`;
-      script.type = 'text/javascript';
-      
-      console.log('Loading Yandex Maps v3 script:', script.src);
-      
-      script.onload = async () => {
-        console.log('Yandex Maps v3 script loaded successfully');
+      try {
+        // Clear any existing error state
+        setMapError(null);
         
-        // Небольшая задержка для инициализации API
-        setTimeout(async () => {
-          try {
-            if (window.ymaps3) {
-              console.log('ymaps3 available, waiting for ready...');
-              await window.ymaps3.ready;
-              console.log('ymaps3.ready resolved!');
-              setMapLoaded(true);
-            } else {
-              console.error('ymaps3 still not available after script load');
+        // Удаляем все старые скрипты Yandex Maps
+        const oldScripts = document.querySelectorAll('script[src*="api-maps.yandex.ru"]');
+        oldScripts.forEach(script => {
+          console.log('Removing old Yandex Maps script');
+          script.remove();
+        });
+
+        // Очищаем старые глобальные переменные
+        if (window.ymaps) {
+          delete window.ymaps;
+        }
+        if (window.ymaps3) {
+          delete window.ymaps3;
+        }
+
+        const apiKey = import.meta.env.VITE_YANDEX_MAPS_API_KEY || '';
+        
+        // Check if API key is available
+        if (!apiKey) {
+          setMapError('api_key_missing');
+          return;
+        }
+
+        const scriptUrl = `https://api-maps.yandex.ru/v3/?apikey=${apiKey}&lang=ru_RU`;
+        
+        // Preflight check using fetch HEAD request
+        try {
+          console.log('Performing preflight check for Yandex Maps API...');
+          const preflightResponse = await fetch(scriptUrl, { 
+            method: 'HEAD',
+            mode: 'no-cors' // Use no-cors to avoid CORS issues for preflight
+          });
+          console.log('Preflight check completed');
+        } catch (preflightError) {
+          console.warn('Preflight check failed, proceeding with script loading:', preflightError);
+          // Continue with script loading even if preflight fails
+        }
+
+        // Загружаем скрипт API 3.0
+        const script = document.createElement('script');
+        script.src = scriptUrl;
+        script.type = 'text/javascript';
+        
+        console.log('Loading Yandex Maps v3 script...');
+        
+        script.onload = async () => {
+          console.log('Yandex Maps v3 script loaded successfully');
+          
+          // Небольшая задержка для инициализации API
+          setTimeout(async () => {
+            try {
+              if (window.ymaps3) {
+                console.log('ymaps3 available, waiting for ready...');
+                await window.ymaps3.ready;
+                console.log('ymaps3.ready resolved!');
+                setMapLoaded(true);
+              } else {
+                console.error('ymaps3 still not available after script load');
+                setMapError('api_initialization_failed');
+              }
+            } catch (error) {
+              console.error('Error waiting for ymaps3.ready:', error);
+              setMapError('api_initialization_failed');
             }
-          } catch (error) {
-            console.error('Error waiting for ymaps3.ready:', error);
+          }, 100);
+        };
+        
+        script.onerror = (error) => {
+          console.error('Failed to load Yandex Maps v3 script:', error);
+          // Determine error type based on common scenarios
+          if (apiKey.length < 10) {
+            setMapError('api_key_invalid');
+          } else {
+            setMapError('api_key_unauthorized');
           }
-        }, 100);
-      };
-      
-      script.onerror = (error) => {
-        console.error('Failed to load Yandex Maps v3 script:', error);
-      };
-      
-      document.head.appendChild(script);
+        };
+        
+        document.head.appendChild(script);
+        
+      } catch (error) {
+        console.error('Error in loadYandexMaps:', error);
+        setMapError('general_error');
+      }
     };
 
     loadYandexMaps();
@@ -689,7 +729,103 @@ export default function WhereToBuy() {
                   className="w-full h-96 lg:h-[500px]"
                   data-testid="yandex-map"
                 >
-                  {!mapLoaded && (
+                  {mapError && (
+                    <div className="w-full h-full flex items-center justify-center bg-red-50 border border-red-200">
+                      <div className="text-center p-6 max-w-md">
+                        <div className="mb-4">
+                          <MapPin className="w-12 h-12 text-red-400 mx-auto mb-3" />
+                          <h3 className="text-lg font-semibold text-red-700 mb-2">
+                            Ошибка загрузки карты
+                          </h3>
+                        </div>
+                        
+                        {mapError === 'api_key_missing' && (
+                          <div className="space-y-3">
+                            <p className="text-red-600 text-sm">
+                              API ключ Yandex Maps не настроен.
+                            </p>
+                            <div className="bg-white border border-red-200 rounded-lg p-3 text-left">
+                              <p className="text-xs text-gray-600 mb-2 font-medium">Для администратора:</p>
+                              <p className="text-xs text-gray-700">
+                                Добавьте переменную окружения <code className="bg-gray-100 px-1 rounded">VITE_YANDEX_MAPS_API_KEY</code> с действующим API ключом Yandex Maps API v3.
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {mapError === 'api_key_invalid' && (
+                          <div className="space-y-3">
+                            <p className="text-red-600 text-sm">
+                              Недействительный API ключ Yandex Maps.
+                            </p>
+                            <div className="bg-white border border-red-200 rounded-lg p-3 text-left">
+                              <p className="text-xs text-gray-600 mb-2 font-medium">Для администратора:</p>
+                              <p className="text-xs text-gray-700 mb-2">
+                                Проверьте правильность API ключа в переменной <code className="bg-gray-100 px-1 rounded">VITE_YANDEX_MAPS_API_KEY</code>.
+                              </p>
+                              <p className="text-xs text-gray-700">
+                                Убедитесь, что ключ получен в <a href="https://developer.tech.yandex.ru/" target="_blank" className="text-blue-600 hover:underline">Yandex Developer Console</a>.
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {mapError === 'api_key_unauthorized' && (
+                          <div className="space-y-3">
+                            <p className="text-red-600 text-sm">
+                              API ключ не авторизован для Yandex Maps API v3.
+                            </p>
+                            <div className="bg-white border border-red-200 rounded-lg p-3 text-left">
+                              <p className="text-xs text-gray-600 mb-2 font-medium">Для администратора:</p>
+                              <div className="text-xs text-gray-700 space-y-1">
+                                <p>1. Перейдите в <a href="https://developer.tech.yandex.ru/" target="_blank" className="text-blue-600 hover:underline">Yandex Developer Console</a></p>
+                                <p>2. Выберите ваш проект или создайте новый</p>
+                                <p>3. В разделе "API" активируйте <strong>"JavaScript API 3.0"</strong></p>
+                                <p>4. В настройках API добавьте домен сайта в разрешенные домены</p>
+                                <p>5. Убедитесь, что ключ имеет права на JavaScript API 3.0</p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {mapError === 'api_initialization_failed' && (
+                          <div className="space-y-3">
+                            <p className="text-red-600 text-sm">
+                              Ошибка инициализации Yandex Maps API.
+                            </p>
+                            <div className="bg-white border border-red-200 rounded-lg p-3 text-left">
+                              <p className="text-xs text-gray-700">
+                                Попробуйте обновить страницу. Если ошибка повторяется, обратитесь к администратору.
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {mapError === 'general_error' && (
+                          <div className="space-y-3">
+                            <p className="text-red-600 text-sm">
+                              Произошла неожиданная ошибка при загрузке карты.
+                            </p>
+                            <div className="bg-white border border-red-200 rounded-lg p-3 text-left">
+                              <p className="text-xs text-gray-700">
+                                Попробуйте обновить страницу или обратитесь к администратору сайта.
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                        
+                        <button 
+                          onClick={() => window.location.reload()}
+                          className="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700 transition-colors"
+                          data-testid="button-reload-map"
+                        >
+                          Обновить страницу
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {!mapLoaded && !mapError && (
                     <div className="w-full h-full flex items-center justify-center bg-gray-100">
                       <div className="text-center">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e90039] mx-auto mb-2"></div>
