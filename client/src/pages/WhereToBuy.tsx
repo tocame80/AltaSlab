@@ -239,31 +239,59 @@ export default function WhereToBuy() {
   // Load Yandex Maps
   useEffect(() => {
     const loadYandexMaps = () => {
+      // Check if maps already loaded AND ready
+      if (window.ymaps && window.ymaps.ready && window.ymaps.Map) {
+        console.log('Yandex Maps already loaded and ready!');
+        setMapLoaded(true);
+        return;
+      }
+
+      // If ymaps exists but not fully ready, wait for it
       if (window.ymaps && window.ymaps.ready) {
-        window.ymaps.ready(() => {
+        console.log('Yandex Maps script loaded, waiting for ready...');
+        
+        // Add timeout in case ready never fires
+        const readyTimeout = setTimeout(() => {
+          console.warn('Yandex Maps ready timeout, trying force load...');
+          if (window.ymaps && window.ymaps.Map) {
+            console.log('Maps available despite timeout, setting loaded');
             setMapLoaded(true);
+          }
+        }, 5000);
+        
+        window.ymaps.ready(() => {
+          console.log('Yandex Maps ready callback fired!');
+          clearTimeout(readyTimeout);
+          setMapLoaded(true);
         });
         return;
       }
 
+      // Remove any existing yandex maps scripts
+      const existingScripts = document.querySelectorAll('script[src*="api-maps.yandex.ru"]');
+      existingScripts.forEach(script => script.remove());
+
       const script = document.createElement('script');
       const apiKey = import.meta.env.VITE_YANDEX_MAPS_API_KEY || '';
-      // Load essential components only to avoid bundling issues
+      console.log('Loading Yandex Maps with API key:', apiKey ? 'Key present' : 'No key');
+      
+      // Load with API key and essential modules
       script.src = `https://api-maps.yandex.ru/2.1/?apikey=${apiKey}&lang=ru_RU&load=Map,Placemark,GeoObjectCollection,geocode,util.bounds`;
-      script.async = true;
-      script.defer = true;
       
       script.onload = () => {
+        console.log('Yandex Maps script loaded');
         if (window.ymaps && window.ymaps.ready) {
           window.ymaps.ready(() => {
+            console.log('Yandex Maps ready after script load!');
             setMapLoaded(true);
           });
+        } else {
+          console.error('ymaps not available after script load');
         }
       };
       
       script.onerror = (error) => {
         console.error('Ошибка загрузки Яндекс Карт:', error);
-        // Fallback: показываем сообщение об ошибке вместо карты
         setMapLoaded(false);
       };
       
@@ -275,19 +303,36 @@ export default function WhereToBuy() {
 
   // Initialize map
   useEffect(() => {
+    console.log('Map initialization effect triggered:', {
+      mapLoaded,
+      dealerLocationsLength: dealerLocations.length,
+      hasMapInstance: !!mapInstance,
+      ymapsAvailable: !!window.ymaps,
+      ymapsMapAvailable: !!(window.ymaps && window.ymaps.Map)
+    });
+
     if (mapLoaded && dealerLocations.length > 0 && !mapInstance) {
       // Double-check that ymaps is fully loaded
       if (window.ymaps && window.ymaps.Map && typeof window.ymaps.Map === 'function') {
         try {
           const mapElement = document.getElementById('yandex-map');
+          console.log('Map element found:', !!mapElement);
+          
           if (mapElement) {
+            console.log('Creating Yandex Map...');
+            // Clear any existing content in the map element
+            mapElement.innerHTML = '';
+            
             const map = new window.ymaps.Map('yandex-map', {
               center: [55.753994, 37.622093], // Moscow coordinates
               zoom: 10,
               controls: ['zoomControl', 'searchControl', 'typeSelector', 'fullscreenControl']
             });
 
+            console.log('Map created successfully!');
             setMapInstance(map);
+          } else {
+            console.error('Map element not found in DOM');
           }
         } catch (error) {
           console.error('Ошибка создания карты:', error);
@@ -295,11 +340,16 @@ export default function WhereToBuy() {
           setMapLoaded(false);
         }
       } else {
-        console.warn('Yandex Maps API not fully loaded, retrying...');
+        console.warn('Yandex Maps API not fully loaded, retrying...', {
+          ymaps: !!window.ymaps,
+          ymapsMap: !!(window.ymaps && window.ymaps.Map),
+          ymapsMapType: window.ymaps && typeof window.ymaps.Map
+        });
         // Try to reload after a short delay
         setTimeout(() => {
           if (window.ymaps && window.ymaps.ready) {
             window.ymaps.ready(() => {
+              console.log('Yandex Maps ready after retry!');
               setMapLoaded(true);
             });
           }

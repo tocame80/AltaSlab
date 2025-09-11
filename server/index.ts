@@ -34,11 +34,12 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "https:", "blob:"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://replit.com", "https://api-maps.yandex.ru"],
-      connectSrc: ["'self'", "wss:", "https:"],
-      frameSrc: ["'none'"],
-      objectSrc: ["'none'"]
+      imgSrc: ["'self'", "data:", "blob:", "https:", "https://*.yandex.net", "https://*.maps.yandex.net", "https://*.yandex.ru"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://replit.com", "https://api-maps.yandex.ru", "https://*.maps.yandex.net"],
+      connectSrc: ["'self'", "wss:", "https:", "https://api-maps.yandex.ru", "https://*.maps.yandex.net", "https://ipinfo.io"],
+      frameSrc: ["'self'", "https://yandex.ru", "https://*.yandex.ru"],
+      objectSrc: ["'none'"],
+      workerSrc: ["'self'", "blob:"]
     }
   },
   crossOriginEmbedderPolicy: false // Для совместимости с Replit
