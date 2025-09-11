@@ -314,18 +314,21 @@ export default function WhereToBuy() {
           fallbackScript.type = 'text/javascript';
           
           fallbackScript.onload = () => {
-            console.log('API v2.1 loaded successfully');
-            setTimeout(() => {
+            console.log('API v2.1 script loaded, waiting for ready...');
+            
+            // Обходим проблему с ymaps.ready() из-за ошибки bundle 'full'
+            const checkReady = () => {
               if (window.ymaps) {
-                window.ymaps.ready(() => {
-                  console.log('ymaps v2.1 ready!');
-                  setMapLoaded(true);
-                });
+                console.log('ymaps v2.1 available! Setting mapLoaded directly...');
+                // Устанавливаем сразу, не ждем ready() из-за bundle error
+                setMapLoaded(true);
               } else {
-                console.error('ymaps v2.1 not available');
-                setMapError('api_initialization_failed');
+                console.log('ymaps not yet available, retrying...');
+                setTimeout(checkReady, 200);
               }
-            }, 100);
+            };
+            
+            setTimeout(checkReady, 100);
           };
           
           fallbackScript.onerror = (fallbackError) => {
@@ -401,16 +404,41 @@ export default function WhereToBuy() {
           // Fallback to API v2.1
           else if (window.ymaps) {
             console.log('Creating Yandex Map v2.1...');
+            console.log('window.ymaps contents:', Object.keys(window.ymaps));
             
-            const map = new window.ymaps.Map(mapElement, {
-              center: [55.753994, 37.622093], // Moscow coordinates (lat, lng for v2.1)
-              zoom: 5
-            });
-            
-            console.log('Map v2.1 created successfully!');
-            setMapInstance(map);
+            try {
+              console.log('Loading Map module for v2.1...');
+              // Загружаем модуль Map через ymaps.modules
+              window.ymaps.modules.require(['Map'], (Map) => {
+                console.log('Map module loaded, creating map...');
+                const map = new Map(mapElement, {
+                  center: [55.753994, 37.622093], // Moscow coordinates (lat, lng for v2.1)
+                  zoom: 5
+                });
+                
+                console.log('Map v2.1 created successfully!');
+                setMapInstance(map);
+              }, (error) => {
+                console.error('Failed to load Map module:', error);
+                // Fallback - try direct creation
+                try {
+                  console.log('Trying direct Map creation as fallback...');
+                  const map = new window.ymaps.Map(mapElement, {
+                    center: [55.753994, 37.622093],
+                    zoom: 5
+                  });
+                  console.log('Direct Map creation successful!');
+                  setMapInstance(map);
+                } catch (fallbackError) {
+                  console.error('Direct Map creation also failed:', fallbackError);
+                }
+              });
+            } catch (mapError) {
+              console.error('Error in Map creation process:', mapError);
+            }
           } else {
             console.error('Neither ymaps3 nor ymaps available');
+            console.log('Available window properties:', Object.keys(window).filter(key => key.includes('ymap')));
           }
         } catch (error) {
           console.error('Error creating map:', error);
