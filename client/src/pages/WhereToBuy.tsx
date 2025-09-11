@@ -454,116 +454,51 @@ export default function WhereToBuy() {
 
       if (points.length === 0) return;
 
-      // Вычисляем границы по точкам
-      const bounds = ymaps3.util?.bounds?.fromPoints ? ymaps3.util.bounds.fromPoints(points) : null;
+      // ПРОСТОЕ И НАДЕЖНОЕ РЕШЕНИЕ: всегда используем ручной расчет
+      const lats = points.map(p => p[0]);
+      const lngs = points.map(p => p[1]);
+      const minLat = Math.min(...lats);
+      const maxLat = Math.max(...lats);
+      const minLng = Math.min(...lngs);
+      const maxLng = Math.max(...lngs);
       
-      if (!bounds) {
-        // Fallback to manual calculation if util.bounds is not available
-        const lats = points.map(p => p[0]);
-        const lngs = points.map(p => p[1]);
-        const minLat = Math.min(...lats);
-        const maxLat = Math.max(...lats);
-        const minLng = Math.min(...lngs);
-        const maxLng = Math.max(...lngs);
-        
-        const centerLat = (minLat + maxLat) / 2;
-        const centerLng = (minLng + maxLng) / 2;
-        
-        // Вычисляем максимальный разброс координат
-        const latDiff = maxLat - minLat;
-        const lngDiff = maxLng - minLng;
-        const maxDiff = Math.max(latDiff, lngDiff);
-
-        // Настройки зума с учетом типа фильтрации
-        let C = 0.3;         // константа подгонки
-        const zoomMax = 14;  // максимальный зум
-        let zoomMin = 6;     // минимальный зум
-        
-        // Специальные настройки для разных фильтров
-        if (selectedCity && selectedCity !== '') {
-          // Для города - ближе
-          C = 0.1;
-          zoomMin = 10;
-        } else if (selectedRegion && selectedRegion !== '') {
-          // Для области - средний зум
-          C = 0.2;
-          zoomMin = 8;
-        }
-
-        // Формула расчёта зума с ограничениями
-        const zoomCalc = Math.floor(Math.log2(C / maxDiff));
-        const zoom = Math.min(Math.max(zoomCalc, zoomMin), zoomMax);
-
-        console.log(`Manual map update: center [${centerLng}, ${centerLat}], zoom ${zoom}, ${filtered.length} dealers`);
-        console.log(`Manual coordinates check: lat=${centerLat}, lng=${centerLng}`);
-        
-        map.update({
-          location: {
-            center: [centerLng, centerLat], // [lng, lat] for v3
-            zoom: zoom
-          }
-        });
-        return;
-      }
-
-      // Вычисляем центр из bounds
-      const centerLat = (bounds[0][0] + bounds[1][0]) / 2;
-      const centerLng = (bounds[0][1] + bounds[1][1]) / 2;
-
-      // Вычисляем максимальный разброс координат
-      const latDiff = bounds[1][0] - bounds[0][0];
-      const lngDiff = bounds[1][1] - bounds[0][1];
+      // Добавляем отступы к границам (padding в градусах)
+      const latPadding = (maxLat - minLat) * 0.1; // 10% отступ
+      const lngPadding = (maxLng - minLng) * 0.1; // 10% отступ
+      
+      const paddedMinLat = minLat - latPadding;
+      const paddedMaxLat = maxLat + latPadding;
+      const paddedMinLng = minLng - lngPadding;
+      const paddedMaxLng = maxLng + lngPadding;
+      
+      // Центр с учетом отступов
+      const centerLat = (paddedMinLat + paddedMaxLat) / 2;
+      const centerLng = (paddedMinLng + paddedMaxLng) / 2;
+      
+      // Размер области с отступами
+      const latDiff = paddedMaxLat - paddedMinLat;
+      const lngDiff = paddedMaxLng - paddedMinLng;
       const maxDiff = Math.max(latDiff, lngDiff);
 
-      // Настройки зума с учетом типа фильтрации
-      let C = 0.3;         // константа подгонки, можно подкорректировать
-      const zoomMax = 14;  // максимальный зум (максимальное приближение)
-      let zoomMin = 6;     // минимальный зум (минимальное приближение)
+      // Простой и надежный расчет зума
+      let zoom = 8; // Базовый зум
+      if (maxDiff < 0.01) zoom = 14; // Очень близко (одна точка)
+      else if (maxDiff < 0.05) zoom = 12; // Город
+      else if (maxDiff < 0.2) zoom = 10; // Несколько точек рядом
+      else if (maxDiff < 0.5) zoom = 9; // Область
+      else if (maxDiff < 1.0) zoom = 8; // Большая область
+      else zoom = 7; // Очень большая область
+
+      console.log(`FIXED map update: center [${centerLng}, ${centerLat}], zoom ${zoom}, ${filtered.length} dealers`);
+      console.log(`FIXED bounds: lat ${minLat}-${maxLat}, lng ${minLng}-${maxLng}`);
+      console.log(`FIXED with padding: center lat=${centerLat}, lng=${centerLng}`);
       
-      // Специальные настройки для разных фильтров
-      if (selectedCity && selectedCity !== '') {
-        // Для города - ближе
-        C = 0.1;
-        zoomMin = 10;
-      } else if (selectedRegion && selectedRegion !== '') {
-        // Для области - средний зум
-        C = 0.2;
-        zoomMin = 8;
-      }
-
-      // Формула расчёта зума с ограничениями на минимум и максимум
-      const zoomCalc = Math.floor(Math.log2(C / maxDiff));
-      const zoom = Math.min(Math.max(zoomCalc, zoomMin), zoomMax);
-
-      console.log(`Professional map update: center [${centerLng}, ${centerLat}], zoom ${zoom}, ${filtered.length} dealers`);
-      console.log(`Professional coordinates check: lat=${centerLat}, lng=${centerLng}`);
-
-      // Устанавливаем центр и зум карты
       map.update({
         location: {
           center: [centerLng, centerLat], // [lng, lat] for v3
           zoom: zoom
         }
       });
-
-      // Попытка использовать setBounds с padding если доступно
-      if (map.setBounds && typeof map.setBounds === 'function') {
-        try {
-          // Преобразуем bounds в формат для setBounds [lng, lat]
-          const mapBounds = [
-            [bounds[0][1], bounds[0][0]], // [minLng, minLat]
-            [bounds[1][1], bounds[1][0]]  // [maxLng, maxLat]
-          ];
-          
-          map.setBounds(mapBounds, {
-            checkZoomRange: true,
-            padding: [50, 50, 50, 50], // в пикселях: отступы (верх, право, низ, лево)
-          });
-          console.log('Applied bounds with padding');
-        } catch (boundsError) {
-          console.log('setBounds not available, using update method');
-        }
-      }
 
     } catch (error) {
       console.error('Error in updateMapView:', error);
