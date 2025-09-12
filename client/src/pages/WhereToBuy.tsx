@@ -481,6 +481,9 @@ export default function WhereToBuy() {
           d.city.toLowerCase().includes(query) ||
           d.address.toLowerCase().includes(query)
         );
+      } else {
+        // Если никакие фильтры не выбраны или выбраны "все регионы"/"все города", показываем всех дилеров
+        filtered = dealers;
       }
 
       if (filtered.length === 0) return;
@@ -570,7 +573,14 @@ export default function WhereToBuy() {
     
     try {
       console.log(`Manual centering on city: ${city}, region: ${region}`);
-      updateMapView(mapInstance, dealerLocations, city, region);
+      
+      // When "all regions" is selected (empty region), show and center on all dealers
+      if (region === '' || region === undefined) {
+        console.log('Centering map on all regions - showing all dealers');
+        updateMapView(mapInstance, dealerLocations, city, '', searchQuery);
+      } else {
+        updateMapView(mapInstance, dealerLocations, city, region, searchQuery);
+      }
     } catch (error) {
       console.error('Error centering map:', error);
     }
@@ -631,7 +641,7 @@ export default function WhereToBuy() {
               onChange={(e) => {
                 setSelectedCity(e.target.value);
                 setSelectedDealerId(''); // Clear selected dealer
-                centerMapOnLocation(e.target.value);
+                centerMapOnLocation(e.target.value, selectedRegion);
               }}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
               data-testid="select-city"
