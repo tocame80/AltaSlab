@@ -20,6 +20,19 @@ function validateEnvironment() {
 // Validate environment on startup
 validateEnvironment();
 
+// Initialize database connection early
+import { db } from "./db";
+async function initDatabase() {
+  try {
+    console.log('Initializing database connection at startup...');
+    await (db as any).init();
+    console.log('Database initialized successfully');
+  } catch (error) {
+    console.error('Database initialization failed:', error);
+    console.log('Server will continue with fallback data if database queries fail');
+  }
+}
+
 const app = express();
 
 // Trust proxy for rate limiting (necessary when behind reverse proxy/CDN)
@@ -130,6 +143,9 @@ app.use((req, res, next) => {
 app.use('/assets/gallery', express.static(path.join(process.cwd(), 'client', 'src', 'assets', 'gallery')));
 
 (async () => {
+  // Initialize database connection before starting server
+  await initDatabase();
+  
   const server = await registerRoutes(app);
 
   // Error handler for API routes
