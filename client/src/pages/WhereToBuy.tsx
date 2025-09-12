@@ -795,9 +795,9 @@ export default function WhereToBuy() {
       <Dialog open={showRegionDialog} onOpenChange={setShowRegionDialog}>
         <DialogContent className="sm:max-w-md bg-white border border-gray-200 shadow-xl">
           <DialogHeader>
-            <DialogDescription className="text-gray-700 bg-gray-50 p-3 rounded-lg">
+            <DialogDescription className="text-gray-700 bg-gray-100 p-4 rounded-lg text-center">
               Мы правильно определили ваш регион?<br />
-              <span className="flex items-center gap-2 mt-2">
+              <span className="inline-flex items-center gap-2 mt-2 justify-center">
                 <MapPin className="w-4 h-4 text-[#e90039]" />
                 <strong className="text-[#e90039]">{detectedRegion}</strong>
               </span>
