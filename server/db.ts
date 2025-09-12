@@ -153,9 +153,10 @@ export const db = new Proxy({} as any, {
           try {
             const result = originalProperty.apply(connection, args);
             
-            // If the result is a promise, handle async errors
-            if (result && typeof result.then === 'function') {
-              return result.catch(async (error: any) => {
+            // If the result is a native promise, handle async errors
+            const isNativePromise = result instanceof Promise || Object.prototype.toString.call(result) === '[object Promise]';
+            if (isNativePromise) {
+              return (result as Promise<any>).catch(async (error: any) => {
                 // Handle connection errors by attempting reconnection
                 if (error.code === '57P01' || error.severity === 'FATAL' || 
                     error.message?.includes('connection') || error.message?.includes('closed')) {
