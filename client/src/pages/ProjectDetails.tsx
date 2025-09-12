@@ -146,7 +146,6 @@ export default function ProjectDetails() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
       <div className="container mx-auto px-6 py-8">
         {/* Back Button */}
         <button
@@ -249,7 +248,7 @@ export default function ProjectDetails() {
 
               {/* Image Counter */}
               {project.images.length > 1 && (
-                <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium">
+                <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium mt-[550px] mb-[550px]">
                   {currentImageIndex + 1} / {project.images.length}
                 </div>
               )}
@@ -354,7 +353,6 @@ export default function ProjectDetails() {
           </div>
         )}
       </div>
-      
       {/* Fullscreen Image Viewer */}
       {isFullscreenOpen && (
         <div 
@@ -418,7 +416,6 @@ export default function ProjectDetails() {
           </div>
         </div>
       )}
-      
       <Footer />
     </div>
   );
