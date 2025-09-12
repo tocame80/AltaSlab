@@ -387,7 +387,7 @@ export default function WhereToBuy() {
               width: ${isSelected ? '28px' : '20px'}; 
               height: ${isSelected ? '28px' : '20px'}; 
               background: ${isSelected ? '#2f378b' : '#e90039'}; 
-              border: ${isSelected ? '3px solid #FFD700' : '2px solid white'};
+              border: ${isSelected ? '3px solid #e90039' : '2px solid white'};
               border-radius: 50%; 
               box-shadow: ${isSelected ? '0 4px 8px rgba(0,0,0,0.5)' : '0 2px 4px rgba(0,0,0,0.3)'};
               cursor: pointer;
