@@ -964,8 +964,8 @@ router.get('/salepoints/export', async (req, res) => {
 
     // Transform data for Excel export
     const exportData = salepoints.map((salepoint: any) => ({
-      'Название магазина': salepoint.name,
-      'Дистрибьютор': salepoint.region || '',
+      'Название торговой точки': salepoint.name,
+      'Регион': salepoint.region || '',
       'Город': salepoint.city,
       'Адрес': salepoint.address,
       'Региональный менеджер': '', // Could be derived from region or added as separate field
@@ -988,8 +988,8 @@ router.get('/salepoints/export', async (req, res) => {
     
     // Set column widths for better readability
     const columnWidths = [
-      { wch: 30 }, // Название магазина
-      { wch: 20 }, // Дистрибьютор
+      { wch: 30 }, // Название торговой точки
+      { wch: 20 }, // Регион
       { wch: 15 }, // Город
       { wch: 40 }, // Адрес
       { wch: 25 }, // Региональный менеджер
