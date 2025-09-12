@@ -1014,7 +1014,7 @@ router.get('/salepoints/export', async (req, res) => {
     
     // Set response headers for file download
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', `attachment; filename="Точки_продаж_${new Date().toISOString().split('T')[0]}.xlsx"`);
+    res.setHeader('Content-Disposition', `attachment; filename="Salepoints_${new Date().toISOString().split('T')[0]}.xlsx"`);
     res.setHeader('Content-Length', excelBuffer.length);
     
     res.send(excelBuffer);
