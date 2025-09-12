@@ -504,18 +504,9 @@ export default function WhereToBuy() {
       const minLng = Math.min(...lngs);
       const maxLng = Math.max(...lngs);
       
-      // Улучшенные отступы в зависимости от количества точек
-      let latPadding, lngPadding;
-      if (points.length === 1) {
-        // Одна точка - фиксированный отступ
-        latPadding = 0.01;
-        lngPadding = 0.01;
-      } else {
-        // Множество точек - процентный отступ, но больший для всех регионов
-        const basePadding = filtered.length >= dealers.length ? 0.15 : 0.1; // Больше отступа для "все регионы"
-        latPadding = Math.max((maxLat - minLat) * basePadding, 0.05);
-        lngPadding = Math.max((maxLng - minLng) * basePadding, 0.05);
-      }
+      // Добавляем отступы к границам (padding в градусах)
+      const latPadding = (maxLat - minLat) * 0.1; // 10% отступ
+      const lngPadding = (maxLng - minLng) * 0.1; // 10% отступ
       
       const paddedMinLat = minLat - latPadding;
       const paddedMaxLat = maxLat + latPadding;
@@ -531,28 +522,14 @@ export default function WhereToBuy() {
       const lngDiff = paddedMaxLng - paddedMinLng;
       const maxDiff = Math.max(latDiff, lngDiff);
 
-      // Расчет зума с учетом типа фильтра  
+      // Простой и надежный расчет зума
       let zoom = 8; // Базовый зум
-      const isAllRegions = filtered.length >= dealers.length; // Показываем все регионы
-      
-      if (points.length === 1) {
-        zoom = 14; // Одна точка - крупный зум
-      } else if (maxDiff < 0.01) {
-        zoom = 14; // Очень близко
-      } else if (maxDiff < 0.05) {
-        zoom = 12; // Город
-      } else if (maxDiff < 0.2) {
-        zoom = 10; // Несколько точек рядом  
-      } else if (maxDiff < 0.5) {
-        zoom = 9; // Область
-      } else if (maxDiff < 1.0) {
-        zoom = isAllRegions ? 8 : 8; // Стандартный зум для областей
-      } else if (maxDiff < 2.0) {
-        // Большая область - улучшения только для "все регионы"
-        zoom = isAllRegions ? 8 : 7; // Для "все регионы" больше зум
-      } else {
-        zoom = isAllRegions ? 7 : 6; // Очень большая область
-      }
+      if (maxDiff < 0.01) zoom = 14; // Очень близко (одна точка)
+      else if (maxDiff < 0.05) zoom = 12; // Город
+      else if (maxDiff < 0.2) zoom = 10; // Несколько точек рядом
+      else if (maxDiff < 0.5) zoom = 9; // Область
+      else if (maxDiff < 1.0) zoom = 8; // Большая область
+      else zoom = 7; // Очень большая область
 
       console.log(`FIXED map update: center [${centerLng}, ${centerLat}], zoom ${zoom}, ${filtered.length} dealers`);
       console.log(`FIXED bounds: lat ${minLat}-${maxLat}, lng ${minLng}-${maxLng}`);
