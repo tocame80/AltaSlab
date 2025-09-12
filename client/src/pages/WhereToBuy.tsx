@@ -761,17 +761,10 @@ export default function WhereToBuy() {
                         </div>
                       )}
                       
-                      {/* Contact Info */}
-                      <div className="text-sm text-secondary mt-2">
-                        Тип: {dealer.dealerType === 'retail' ? 'Розничный' : 
-                              dealer.dealerType === 'wholesale' ? 'Оптовый' : 
-                              dealer.dealerType === 'authorized' ? 'Авторизованный' : 
-                              dealer.dealerType}
-                      </div>
-                      
                       {/* Location */}
                       <div className="mt-2">
-                        <span className="px-2 py-1 text-xs bg-[#e90039] text-white rounded">
+                        <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-[#e90039] text-white rounded-full font-medium">
+                          <MapPin className="w-3 h-3" />
                           {dealer.city}, {dealer.region}
                         </span>
                       </div>
