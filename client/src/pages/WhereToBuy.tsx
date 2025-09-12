@@ -36,6 +36,7 @@ export default function WhereToBuy() {
   const [showRegionDialog, setShowRegionDialog] = useState<boolean>(false);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapInstance, setMapInstance] = useState<any>(null);
+  const [selectedDealerId, setSelectedDealerId] = useState<string>('');
 
   // Fetch dealer locations
   const { data: dealerLocations = [], isLoading } = useQuery<DealerLocation[]>({
@@ -368,18 +369,44 @@ export default function WhereToBuy() {
             const coordinates = [parseFloat(dealer.longitude), parseFloat(dealer.latitude)];
             console.log(`Creating marker for ${dealer.name} at coordinates:`, coordinates);
             
-            // Create simple div marker element
+            // Create interactive div marker element
             const markerContent = document.createElement('div');
+            const isSelected = dealer.id === selectedDealerId;
             markerContent.style.cssText = `
-              width: 20px; 
-              height: 20px; 
-              background: #e90039; 
-              border: 2px solid white;
+              width: ${isSelected ? '28px' : '20px'}; 
+              height: ${isSelected ? '28px' : '20px'}; 
+              background: ${isSelected ? '#2f378b' : '#e90039'}; 
+              border: ${isSelected ? '3px solid #FFD700' : '2px solid white'};
               border-radius: 50%; 
-              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+              box-shadow: ${isSelected ? '0 4px 8px rgba(0,0,0,0.5)' : '0 2px 4px rgba(0,0,0,0.3)'};
               cursor: pointer;
+              transition: all 0.2s ease-in-out;
+              transform: ${isSelected ? 'scale(1.2)' : 'scale(1)'};
+              z-index: ${isSelected ? '1000' : '100'};
+              position: relative;
             `;
-            markerContent.title = `${dealer.name}\n${dealer.city}`;
+            markerContent.title = `${dealer.name}\n${dealer.city}\nНажмите для выбора`;
+            
+            // Add click handler
+            markerContent.addEventListener('click', (e) => {
+              e.stopPropagation();
+              handleMarkerClick(dealer);
+            });
+            
+            // Add hover effects
+            markerContent.addEventListener('mouseenter', () => {
+              if (!isSelected) {
+                markerContent.style.transform = 'scale(1.1)';
+                markerContent.style.boxShadow = '0 3px 6px rgba(0,0,0,0.4)';
+              }
+            });
+            
+            markerContent.addEventListener('mouseleave', () => {
+              if (!isSelected) {
+                markerContent.style.transform = 'scale(1)';
+                markerContent.style.boxShadow = '0 2px 4px rgba(0,0,0,0.3)';
+              }
+            });
             
             const marker = new ymaps3.YMapMarker(
               {
@@ -402,7 +429,7 @@ export default function WhereToBuy() {
         }
       });
     }
-  }, [mapInstance, filteredDealers]);
+  }, [mapInstance, filteredDealers, selectedDealerId]);
 
   // Auto-adjust map view when filtered dealers change
   useEffect(() => {
@@ -505,6 +532,34 @@ export default function WhereToBuy() {
     }
   };
 
+  // Handle marker click - update filters and select dealer
+  const handleMarkerClick = (dealer: DealerLocation) => {
+    console.log(`Marker clicked: ${dealer.name} in ${dealer.city}, ${dealer.region}`);
+    
+    // Update filters based on dealer location
+    setSelectedCity(dealer.city);
+    setSelectedRegion(dealer.region);
+    setSelectedDealerId(dealer.id);
+    
+    // Clear search query to show filtered results
+    setSearchQuery('');
+    
+    // Center map on this location
+    centerMapOnLocation(dealer.city, dealer.region);
+    
+    // Scroll to dealer in the list
+    setTimeout(() => {
+      const dealerElement = document.querySelector(`[data-dealer-id="${dealer.id}"]`);
+      if (dealerElement) {
+        dealerElement.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center',
+          inline: 'nearest'
+        });
+      }
+    }, 100);
+  };
+
   // Center map when region or city is selected
   const centerMapOnLocation = async (city?: string, region?: string) => {
     if (!mapInstance) return;
@@ -555,7 +610,10 @@ export default function WhereToBuy() {
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setSelectedDealerId(''); // Clear selected dealer
+                }}
                 placeholder="Поиск по названию или городу..."
                 className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
                 data-testid="input-search-dealers"
@@ -568,6 +626,7 @@ export default function WhereToBuy() {
               value={selectedCity}
               onChange={(e) => {
                 setSelectedCity(e.target.value);
+                setSelectedDealerId(''); // Clear selected dealer
                 centerMapOnLocation(e.target.value);
               }}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
@@ -586,6 +645,7 @@ export default function WhereToBuy() {
               value={selectedRegion}
               onChange={(e) => {
                 setSelectedRegion(e.target.value);
+                setSelectedDealerId(''); // Clear selected dealer
                 centerMapOnLocation(undefined, e.target.value);
               }}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e90039] focus:border-transparent"
@@ -638,7 +698,16 @@ export default function WhereToBuy() {
             {filteredDealers.length > 0 ? (
               <div className="space-y-4 max-h-[500px] overflow-y-auto">
                 {filteredDealers.map(dealer => (
-                  <div key={dealer.id} className="bg-white p-4 rounded-lg shadow-sm border">
+                  <div 
+                    key={dealer.id} 
+                    data-dealer-id={dealer.id}
+                    className={`bg-white p-4 rounded-lg shadow-sm border transition-all duration-200 cursor-pointer ${
+                      dealer.id === selectedDealerId 
+                        ? 'border-[#e90039] bg-red-50 shadow-md' 
+                        : 'border-gray-200 hover:shadow-md'
+                    }`}
+                    onClick={() => handleMarkerClick(dealer)}
+                  >
                     <h3 className="font-bold text-[#2f378b] mb-2">{dealer.name}</h3>
                     
                     <div className="space-y-2 text-sm">
