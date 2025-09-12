@@ -248,7 +248,7 @@ export default function ProjectDetails() {
 
               {/* Image Counter */}
               {project.images.length > 1 && (
-                <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium mt-[550px] mb-[550px]">
+                <div className="absolute top-4 right-4 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium mt-[550px] mb-[550px] text-[#111827] bg-[#ffffff]">
                   {currentImageIndex + 1} / {project.images.length}
                 </div>
               )}
