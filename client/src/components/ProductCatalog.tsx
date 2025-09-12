@@ -141,7 +141,7 @@ export function ProductCatalog() {
           <Card key={product.id} className="hover:shadow-lg transition-shadow cursor-pointer" data-testid={`card-product-${product.id}`}
                 onClick={() => window.location.href = `/product/${product.barcode || product.id}`}>
             <CardHeader className="p-0">
-              <div className="aspect-square overflow-hidden rounded-t-lg">
+              <div className="aspect-[2/1] overflow-hidden rounded-t-lg">
                 <img
                   src={(() => {
                     // Отладка для продукта 8934

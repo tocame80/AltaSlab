@@ -129,7 +129,7 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
       {/* Header Section */}
       <div className="relative overflow-hidden">
         {/* Image Gallery */}
-        <div className="relative w-full aspect-[3/2] lg:aspect-[2/1] bg-white">
+        <div className="relative w-full aspect-[2/1] bg-white">
           <OptimizedThumbnail
             src={currentImage}
             alt={`${product.design} - ${product.collection}`}
