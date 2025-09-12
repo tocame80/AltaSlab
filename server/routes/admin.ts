@@ -1007,7 +1007,7 @@ router.get('/salepoints/export', async (req, res) => {
     ];
     worksheet['!cols'] = columnWidths;
 
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Точки продаж');
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Salepoints');
     
     // Generate Excel buffer
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
