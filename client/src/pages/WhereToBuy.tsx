@@ -531,8 +531,10 @@ export default function WhereToBuy() {
       const lngDiff = paddedMaxLng - paddedMinLng;
       const maxDiff = Math.max(latDiff, lngDiff);
 
-      // Улучшенный расчет зума
+      // Расчет зума с учетом типа фильтра  
       let zoom = 8; // Базовый зум
+      const isAllRegions = filtered.length >= dealers.length; // Показываем все регионы
+      
       if (points.length === 1) {
         zoom = 14; // Одна точка - крупный зум
       } else if (maxDiff < 0.01) {
@@ -543,11 +545,13 @@ export default function WhereToBuy() {
         zoom = 10; // Несколько точек рядом  
       } else if (maxDiff < 0.5) {
         zoom = 9; // Область
+      } else if (maxDiff < 1.0) {
+        zoom = isAllRegions ? 8 : 8; // Стандартный зум для областей
       } else if (maxDiff < 2.0) {
-        // Большая область (например, все регионы) - увеличиваем зум
-        zoom = filtered.length >= dealers.length ? 8 : 7; // 8 для "все регионы", 7 для очень больших областей
+        // Большая область - улучшения только для "все регионы"
+        zoom = isAllRegions ? 8 : 7; // Для "все регионы" больше зум
       } else {
-        zoom = 6; // Очень большая область
+        zoom = isAllRegions ? 7 : 6; // Очень большая область
       }
 
       console.log(`FIXED map update: center [${centerLng}, ${centerLat}], zoom ${zoom}, ${filtered.length} dealers`);
