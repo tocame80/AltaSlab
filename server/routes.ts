@@ -3,7 +3,7 @@ import express from "express";
 import path from "path";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertCertificateSchema, insertVideoInstructionSchema, insertInstallationInstructionSchema, insertHeroImageSchema, insertGalleryProjectSchema, insertDealerLocationSchema, insertCatalogProductSchema, catalogProducts, galleryProjects, installationInstructions } from "@shared/schema";
+import { insertCertificateSchema, insertVideoInstructionSchema, insertInstallationInstructionSchema, insertHeroImageSchema, insertGalleryProjectSchema, insertDealerLocationSchema, insertCatalogProductSchema, catalogProducts, galleryProjects, installationInstructions, dealerLocations } from "@shared/schema";
 import adminRoutes from "./routes/admin";
 import thumbnailRoutes from "./routes/thumbnails";
 import {
@@ -12,6 +12,52 @@ import {
 } from "./objectStorage";
 import { db } from "./db";
 import { sql } from "drizzle-orm";
+
+// Geocoding function using Yandex Geocoder API
+async function geocodeAddress(address: string): Promise<{ latitude: string; longitude: string } | null> {
+  try {
+    const apiKey = "0e8aff63-579c-4dd3-b4cb-c2b48b0d4b93"; // Same as Maps API key
+    const encodedAddress = encodeURIComponent(address);
+    const url = `https://geocode-maps.yandex.ru/1.x/?apikey=${apiKey}&geocode=${encodedAddress}&format=json&results=1`;
+    
+    console.log(`Geocoding: ${address}`);
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      console.error(`Geocoding API error: ${response.status}`);
+      return null;
+    }
+    
+    const data = await response.json();
+    const geoObjects = data?.response?.GeoObjectCollection?.featureMember;
+    
+    if (!geoObjects || geoObjects.length === 0) {
+      console.log(`No geocoding results for: ${address}`);
+      return null;
+    }
+    
+    const coordinates = geoObjects[0]?.GeoObject?.Point?.pos;
+    if (!coordinates) {
+      console.log(`No coordinates found for: ${address}`);
+      return null;
+    }
+    
+    const [longitude, latitude] = coordinates.split(' ').map((coord: string) => parseFloat(coord));
+    
+    if (isNaN(latitude) || isNaN(longitude)) {
+      console.log(`Invalid coordinates for: ${address}`);
+      return null;
+    }
+    
+    return {
+      latitude: latitude.toString(),
+      longitude: longitude.toString()
+    };
+  } catch (error) {
+    console.error('Geocoding error:', error);
+    return null;
+  }
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Make storage available to all routes
@@ -307,9 +353,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Fix missing coordinates for existing dealers
+  app.post('/api/dealer-locations/fix-coordinates', async (req, res) => {
+    try {
+      const dealersWithoutCoords = await db.select().from(dealerLocations)
+        .where(sql`latitude = '0' OR longitude = '0' OR latitude IS NULL OR longitude IS NULL`);
+      
+      console.log(`Found ${dealersWithoutCoords.length} dealers without coordinates`);
+      let fixedCount = 0;
+      
+      for (const dealer of dealersWithoutCoords) {
+        try {
+          const coords = await geocodeAddress(`${dealer.address}, ${dealer.city}, ${dealer.region}`);
+          if (coords) {
+            await db.update(dealerLocations)
+              .set({
+                latitude: coords.latitude,
+                longitude: coords.longitude,
+                updatedAt: new Date()
+              })
+              .where(sql`id = ${dealer.id}`);
+            
+            console.log(`✅ Fixed coordinates for ${dealer.name}: ${coords.latitude}, ${coords.longitude}`);
+            fixedCount++;
+          }
+        } catch (error) {
+          console.warn(`⚠️ Failed to fix coordinates for ${dealer.name}:`, error);
+        }
+        
+        // Small delay to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
+      res.json({ 
+        message: `Fixed coordinates for ${fixedCount} out of ${dealersWithoutCoords.length} dealers`,
+        fixed: fixedCount,
+        total: dealersWithoutCoords.length
+      });
+    } catch (error) {
+      console.error('Error fixing coordinates:', error);
+      res.status(500).json({ message: 'Failed to fix coordinates' });
+    }
+  });
+
   app.post('/api/dealer-locations', async (req, res) => {
     try {
       const dealerData = insertDealerLocationSchema.parse(req.body);
+      
+      // Auto-geocode if coordinates are missing or zero
+      if (!dealerData.latitude || !dealerData.longitude || 
+          dealerData.latitude === '0' || dealerData.longitude === '0') {
+        console.log(`Auto-geocoding address for dealer: ${dealerData.name}`);
+        try {
+          const coords = await geocodeAddress(`${dealerData.address}, ${dealerData.city}, ${dealerData.region}`);
+          if (coords) {
+            dealerData.latitude = coords.latitude;
+            dealerData.longitude = coords.longitude;
+            console.log(`✅ Geocoded ${dealerData.name}: ${coords.latitude}, ${coords.longitude}`);
+          }
+        } catch (geocodeError) {
+          console.warn(`⚠️ Geocoding failed for ${dealerData.name}:`, geocodeError);
+        }
+      }
+      
       const dealerLocation = await storage.createDealerLocation(dealerData);
       res.status(201).json(dealerLocation);
     } catch (error) {
