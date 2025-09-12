@@ -308,6 +308,17 @@ export default function WhereToBuy() {
             }
           });
           
+          // Add click handler to deselect dealer when clicking on empty area
+          map.addChild(new ymaps3.YMapListener({
+            layer: 'any',
+            onClick: (object: any, event: any) => {
+              // If click was not on a marker, clear selection
+              if (!event.target.closest('[data-marker]')) {
+                setSelectedDealerId('');
+              }
+            }
+          }));
+          
           // Add required layers for markers
           const defaultScheme = new ymaps3.YMapDefaultSchemeLayer();
           const defaultFeatures = new ymaps3.YMapDefaultFeaturesLayer();
@@ -386,11 +397,12 @@ export default function WhereToBuy() {
               position: relative;
             `;
             markerContent.title = `${dealer.name}\n${dealer.city}\nНажмите для выбора`;
+            markerContent.setAttribute('data-marker', 'true');
             
             // Add click handler
             markerContent.addEventListener('click', (e) => {
               e.stopPropagation();
-              handleMarkerClick(dealer);
+              handleDealerSelect(dealer);
             });
             
             // Add hover effects
@@ -532,22 +544,14 @@ export default function WhereToBuy() {
     }
   };
 
-  // Handle marker click - update filters and select dealer
-  const handleMarkerClick = (dealer: DealerLocation) => {
-    console.log(`Marker clicked: ${dealer.name} in ${dealer.city}, ${dealer.region}`);
+  // Handle dealer selection - highlight dealer in list and marker on map
+  const handleDealerSelect = (dealer: DealerLocation) => {
+    console.log(`Dealer selected: ${dealer.name} in ${dealer.city}, ${dealer.region}`);
     
-    // Update filters based on dealer location
-    setSelectedCity(dealer.city);
-    setSelectedRegion(dealer.region);
+    // Select dealer for visual highlighting (no filter changes)
     setSelectedDealerId(dealer.id);
     
-    // Clear search query to show filtered results
-    setSearchQuery('');
-    
-    // Center map on this location
-    centerMapOnLocation(dealer.city, dealer.region);
-    
-    // Scroll to dealer in the list
+    // Scroll to dealer card in the list
     setTimeout(() => {
       const dealerElement = document.querySelector(`[data-dealer-id="${dealer.id}"]`);
       if (dealerElement) {
@@ -706,7 +710,7 @@ export default function WhereToBuy() {
                         ? 'border-[#e90039] bg-red-50 shadow-md' 
                         : 'border-gray-200 hover:shadow-md'
                     }`}
-                    onClick={() => handleMarkerClick(dealer)}
+                    onClick={() => handleDealerSelect(dealer)}
                   >
                     <h3 className="font-bold text-[#2f378b] mb-2">{dealer.name}</h3>
                     
