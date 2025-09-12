@@ -800,8 +800,8 @@ export default function WhereToBuy() {
               Определение региона
             </DialogTitle>
             <DialogDescription className="text-gray-700 bg-gray-50 p-3 rounded-lg">
-              Мы определили ваш регион как <strong className="text-[#e90039]">{detectedRegion}</strong>. 
-              Это правильно?
+              Мы правильно определили ваш регион?<br />
+              <strong className="text-[#e90039]">{detectedRegion}</strong>
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-3 mt-6">
