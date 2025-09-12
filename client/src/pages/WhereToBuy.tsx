@@ -716,7 +716,7 @@ export default function WhereToBuy() {
                     
                     <div className="space-y-2 text-sm">
                       <div className="flex items-start gap-2">
-                        <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                        <MapPin className="w-4 h-4 text-[#e90039] mt-0.5 flex-shrink-0" />
                         <span className="text-secondary">
                           {dealer.address}, {dealer.city}, {dealer.region}
                         </span>
@@ -764,7 +764,6 @@ export default function WhereToBuy() {
                       {/* Location */}
                       <div className="mt-2">
                         <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-[#e90039] text-white rounded-full font-medium">
-                          <MapPin className="w-3 h-3" />
                           {dealer.city}, {dealer.region}
                         </span>
                       </div>
