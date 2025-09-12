@@ -728,7 +728,7 @@ export default function WhereToBuy() {
                       <div className="flex items-start gap-2">
                         <MapPin className="w-4 h-4 text-[#e90039] mt-0.5 flex-shrink-0" />
                         <span className="text-secondary">
-                          {dealer.address}, {dealer.city}, {dealer.region}
+                          {dealer.address}
                         </span>
                       </div>
                       
