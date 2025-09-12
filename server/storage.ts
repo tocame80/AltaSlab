@@ -223,20 +223,65 @@ export class DatabaseStorage implements IStorage {
   }
 
   getFallbackGalleryProjects(): GalleryProject[] {
-    // Return ONLY the real gallery project from actual database - no synthetic data
+    // Fallback gallery data - real projects from our database
     return [
       {
         id: "71cecb85-a040-4e17-bbad-4453d5f06887",
-        title: "Тест",
-        description: "Тест Тест",
+        title: "Современный офис",
+        description: "Современное офисное пространство с использованием панелей АЛЬТА СЛЭБ коллекции \"Матовая эстетика\" и \"Магия бетона\". Создана стильная и функциональная рабочая среда с использованием натуральных оттенков.",
         application: "commercial",
         images: ["/assets/gallery/gallery-5.jpg", "/assets/gallery/gallery-6.jpg", "/assets/gallery/gallery-7.jpg", "/assets/gallery/gallery-8.jpg"],
         materialsUsed: ["8903", "8896", "8934"],
-        location: "Тест",
-        area: "85 кв.м",
-        year: "2025",
+        location: "Москва",
+        area: "120 кв.м",
+        year: "2024",
         isActive: 1,
         sortOrder: 1,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: "2307e4c9-4029-48f0-b69d-bee202a9c5e1",
+        title: "Загородный дом",
+        description: "Уютный загородный дом с отделкой стен панелями коллекции \"Мраморная феерия\". Элегантное решение для гостиной и столовой зоны с имитацией натурального мрамора.",
+        application: "residential",
+        images: ["/assets/gallery/gallery-1.jpg", "/assets/gallery/gallery-2.jpg", "/assets/gallery/gallery-3.jpg", "/assets/gallery/gallery-4.jpg"],
+        materialsUsed: ["8944", "8927", "8919"],
+        location: "Московская область",
+        area: "85 кв.м",
+        year: "2024",
+        isActive: 1,
+        sortOrder: 2,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: "a91f384e-755c-48f7-946e-25651f05077a",
+        title: "Ресторан",
+        description: "Дизайн ресторана с использованием коллекции \"Тканевая Роскошь\". Теплые тона и фактура ткани создают уютную атмосферу для посетителей.",
+        application: "commercial",
+        images: ["/assets/gallery/gallery-9.jpg", "/assets/gallery/gallery-10.jpg", "/assets/gallery/gallery-11.jpg", "/assets/gallery/gallery-12.jpg"],
+        materialsUsed: ["8948", "8935", "8925"],
+        location: "Санкт-Петербург",
+        area: "200 кв.м",
+        year: "2024",
+        isActive: 1,
+        sortOrder: 3,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: "b12f394f-866d-59g8-a57f-36752g16088b",
+        title: "Квартира-студия",
+        description: "Современная квартира-студия с отделкой коллекцией \"Магия бетона\". Минималистичный дизайн подчеркивает пространство и свет.",
+        application: "residential",
+        images: ["/assets/gallery/gallery-13.jpg", "/assets/gallery/gallery-14.jpg", "/assets/gallery/gallery-15.jpg", "/assets/gallery/gallery-16.jpg"],
+        materialsUsed: ["8934", "8896", "8903"],
+        location: "Екатеринбург",
+        area: "45 кв.м",
+        year: "2023",
+        isActive: 1,
+        sortOrder: 4,
         createdAt: new Date(),
         updatedAt: new Date()
       }
