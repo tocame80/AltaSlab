@@ -342,36 +342,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Temporary endpoint to restore gallery data from fallback
-  app.post('/api/restore-gallery', async (req, res) => {
-    try {
-      console.log('Restoring gallery data from fallback...');
-      const fallbackProjects = storage.getFallbackGalleryProjects();
-      
-      let restored = 0;
-      for (const project of fallbackProjects) {
-        try {
-          // Remove id to let database generate new one
-          const { id, createdAt, updatedAt, ...projectData } = project;
-          await storage.createGalleryProject(projectData);
-          restored++;
-          console.log(`Restored project: ${project.title}`);
-        } catch (error) {
-          console.warn(`Failed to restore project ${project.title}:`, error);
-        }
-      }
-      
-      console.log(`Gallery restoration complete: ${restored} projects restored`);
-      res.json({ 
-        success: true, 
-        message: `Restored ${restored} gallery projects`,
-        restored: restored
-      });
-    } catch (error) {
-      console.error('Error restoring gallery:', error);
-      res.status(500).json({ message: 'Failed to restore gallery data' });
-    }
-  });
 
   // Dealer location routes
   app.get('/api/dealer-locations', async (req, res) => {

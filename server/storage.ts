@@ -270,9 +270,8 @@ export class DatabaseStorage implements IStorage {
 
   async deleteGalleryProject(id: string): Promise<void> {
     console.log('DatabaseStorage: Attempting to delete gallery project:', id);
-    const result = await db.delete(galleryProjects).where(eq(galleryProjects.id, id));
+    await db.delete(galleryProjects).where(eq(galleryProjects.id, id));
     console.log('DatabaseStorage: Successfully deleted gallery project:', id);
-    return result;
   }
 
   // Dealer location methods
