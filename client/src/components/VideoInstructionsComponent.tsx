@@ -59,15 +59,28 @@ export default function VideoInstructionsComponent({
     return 'other';
   };
   
-  // Function to convert video URLs to embeddable format (for non-Rutube videos)
+  // Function to convert video URLs to embeddable format
   const getEmbedUrl = (videoUrl: string): string => {
     if (!videoUrl) return '';
     
-    const serviceType = getVideoServiceType(videoUrl);
-    
-    // Skip Rutube - it will be handled separately
-    if (serviceType === 'rutube') {
-      return videoUrl; // Return original URL for external opening
+    // Rutube - convert to proper embed format according to official docs
+    if (videoUrl.includes('rutube.ru')) {
+      // Already in embed format
+      if (videoUrl.includes('/play/embed/')) {
+        return videoUrl;
+      }
+      
+      // Convert shorts to video format first (as per docs)
+      let processedUrl = videoUrl;
+      if (videoUrl.includes('/shorts/')) {
+        processedUrl = videoUrl.replace('/shorts/', '/video/');
+      }
+      
+      // Extract video ID from various Rutube formats
+      const rutubeMatch = processedUrl.match(/rutube\.ru\/(?:video|play\/embed)\/([\w-]{20,})\/?/);
+      if (rutubeMatch) {
+        return `https://rutube.ru/play/embed/${rutubeMatch[1]}/`;
+      }
     }
     
     // YouTube
@@ -239,31 +252,7 @@ export default function VideoInstructionsComponent({
                   const serviceType = getVideoServiceType(selectedVideo.videoUrl);
                   const embedUrl = getEmbedUrl(selectedVideo.videoUrl);
                   
-                  // Special handling for Rutube - show preview with external link
-                  if (serviceType === 'rutube') {
-                    return (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-red-900 to-red-700 text-white relative">
-                        <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-                        <div className="text-center z-10">
-                          <div className="mb-4">
-                            <div className="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-3">
-                              <Play className="w-10 h-10 text-white ml-1" />
-                            </div>
-                            <div className="text-2xl font-bold mb-2">RuTube</div>
-                            <p className="text-sm opacity-90 mb-4">Видео откроется на RuTube</p>
-                          </div>
-                          <button 
-                            onClick={() => window.open(selectedVideo.videoUrl, '_blank', 'noopener,noreferrer')}
-                            className="bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 shadow-lg"
-                          >
-                            Смотреть на RuTube
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  }
-                  
-                  // For other services, use embedding
+                  // Direct video files
                   if (serviceType === 'direct' && embedUrl.match(/\.(mp4|webm|ogg)$/i)) {
                     return (
                       <video 
@@ -276,7 +265,8 @@ export default function VideoInstructionsComponent({
                     );
                   }
                   
-                  if (serviceType === 'youtube' || serviceType === 'vk') {
+                  // All video services including Rutube - use iframe embedding
+                  if (serviceType === 'youtube' || serviceType === 'vk' || serviceType === 'rutube') {
                     return (
                       <iframe
                         src={embedUrl}
@@ -285,6 +275,7 @@ export default function VideoInstructionsComponent({
                         allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
                         allowFullScreen
                         title={selectedVideo.title}
+                        data-testid="video-player-iframe"
                       />
                     );
                   }
@@ -298,6 +289,7 @@ export default function VideoInstructionsComponent({
                         <button 
                           onClick={() => window.open(selectedVideo.videoUrl, '_blank', 'noopener,noreferrer')}
                           className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded font-semibold transition-colors duration-200"
+                          data-testid="button-open-external"
                         >
                           Открыть видео
                         </button>
