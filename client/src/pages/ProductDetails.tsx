@@ -917,7 +917,7 @@ export default function ProductDetails() {
                       <div
                         key={project.id}
                         className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-                        onClick={() => window.open(`/project/${project.id}`, '_blank')}
+                        onClick={() => setLocation(`/project/${project.id}`)}
                         data-testid={`project-card-${project.id}`}
                       >
                         {project.images && project.images.length > 0 && (
