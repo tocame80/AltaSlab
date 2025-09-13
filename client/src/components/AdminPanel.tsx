@@ -3369,8 +3369,11 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
           {/* Gallery Tab */}
           {activeTab === 'gallery' && (
             <div className="p-6 space-y-6">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xl font-semibold text-gray-900">Управление галереей проектов</h3>
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">Управление галереей проектов</h3>
+                  <p className="text-sm text-gray-600 mt-1">Создавайте и редактируйте проекты для галереи</p>
+                </div>
                 <button
                   onClick={() => setShowGalleryForm(true)}
                   className="bg-[#E95D22] text-white px-4 py-2 rounded-lg hover:bg-[#d54a1a] transition-colors flex items-center gap-2"
@@ -3380,51 +3383,114 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                 </button>
               </div>
 
-              {/* Instructions */}
-              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <h3 className="font-semibold text-blue-800 mb-2">Инструкция:</h3>
-                <ul className="text-sm text-blue-700 space-y-1">
-                  <li>• Загружайте изображения для каждого проекта отдельно</li>
-                  <li>• Выбирайте материалы из каталога для отображения в проекте</li>
-                  <li>• Укажите тип применения: интерьер, экстерьер, коммерческий, жилой</li>
-                  <li>• Заполните дополнительную информацию: локация, площадь, год</li>
-                  <li>• Каждый проект будет иметь свою галерею изображений</li>
-                </ul>
-              </div>
+              {/* Search and Filters */}
+              {galleryProjects.length > 0 && (
+                <div className="bg-white border border-gray-200 rounded-lg p-4">
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="flex-1">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <input
+                          type="text"
+                          placeholder="Поиск проектов..."
+                          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent"
+                          data-testid="input-gallery-search"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <select className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent">
+                        <option value="">Все типы</option>
+                        <option value="commercial">Коммерческий</option>
+                        <option value="residential">Жилой</option>
+                        <option value="interior">Интерьер</option>
+                        <option value="exterior">Экстерьер</option>
+                      </select>
+                      <select className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E95D22] focus:border-transparent">
+                        <option value="">Сортировка</option>
+                        <option value="newest">Сначала новые</option>
+                        <option value="oldest">Сначала старые</option>
+                        <option value="title">По названию</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              )}
 
+              {/* Statistics */}
+              {galleryProjects.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-[#E95D22] mb-1">{galleryProjects.length}</div>
+                    <div className="text-sm text-gray-600">Всего проектов</div>
+                  </div>
+                  <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-[#E95D22] mb-1">
+                      {galleryProjects.reduce((sum, p) => sum + (p.images?.length || 0), 0)}
+                    </div>
+                    <div className="text-sm text-gray-600">Всего изображений</div>
+                  </div>
+                  <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-[#E95D22] mb-1">
+                      {galleryProjects.filter(p => p.application === 'commercial').length}
+                    </div>
+                    <div className="text-sm text-gray-600">Коммерческих</div>
+                  </div>
+                  <div className="bg-white border border-gray-200 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-[#E95D22] mb-1">
+                      {galleryProjects.filter(p => p.application === 'residential').length}
+                    </div>
+                    <div className="text-sm text-gray-600">Жилых</div>
+                  </div>
+                </div>
+              )}
 
-
-              {/* Existing Gallery Projects */}
+              {/* Gallery Projects Grid */}
               {galleryProjectsLoading ? (
-                <div className="p-8 text-center text-gray-500">Загрузка проектов...</div>
+                <div className="p-8 text-center text-gray-500">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#E95D22] mx-auto mb-4"></div>
+                  Загрузка проектов...
+                </div>
               ) : galleryProjects.length > 0 ? (
                 <div>
-                  <h4 className="text-lg font-semibold mb-4">Существующие проекты ({galleryProjects.length})</h4>
-                  <div className="grid gap-4">
+                  <h4 className="text-lg font-semibold mb-6">Все проекты ({galleryProjects.length})</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {galleryProjects.map((project) => (
-                      <div key={project.id} className="border border-gray-200 rounded-lg p-4">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex-1">
-                            {/* Project Info */}
-                            <div>
-                              <h5 className="font-semibold text-gray-900 mb-2">{project.title}</h5>
-                              <p className="text-sm text-gray-600 mb-2 line-clamp-2">{project.description}</p>
-                              <div className="flex gap-4 text-sm text-gray-500">
-                                <span>Тип: {project.application}</span>
-                                {project.location && <span>Локация: {project.location}</span>}
-                                {project.area && <span>Площадь: {project.area}</span>}
-                                {project.year && <span>Год: {project.year}</span>}
+                      <div key={project.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200 group">
+                        {/* Project Image Preview */}
+                        <div className="aspect-[4/3] relative bg-gray-100">
+                          {project.images && project.images.length > 0 ? (
+                            <>
+                              <img
+                                src={project.images[0]}
+                                alt={project.title}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                  const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
+                                  if (nextElement) {
+                                    nextElement.style.display = 'flex';
+                                  }
+                                }}
+                              />
+                              <div className="hidden w-full h-full bg-gray-200 items-center justify-center text-sm text-gray-500">
+                                <Image className="w-8 h-8 mb-2" />
+                                Изображение недоступно
                               </div>
-                              {project.materialsUsed && project.materialsUsed.length > 0 && (
-                                <div className="mt-2">
-                                  <span className="text-xs text-gray-500">Материалы: {project.materialsUsed.length} шт.</span>
+                              {project.images.length > 1 && (
+                                <div className="absolute top-3 right-3 bg-black/60 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                  +{project.images.length - 1}
                                 </div>
                               )}
+                            </>
+                          ) : (
+                            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                              <Image className="w-12 h-12 text-gray-400" />
                             </div>
-                          </div>
+                          )}
                           
-                          {/* Actions */}
-                          <div className="flex gap-2">
+                          {/* Actions Overlay */}
+                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                             <button
                               onClick={() => {
                                 setEditingGalleryProject(project);
@@ -3444,76 +3510,110 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                 });
                                 setShowGalleryForm(true);
                               }}
-                              className="text-blue-600 hover:text-blue-700 p-2"
-                              title="Редактировать"
+                              className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full transition-colors"
+                              title="Редактировать проект"
                             >
                               <Edit size={16} />
                             </button>
                             <button
+                              onClick={() => window.open(`/project/${project.id}`, '_blank')}
+                              className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full transition-colors"
+                              title="Просмотреть проект"
+                            >
+                              <Eye size={16} />
+                            </button>
+                            <button
                               onClick={() => {
-                                if (confirm('Удалить этот проект?')) {
+                                if (confirm(`Удалить проект "${project.title}"?`)) {
                                   deleteGalleryProjectMutation.mutate(project.id);
                                 }
                               }}
-                              className="text-red-600 hover:text-red-700 p-2"
-                              title="Удалить"
+                              className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition-colors"
+                              title="Удалить проект"
                             >
                               <Trash2 size={16} />
                             </button>
                           </div>
                         </div>
-                        
-                        {/* Project Gallery */}
-                        {project.images && project.images.length > 0 && (
-                          <div className="border-t border-gray-200 pt-4">
-                            <h6 className="text-sm font-medium text-gray-700 mb-3">
-                              Галерея проекта ({project.images.length} фото)
-                            </h6>
-                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
-                              {project.images.map((imageUrl, index) => (
-                                <div key={index} className="relative group">
-                                  <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
-                                    <img
-                                      src={imageUrl}
-                                      alt={`${project.title} - изображение ${index + 1}`}
-                                      className="w-full h-full object-cover"
-                                      onError={(e) => {
-                                        e.currentTarget.style.display = 'none';
-                                        const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
-                                        if (nextElement) {
-                                          nextElement.style.display = 'flex';
-                                        }
-                                      }}
-                                    />
-                                    <div className="hidden w-full h-full bg-gray-200 items-center justify-center text-xs text-gray-500">
-                                      Ошибка
-                                    </div>
-                                  </div>
-                                  
-                                  {/* Overlay with preview button */}
-                                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                                    <button
-                                      onClick={() => window.open(imageUrl, '_blank')}
-                                      className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full transition-colors"
-                                      title="Открыть в новой вкладке"
-                                    >
-                                      <Eye size={14} />
-                                    </button>
-                                  </div>
-                                </div>
-                              ))}
+
+                        {/* Project Info */}
+                        <div className="p-4">
+                          <div className="mb-3">
+                            <h5 className="font-semibold text-gray-900 mb-1 line-clamp-1">{project.title}</h5>
+                            <p className="text-sm text-gray-600 line-clamp-2">{project.description}</p>
+                          </div>
+                          
+                          {/* Project Details */}
+                          <div className="space-y-2 mb-3">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-gray-500">Тип:</span>
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                project.application === 'commercial' ? 'bg-blue-100 text-blue-700' :
+                                project.application === 'residential' ? 'bg-green-100 text-green-700' :
+                                project.application === 'interior' ? 'bg-purple-100 text-purple-700' :
+                                'bg-orange-100 text-orange-700'
+                              }`}>
+                                {project.application === 'commercial' ? 'Коммерческий' :
+                                 project.application === 'residential' ? 'Жилой' :
+                                 project.application === 'interior' ? 'Интерьер' : 'Экстерьер'}
+                              </span>
+                            </div>
+                            
+                            {project.location && (
+                              <div className="flex items-center justify-between text-xs">
+                                <span className="text-gray-500">Локация:</span>
+                                <span className="text-gray-700 font-medium truncate ml-2">{project.location}</span>
+                              </div>
+                            )}
+                            
+                            {(project.area || project.year) && (
+                              <div className="flex items-center justify-between text-xs">
+                                {project.area && (
+                                  <>
+                                    <span className="text-gray-500">Площадь:</span>
+                                    <span className="text-gray-700 font-medium">{project.area}</span>
+                                  </>
+                                )}
+                                {project.year && !project.area && (
+                                  <>
+                                    <span className="text-gray-500">Год:</span>
+                                    <span className="text-gray-700 font-medium">{project.year}</span>
+                                  </>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                          
+                          {/* Materials Count */}
+                          <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                            <div className="flex items-center gap-1 text-xs text-gray-500">
+                              <div className="w-2 h-2 bg-[#E95D22] rounded-full"></div>
+                              Материалы: {project.materialsUsed?.length || 0}
+                            </div>
+                            <div className="flex items-center gap-1 text-xs text-gray-500">
+                              <Image className="w-3 h-3" />
+                              Фото: {project.images?.length || 0}
                             </div>
                           </div>
-                        )}
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
               ) : (
-                <div className="text-center py-12 text-gray-500">
-                  <Image className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                  <p>Проекты не найдены</p>
-                  <p className="text-sm">Добавьте первый проект в галерею</p>
+                <div className="text-center py-16 text-gray-500">
+                  <div className="bg-gray-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Image className="w-12 h-12 text-gray-400" />
+                  </div>
+                  <h4 className="text-lg font-semibold text-gray-700 mb-2">Проекты не найдены</h4>
+                  <p className="text-sm mb-6">Создайте первый проект для галереи</p>
+                  <button
+                    onClick={() => setShowGalleryForm(true)}
+                    className="bg-[#E95D22] text-white px-6 py-3 rounded-lg hover:bg-[#d54a1a] transition-colors flex items-center gap-2 mx-auto"
+                  >
+                    <Plus size={18} />
+                    Добавить первый проект
+                  </button>
                 </div>
               )}
 
