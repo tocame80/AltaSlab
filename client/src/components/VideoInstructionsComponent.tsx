@@ -265,8 +265,24 @@ export default function VideoInstructionsComponent({
                     );
                   }
                   
-                  // All video services including Rutube - use iframe embedding
-                  if (serviceType === 'youtube' || serviceType === 'vk' || serviceType === 'rutube') {
+                  // Rutube - use specific iframe configuration per docs
+                  if (serviceType === 'rutube') {
+                    return (
+                      <iframe
+                        src={embedUrl}
+                        className="w-full h-full"
+                        frameBorder="0"
+                        allow="clipboard-write; autoplay"
+                        {...({ webkitallowfullscreen: '', mozallowfullscreen: '' } as any)}
+                        allowFullScreen
+                        title={selectedVideo.title}
+                        data-testid="video-player-iframe"
+                      />
+                    );
+                  }
+                  
+                  // YouTube and VK - use standard iframe configuration
+                  if (serviceType === 'youtube' || serviceType === 'vk') {
                     return (
                       <iframe
                         src={embedUrl}
