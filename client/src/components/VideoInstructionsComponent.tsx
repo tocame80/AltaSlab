@@ -53,7 +53,7 @@ export default function VideoInstructionsComponent({
     if (!videoUrl) return 'other';
     
     if (videoUrl.includes('rutube.ru')) return 'rutube';
-    if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) return 'youtube';
+    if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be') || videoUrl.includes('youtube-nocookie.com')) return 'youtube';
     if (videoUrl.includes('vk.com/video')) return 'vk';
     if (videoUrl.match(/\.(mp4|webm|ogg)$/i)) return 'direct';
     
@@ -66,8 +66,14 @@ export default function VideoInstructionsComponent({
     
     // Rutube - convert to proper embed format according to official docs
     if (videoUrl.includes('rutube.ru')) {
-      // Already in embed format
+      // Already in embed format - need to add autoplay params
       if (videoUrl.includes('/play/embed/')) {
+        if (autoplay) {
+          // Check if URL already has query params
+          const hasQuery = videoUrl.includes('?');
+          const separator = hasQuery ? '&' : '?';
+          return `${videoUrl}${separator}autoplay=1&mute=1`;
+        }
         return videoUrl;
       }
       
@@ -88,10 +94,33 @@ export default function VideoInstructionsComponent({
       }
     }
     
-    // YouTube with autoplay support  
-    const youtubeMatch = videoUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);
-    if (youtubeMatch) {
-      const baseUrl = `https://www.youtube.com/embed/${youtubeMatch[1]}?rel=0&showinfo=0&modestbranding=1`;
+    // YouTube with autoplay support - handle multiple URL formats
+    let youtubeId = null;
+    
+    // Check for various YouTube URL formats
+    if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be') || videoUrl.includes('youtube-nocookie.com')) {
+      // Already in embed format
+      const embedMatch = videoUrl.match(/(?:youtube\.com|youtube-nocookie\.com)\/embed\/([a-zA-Z0-9_-]+)/);
+      if (embedMatch) {
+        youtubeId = embedMatch[1];
+        if (autoplay) {
+          // Check if URL already has query params
+          const hasQuery = videoUrl.includes('?');
+          const separator = hasQuery ? '&' : '?';
+          return `${videoUrl}${separator}autoplay=1&mute=1`;
+        }
+        return videoUrl;
+      }
+      
+      // Standard watch URLs and shorts
+      const watchMatch = videoUrl.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+      if (watchMatch) {
+        youtubeId = watchMatch[1];
+      }
+    }
+    
+    if (youtubeId) {
+      const baseUrl = `https://www.youtube.com/embed/${youtubeId}?rel=0&showinfo=0&modestbranding=1`;
       if (autoplay) {
         return `${baseUrl}&autoplay=1&mute=1`;
       }
