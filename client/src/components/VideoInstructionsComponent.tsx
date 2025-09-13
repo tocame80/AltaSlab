@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { Play, Clock, Tag } from 'lucide-react';
+import { Play, Clock, Tag, X } from 'lucide-react';
+import { useState } from 'react';
 
 interface VideoInstruction {
   id: string;
@@ -23,6 +24,7 @@ export default function VideoInstructionsComponent({
   title = "Видео инструкции",
   showByCategory = true 
 }: VideoInstructionsProps) {
+  const [selectedVideo, setSelectedVideo] = useState<VideoInstruction | null>(null);
   const { data: videos = [], isLoading } = useQuery({
     queryKey: ['/api/video-instructions'],
     queryFn: async () => {
@@ -36,22 +38,56 @@ export default function VideoInstructionsComponent({
   const sortedVideos = [...videos].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
   // Group videos by category if needed
-  const categorizedVideos = showByCategory 
-    ? sortedVideos.reduce((acc, video) => {
+  const categorizedVideos: Record<string, VideoInstruction[]> = showByCategory 
+    ? sortedVideos.reduce((acc: Record<string, VideoInstruction[]>, video) => {
         const category = video.category || 'Общие';
         if (!acc[category]) acc[category] = [];
         acc[category].push(video);
         return acc;
-      }, {} as Record<string, VideoInstruction[]>)
+      }, {})
     : { 'Все видео': sortedVideos };
 
-  const handleVideoClick = (videoUrl: string) => {
-    if (!videoUrl) {
+  // Function to convert video URLs to embeddable format
+  const getEmbedUrl = (videoUrl: string): string => {
+    if (!videoUrl) return '';
+    
+    // Rutube
+    const rutubeMatch = videoUrl.match(/rutube\.ru\/video\/([a-zA-Z0-9]+)\/?/);
+    if (rutubeMatch) {
+      return `https://rutube.ru/play/embed/${rutubeMatch[1]}`;
+    }
+    
+    // YouTube
+    const youtubeMatch = videoUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);
+    if (youtubeMatch) {
+      return `https://www.youtube.com/embed/${youtubeMatch[1]}?rel=0&showinfo=0&modestbranding=1`;
+    }
+    
+    // VK Video
+    const vkMatch = videoUrl.match(/vk\.com\/video([0-9_-]+)/);
+    if (vkMatch) {
+      return `https://vk.com/video_ext.php?oid=${vkMatch[1].split('_')[0]}&id=${vkMatch[1].split('_')[1]}&hash=&hd=1`;
+    }
+    
+    // Direct video files or other formats
+    if (videoUrl.match(/\.(mp4|webm|ogg)$/i)) {
+      return videoUrl;
+    }
+    
+    // Fallback: return original URL
+    return videoUrl;
+  };
+  
+  const handleVideoClick = (video: VideoInstruction) => {
+    if (!video.videoUrl) {
       alert('Видео недоступно');
       return;
     }
-    // Open video in new tab/window
-    window.open(videoUrl, '_blank', 'noopener,noreferrer');
+    setSelectedVideo(video);
+  };
+  
+  const closeVideoModal = () => {
+    setSelectedVideo(null);
   };
 
   if (isLoading) {
@@ -98,7 +134,7 @@ export default function VideoInstructionsComponent({
               <div 
                 key={video.id}
                 className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => handleVideoClick(video.videoUrl || '')}
+                onClick={() => handleVideoClick(video)}
                 data-testid={`video-card-${video.id}`}
               >
                 <div className="aspect-video bg-gray-100 flex items-center justify-center relative overflow-hidden">
@@ -157,6 +193,81 @@ export default function VideoInstructionsComponent({
           </div>
         </div>
       ))}
+      
+      {/* Video Modal */}
+      {selectedVideo && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex justify-between items-center p-4 border-b">
+              <h3 className="text-lg font-semibold text-gray-900" role="dialog" aria-label={selectedVideo.title}>{selectedVideo.title}</h3>
+              <button 
+                onClick={closeVideoModal}
+                className="text-gray-500 hover:text-gray-700"
+                data-testid="close-video-modal"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            
+            <div className="p-4">
+              <div className="aspect-video bg-gray-900 rounded overflow-hidden mb-4">
+                {selectedVideo.videoUrl && getEmbedUrl(selectedVideo.videoUrl) ? (
+                  getEmbedUrl(selectedVideo.videoUrl).match(/\.(mp4|webm|ogg)$/i) ? (
+                    <video 
+                      controls 
+                      className="w-full h-full"
+                      src={getEmbedUrl(selectedVideo.videoUrl)}
+                    >
+                      Ваш браузер не поддерживает воспроизведение видео.
+                    </video>
+                  ) : (
+                    <iframe
+                      src={getEmbedUrl(selectedVideo.videoUrl)}
+                      className="w-full h-full"
+                      frameBorder="0"
+                      allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+                      allowFullScreen
+                      title={selectedVideo.title}
+                    />
+                  )
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-white">
+                    <div className="text-center">
+                      <Play className="w-12 h-12 mx-auto mb-2" />
+                      <p>Видео недоступно для воспроизведения</p>
+                      <button 
+                        onClick={() => window.open(selectedVideo.videoUrl, '_blank')}
+                        className="mt-2 text-blue-300 underline hover:text-blue-100"
+                      >
+                        Открыть в новом окне
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              {selectedVideo.description && (
+                <div className="text-sm text-gray-600 mb-2">
+                  {selectedVideo.description}
+                </div>
+              )}
+              
+              <div className="flex items-center gap-4 text-sm text-gray-500">
+                <div className="flex items-center gap-1">
+                  <Clock className="w-4 h-4" />
+                  <span>{selectedVideo.duration}</span>
+                </div>
+                {selectedVideo.category && (
+                  <div className="flex items-center gap-1">
+                    <Tag className="w-4 h-4" />
+                    <span>{selectedVideo.category}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
