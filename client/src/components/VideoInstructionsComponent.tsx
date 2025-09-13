@@ -270,11 +270,16 @@ export default function VideoInstructionsComponent({
             </h4>
           )}
           
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className={categoryVideos.length === 1 
+            ? "flex justify-center" 
+            : "grid md:grid-cols-2 gap-6"
+          }>
             {categoryVideos.map((video) => (
               <div 
                 key={video.id}
-                className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+                className={`bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer ${
+                  categoryVideos.length === 1 ? 'max-w-md w-full' : ''
+                }`}
                 onClick={() => handleVideoClick(video)}
                 data-testid={`video-card-${video.id}`}
               >
