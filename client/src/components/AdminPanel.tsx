@@ -3584,7 +3584,48 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                             )}
                           </div>
                           
-                          {/* Materials Count */}
+                          {/* Materials Used Preview */}
+                          {project.materialsUsed && project.materialsUsed.length > 0 && (
+                            <div className="pt-3 border-t border-gray-100">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs font-medium text-gray-700">Используемые материалы</span>
+                                <span className="text-xs text-gray-500">{project.materialsUsed.length} шт.</span>
+                              </div>
+                              <div className="flex gap-1 overflow-x-auto">
+                                {project.materialsUsed.slice(0, 6).map((materialId, index) => {
+                                  const material = catalogProducts.find(p => 
+                                    p.productCode === materialId || 
+                                    p.productCode === `SPC${materialId}` ||
+                                    p.productCode?.replace('SPC', '') === materialId
+                                  );
+                                  
+                                  return (
+                                    <div key={index} className="flex-shrink-0 w-8 h-8 rounded border border-gray-200 overflow-hidden bg-gray-100">
+                                      {material?.gallery?.[0] ? (
+                                        <OptimizedThumbnail
+                                          src={material.gallery[0]}
+                                          alt={material.name || `Материал ${materialId}`}
+                                          size="32"
+                                          className="w-full h-full object-cover"
+                                        />
+                                      ) : (
+                                        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                                          <div className="w-3 h-3 bg-gray-400 rounded-sm"></div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                                {project.materialsUsed.length > 6 && (
+                                  <div className="flex-shrink-0 w-8 h-8 rounded border border-gray-200 bg-gray-100 flex items-center justify-center">
+                                    <span className="text-xs text-gray-600 font-medium">+{project.materialsUsed.length - 6}</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Summary Stats */}
                           <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                             <div className="flex items-center gap-1 text-xs text-gray-500">
                               <div className="w-2 h-2 bg-[#E95D22] rounded-full"></div>
