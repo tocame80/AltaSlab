@@ -1,0 +1,253 @@
+Основные проблемы в текущем коде
+Проблема с frameBorder
+В React атрибут frameBorder должен быть в camelCase формате:
+
+jsx
+// Неправильно
+frameBorder="0"
+
+// Правильно  
+frameBorder={0}
+Отсутствие оптимизации загрузки
+Текущий код загружает iframe сразу при клике, что может замедлить производительность.
+
+Рекомендуемые улучшения
+1. Исправленная функция getEmbedUrl для Rutube
+jsx
+function getEmbedUrl(url: string): string | null {
+  if (!url) return null;
+  
+  // YouTube
+  const youtubeMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/);
+  if (youtubeMatch) {
+    return `https://www.youtube.com/embed/${youtubeMatch[21]}?rel=0&showinfo=0&modestbranding=1&autoplay=1&mute=1`;
+  }
+  
+  // RuTube - улучшенная поддержка
+  const rutubeMatch = url.match(/rutube\.ru\/video\/([^\/\?]+)/);
+  if (rutubeMatch) {
+    return `https://rutube.ru/play/embed/${rutubeMatch[21]}/`;
+  }
+  
+  // VK Video
+  const vkMatch = url.match(/vk\.com\/video([^&\n?#]+)/);
+  if (vkMatch) {
+    return `https://vk.com/video_ext.php?oid=${vkMatch[1]}`;
+  }
+  
+  // Прямые ссылки на видео
+  if (url.match(/\.(mp4|webm|ogg)$/i)) {
+    return url;
+  }
+  
+  return null;
+}
+2. Компонент с lazy loading для iframe
+jsx
+import { useRef, useEffect, useState } from 'react';
+
+interface LazyIframeProps {
+  src: string;
+  title: string;
+  className?: string;
+}
+
+const LazyIframe: React.FC<LazyIframeProps> = ({ src, title, className }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isLoaded) {
+          setIsLoaded(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [isLoaded]);
+
+  return (
+    <div 
+      ref={containerRef}
+      className={className}
+      style={{
+        overflow: 'hidden',
+        paddingTop: '56.25%', // 16:9 aspect ratio
+        position: 'relative',
+        width: '100%',
+      }}
+    >
+      {isLoaded && (
+        <iframe
+          src={src}
+          title={title}
+          frameBorder={0}
+          allowFullScreen
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+          }}
+          loading="lazy"
+        />
+      )}
+    </div>
+  );
+};
+3. Улучшенный рендеринг плеера
+jsx
+// В вашем компоненте замените секцию с iframe на:
+{featuredVideo.videoUrl && isPlaying ? (
+  (() => {
+    const embedUrl = getEmbedUrl(featuredVideo.videoUrl);
+    const isDirectVideo = isDirectVideoUrl(featuredVideo.videoUrl);
+    
+    if (embedUrl && !isDirectVideo) {
+      return (
+        <LazyIframe
+          src={embedUrl}
+          title={featuredVideo.title}
+          className="w-full h-full"
+        />
+      );
+    } else if (embedUrl && isDirectVideo) {
+      return (
+        <video
+          controls
+          autoPlay
+          muted
+          playsInline
+          className="w-full h-full object-cover"
+          poster={featuredVideo.thumbnailUrl || undefined}
+        >
+          <source src={embedUrl} type="video/mp4" />
+          <source src={embedUrl} type="video/webm" />
+          <source src={embedUrl} type="video/ogg" />
+          Ваш браузер не поддерживает видео HTML5.
+        </video>
+      );
+    } else {
+      return (
+        <div className="w-full h-full flex items-center justify-center text-white">
+          <div className="text-center">
+            <p className="text-lg mb-2">Неподдерживаемый формат видео</p>
+            <p className="text-sm text-gray-300">URL: {featuredVideo.videoUrl}</p>
+          </div>
+        </div>
+      );
+    }
+  })()
+) : (
+  // Ваш существующий код для превью
+)}
+4. Добавление обработки ошибок
+jsx
+const [videoError, setVideoError] = useState<string | null>(null);
+
+// Функция для обработки ошибок загрузки
+const handleVideoError = (error: string) => {
+  setVideoError(error);
+  setIsPlaying(false);
+};
+
+// В компоненте iframe добавьте:
+<iframe
+  src={embedUrl}
+  title={featuredVideo.title}
+  frameBorder={0}
+  allowFullScreen
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  onError={() => handleVideoError('Ошибка загрузки видео')}
+  onLoad={() => setVideoError(null)}
+  // ... остальные атрибуты
+/>
+5. Оптимизация для мобильных устройств
+jsx
+// Добавьте проверку типа устройства
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+  navigator.userAgent
+);
+
+// В iframe добавьте дополнительные атрибуты для мобильных
+<iframe
+  src={embedUrl}
+  title={featuredVideo.title}
+  frameBorder={0}
+  allowFullScreen
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  style={{
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+  }}
+  {...(isMobile && {
+    allow: "accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  })}
+/>
+6. Улучшенная поддержка autoplay
+Для корректного автовоспроизведения в современных браузерах добавьте параметры mute:
+
+jsx
+function getEmbedUrl(url: string, autoplay: boolean = false): string | null {
+  if (!url) return null;
+  
+  // RuTube с параметрами автовоспроизведения
+  const rutubeMatch = url.match(/rutube\.ru\/video\/([^\/\?]+)/);
+  if (rutubeMatch) {
+    const baseUrl = `https://rutube.ru/play/embed/${rutubeMatch[21]}/`;
+    if (autoplay) {
+      return `${baseUrl}?autoplay=1&mute=1`;
+    }
+    return baseUrl;
+  }
+  
+  // Остальная логика...
+}
+7. Компонент с предзагрузкой thumbnails
+jsx
+const VideoThumbnail: React.FC<{
+  video: VideoInstruction;
+  onClick: () => void;
+}> = ({ video, onClick }) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  
+  return (
+    <div className="relative aspect-video bg-gray-200 flex items-center justify-center group overflow-hidden">
+      <img 
+        src={video.thumbnailUrl || videoPlaceholder} 
+        alt={video.title}
+        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+          imageLoaded ? 'opacity-100' : 'opacity-0'
+        }`}
+        onLoad={() => setImageLoaded(true)}
+        loading="lazy"
+      />
+      
+      {!imageLoaded && (
+        <div className="absolute inset-0 bg-gray-300 animate-pulse" />
+      )}
+      
+      <button 
+        onClick={onClick}
+        className="relative z-10 w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center hover:bg-[#c8002f] transition-all group-hover:scale-110"
+      >
+        <Play className="w-6 h-6 text-white ml-1" />
+      </button>
+      
+      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+    </div>
+  );
+};

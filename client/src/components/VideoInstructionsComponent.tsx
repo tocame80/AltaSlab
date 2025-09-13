@@ -25,6 +25,7 @@ export default function VideoInstructionsComponent({
   showByCategory = true 
 }: VideoInstructionsProps) {
   const [selectedVideo, setSelectedVideo] = useState<VideoInstruction | null>(null);
+  const [videoError, setVideoError] = useState<string | null>(null);
   const { data: videos = [], isLoading } = useQuery({
     queryKey: ['/api/video-instructions'],
     queryFn: async () => {
@@ -59,8 +60,8 @@ export default function VideoInstructionsComponent({
     return 'other';
   };
   
-  // Function to convert video URLs to embeddable format
-  const getEmbedUrl = (videoUrl: string): string => {
+  // Function to convert video URLs to embeddable format with autoplay support
+  const getEmbedUrl = (videoUrl: string, autoplay: boolean = true): string => {
     if (!videoUrl) return '';
     
     // Rutube - convert to proper embed format according to official docs
@@ -79,14 +80,22 @@ export default function VideoInstructionsComponent({
       // Extract video ID from various Rutube formats
       const rutubeMatch = processedUrl.match(/rutube\.ru\/(?:video|play\/embed)\/([\w-]{20,})\/?/);
       if (rutubeMatch) {
-        return `https://rutube.ru/play/embed/${rutubeMatch[1]}/`;
+        const baseUrl = `https://rutube.ru/play/embed/${rutubeMatch[1]}/`;
+        if (autoplay) {
+          return `${baseUrl}?autoplay=1&mute=1`;
+        }
+        return baseUrl;
       }
     }
     
-    // YouTube
+    // YouTube with autoplay support  
     const youtubeMatch = videoUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/);
     if (youtubeMatch) {
-      return `https://www.youtube.com/embed/${youtubeMatch[1]}?rel=0&showinfo=0&modestbranding=1`;
+      const baseUrl = `https://www.youtube.com/embed/${youtubeMatch[1]}?rel=0&showinfo=0&modestbranding=1`;
+      if (autoplay) {
+        return `${baseUrl}&autoplay=1&mute=1`;
+      }
+      return baseUrl;
     }
     
     // VK Video
@@ -109,7 +118,12 @@ export default function VideoInstructionsComponent({
       alert('Видео недоступно');
       return;
     }
+    setVideoError(null); // Clear any previous errors
     setSelectedVideo(video);
+  };
+
+  const handleVideoError = (error: string) => {
+    setVideoError(error);
   };
   
   const closeVideoModal = () => {
@@ -236,6 +250,12 @@ export default function VideoInstructionsComponent({
             </div>
             
             <div className="p-4">
+              {videoError && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                  <strong>Ошибка загрузки видео:</strong> {videoError}
+                </div>
+              )}
+              
               <div className="aspect-video bg-gray-900 rounded overflow-hidden mb-4">
                 {(() => {
                   if (!selectedVideo.videoUrl) {
@@ -250,7 +270,7 @@ export default function VideoInstructionsComponent({
                   }
                   
                   const serviceType = getVideoServiceType(selectedVideo.videoUrl);
-                  const embedUrl = getEmbedUrl(selectedVideo.videoUrl);
+                  const embedUrl = getEmbedUrl(selectedVideo.videoUrl, true);
                   
                   // Direct video files
                   if (serviceType === 'direct' && embedUrl.match(/\.(mp4|webm|ogg)$/i)) {
@@ -275,6 +295,8 @@ export default function VideoInstructionsComponent({
                         allow="clipboard-write; autoplay"
                         {...({ webkitAllowFullScreen: true, mozallowfullscreen: true } as any)}
                         allowFullScreen
+                        onError={() => handleVideoError('Не удалось загрузить Rutube видео')}
+                        onLoad={() => setVideoError(null)}
                         data-testid="video-player-iframe"
                       />
                     );
@@ -286,10 +308,12 @@ export default function VideoInstructionsComponent({
                       <iframe
                         src={embedUrl}
                         className="w-full h-full"
-                        frameBorder="0"
+                        style={{ border: 'none' }}
                         allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
                         allowFullScreen
                         title={selectedVideo.title}
+                        onError={() => handleVideoError(`Не удалось загрузить ${serviceType === 'youtube' ? 'YouTube' : 'VK'} видео`)}
+                        onLoad={() => setVideoError(null)}
                         data-testid="video-player-iframe"
                       />
                     );
