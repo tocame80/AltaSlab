@@ -337,7 +337,7 @@ export default function VideoInstructionsComponent({
                 key={video.id}
                 className={`bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-all duration-300 cursor-pointer ${
                   playingVideo === video.id 
-                    ? 'col-span-full max-w-4xl mx-auto shadow-2xl' 
+                    ? 'col-span-full max-w-5xl w-full mx-auto shadow-2xl' 
                     : categoryVideos.length === 1 
                       ? 'max-w-md w-full' 
                       : ''
@@ -345,11 +345,7 @@ export default function VideoInstructionsComponent({
                 onClick={() => handleVideoClick(video)}
                 data-testid={`video-card-${video.id}`}
               >
-                <div className={`bg-gray-100 flex items-center justify-center relative overflow-hidden ${
-                  playingVideo === video.id 
-                    ? 'aspect-video md:aspect-[21/10] lg:aspect-[2/1]' 
-                    : 'aspect-video'
-                }`}>
+                <div className="aspect-video bg-gray-100 flex items-center justify-center relative overflow-hidden">
                   {playingVideo === video.id ? (
                     // Show video player
                     <div className="w-full h-full relative">
