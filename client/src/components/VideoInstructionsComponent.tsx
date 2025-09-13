@@ -24,21 +24,21 @@ export default function VideoInstructionsComponent({
   title = "Видео инструкции",
   showByCategory = true 
 }: VideoInstructionsProps) {
-  const [selectedVideo, setSelectedVideo] = useState<VideoInstruction | null>(null);
-  const [videoError, setVideoError] = useState<string | null>(null);
-  const [isIframeBlocked, setIsIframeBlocked] = useState(false);
-  const [isIframeLoading, setIsIframeLoading] = useState(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [playingVideo, setPlayingVideo] = useState<string | null>(null);
+  const [videoErrors, setVideoErrors] = useState<Record<string, string>>({});
+  const [blockedVideos, setBlockedVideos] = useState<Record<string, boolean>>({});
+  const [loadingVideos, setLoadingVideos] = useState<Record<string, boolean>>({});
+  const timeoutRefs = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
 
-  // Cleanup timeout on unmount or video change
+  // Cleanup timeouts on unmount
   useEffect(() => {
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
-      }
+      Object.values(timeoutRefs.current).forEach(timeout => {
+        if (timeout) clearTimeout(timeout);
+      });
+      timeoutRefs.current = {};
     };
-  }, [selectedVideo]);
+  }, []);
 
   const { data: videos = [], isLoading } = useQuery({
     queryKey: ['/api/video-instructions'],
@@ -171,48 +171,110 @@ export default function VideoInstructionsComponent({
       alert('Видео недоступно');
       return;
     }
-    // Clear any existing timeout
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
+    
+    // If already playing, stop it
+    if (playingVideo === video.id) {
+      handleStopVideo(video.id);
+      return;
     }
     
-    setVideoError(null); // Clear any previous errors
-    setIsIframeBlocked(false); // Reset blocked state
-    setIsIframeLoading(true);
-    setSelectedVideo(video);
+    // Clear any existing timeout for this video
+    if (timeoutRefs.current[video.id]) {
+      clearTimeout(timeoutRefs.current[video.id]);
+      delete timeoutRefs.current[video.id];
+    }
+    
+    // Clear any previous errors and states for this video
+    setVideoErrors(prev => {
+      const updated = { ...prev };
+      delete updated[video.id];
+      return updated;
+    });
+    setBlockedVideos(prev => {
+      const updated = { ...prev };
+      delete updated[video.id];
+      return updated;
+    });
+    setLoadingVideos(prev => ({ ...prev, [video.id]: true }));
+    setPlayingVideo(video.id);
     
     // Start timeout for iframe loading detection (6 seconds)
-    timeoutRef.current = setTimeout(() => {
-      console.warn('Iframe timeout: no onLoad or onError event fired');
-      setIsIframeBlocked(true);
-      setIsIframeLoading(false);
-      setVideoError('Время загрузки видео истекло');
+    timeoutRefs.current[video.id] = setTimeout(() => {
+      console.warn('Iframe timeout: no onLoad or onError event fired for video', video.id);
+      setBlockedVideos(prev => ({ ...prev, [video.id]: true }));
+      setLoadingVideos(prev => {
+        const updated = { ...prev };
+        delete updated[video.id];
+        return updated;
+      });
+      setVideoErrors(prev => ({ ...prev, [video.id]: 'Время загрузки видео истекло' }));
     }, 6000);
   };
 
-  const handleVideoError = (error: string) => {
-    // Clear timeout since we got an error event
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
+  const handleStopVideo = (videoId: string) => {
+    // Clear timeout for this video
+    if (timeoutRefs.current[videoId]) {
+      clearTimeout(timeoutRefs.current[videoId]);
+      delete timeoutRefs.current[videoId];
     }
     
-    setVideoError(error);
-    setIsIframeBlocked(true);
-    setIsIframeLoading(false);
+    // Clear all states for this video
+    setPlayingVideo(null);
+    setVideoErrors(prev => {
+      const updated = { ...prev };
+      delete updated[videoId];
+      return updated;
+    });
+    setBlockedVideos(prev => {
+      const updated = { ...prev };
+      delete updated[videoId];
+      return updated;
+    });
+    setLoadingVideos(prev => {
+      const updated = { ...prev };
+      delete updated[videoId];
+      return updated;
+    });
   };
 
-  const handleIframeLoad = () => {
-    // Clear timeout since iframe loaded successfully
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
+  const handleVideoError = (videoId: string, error: string) => {
+    // Clear timeout since we got an error event
+    if (timeoutRefs.current[videoId]) {
+      clearTimeout(timeoutRefs.current[videoId]);
+      delete timeoutRefs.current[videoId];
     }
     
-    setVideoError(null);
-    setIsIframeLoading(false);
-    setIsIframeBlocked(false);
+    setVideoErrors(prev => ({ ...prev, [videoId]: error }));
+    setBlockedVideos(prev => ({ ...prev, [videoId]: true }));
+    setLoadingVideos(prev => {
+      const updated = { ...prev };
+      delete updated[videoId];
+      return updated;
+    });
+  };
+
+  const handleIframeLoad = (videoId: string) => {
+    // Clear timeout since iframe loaded successfully
+    if (timeoutRefs.current[videoId]) {
+      clearTimeout(timeoutRefs.current[videoId]);
+      delete timeoutRefs.current[videoId];
+    }
+    
+    setVideoErrors(prev => {
+      const updated = { ...prev };
+      delete updated[videoId];
+      return updated;
+    });
+    setLoadingVideos(prev => {
+      const updated = { ...prev };
+      delete updated[videoId];
+      return updated;
+    });
+    setBlockedVideos(prev => {
+      const updated = { ...prev };
+      delete updated[videoId];
+      return updated;
+    });
   };
 
   const handleOpenExternal = (videoUrl: string) => {
@@ -225,10 +287,6 @@ export default function VideoInstructionsComponent({
       }
     }
     window.open(externalUrl, '_blank', 'noopener,noreferrer');
-  };
-  
-  const closeVideoModal = () => {
-    setSelectedVideo(null);
   };
 
   if (isLoading) {
@@ -284,28 +342,188 @@ export default function VideoInstructionsComponent({
                 data-testid={`video-card-${video.id}`}
               >
                 <div className="aspect-video bg-gray-100 flex items-center justify-center relative overflow-hidden">
-                  {video.thumbnailUrl ? (
-                    <>
-                      <img 
-                        src={video.thumbnailUrl} 
-                        alt={video.title}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
-                        <div className="w-16 h-16 bg-[#e90039] bg-opacity-90 rounded-full flex items-center justify-center">
+                  {playingVideo === video.id ? (
+                    // Show video player
+                    <div className="w-full h-full relative">
+                      {/* Loading overlay */}
+                      {loadingVideos[video.id] && (
+                        <div className="absolute inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-10">
+                          <div className="text-white text-center">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+                            <p>Загрузка видео...</p>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Close button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleStopVideo(video.id);
+                        }}
+                        className="absolute top-2 right-2 z-20 bg-black bg-opacity-50 hover:bg-opacity-75 text-white rounded-full p-1 transition-colors"
+                        data-testid={`close-video-${video.id}`}
+                      >
+                        <X size={16} />
+                      </button>
+                      
+                      {/* Error display or fallback */}
+                      {videoErrors[video.id] && (
+                        <div className="absolute top-8 left-2 right-2 bg-red-100 border border-red-400 text-red-700 px-2 py-1 rounded text-xs z-10">
+                          <strong>Ошибка:</strong> {videoErrors[video.id]}
+                        </div>
+                      )}
+                      
+                      {/* Fallback for blocked content */}
+                      {blockedVideos[video.id] ? (
+                        <div className="w-full h-full flex items-center justify-center text-white bg-gray-900">
+                          <div className="text-center">
+                            <Play className="w-8 h-8 mx-auto mb-2" />
+                            <p className="text-sm mb-2">Контент заблокирован</p>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOpenExternal(video.videoUrl!);
+                              }}
+                              className="bg-[#e90039] hover:bg-[#c8002f] text-white px-3 py-1 rounded text-xs font-semibold transition-colors duration-200 flex items-center gap-1 mx-auto"
+                              data-testid={`button-open-external-${video.id}`}
+                            >
+                              <Play className="w-3 h-3" />
+                              Открыть на {video.videoUrl && getVideoServiceType(video.videoUrl) === 'rutube' ? 'Rutube' : 'видеохостинге'}
+                            </button>
+                          </div>
+                        </div>
+                      ) : (() => {
+                        if (!video.videoUrl) {
+                          return (
+                            <div className="w-full h-full flex items-center justify-center text-white bg-gray-900">
+                              <div className="text-center">
+                                <Play className="w-8 h-8 mx-auto mb-2" />
+                                <p className="text-sm">Видео недоступно</p>
+                              </div>
+                            </div>
+                          );
+                        }
+                        
+                        const serviceType = getVideoServiceType(video.videoUrl);
+                        const embedUrl = getEmbedUrl(video.videoUrl, true);
+                        
+                        // Direct video files
+                        if (serviceType === 'direct' && embedUrl.match(/\.(mp4|webm|ogg)$/i)) {
+                          return (
+                            <video 
+                              controls 
+                              className="w-full h-full"
+                              src={embedUrl}
+                            >
+                              Ваш браузер не поддерживает воспроизведение видео.
+                            </video>
+                          );
+                        }
+                        
+                        // Rutube - use specific iframe configuration
+                        if (serviceType === 'rutube') {
+                          // If embed URL extraction failed, show fallback immediately
+                          if (!embedUrl) {
+                            return (
+                              <div className="w-full h-full flex items-center justify-center text-white bg-gray-900">
+                                <div className="text-center">
+                                  <Play className="w-8 h-8 mx-auto mb-2" />
+                                  <p className="text-sm mb-2">Встраивание недоступно</p>
+                                  <button 
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleOpenExternal(video.videoUrl!);
+                                    }}
+                                    className="bg-[#e90039] hover:bg-[#c8002f] text-white px-3 py-1 rounded text-xs font-semibold transition-colors duration-200 flex items-center gap-1 mx-auto"
+                                    data-testid={`button-open-external-${video.id}`}
+                                  >
+                                    <Play className="w-3 h-3" />
+                                    Открыть на Rutube
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          }
+                          
+                          return (
+                            <iframe
+                              src={embedUrl}
+                              className="w-full h-full"
+                              style={{ border: 'none' }}
+                              allow="autoplay; fullscreen; clipboard-write; encrypted-media; picture-in-picture"
+                              allowFullScreen
+                              title={video.title}
+                              onError={() => handleVideoError(video.id, 'Не удалось загрузить Rutube видео')}
+                              onLoad={() => handleIframeLoad(video.id)}
+                              data-testid={`video-player-iframe-${video.id}`}
+                            />
+                          );
+                        }
+                        
+                        // YouTube and VK - use standard iframe configuration
+                        if (serviceType === 'youtube' || serviceType === 'vk') {
+                          return (
+                            <iframe
+                              src={embedUrl}
+                              className="w-full h-full"
+                              style={{ border: 'none' }}
+                              allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+                              allowFullScreen
+                              title={video.title}
+                              onError={() => handleVideoError(video.id, `Не удалось загрузить ${serviceType === 'youtube' ? 'YouTube' : 'VK'} видео`)}
+                              onLoad={() => handleIframeLoad(video.id)}
+                              data-testid={`video-player-iframe-${video.id}`}
+                            />
+                          );
+                        }
+                        
+                        // Fallback for unknown services
+                        return (
+                          <div className="w-full h-full flex items-center justify-center text-white bg-gray-900">
+                            <div className="text-center">
+                              <Play className="w-8 h-8 mx-auto mb-2" />
+                              <p className="text-sm mb-2">Встраивание недоступно</p>
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  window.open(video.videoUrl, '_blank', 'noopener,noreferrer');
+                                }}
+                                className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded text-xs font-semibold transition-colors duration-200"
+                                data-testid={`button-open-external-${video.id}`}
+                              >
+                                Открыть видео
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  ) : (
+                    // Show thumbnail preview
+                    video.thumbnailUrl ? (
+                      <>
+                        <img 
+                          src={video.thumbnailUrl} 
+                          alt={video.title}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+                          <div className="w-16 h-16 bg-[#e90039] bg-opacity-90 rounded-full flex items-center justify-center">
+                            <Play size={24} className="text-white ml-1" />
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-center">
+                        <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
                           <Play size={24} className="text-white ml-1" />
                         </div>
+                        <div className="text-sm text-gray-600">
+                          {video.videoUrl ? 'Нажмите для просмотра' : 'Видео недоступно'}
+                        </div>
                       </div>
-                    </>
-                  ) : (
-                    <div className="text-center">
-                      <div className="w-16 h-16 bg-[#e90039] rounded-full flex items-center justify-center mx-auto mb-2">
-                        <Play size={24} className="text-white ml-1" />
-                      </div>
-                      <div className="text-sm text-gray-600">
-                        {video.videoUrl ? 'Нажмите для просмотра' : 'Видео недоступно'}
-                      </div>
-                    </div>
+                    )
                   )}
                 </div>
                 
@@ -339,181 +557,6 @@ export default function VideoInstructionsComponent({
           </div>
         </div>
       ))}
-      
-      {/* Video Modal */}
-      {selectedVideo && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4" role="dialog" aria-modal="true" aria-labelledby="video-modal-title">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
-            <div className="flex justify-between items-center p-4 border-b">
-              <h3 id="video-modal-title" className="text-lg font-semibold text-gray-900">{selectedVideo.title}</h3>
-              <button 
-                onClick={closeVideoModal}
-                className="text-gray-500 hover:text-gray-700"
-                data-testid="close-video-modal"
-              >
-                <X size={24} />
-              </button>
-            </div>
-            
-            <div className="p-4">
-              {videoError && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                  <strong>Ошибка загрузки видео:</strong> {videoError}
-                </div>
-              )}
-              
-              <div className="aspect-video bg-gray-900 rounded overflow-hidden mb-4 relative">
-                {/* Loader overlay */}
-                {isIframeLoading && (
-                  <div className="absolute inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-10">
-                    <div className="text-white text-center">
-                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-                      <p>Загрузка видео...</p>
-                    </div>
-                  </div>
-                )}
-                
-                {/* Fallback for blocked content */}
-                {isIframeBlocked ? (
-                  <div className="w-full h-full flex items-center justify-center text-white">
-                    <div className="text-center">
-                      <Play className="w-12 h-12 mx-auto mb-4" />
-                      <p className="text-lg mb-2">Этот контент заблокирован</p>
-                      <p className="text-sm text-gray-300 mb-4">Видео может быть недоступно для встраивания</p>
-                      <button 
-                        onClick={() => selectedVideo.videoUrl && handleOpenExternal(selectedVideo.videoUrl)}
-                        className="bg-[#e90039] hover:bg-[#c8002f] text-white px-6 py-3 rounded font-semibold transition-colors duration-200 flex items-center gap-2 mx-auto"
-                        data-testid="button-open-external"
-                      >
-                        <Play className="w-4 h-4" />
-                        Открыть на {selectedVideo.videoUrl && getVideoServiceType(selectedVideo.videoUrl) === 'rutube' ? 'Rutube' : 'видеохостинге'}
-                      </button>
-                    </div>
-                  </div>
-                ) : (() => {
-                  if (!selectedVideo.videoUrl) {
-                    return (
-                      <div className="w-full h-full flex items-center justify-center text-white">
-                        <div className="text-center">
-                          <Play className="w-12 h-12 mx-auto mb-2" />
-                          <p>Видео недоступно</p>
-                        </div>
-                      </div>
-                    );
-                  }
-                  
-                  const serviceType = getVideoServiceType(selectedVideo.videoUrl);
-                  const embedUrl = getEmbedUrl(selectedVideo.videoUrl, true);
-                  
-                  // Direct video files
-                  if (serviceType === 'direct' && embedUrl.match(/\.(mp4|webm|ogg)$/i)) {
-                    return (
-                      <video 
-                        controls 
-                        className="w-full h-full"
-                        src={embedUrl}
-                      >
-                        Ваш браузер не поддерживает воспроизведение видео.
-                      </video>
-                    );
-                  }
-                  
-                  // Rutube - use specific iframe configuration per docs
-                  if (serviceType === 'rutube') {
-                    // If embed URL extraction failed, show fallback immediately
-                    if (!embedUrl) {
-                      return (
-                        <div className="w-full h-full flex items-center justify-center text-white">
-                          <div className="text-center">
-                            <Play className="w-12 h-12 mx-auto mb-4" />
-                            <p className="text-lg mb-2">Встраивание недоступно</p>
-                            <p className="text-sm text-gray-300 mb-4">Не удалось обработать Rutube URL</p>
-                            <button 
-                              onClick={() => selectedVideo.videoUrl && handleOpenExternal(selectedVideo.videoUrl)}
-                              className="bg-[#e90039] hover:bg-[#c8002f] text-white px-6 py-3 rounded font-semibold transition-colors duration-200 flex items-center gap-2 mx-auto"
-                              data-testid="button-open-external"
-                            >
-                              <Play className="w-4 h-4" />
-                              Открыть на Rutube
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    }
-                    
-                    return (
-                      <iframe
-                        src={embedUrl}
-                        className="w-full h-full"
-                        style={{ border: 'none' }}
-                        allow="autoplay; fullscreen; clipboard-write; encrypted-media; picture-in-picture"
-                        allowFullScreen
-                        title={selectedVideo.title}
-                        onError={() => handleVideoError('Не удалось загрузить Rutube видео')}
-                        onLoad={handleIframeLoad}
-                        data-testid="video-player-iframe"
-                      />
-                    );
-                  }
-                  
-                  // YouTube and VK - use standard iframe configuration
-                  if (serviceType === 'youtube' || serviceType === 'vk') {
-                    return (
-                      <iframe
-                        src={embedUrl}
-                        className="w-full h-full"
-                        style={{ border: 'none' }}
-                        allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
-                        allowFullScreen
-                        title={selectedVideo.title}
-                        onError={() => handleVideoError(`Не удалось загрузить ${serviceType === 'youtube' ? 'YouTube' : 'VK'} видео`)}
-                        onLoad={handleIframeLoad}
-                        data-testid="video-player-iframe"
-                      />
-                    );
-                  }
-                  
-                  // Fallback for unknown services
-                  return (
-                    <div className="w-full h-full flex items-center justify-center text-white">
-                      <div className="text-center">
-                        <Play className="w-12 h-12 mx-auto mb-2" />
-                        <p className="mb-4">Встраивание недоступно</p>
-                        <button 
-                          onClick={() => window.open(selectedVideo.videoUrl, '_blank', 'noopener,noreferrer')}
-                          className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded font-semibold transition-colors duration-200"
-                          data-testid="button-open-external"
-                        >
-                          Открыть видео
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })()}
-              </div>
-              
-              {selectedVideo.description && (
-                <div className="text-sm text-gray-600 mb-2">
-                  {selectedVideo.description}
-                </div>
-              )}
-              
-              <div className="flex items-center gap-4 text-sm text-gray-500">
-                <div className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
-                  <span>{selectedVideo.duration}</span>
-                </div>
-                {selectedVideo.category && (
-                  <div className="flex items-center gap-1">
-                    <Tag className="w-4 h-4" />
-                    <span>{selectedVideo.category}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
