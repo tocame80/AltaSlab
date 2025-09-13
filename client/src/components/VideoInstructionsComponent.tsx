@@ -271,11 +271,10 @@ export default function VideoInstructionsComponent({
                       <iframe
                         src={embedUrl}
                         className="w-full h-full"
-                        frameBorder="0"
+                        style={{ border: 'none' }}
                         allow="clipboard-write; autoplay"
-                        {...({ webkitallowfullscreen: '', mozallowfullscreen: '' } as any)}
+                        {...({ webkitAllowFullScreen: true, mozallowfullscreen: true } as any)}
                         allowFullScreen
-                        title={selectedVideo.title}
                         data-testid="video-player-iframe"
                       />
                     );
