@@ -1,0 +1,72 @@
+﻿
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 74632045 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 74632045 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 74632045 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 74632045 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Send statistics error: TypeError: Cannot read properties of undefined (reading 'reachGoal')
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+log.rutube.ru/player…d&t=1757756186795:1 
+ GET https://log.rutube.ru/player_events/?app=player-embed&ms=695&did=1a61486fd4…625c89af06353fc9dbc&sm=dm&qm=manual&v=100&ver=2.73.0-embed&t=1757756186795 net::ERR_CONNECTION_CLOSED
+mc.yandex.ru/watch/7…D&t=1757756186905:1 
+ GET https://mc.yandex.ru/watch/74632045?page-ref=https%3A%2F%2F2cc53e8d-20ae-45…defebb3ad8786eeea%22%2C%22ref-url%22%3A%22replit.dev%22%7D&t=1757756186905 net::ERR_CONNECTION_CLOSED
+mc.yandex.ru/watch/3…D&t=1757756186906:1 
+ GET https://mc.yandex.ru/watch/39751470?page-ref=https%3A%2F%2F2cc53e8d-20ae-45…cbb9625…%2F%3Fautoplay%3D1%26mute%3D1%22%7D&t=1757756186906 net::ERR_CONNECTION_CLOSED
+mc.yandex.ru/watch/3…D&t=1757756186906:1 
+ GET https://mc.yandex.ru/watch/39751470?ut=noindex&wmode=5&callback=_ymjsp0.276…0%BB%D0%B8%20%D0%B4%D0%BB%D1%8F%20%D1%81%D1%82%D0%B5%D0%BD&t=1757756186906 net::ERR_CONNECTION_CLOSED
+mc.yandex.ru/watch/5…D&t=1757756186906:1 
+ GET https://mc.yandex.ru/watch/53182297?page-ref=https%3A%2F%2F2cc53e8d-20ae-45…cbb9625…%2F%3Fautoplay%3D1%26mute%3D1%22%7D&t=1757756186906 net::ERR_CONNECTION_CLOSED
+ssp.rutube.ru/api/v1…c?t=1757756186906:1 
+ GET https://ssp.rutube.ru/api/v1/isync?t=1757756186906 net::ERR_CONNECTION_CLOSED
+www.tns-counter.ru/V…_rutube-load/4016:1 
+ GET https://www.tns-counter.ru/V13a****rutube_ru/ru/UTF-8/tmsec=rutube_rutube-load/4016 net::ERR_CONNECTION_CLOSED
+mc.yandex.ru/watch/5…D&t=1757756186919:1 
+ GET https://mc.yandex.ru/watch/53182297?page-url=be5b1d4……2video_land%22%3A%22be5b1…%22%7D&t=1757756186919 net::ERR_CONNECTION_CLOSED
+log.rutube.ru/player…d&t=1757756187002:1 
+ GET https://log.rutube.ru/player_events/?app=player-embed&ms=900&did=1a61486fd4…55&sm=dm&qm=manual&v=100&tr=Hls&bw=500000&ver=2.73.0-embed&t=1757756187002 net::ERR_CONNECTION_CLOSED
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+log.rutube.ru/player…d&t=1757756187146:1 
+ GET https://log.rutube.ru/player_events/?app=player-embed&ms=1050&did=1a61486fd…55&sm=dm&qm=manual&v=100&tr=Hls&bw=500000&ver=2.73.0-embed&t=1757756187146 net::ERR_CONNECTION_CLOSED
+log.rutube.ru/player…d&t=1757756187161:1 
+ GET https://log.rutube.ru/player_events/?app=player-embed&ms=1063&did=1a61486fd…2655&sm=dm&qm=auto&v=100&tr=Hls&bw=500000&ver=2.73.0-embed&t=1757756187161 net::ERR_CONNECTION_CLOSED
+index.9b1b0ca….js:1 Init stat_api ym counter 53182297 error: TypeError: Ya.Metrika2 is not a constructor
+log.rutube.ru/player…d&t=1757756187260:1 
+ GET https://log.rutube.ru/player_events/?app=player-embed&ms=1163&did=1a61486fd…55&sm=dm&qm=auto&v=100&tr=Hls&bw=15942400&ver=2.73.0-embed&t=1757756187260 net::ERR_CONNECTION_CLOSED
+framework-87e4a596bb9cb438.js:1 [Violation] 'message' handler took 187ms
+be5b1d4……autoplay=1&mute=1:1 The resource https://yastatic.net/partner-code-bundles/1301879/vas-bundles/bundles-es2017/loader.bundle.js was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
