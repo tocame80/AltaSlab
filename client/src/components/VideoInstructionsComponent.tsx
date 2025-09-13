@@ -51,8 +51,11 @@ export default function VideoInstructionsComponent({
   const getEmbedUrl = (videoUrl: string): string => {
     if (!videoUrl) return '';
     
-    // Rutube
-    const rutubeMatch = videoUrl.match(/rutube\.ru\/video\/([a-zA-Z0-9]+)\/?/);
+    // Rutube - support various formats including UUIDs with hyphens
+    if (videoUrl.includes('/play/embed/')) {
+      return videoUrl; // Already in embed format
+    }
+    const rutubeMatch = videoUrl.match(/rutube\.ru\/(?:video|shorts)\/([\w-]{20,})\/?/i);
     if (rutubeMatch) {
       return `https://rutube.ru/play/embed/${rutubeMatch[1]}`;
     }
@@ -196,10 +199,10 @@ export default function VideoInstructionsComponent({
       
       {/* Video Modal */}
       {selectedVideo && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4" role="dialog" aria-modal="true" aria-labelledby="video-modal-title">
           <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
             <div className="flex justify-between items-center p-4 border-b">
-              <h3 className="text-lg font-semibold text-gray-900" role="dialog" aria-label={selectedVideo.title}>{selectedVideo.title}</h3>
+              <h3 id="video-modal-title" className="text-lg font-semibold text-gray-900">{selectedVideo.title}</h3>
               <button 
                 onClick={closeVideoModal}
                 className="text-gray-500 hover:text-gray-700"
@@ -236,7 +239,7 @@ export default function VideoInstructionsComponent({
                       <Play className="w-12 h-12 mx-auto mb-2" />
                       <p>Видео недоступно для воспроизведения</p>
                       <button 
-                        onClick={() => window.open(selectedVideo.videoUrl, '_blank')}
+                        onClick={() => window.open(selectedVideo.videoUrl, '_blank', 'noopener,noreferrer')}
                         className="mt-2 text-blue-300 underline hover:text-blue-100"
                       >
                         Открыть в новом окне
