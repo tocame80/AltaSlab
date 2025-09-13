@@ -694,6 +694,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get gallery projects that use specific catalog product
+  app.get('/api/catalog-products/:productCode/gallery-projects', async (req, res) => {
+    try {
+      const { productCode } = req.params;
+      console.log('API: Finding gallery projects for product:', productCode);
+      
+      // Get all gallery projects
+      const allProjects = await storage.getGalleryProjects();
+      
+      // Filter projects that include this product in materialsUsed
+      const relatedProjects = allProjects.filter(project => {
+        const materialsUsed = project.materialsUsed || [];
+        return materialsUsed.includes(productCode) || 
+               materialsUsed.some(materialId => 
+                 materialId.replace('SPC', '') === productCode.replace('SPC', '')
+               );
+      });
+      
+      console.log(`API: Found ${relatedProjects.length} projects using product ${productCode}`);
+      res.json(relatedProjects);
+    } catch (error) {
+      console.error('Error fetching related gallery projects:', error);
+      res.status(500).json({ message: 'Failed to fetch related gallery projects' });
+    }
+  });
+
   // Object Storage routes for file upload
   app.post("/api/objects/upload", async (req, res) => {
     const objectStorageService = new ObjectStorageService();

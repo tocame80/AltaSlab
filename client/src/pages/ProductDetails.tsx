@@ -1,4 +1,5 @@
 import { useState, useContext, useMemo, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import JSZip from "jszip";
 import { useRoute, useLocation } from "wouter";
 import {
@@ -61,6 +62,18 @@ interface Product {
   availability?: string;
 }
 
+interface GalleryProject {
+  id: string;
+  title: string;
+  description: string;
+  images: string[];
+  location?: string;
+  area?: string;
+  year?: string;
+  application?: string;
+  materialsUsed: string[];
+}
+
 export default function ProductDetails() {
   const [, params] = useRoute("/product/:id");
   const [, setLocation] = useLocation();
@@ -80,6 +93,12 @@ export default function ProductDetails() {
   const [loading, setLoading] = useState(true);
   const [collectionColors, setCollectionColors] = useState<Product[]>([]);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
+
+  // Fetch related gallery projects for this product
+  const { data: relatedProjects = [], isLoading: isProjectsLoading } = useQuery<GalleryProject[]>({
+    queryKey: [`/api/catalog-products/${product?.productCode}/gallery-projects`],
+    enabled: !!product?.productCode, // Only fetch when we have a product code
+  });
 
   // Parse images using imageMap functions for local images
   const gallery = useMemo(() => {
@@ -720,6 +739,7 @@ export default function ProductDetails() {
                 { id: "installation", label: "Монтаж" },
                 { id: "calculator", label: "Калькулятор" },
                 { id: "certificates", label: "Сертификаты" },
+                { id: "projects", label: "Проекты" },
                 { id: "faq", label: "FAQ" },
                 { id: "video", label: "Видеоинструкция" },
                 { id: "feedback", label: "Обратная связь" },
@@ -876,6 +896,77 @@ export default function ProductDetails() {
                   title="Сертификаты и документы качества"
                   showInstallationDocs={false}
                 />
+              </div>
+            )}
+
+            {activeTab === "projects" && (
+              <div className="space-y-8">
+                <div className="mb-8">
+                  <h3 className="text-2xl font-bold text-[#2f378b] mb-2">Проекты с использованием этого материала</h3>
+                  <p className="text-gray-600">Посмотрите, как данный продукт используется в реальных проектах</p>
+                </div>
+
+                {isProjectsLoading ? (
+                  <div className="flex justify-center items-center py-12">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e90039]"></div>
+                    <span className="ml-2 text-gray-600">Загружаем проекты...</span>
+                  </div>
+                ) : relatedProjects.length > 0 ? (
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {relatedProjects.map((project) => (
+                      <div
+                        key={project.id}
+                        className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                        onClick={() => window.open(`/project/${project.id}`, '_blank')}
+                        data-testid={`project-card-${project.id}`}
+                      >
+                        {project.images && project.images.length > 0 && (
+                          <div className="aspect-video overflow-hidden">
+                            <img
+                              src={project.images[0]}
+                              alt={project.title}
+                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+                        )}
+                        <div className="p-6">
+                          <h4 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                            {project.title}
+                          </h4>
+                          <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                            {project.description}
+                          </p>
+                          <div className="flex items-center justify-between text-sm text-gray-500">
+                            {project.location && (
+                              <div className="flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
+                                <span>{project.location}</span>
+                              </div>
+                            )}
+                            {project.year && (
+                              <div className="flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
+                                <span>{project.year}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                      <span className="text-2xl text-gray-400">📋</span>
+                    </div>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                      Пока нет проектов
+                    </h4>
+                    <p className="text-gray-600 max-w-sm mx-auto">
+                      Данный продукт еще не использовался в наших опубликованных проектах или информация находится в процессе обновления.
+                    </p>
+                  </div>
+                )}
               </div>
             )}
 

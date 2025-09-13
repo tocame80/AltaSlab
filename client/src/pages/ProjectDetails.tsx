@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useRoute } from 'wouter';
 import { ArrowLeft, MapPin, Calendar, Maximize2, ChevronLeft, ChevronRight, X, ZoomIn, Share2, Save } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { products } from '@/data/products';
 import ProductCard from '@/components/ProductCard';
 import { useFavoritesContext } from '@/contexts/FavoritesContext';
 import Header from '@/components/Header';
@@ -20,6 +19,29 @@ interface GalleryProject {
   materialsUsed: string[];
 }
 
+interface CatalogProduct {
+  id: string;
+  productCode: string;
+  name: string;
+  collection: string;
+  design?: string;
+  format: string;
+  price: number;
+  quantity?: number;
+  unit?: string;
+  areaPerPackage?: number;
+  pcsPerPackage?: number;
+  image?: string;
+  gallery?: string[];
+  category: string;
+  surface: string;
+  color: string;
+  barcode: string;
+  description?: string;
+  specifications?: Record<string, string>;
+  availability?: string;
+}
+
 export default function ProjectDetails() {
   const [, params] = useRoute('/project/:id');
   const { favorites, toggleFavorite, isFavorite } = useFavoritesContext();
@@ -31,11 +53,62 @@ export default function ProjectDetails() {
     queryKey: ['/api/gallery-projects'],
   });
 
+  // Fetch catalog products
+  const { data: catalogProducts = [], isLoading: isCatalogLoading } = useQuery<CatalogProduct[]>({
+    queryKey: ['/api/catalog-products'],
+  });
+
   const project = galleryProjects.find(p => p.id === params?.id);
 
-  // Get materials used in project
+  // Get materials used in project from catalog - convert to Product interface
   const getProjectMaterials = (materialIds: string[]) => {
-    return products.filter(product => materialIds.includes(product.id));
+    const matchedProducts = catalogProducts.filter((product: CatalogProduct) => {
+      // Check if productCode matches any of the material IDs
+      const productCode = product.productCode;
+      return materialIds.includes(productCode) || 
+             materialIds.includes(productCode?.replace('SPC', '')) ||
+             materialIds.some(materialId => 
+               materialId.replace('SPC', '') === productCode?.replace('SPC', '')
+             );
+    });
+
+    // Convert CatalogProduct to Product interface expected by ProductCard
+    return matchedProducts.map((product: CatalogProduct) => ({
+      id: product.id,
+      name: product.name,
+      collection: product.collection,
+      design: product.design || product.color,
+      format: product.format,
+      areaPerPiece: 0, // Not available in catalog, use default
+      piecesPerPackage: product.pcsPerPackage || 0,
+      areaPerPackage: product.areaPerPackage || 0,
+      price: product.price,
+      isPremium: false, // Not available in catalog, use default
+      image: product.image || '',
+      images: product.gallery,
+      category: getProductCategory(product.collection),
+      surface: product.surface,
+      color: product.color,
+      barcode: product.barcode,
+      gallery: product.gallery,
+      specifications: product.specifications || {},
+      availability: {
+        inStock: product.availability !== 'Нет в наличии',
+        deliveryTime: product.availability || 'В наличии'
+      }
+    }));
+  };
+
+  // Helper function to convert collection to category
+  const getProductCategory = (collection: string): any => {
+    const lowerCollection = collection.toLowerCase();
+    if (lowerCollection.includes('бетон')) return 'concrete';
+    if (lowerCollection.includes('ткан')) return 'fabric';
+    if (lowerCollection.includes('матов')) return 'matte';
+    if (lowerCollection.includes('мрамор')) return 'marble';
+    if (lowerCollection.includes('профиль')) return 'profile';
+    if (lowerCollection.includes('клей')) return 'glue';
+    return 'concrete'; // Default category
   };
 
   const projectMaterials = project ? getProjectMaterials(project.materialsUsed) : [];
