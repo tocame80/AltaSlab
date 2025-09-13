@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit, Play, Database, Download, Image, RotateCw, HardDrive, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Star } from 'lucide-react';
+import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit, Play, Database, Download, Image, RotateCw, HardDrive, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Star, Search } from 'lucide-react';
 import { products } from '../data/products';
 import * as XLSX from 'xlsx';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
