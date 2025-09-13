@@ -75,6 +75,7 @@ export default function ProjectDetails() {
     // Convert CatalogProduct to Product interface expected by ProductCard
     return matchedProducts.map((product: CatalogProduct) => ({
       id: product.id,
+      productCode: product.productCode, // Add productCode for imageMap functions
       name: product.name,
       collection: product.collection,
       design: product.design || product.color,
@@ -84,13 +85,13 @@ export default function ProjectDetails() {
       areaPerPackage: product.areaPerPackage || 0,
       price: product.price,
       isPremium: false, // Not available in catalog, use default
-      image: product.image || '',
+      image: 'USE_IMAGEMAP:', // Signal to ProductCard to use imageMap system
       images: product.gallery,
       category: getProductCategory(product.collection),
       surface: product.surface,
       color: product.color,
       barcode: product.barcode,
-      gallery: product.gallery,
+      gallery: ['USE_IMAGEMAP:'], // Signal to ProductCard to use imageMap system
       specifications: product.specifications || {},
       availability: {
         inStock: product.availability !== 'Нет в наличии',
