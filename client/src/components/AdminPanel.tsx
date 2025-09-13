@@ -122,6 +122,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const [galleryImagePreviews, setGalleryImagePreviews] = useState<string[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [materialSearchQuery, setMaterialSearchQuery] = useState<string>('');
+  const [expandedMaterial, setExpandedMaterial] = useState<string | null>(null);
   const [editingCatalogProduct, setEditingCatalogProduct] = useState<CatalogProduct | null>(null);
   const [showCatalogForm, setShowCatalogForm] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -3591,8 +3592,65 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                 <span className="text-xs font-medium text-gray-700">Используемые материалы</span>
                                 <span className="text-xs text-gray-500">{project.materialsUsed.length} шт.</span>
                               </div>
+                              
+                              {/* Expanded Material View */}
+                              {expandedMaterial && project.materialsUsed.includes(expandedMaterial) && (
+                                <div className="mb-3 p-3 bg-gray-50 rounded-lg border">
+                                  {(() => {
+                                    const material = catalogProducts.find(p => 
+                                      p.productCode === expandedMaterial || 
+                                      p.productCode === `SPC${expandedMaterial}` ||
+                                      p.productCode?.replace('SPC', '') === expandedMaterial
+                                    );
+                                    
+                                    return (
+                                      <div className="flex gap-3">
+                                        <div className="flex-shrink-0 w-16 h-16 rounded border border-gray-200 overflow-hidden bg-gray-100">
+                                          {material?.gallery?.[0] ? (
+                                            <OptimizedThumbnail
+                                              src={material.gallery[0]}
+                                              alt={material.name || `Материал ${expandedMaterial}`}
+                                              size="64"
+                                              className="w-full h-full object-cover"
+                                            />
+                                          ) : (
+                                            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                                              <div className="w-6 h-6 bg-gray-400 rounded-sm"></div>
+                                            </div>
+                                          )}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                          <div className="flex items-start justify-between">
+                                            <div>
+                                              <h5 className="text-sm font-medium text-gray-900 truncate">
+                                                {material?.name || `Материал ${expandedMaterial}`}
+                                              </h5>
+                                              <p className="text-xs text-gray-500 mt-1">
+                                                Код: {material?.productCode || expandedMaterial}
+                                              </p>
+                                              {material?.collection && (
+                                                <p className="text-xs text-gray-500">
+                                                  Коллекция: {material.collection}
+                                                </p>
+                                              )}
+                                            </div>
+                                            <button
+                                              onClick={() => setExpandedMaterial(null)}
+                                              className="text-gray-400 hover:text-gray-600 ml-2"
+                                            >
+                                              <X className="w-4 h-4" />
+                                            </button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })()}
+                                </div>
+                              )}
+                              
+                              {/* Material Thumbnails */}
                               <div className="flex gap-1 overflow-x-auto">
-                                {project.materialsUsed.slice(0, 6).map((materialId, index) => {
+                                {project.materialsUsed.slice(0, 8).map((materialId, index) => {
                                   const material = catalogProducts.find(p => 
                                     p.productCode === materialId || 
                                     p.productCode === `SPC${materialId}` ||
@@ -3600,7 +3658,13 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                   );
                                   
                                   return (
-                                    <div key={index} className="flex-shrink-0 w-8 h-8 rounded border border-gray-200 overflow-hidden bg-gray-100">
+                                    <button
+                                      key={index}
+                                      onClick={() => setExpandedMaterial(expandedMaterial === materialId ? null : materialId)}
+                                      className={`flex-shrink-0 w-8 h-8 rounded border overflow-hidden bg-gray-100 hover:ring-2 hover:ring-[#E95D22] transition-all ${
+                                        expandedMaterial === materialId ? 'ring-2 ring-[#E95D22]' : 'border-gray-200'
+                                      }`}
+                                    >
                                       {material?.gallery?.[0] ? (
                                         <OptimizedThumbnail
                                           src={material.gallery[0]}
@@ -3613,12 +3677,12 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                           <div className="w-3 h-3 bg-gray-400 rounded-sm"></div>
                                         </div>
                                       )}
-                                    </div>
+                                    </button>
                                   );
                                 })}
-                                {project.materialsUsed.length > 6 && (
+                                {project.materialsUsed.length > 8 && (
                                   <div className="flex-shrink-0 w-8 h-8 rounded border border-gray-200 bg-gray-100 flex items-center justify-center">
-                                    <span className="text-xs text-gray-600 font-medium">+{project.materialsUsed.length - 6}</span>
+                                    <span className="text-xs text-gray-600 font-medium">+{project.materialsUsed.length - 8}</span>
                                   </div>
                                 )}
                               </div>
@@ -3676,6 +3740,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                           setGalleryImagePreviews([]);
                           setIsDragging(false);
                           setMaterialSearchQuery('');
+                          setExpandedMaterial(null);
                           galleryForm.reset();
                         }}
                         className="text-gray-500 hover:text-gray-700"
