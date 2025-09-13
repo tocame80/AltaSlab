@@ -38,6 +38,7 @@ import DownloadableDocuments from "@/components/DownloadableDocuments";
 import VideoInstructionsComponent from "@/components/VideoInstructionsComponent";
 import FAQComponent from "@/components/FAQComponent";
 import CalculatorComponent from "@/components/Calculator";
+import { getGalleryImageUrl } from "@/assets/gallery/galleryImageMap";
 
 interface Product {
   id: string;
@@ -923,7 +924,7 @@ export default function ProductDetails() {
                         {project.images && project.images.length > 0 && (
                           <div className="aspect-video overflow-hidden">
                             <img
-                              src={project.images[0]}
+                              src={getGalleryImageUrl(project.images[0])}
                               alt={project.title}
                               className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                             />
