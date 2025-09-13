@@ -59,7 +59,7 @@ app.use((req, res, next) => {
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://replit.com https://api-maps.yandex.ru https://*.yandex.ru https://*.yandex.net https://yastatic.net https://*.yastatic.net",
     "script-src-elem 'self' 'unsafe-inline' https://api-maps.yandex.ru https://yastatic.net https://*.yastatic.net https://replit.com",
     "connect-src 'self' ws: wss: https: data: https://api-maps.yandex.ru https://*.yandex.ru https://*.yandex.net https://*.maps.yandex.net https://yastatic.net https://*.yastatic.net https://geocode-maps.yandex.ru https://sp.replit.com https://analytics.google.com https://stats.g.doubleclick.net https://logs.browser-intake-us5-datadoghq.com",
-    "frame-src 'self' https://*.yandex.ru https://*.yandex.net",
+    "frame-src 'self' https://*.yandex.ru https://*.yandex.net https://rutube.ru https://*.rutube.ru https://www.youtube.com https://youtube.com https://*.youtube.com https://youtube-nocookie.com https://*.youtube-nocookie.com https://vk.com https://*.vk.com",
     "object-src 'none'",
     "worker-src 'self' blob: https://*.yandex.ru https://*.yandex.net https://yastatic.net https://*.yastatic.net https://api-maps.yandex.ru",
     "child-src 'self' blob:"

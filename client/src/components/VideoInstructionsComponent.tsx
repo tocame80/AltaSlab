@@ -105,22 +105,16 @@ export default function VideoInstructionsComponent({
         
         if (videoId) {
           const baseUrl = `https://rutube.ru/play/embed/${videoId}/`;
-          const finalUrl = autoplay ? `${baseUrl}?autoplay=1&mute=1` : baseUrl;
-          console.log('Rutube URL processed:', {
-            original: videoUrl,
-            videoId,
-            final: finalUrl
-          });
-          return finalUrl;
-        } else {
-          console.warn('Failed to extract Rutube video ID from:', videoUrl);
+          if (autoplay) {
+            return `${baseUrl}?autoplay=1&mute=1`;
+          }
+          return baseUrl;
         }
       } catch (e) {
         console.warn('Failed to parse Rutube URL:', videoUrl, e);
       }
       
       // If extraction failed, return empty to trigger fallback
-      console.warn('Rutube URL parsing failed, returning empty for fallback:', videoUrl);
       return '';
     }
     
