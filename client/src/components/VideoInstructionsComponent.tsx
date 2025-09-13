@@ -26,6 +26,8 @@ export default function VideoInstructionsComponent({
 }: VideoInstructionsProps) {
   const [selectedVideo, setSelectedVideo] = useState<VideoInstruction | null>(null);
   const [videoError, setVideoError] = useState<string | null>(null);
+  const [isIframeBlocked, setIsIframeBlocked] = useState(false);
+  const [isIframeLoading, setIsIframeLoading] = useState(false);
   const { data: videos = [], isLoading } = useQuery({
     queryKey: ['/api/video-instructions'],
     queryFn: async () => {
@@ -148,11 +150,33 @@ export default function VideoInstructionsComponent({
       return;
     }
     setVideoError(null); // Clear any previous errors
+    setIsIframeBlocked(false); // Reset blocked state
+    setIsIframeLoading(true);
     setSelectedVideo(video);
   };
 
   const handleVideoError = (error: string) => {
     setVideoError(error);
+    setIsIframeBlocked(true);
+    setIsIframeLoading(false);
+  };
+
+  const handleIframeLoad = () => {
+    setVideoError(null);
+    setIsIframeLoading(false);
+    setIsIframeBlocked(false);
+  };
+
+  const handleOpenExternal = (videoUrl: string) => {
+    // Convert embed URL back to normal URL for Rutube
+    let externalUrl = videoUrl;
+    if (videoUrl.includes('rutube.ru/play/embed/')) {
+      const videoId = videoUrl.match(/rutube\.ru\/play\/embed\/([\w-]+)/);
+      if (videoId) {
+        externalUrl = `https://rutube.ru/video/${videoId[1]}/`;
+      }
+    }
+    window.open(externalUrl, '_blank', 'noopener,noreferrer');
   };
   
   const closeVideoModal = () => {
@@ -285,8 +309,35 @@ export default function VideoInstructionsComponent({
                 </div>
               )}
               
-              <div className="aspect-video bg-gray-900 rounded overflow-hidden mb-4">
-                {(() => {
+              <div className="aspect-video bg-gray-900 rounded overflow-hidden mb-4 relative">
+                {/* Loader overlay */}
+                {isIframeLoading && (
+                  <div className="absolute inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-10">
+                    <div className="text-white text-center">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+                      <p>Загрузка видео...</p>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Fallback for blocked content */}
+                {isIframeBlocked ? (
+                  <div className="w-full h-full flex items-center justify-center text-white">
+                    <div className="text-center">
+                      <Play className="w-12 h-12 mx-auto mb-4" />
+                      <p className="text-lg mb-2">Этот контент заблокирован</p>
+                      <p className="text-sm text-gray-300 mb-4">Видео может быть недоступно для встраивания</p>
+                      <button 
+                        onClick={() => selectedVideo.videoUrl && handleOpenExternal(selectedVideo.videoUrl)}
+                        className="bg-[#e90039] hover:bg-[#c8002f] text-white px-6 py-3 rounded font-semibold transition-colors duration-200 flex items-center gap-2 mx-auto"
+                        data-testid="button-open-external"
+                      >
+                        <Play className="w-4 h-4" />
+                        Открыть на {selectedVideo.videoUrl && getVideoServiceType(selectedVideo.videoUrl) === 'rutube' ? 'Rutube' : 'видеохостинге'}
+                      </button>
+                    </div>
+                  </div>
+                ) : (() => {
                   if (!selectedVideo.videoUrl) {
                     return (
                       <div className="w-full h-full flex items-center justify-center text-white">
@@ -325,7 +376,7 @@ export default function VideoInstructionsComponent({
                         {...({ webkitAllowFullScreen: true, mozallowfullscreen: true } as any)}
                         allowFullScreen
                         onError={() => handleVideoError('Не удалось загрузить Rutube видео')}
-                        onLoad={() => setVideoError(null)}
+                        onLoad={handleIframeLoad}
                         data-testid="video-player-iframe"
                       />
                     );
@@ -342,7 +393,7 @@ export default function VideoInstructionsComponent({
                         allowFullScreen
                         title={selectedVideo.title}
                         onError={() => handleVideoError(`Не удалось загрузить ${serviceType === 'youtube' ? 'YouTube' : 'VK'} видео`)}
-                        onLoad={() => setVideoError(null)}
+                        onLoad={handleIframeLoad}
                         data-testid="video-player-iframe"
                       />
                     );

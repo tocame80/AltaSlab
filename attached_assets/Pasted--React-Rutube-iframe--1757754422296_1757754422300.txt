@@ -1,0 +1,346 @@
+# Решение ошибки "Этот контент заблокирован" в React-приложении с Rutube iframe
+
+Ошибка **"Этот контент заблокирован. Чтобы устранить неполадку, свяжитесь с владельцем сайта"** в React-приложении при работе с iframe Rutube обычно связана с проблемами CORS (Cross-Origin Resource Sharing) или политиками безопасности контента.[1][2]
+
+## Основные причины ошибки в React
+
+### 1. Content Security Policy (CSP) блокировка
+
+React-приложения часто имеют строгие CSP-правила, которые блокируют встраивание iframe из внешних доменов:[3][1]
+
+```javascript
+// Ошибка в консоли:
+// "Refused to frame 'https://rutube.ru' because it violates the following 
+// Content Security Policy directive: "default-src 'self'"
+```
+
+### 2. CORS политики Rutube
+
+Rutube может ограничивать встраивание контента на определенных доменах, особенно в development-окружении (localhost).[4][2]
+
+### 3. Embed-ограничения от владельца видео
+
+Владелец видео может запретить встраивание на сторонних сайтах.[5]
+
+## Решения для React-приложений
+
+### 1. Настройка CSP в React
+
+Если вы используете **Create React App**, добавьте в `public/index.html`:[1]
+
+```html
+<meta http-equiv="Content-Security-Policy" 
+      content="default-src 'self'; 
+               frame-src 'self' https://rutube.ru https://*.rutube.ru; 
+               script-src 'self' 'unsafe-inline' 'unsafe-eval';">
+```
+
+Для **Next.js** в `next.config.js`:[1]
+
+```javascript
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-src 'self' https://rutube.ru https://*.rutube.ru"
+          }
+        ]
+      }
+    ]
+  }
+}
+
+module.exports = nextConfig
+```
+
+### 2. Улучшенный компонент RutubePlayer
+
+```jsx
+import React, { useState, useRef, useCallback } from 'react';
+
+interface RutubePlayerProps {
+  videoId: string;
+  title?: string;
+  width?: string | number;
+  height?: string | number;
+  autoplay?: boolean;
+  onError?: (error: string) => void;
+}
+
+const RutubePlayer: React.FC<RutubePlayerProps> = ({
+  videoId,
+  title = "Rutube Video",
+  width = "100%",
+  height = "315",
+  autoplay = false,
+  onError
+}) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const embedUrl = `https://rutube.ru/play/embed/${videoId}/${autoplay ? '?autoplay=1' : ''}`;
+
+  const handleLoad = useCallback(() => {
+    setIsLoaded(true);
+    setHasError(false);
+  }, []);
+
+  const handleError = useCallback(() => {
+    setHasError(true);
+    onError?.('Ошибка загрузки видео Rutube');
+  }, [onError]);
+
+  // Fallback для заблокированного контента
+  if (hasError) {
+    return (
+      <div 
+        style={{ width, height }}
+        className="flex items-center justify-center bg-gray-100 border border-gray-300 rounded"
+      >
+        <div className="text-center p-4">
+          <p className="text-gray-600 mb-2">Видео недоступно</p>
+          <a 
+            href={`https://rutube.ru/video/${videoId}/`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline"
+          >
+            Открыть на Rutube
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ width, height, position: 'relative' }}>
+      {!isLoaded && (
+        <div 
+          style={{ width, height }}
+          className="absolute inset-0 flex items-center justify-center bg-gray-100 animate-pulse"
+        >
+          <span className="text-gray-500">Загрузка видео...</span>
+        </div>
+      )}
+      <iframe
+        ref={iframeRef}
+        src={embedUrl}
+        title={title}
+        width={width}
+        height={height}
+        frameBorder={0}
+        allowFullScreen
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        onLoad={handleLoad}
+        onError={handleError}
+        style={{
+          border: 'none',
+          opacity: isLoaded ? 1 : 0,
+          transition: 'opacity 0.3s ease'
+        }}
+      />
+    </div>
+  );
+};
+
+export default RutubePlayer;
+```
+
+### 3. Использование в компоненте
+
+Замените вашу текущую логику iframe на:
+
+```jsx
+// В вашем VideoPage компоненте
+{featuredVideo.videoUrl && isPlaying ? (
+  (() => {
+    const rutubeMatch = featuredVideo.videoUrl.match(/rutube\.ru\/video\/([^\/\?]+)/);
+    if (rutubeMatch) {
+      return (
+        <RutubePlayer
+          videoId={rutubeMatch[21]}
+          title={featuredVideo.title}
+          width="100%"
+          height="100%"
+          autoplay={true}
+          onError={(error) => {
+            console.error('Rutube player error:', error);
+            // Можно показать fallback или уведомление
+          }}
+        />
+      );
+    }
+    
+    // Остальная логика для других платформ
+    const embedUrl = getEmbedUrl(featuredVideo.videoUrl);
+    const isDirectVideo = isDirectVideoUrl(featuredVideo.videoUrl);
+    
+    if (embedUrl && !isDirectVideo) {
+      return (
+        <iframe
+          src={embedUrl}
+          className="w-full h-full"
+          frameBorder={0}
+          allowFullScreen
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        />
+      );
+    }
+    // ... остальной код
+  })()
+) : (
+  // Превью код
+)}
+```
+
+### 4. Proxy для development окружения
+
+Для **Create React App** добавьте в `package.json`:[6][2]
+
+```json
+{
+  "name": "your-app",
+  "proxy": "https://rutube.ru",
+  "dependencies": {
+    // ...
+  }
+}
+```
+
+Или создайте `src/setupProxy.js`:[2]
+
+```javascript
+const { createProxyMiddleware } = require('http-proxy-middleware');
+
+module.exports = function(app) {
+  app.use(
+    '/api/rutube',
+    createProxyMiddleware({
+      target: 'https://rutube.ru',
+      changeOrigin: true,
+      pathRewrite: {
+        '^/api/rutube': '',
+      },
+      onProxyRes: function (proxyRes, req, res) {
+        proxyRes.headers['Access-Control-Allow-Origin'] = '*';
+        proxyRes.headers['Access-Control-Allow-Methods'] = 'GET,PUT,POST,DELETE,OPTIONS';
+        proxyRes.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
+      },
+    })
+  );
+};
+```
+
+### 5. Lazy Loading с Intersection Observer
+
+```jsx
+import { useEffect, useRef, useState } from 'react';
+
+const LazyRutubePlayer: React.FC<RutubePlayerProps> = (props) => {
+  const [shouldLoad, setShouldLoad] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldLoad(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={containerRef} style={{ width: props.width, height: props.height }}>
+      {shouldLoad ? (
+        <RutubePlayer {...props} />
+      ) : (
+        <div className="bg-gray-200 animate-pulse w-full h-full flex items-center justify-center">
+          <span className="text-gray-500">Нажмите для загрузки</span>
+        </div>
+      )}
+    </div>
+  );
+};
+```
+
+### 6. Обработка ошибок на уровне приложения
+
+```jsx
+// Error Boundary для iframe
+class IframeErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('Iframe Error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-4 text-center bg-red-50 border border-red-200 rounded">
+          <p className="text-red-600">Ошибка загрузки видео</p>
+          <button 
+            onClick={() => this.setState({ hasError: false })}
+            className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Попробовать снова
+          </button>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+// Использование
+<IframeErrorBoundary>
+  <RutubePlayer videoId={videoId} />
+</IframeErrorBoundary>
+```
+
+Эти решения помогут устранить большинство проблем с блокировкой Rutube iframe в React-приложениях, обеспечивая корректную работу как в development, так и в production окружениях.[7][3]
+
+[1](https://stackoverflow.com/questions/76133761/react-app-blocked-when-embedded-in-iframe)
+[2](https://stackoverflow.com/questions/58403651/react-component-has-been-blocked-by-cors-policy-no-access-control-allow-origin)
+[3](https://blog.logrocket.com/best-practices-react-iframes/)
+[4](https://community.latenode.com/t/troubleshooting-youtube-video-embedding-in-a-react-app/17669)
+[5](https://github.com/LonelyCpp/react-native-youtube-iframe/issues/5)
+[6](https://www.youtube.com/watch?v=hxyp_LkKDdk)
+[7](https://dev.to/serifcolakel/mastering-the-tag-in-react-with-typescript-a-comprehensive-guide-27m6)
+[8](https://www.youtube.com/watch?v=8gYXCRpCxsw)
+[9](https://github.com/Flowseal/zapret-discord-youtube/issues/1904)
+[10](https://www.reddit.com/r/nextjs/comments/1m8nx4o/recreate_tiktoks_vertical_video_player_interface/)
+[11](https://rutube.ru/video/a994f5bee2635c1b62ba1791b3bbb50b/)
+[12](https://rutube.ru/video/db11f10f7035fd3d9859383551a45b29/)
+[13](https://issuetracker.google.com/issues/229013699)
+[14](https://stackoverflow.com/questions/44715819/iframes-and-react-js-how-to-embed-a-youtube-video-into-my-app)
+[15](https://rutube.ru/channel/33623696/videos/)
+[16](https://rutube.ru/video/d17228f43e605a5ba6f55084b051af34/)
+[17](https://rutube.ru/video/5ea33fd894b8b9a632b4b905a8e2e2f0/)
+[18](https://www.reddit.com/r/Wordpress/comments/1apk129/how_do_i_fix_a_html_block_with_an_iframe_embed/)
+[19](https://www.youtube.com/watch?v=N4yUiQiTvwU)
+[20](https://www.youtube.com/watch?v=xNRJwmlRBNU)
+[21](https://rutube.ru/info/embed/)
