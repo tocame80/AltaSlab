@@ -47,17 +47,27 @@ export default function VideoInstructionsComponent({
       }, {})
     : { 'Все видео': sortedVideos };
 
-  // Function to convert video URLs to embeddable format
+  // Function to detect video service type
+  const getVideoServiceType = (videoUrl: string): 'rutube' | 'youtube' | 'vk' | 'direct' | 'other' => {
+    if (!videoUrl) return 'other';
+    
+    if (videoUrl.includes('rutube.ru')) return 'rutube';
+    if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) return 'youtube';
+    if (videoUrl.includes('vk.com/video')) return 'vk';
+    if (videoUrl.match(/\.(mp4|webm|ogg)$/i)) return 'direct';
+    
+    return 'other';
+  };
+  
+  // Function to convert video URLs to embeddable format (for non-Rutube videos)
   const getEmbedUrl = (videoUrl: string): string => {
     if (!videoUrl) return '';
     
-    // Rutube - support various formats including UUIDs with hyphens
-    if (videoUrl.includes('/play/embed/')) {
-      return videoUrl; // Already in embed format
-    }
-    const rutubeMatch = videoUrl.match(/rutube\.ru\/(?:video|shorts)\/([\w-]{20,})\/?/i);
-    if (rutubeMatch) {
-      return `https://rutube.ru/play/embed/${rutubeMatch[1]}`;
+    const serviceType = getVideoServiceType(videoUrl);
+    
+    // Skip Rutube - it will be handled separately
+    if (serviceType === 'rutube') {
+      return videoUrl; // Return original URL for external opening
     }
     
     // YouTube
@@ -214,39 +224,87 @@ export default function VideoInstructionsComponent({
             
             <div className="p-4">
               <div className="aspect-video bg-gray-900 rounded overflow-hidden mb-4">
-                {selectedVideo.videoUrl && getEmbedUrl(selectedVideo.videoUrl) ? (
-                  getEmbedUrl(selectedVideo.videoUrl).match(/\.(mp4|webm|ogg)$/i) ? (
-                    <video 
-                      controls 
-                      className="w-full h-full"
-                      src={getEmbedUrl(selectedVideo.videoUrl)}
-                    >
-                      Ваш браузер не поддерживает воспроизведение видео.
-                    </video>
-                  ) : (
-                    <iframe
-                      src={getEmbedUrl(selectedVideo.videoUrl)}
-                      className="w-full h-full"
-                      frameBorder="0"
-                      allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
-                      allowFullScreen
-                      title={selectedVideo.title}
-                    />
-                  )
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-white">
-                    <div className="text-center">
-                      <Play className="w-12 h-12 mx-auto mb-2" />
-                      <p>Видео недоступно для воспроизведения</p>
-                      <button 
-                        onClick={() => window.open(selectedVideo.videoUrl, '_blank', 'noopener,noreferrer')}
-                        className="mt-2 text-blue-300 underline hover:text-blue-100"
+                {(() => {
+                  if (!selectedVideo.videoUrl) {
+                    return (
+                      <div className="w-full h-full flex items-center justify-center text-white">
+                        <div className="text-center">
+                          <Play className="w-12 h-12 mx-auto mb-2" />
+                          <p>Видео недоступно</p>
+                        </div>
+                      </div>
+                    );
+                  }
+                  
+                  const serviceType = getVideoServiceType(selectedVideo.videoUrl);
+                  const embedUrl = getEmbedUrl(selectedVideo.videoUrl);
+                  
+                  // Special handling for Rutube - show preview with external link
+                  if (serviceType === 'rutube') {
+                    return (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-red-900 to-red-700 text-white relative">
+                        <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                        <div className="text-center z-10">
+                          <div className="mb-4">
+                            <div className="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-3">
+                              <Play className="w-10 h-10 text-white ml-1" />
+                            </div>
+                            <div className="text-2xl font-bold mb-2">RuTube</div>
+                            <p className="text-sm opacity-90 mb-4">Видео откроется на RuTube</p>
+                          </div>
+                          <button 
+                            onClick={() => window.open(selectedVideo.videoUrl, '_blank', 'noopener,noreferrer')}
+                            className="bg-red-600 hover:bg-red-500 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 shadow-lg"
+                          >
+                            Смотреть на RuTube
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  }
+                  
+                  // For other services, use embedding
+                  if (serviceType === 'direct' && embedUrl.match(/\.(mp4|webm|ogg)$/i)) {
+                    return (
+                      <video 
+                        controls 
+                        className="w-full h-full"
+                        src={embedUrl}
                       >
-                        Открыть в новом окне
-                      </button>
+                        Ваш браузер не поддерживает воспроизведение видео.
+                      </video>
+                    );
+                  }
+                  
+                  if (serviceType === 'youtube' || serviceType === 'vk') {
+                    return (
+                      <iframe
+                        src={embedUrl}
+                        className="w-full h-full"
+                        frameBorder="0"
+                        allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+                        allowFullScreen
+                        title={selectedVideo.title}
+                      />
+                    );
+                  }
+                  
+                  // Fallback for unknown services
+                  return (
+                    <div className="w-full h-full flex items-center justify-center text-white">
+                      <div className="text-center">
+                        <Play className="w-12 h-12 mx-auto mb-2" />
+                        <p className="mb-4">Встраивание недоступно</p>
+                        <button 
+                          onClick={() => window.open(selectedVideo.videoUrl, '_blank', 'noopener,noreferrer')}
+                          className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded font-semibold transition-colors duration-200"
+                        >
+                          Открыть видео
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
               </div>
               
               {selectedVideo.description && (
