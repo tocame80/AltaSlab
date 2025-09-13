@@ -1,0 +1,269 @@
+[vite] connected.
+recaptcha__ru.js:122 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+(anonymous) @ recaptcha__ru.js:122
+id.render @ recaptcha__ru.js:1514
+(anonymous) @ recaptcha__ru.js:425
+(anonymous) @ recaptcha__ru.js:653
+(anonymous) @ recaptcha__ru.js:486
+(anonymous) @ recaptcha__ru.js:271
+gvQ.te @ recaptcha__ru.js:1532
+u.u @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+B @ recaptcha__ru.js:237
+Promise.then
+u @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:316
+Td @ recaptcha__ru.js:1005
+A @ recaptcha__ru.js:56
+n @ _app-1ae87f7f7b922a17.js:38
+recaptcha__ru.js:122 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+(anonymous) @ recaptcha__ru.js:122
+id.render @ recaptcha__ru.js:1514
+(anonymous) @ recaptcha__ru.js:425
+(anonymous) @ recaptcha__ru.js:653
+(anonymous) @ recaptcha__ru.js:486
+(anonymous) @ recaptcha__ru.js:271
+gvQ.te @ recaptcha__ru.js:1532
+u.u @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+B @ recaptcha__ru.js:237
+Promise.then
+u @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:316
+Td @ recaptcha__ru.js:1005
+A @ recaptcha__ru.js:56
+n @ _app-1ae87f7f7b922a17.js:38
+recaptcha__ru.js:122 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+(anonymous) @ recaptcha__ru.js:122
+id.render @ recaptcha__ru.js:1514
+(anonymous) @ recaptcha__ru.js:425
+(anonymous) @ recaptcha__ru.js:653
+(anonymous) @ recaptcha__ru.js:486
+(anonymous) @ recaptcha__ru.js:271
+gvQ.te @ recaptcha__ru.js:1532
+u.u @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+B @ recaptcha__ru.js:237
+Promise.then
+u @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:316
+Td @ recaptcha__ru.js:1005
+A @ recaptcha__ru.js:56
+n @ _app-1ae87f7f7b922a17.js:38
+recaptcha__ru.js:496 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+(anonymous) @ recaptcha__ru.js:496
+(anonymous) @ recaptcha__ru.js:82
+(anonymous) @ recaptcha__ru.js:512
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:512
+(anonymous) @ recaptcha__ru.js:731
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:731
+(anonymous) @ recaptcha__ru.js:224
+Promise.then
+(anonymous) @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+B @ recaptcha__ru.js:237
+Promise.then
+u @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:316
+Td @ recaptcha__ru.js:1005
+A @ recaptcha__ru.js:56
+n @ _app-1ae87f7f7b922a17.js:38
+recaptcha__ru.js:496 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+(anonymous) @ recaptcha__ru.js:496
+(anonymous) @ recaptcha__ru.js:82
+(anonymous) @ recaptcha__ru.js:512
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:512
+(anonymous) @ recaptcha__ru.js:731
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:731
+(anonymous) @ recaptcha__ru.js:224
+Promise.then
+(anonymous) @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+B @ recaptcha__ru.js:237
+Promise.then
+u @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:316
+Td @ recaptcha__ru.js:1005
+A @ recaptcha__ru.js:56
+n @ _app-1ae87f7f7b922a17.js:38
+recaptcha__ru.js:496 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+(anonymous) @ recaptcha__ru.js:496
+(anonymous) @ recaptcha__ru.js:82
+(anonymous) @ recaptcha__ru.js:512
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:512
+(anonymous) @ recaptcha__ru.js:731
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:731
+(anonymous) @ recaptcha__ru.js:224
+Promise.then
+(anonymous) @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+B @ recaptcha__ru.js:237
+Promise.then
+u @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:316
+Td @ recaptcha__ru.js:1005
+A @ recaptcha__ru.js:56
+n @ _app-1ae87f7f7b922a17.js:38
+recaptcha__ru.js:496 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+(anonymous) @ recaptcha__ru.js:496
+(anonymous) @ recaptcha__ru.js:82
+(anonymous) @ recaptcha__ru.js:512
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:512
+(anonymous) @ recaptcha__ru.js:731
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:731
+(anonymous) @ recaptcha__ru.js:224
+Promise.then
+(anonymous) @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+B @ recaptcha__ru.js:237
+Promise.then
+u @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:316
+Td @ recaptcha__ru.js:1005
+A @ recaptcha__ru.js:56
+n @ _app-1ae87f7f7b922a17.js:38
+recaptcha__ru.js:496 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+(anonymous) @ recaptcha__ru.js:496
+(anonymous) @ recaptcha__ru.js:82
+(anonymous) @ recaptcha__ru.js:512
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:512
+(anonymous) @ recaptcha__ru.js:731
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:731
+(anonymous) @ recaptcha__ru.js:224
+Promise.then
+(anonymous) @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+B @ recaptcha__ru.js:237
+Promise.then
+u @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:316
+Td @ recaptcha__ru.js:1005
+A @ recaptcha__ru.js:56
+n @ _app-1ae87f7f7b922a17.js:38
+recaptcha__ru.js:496 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+(anonymous) @ recaptcha__ru.js:496
+(anonymous) @ recaptcha__ru.js:82
+(anonymous) @ recaptcha__ru.js:512
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:512
+(anonymous) @ recaptcha__ru.js:731
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:731
+(anonymous) @ recaptcha__ru.js:224
+Promise.then
+(anonymous) @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:117
+next @ recaptcha__ru.js:226
+B @ recaptcha__ru.js:237
+Promise.then
+u @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:237
+(anonymous) @ recaptcha__ru.js:477
+(anonymous) @ recaptcha__ru.js:224
+(anonymous) @ recaptcha__ru.js:316
+Td @ recaptcha__ru.js:1005
+A @ recaptcha__ru.js:56
+n @ _app-1ae87f7f7b922a17.js:38
+[Report Only] Refused to frame 'https://www.google.com/' because an ancestor violates the following Content Security Policy directive: "frame-ancestors 'self'".
