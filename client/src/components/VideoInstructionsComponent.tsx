@@ -526,11 +526,18 @@ export default function VideoInstructionsComponent({
       {playingVideo && nonPlayingVideos.length > 0 && (
         <div className="mb-8">
           <h4 className="text-lg font-semibold text-gray-900 mb-4">Другие видео</h4>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className={nonPlayingVideos.length === 1 
+            ? "flex justify-center" 
+            : nonPlayingVideos.length <= 3
+            ? "flex justify-center gap-4"
+            : "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+          }>
             {nonPlayingVideos.map((video) => (
               <div 
                 key={video.id}
-                className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+                className={`bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow cursor-pointer ${
+                  nonPlayingVideos.length === 1 ? 'max-w-sm w-full' : ''
+                }`}
                 onClick={() => handleVideoClick(video)}
                 data-testid={`thumbnail-${video.id}`}
               >
