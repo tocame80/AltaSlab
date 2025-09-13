@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Play, Clock, Tag, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface VideoInstruction {
   id: string;
@@ -28,6 +28,18 @@ export default function VideoInstructionsComponent({
   const [videoError, setVideoError] = useState<string | null>(null);
   const [isIframeBlocked, setIsIframeBlocked] = useState(false);
   const [isIframeLoading, setIsIframeLoading] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup timeout on unmount or video change
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
+  }, [selectedVideo]);
+
   const { data: videos = [], isLoading } = useQuery({
     queryKey: ['/api/video-instructions'],
     queryFn: async () => {
@@ -66,34 +78,44 @@ export default function VideoInstructionsComponent({
   const getEmbedUrl = (videoUrl: string, autoplay: boolean = true): string => {
     if (!videoUrl) return '';
     
-    // Rutube - convert to proper embed format according to official docs
+    // Rutube - convert to proper embed format with robust URL parsing
     if (videoUrl.includes('rutube.ru')) {
-      // Already in embed format - need to add autoplay params
-      if (videoUrl.includes('/play/embed/')) {
-        if (autoplay) {
-          // Check if URL already has query params
-          const hasQuery = videoUrl.includes('?');
-          const separator = hasQuery ? '&' : '?';
-          return `${videoUrl}${separator}autoplay=1&mute=1`;
+      try {
+        const urlObj = new URL(videoUrl);
+        let videoId = '';
+        
+        // If already an embed URL, extract ID and rebuild
+        if (videoUrl.includes('/play/embed/')) {
+          const embedMatch = urlObj.pathname.match(/\/play\/embed\/([a-f0-9_-]{10,})/i);
+          if (embedMatch) videoId = embedMatch[1];
+        } else {
+          // Extract from various URL patterns: /video/, /shorts/, /tracks/, etc.
+          const pathSegments = urlObj.pathname.split('/').filter(Boolean);
+          for (let i = 0; i < pathSegments.length - 1; i++) {
+            if (['video', 'shorts', 'tracks', 'play'].includes(pathSegments[i])) {
+              const potentialId = pathSegments[i + 1];
+              // More permissive ID pattern for Rutube (10+ characters)
+              if (potentialId && /^[a-f0-9_-]{10,}$/i.test(potentialId)) {
+                videoId = potentialId;
+                break;
+              }
+            }
+          }
         }
-        return videoUrl;
+        
+        if (videoId) {
+          const baseUrl = `https://rutube.ru/play/embed/${videoId}/`;
+          if (autoplay) {
+            return `${baseUrl}?autoplay=1&mute=1`;
+          }
+          return baseUrl;
+        }
+      } catch (e) {
+        console.warn('Failed to parse Rutube URL:', videoUrl, e);
       }
       
-      // Convert shorts to video format first (as per docs)
-      let processedUrl = videoUrl;
-      if (videoUrl.includes('/shorts/')) {
-        processedUrl = videoUrl.replace('/shorts/', '/video/');
-      }
-      
-      // Extract video ID from various Rutube formats
-      const rutubeMatch = processedUrl.match(/rutube\.ru\/(?:video|play\/embed)\/([\w-]{20,})\/?/);
-      if (rutubeMatch) {
-        const baseUrl = `https://rutube.ru/play/embed/${rutubeMatch[1]}/`;
-        if (autoplay) {
-          return `${baseUrl}?autoplay=1&mute=1`;
-        }
-        return baseUrl;
-      }
+      // If extraction failed, return empty to trigger fallback
+      return '';
     }
     
     // YouTube with autoplay support - handle multiple URL formats
@@ -149,19 +171,45 @@ export default function VideoInstructionsComponent({
       alert('Видео недоступно');
       return;
     }
+    // Clear any existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    
     setVideoError(null); // Clear any previous errors
     setIsIframeBlocked(false); // Reset blocked state
     setIsIframeLoading(true);
     setSelectedVideo(video);
+    
+    // Start timeout for iframe loading detection (6 seconds)
+    timeoutRef.current = setTimeout(() => {
+      console.warn('Iframe timeout: no onLoad or onError event fired');
+      setIsIframeBlocked(true);
+      setIsIframeLoading(false);
+      setVideoError('Время загрузки видео истекло');
+    }, 6000);
   };
 
   const handleVideoError = (error: string) => {
+    // Clear timeout since we got an error event
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    
     setVideoError(error);
     setIsIframeBlocked(true);
     setIsIframeLoading(false);
   };
 
   const handleIframeLoad = () => {
+    // Clear timeout since iframe loaded successfully
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    
     setVideoError(null);
     setIsIframeLoading(false);
     setIsIframeBlocked(false);
@@ -367,14 +415,35 @@ export default function VideoInstructionsComponent({
                   
                   // Rutube - use specific iframe configuration per docs
                   if (serviceType === 'rutube') {
+                    // If embed URL extraction failed, show fallback immediately
+                    if (!embedUrl) {
+                      return (
+                        <div className="w-full h-full flex items-center justify-center text-white">
+                          <div className="text-center">
+                            <Play className="w-12 h-12 mx-auto mb-4" />
+                            <p className="text-lg mb-2">Встраивание недоступно</p>
+                            <p className="text-sm text-gray-300 mb-4">Не удалось обработать Rutube URL</p>
+                            <button 
+                              onClick={() => selectedVideo.videoUrl && handleOpenExternal(selectedVideo.videoUrl)}
+                              className="bg-[#e90039] hover:bg-[#c8002f] text-white px-6 py-3 rounded font-semibold transition-colors duration-200 flex items-center gap-2 mx-auto"
+                              data-testid="button-open-external"
+                            >
+                              <Play className="w-4 h-4" />
+                              Открыть на Rutube
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    }
+                    
                     return (
                       <iframe
                         src={embedUrl}
                         className="w-full h-full"
                         style={{ border: 'none' }}
-                        allow="clipboard-write; autoplay"
-                        {...({ webkitAllowFullScreen: true, mozallowfullscreen: true } as any)}
+                        allow="autoplay; fullscreen; clipboard-write; encrypted-media; picture-in-picture"
                         allowFullScreen
+                        title={selectedVideo.title}
                         onError={() => handleVideoError('Не удалось загрузить Rutube видео')}
                         onLoad={handleIframeLoad}
                         data-testid="video-player-iframe"
