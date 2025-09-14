@@ -3602,7 +3602,20 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                     >
                                       <div className="relative aspect-[2/1] overflow-hidden">
                                         {(() => {
-                                          const imageSrc = material.images?.[0] || getProductMainImage(material.productCode || '', material.collection || '', material.color || '');
+                                          // Get correct productId (remove SPC prefix)
+                                          const productCode = material.productCode;
+                                          const productId = productCode?.replace('SPC', '') || '';
+                                          
+                                          // Check if API returned USE_IMAGEMAP signal or use imageMap by default
+                                          let imageSrc = '';
+                                          if (material.images?.[0]?.startsWith('USE_IMAGEMAP:') || !material.images?.[0]) {
+                                            // Use imageMap system - get main image
+                                            imageSrc = getProductMainImage(productId, material.collection || '', material.color || '');
+                                          } else {
+                                            // Use API provided image
+                                            imageSrc = material.images[0];
+                                          }
+                                          
                                           return imageSrc ? (
                                             <OptimizedThumbnail
                                               src={imageSrc}
