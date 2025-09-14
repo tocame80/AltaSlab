@@ -216,7 +216,8 @@ export default function WhereToBuy() {
 
       try {
         const script = document.createElement('script');
-        script.src = 'https://api-maps.yandex.ru/v3/?apikey=0e8aff63-579c-4dd3-b4cb-c2b48b0d4b93&lang=ru_RU';
+        // Попробуем без API ключа для разработки или с более универсальными настройками
+        script.src = 'https://api-maps.yandex.ru/v3/?lang=ru_RU';
         script.referrerPolicy = 'origin'; // Отправляем только домен без пути для Yandex
         
         const timeout = setTimeout(() => {
