@@ -3458,7 +3458,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                     {galleryProjects.map((project) => {
                       const projectMaterials = catalogProducts.filter(product => 
-                        project.materialsUsed?.includes(product.id)
+                        project.materialsUsed?.includes(product.productCode)
                       );
                       
                       return (
