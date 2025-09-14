@@ -65,6 +65,7 @@ app.use((req, res, next) => {
     "child-src 'self' blob:"
   ].join('; ');
   
+  
   res.setHeader('Content-Security-Policy', csp);
   next();
 });
