@@ -3459,9 +3459,10 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                     {galleryProjects.map((project) => {
                       const projectMaterials = catalogProducts.filter(p => 
                         project.materialsUsed?.some(materialId => 
-                          p.id === materialId || 
-                          p.id === `SPC${materialId}` ||
-                          p.id?.replace('SPC', '') === materialId
+                          p.productCode === materialId || 
+                          p.productCode === `SPC${materialId}` ||
+                          p.productCode?.replace('SPC', '') === materialId ||
+                          p.id === materialId
                         )
                       );
                       
