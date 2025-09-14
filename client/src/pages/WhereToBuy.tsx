@@ -98,12 +98,14 @@ export default function WhereToBuy() {
             // For Russia, try to map region
             if (data.region === 'Moscow' || data.city === 'Moscow') {
               detectedRegionName = 'Московская область';
+            } else if (data.region) {
+              detectedRegionName = data.region; // Use detected region for Russia
             } else {
               detectedRegionName = 'Московская область'; // Default for Russia
             }
           } else {
-            // For other countries, default to Moscow region
-            detectedRegionName = 'Московская область';
+            // For other countries, show detected location instead of forcing Moscow
+            detectedRegionName = data.country_name || data.region || data.city || 'Не определен';
           }
           
           setDetectedRegion(detectedRegionName);
@@ -208,18 +210,9 @@ export default function WhereToBuy() {
           console.error('Current domain:', window.location.hostname);
           console.error('Current referer:', document.referrer);
           
-          // Попробуем проверить API URL fetch запросом
-          fetch(script.src)
-            .then(response => {
-              console.log('API URL fetch status:', response.status);
-              console.log('API URL fetch ok:', response.ok);
-              if (!response.ok) {
-                console.error('API key может быть недействительным или домен не авторизован');
-              }
-            })
-            .catch(fetchError => {
-              console.error('API URL fetch failed:', fetchError);
-            });
+          // API недоступен - проверьте настройки домена в консоли Яндекс
+          console.error('API key может быть недействительным или домен не авторизован');
+          console.error('Добавьте текущий домен в настройки API ключа Яндекс.Карт');
           
           setMapLoaded(false);
         };
