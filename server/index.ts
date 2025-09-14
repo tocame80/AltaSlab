@@ -49,20 +49,21 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false // Для совместимости с Replit
 }));
 
-// Custom CSP middleware for Yandex Maps v3
+// Custom CSP middleware for Yandex Maps v3 and Google services
 app.use((req, res, next) => {
   const csp = [
     "default-src 'self' blob: data:",
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://yastatic.net https://*.yastatic.net",
-    "font-src 'self' data: https://fonts.gstatic.com https://yastatic.net https://*.yastatic.net",
-    "img-src 'self' data: blob: https: https://*.yandex.ru https://*.yandex.net https://*.maps.yandex.net https://yastatic.net https://*.yastatic.net",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://replit.com https://api-maps.yandex.ru https://*.yandex.ru https://*.yandex.net https://*.maps.yandex.ru https://*.maps.yandex.net https://yastatic.net https://*.yastatic.net https://rutube.ru https://*.rutube.ru https://www.youtube.com https://*.youtube.com https://youtube-nocookie.com https://*.youtube-nocookie.com https://vk.com https://*.vk.com",
-    "script-src-elem 'self' 'unsafe-inline' https://api-maps.yandex.ru https://*.yandex.ru https://*.yandex.net https://*.maps.yandex.ru https://*.maps.yandex.net https://yastatic.net https://*.yastatic.net https://replit.com",
-    "connect-src 'self' ws: wss: https: data: https://api-maps.yandex.ru https://*.yandex.ru https://*.yandex.net https://*.maps.yandex.net https://yastatic.net https://*.yastatic.net https://geocode-maps.yandex.ru https://sp.replit.com https://analytics.google.com https://stats.g.doubleclick.net https://logs.browser-intake-us5-datadoghq.com",
-    "frame-src 'self' https://*.yandex.ru https://*.yandex.net https://rutube.ru https://*.rutube.ru https://www.youtube.com https://youtube.com https://*.youtube.com https://youtube-nocookie.com https://*.youtube-nocookie.com https://vk.com https://*.vk.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://www.gstatic.com https://*.googleapis.com https://yastatic.net https://*.yastatic.net",
+    "font-src 'self' data: https://fonts.gstatic.com https://www.gstatic.com https://*.googleapis.com https://yastatic.net https://*.yastatic.net",
+    "img-src 'self' data: blob: https: https://*.google.com https://*.googleapis.com https://www.gstatic.com https://*.gstatic.com https://*.yandex.ru https://*.yandex.net https://*.maps.yandex.net https://yastatic.net https://*.yastatic.net",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'unsafe-dynamic' blob: https://replit.com https://www.google.com https://*.google.com https://www.gstatic.com https://*.gstatic.com https://*.googleapis.com https://www.recaptcha.net https://*.recaptcha.net https://api-maps.yandex.ru https://*.yandex.ru https://*.yandex.net https://*.maps.yandex.ru https://*.maps.yandex.net https://yastatic.net https://*.yastatic.net https://rutube.ru https://*.rutube.ru https://www.youtube.com https://*.youtube.com https://youtube-nocookie.com https://*.youtube-nocookie.com https://vk.com https://*.vk.com",
+    "script-src-elem 'self' 'unsafe-inline' https://www.google.com https://*.google.com https://www.gstatic.com https://*.gstatic.com https://*.googleapis.com https://www.recaptcha.net https://*.recaptcha.net https://api-maps.yandex.ru https://*.yandex.ru https://*.yandex.net https://*.maps.yandex.ru https://*.maps.yandex.net https://yastatic.net https://*.yastatic.net https://replit.com",
+    "connect-src 'self' ws: wss: https: data: https://www.google.com https://*.google.com https://*.googleapis.com https://www.gstatic.com https://*.gstatic.com https://www.recaptcha.net https://*.recaptcha.net https://api-maps.yandex.ru https://*.yandex.ru https://*.yandex.net https://*.maps.yandex.net https://yastatic.net https://*.yastatic.net https://geocode-maps.yandex.ru https://sp.replit.com https://analytics.google.com https://stats.g.doubleclick.net https://logs.browser-intake-us5-datadoghq.com https://events.launchdarkly.com",
+    "frame-src 'self' https://www.google.com https://*.google.com https://www.recaptcha.net https://*.recaptcha.net https://*.yandex.ru https://*.yandex.net https://rutube.ru https://*.rutube.ru https://www.youtube.com https://youtube.com https://*.youtube.com https://youtube-nocookie.com https://*.youtube-nocookie.com https://vk.com https://*.vk.com",
     "object-src 'none'",
-    "worker-src 'self' blob: https://*.yandex.ru https://*.yandex.net https://yastatic.net https://*.yastatic.net https://api-maps.yandex.ru",
-    "child-src 'self' blob:"
+    "worker-src 'self' blob: https://*.google.com https://*.googleapis.com https://www.gstatic.com https://*.gstatic.com https://*.yandex.ru https://*.yandex.net https://yastatic.net https://*.yastatic.net https://api-maps.yandex.ru",
+    "child-src 'self' blob:",
+    "form-action 'self' https://*.google.com https://www.recaptcha.net"
   ].join('; ');
   
   res.setHeader('Content-Security-Policy', csp);
