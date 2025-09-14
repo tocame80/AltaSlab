@@ -3606,11 +3606,11 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                     return (
                                       <div className="flex gap-3">
                                         <div className="flex-shrink-0 w-16 h-16 rounded border border-gray-200 overflow-hidden bg-gray-100">
-                                          {material?.gallery?.[0] ? (
+                                          {material?.images?.[0] ? (
                                             <OptimizedThumbnail
-                                              src={material.gallery[0]}
+                                              src={material.images[0]}
                                               alt={material.name || `Материал ${expandedMaterial}`}
-                                              size="64"
+                                              size={64}
                                               className="w-full h-full object-cover"
                                             />
                                           ) : (
@@ -3667,11 +3667,11 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                     >
                                       {/* Material Image */}
                                       <div className="relative aspect-[2/1] overflow-hidden">
-                                        {material?.images?.[0] || material?.gallery?.[0] ? (
+                                        {material?.images?.[0] ? (
                                           <OptimizedThumbnail
-                                            src={material.images?.[0] || material.gallery[0]}
+                                            src={material.images[0]}
                                             alt={material.name || `Материал ${materialId}`}
-                                            size="80"
+                                            size={80}
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover/gallery-material:scale-105"
                                           />
                                         ) : (
