@@ -4082,41 +4082,64 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         </div>
 
                         <div className="border border-gray-300 rounded-lg p-4 max-h-60 overflow-y-auto">
-                          <div className="grid grid-cols-1 gap-2">
-                            {getFilteredMaterials().length === 0 ? (
-                              <div className="text-center py-8 text-gray-500">
-                                <p>Материалы не найдены</p>
-                                <p className="text-sm">Попробуйте изменить поисковый запрос</p>
-                              </div>
-                            ) : (
-                              getFilteredMaterials().map((product) => (
-                              <label key={product.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  checked={selectedMaterials.includes(product.id)}
-                                  onChange={(e) => {
-                                    if (e.target.checked) {
-                                      setSelectedMaterials(prev => [...prev, product.id]);
-                                    } else {
-                                      setSelectedMaterials(prev => prev.filter(id => id !== product.id));
-                                    }
-                                  }}
-                                  className="rounded"
-                                />
-                                <img
-                                  src={product.image}
-                                  alt={product.name}
-                                  className="w-12 h-8 object-cover rounded"
-                                />
-                                <div className="flex-1">
-                                  <p className="text-sm font-medium">{product.color}</p>
-                                  <p className="text-xs text-gray-500">{product.collection} - {product.format}</p>
-                                  <p className="text-xs text-gray-400">Артикул: {product.id}</p>
-                                </div>
-                              </label>
-                              ))
-                            )}
-                          </div>
+                          {getFilteredMaterials().length === 0 ? (
+                            <div className="text-center py-8 text-gray-500">
+                              <p>Материалы не найдены</p>
+                              <p className="text-sm">Попробуйте изменить поисковый запрос</p>
+                            </div>
+                          ) : (
+                            <div className="grid grid-cols-3 gap-2">
+                              {getFilteredMaterials().map((product) => (
+                                <label key={product.id} className="group/material rounded-lg overflow-hidden hover:shadow-md transition-all duration-300 cursor-pointer relative">
+                                  {/* Material Image */}
+                                  <div className="relative aspect-[2/1] overflow-hidden">
+                                    <img 
+                                      src={product.image} 
+                                      alt={`${product.name} - ${product.collection}`}
+                                      className="w-full h-full object-cover transition-transform duration-500 group-hover/material:scale-105"
+                                    />
+                                    
+                                    {/* Image Overlay - darkening effect on hover */}
+                                    <div className="absolute inset-0 bg-black/20 transition-opacity duration-300 opacity-0 group-hover/material:opacity-100 pointer-events-none"></div>
+
+                                    {/* Product Info Overlay - Bottom Left */}
+                                    <div className="absolute bottom-0 left-0 p-2 transition-all duration-300">
+                                      <div>
+                                        {/* Collection */}
+                                        <div className="text-white text-[10px] font-medium mb-1 drop-shadow-lg transition-colors duration-300">
+                                          {product.collection === 'МАГИЯ БЕТОНА' ? 'МАГИЯ БЕТОНА' : 
+                                           product.collection === 'ТКАНЕВАЯ РОСКОШЬ' ? 'ТКАНЕВАЯ РОСКОШЬ' : 
+                                           product.collection === 'МАТОВАЯ ЭСТЕТИКА' ? 'МАТОВАЯ ЭСТЕТИКА' : 
+                                           product.collection === 'МРАМОРНАЯ ФЕЕРИЯ' ? 'МРАМОРНАЯ ФЕЕРИЯ' : product.collection}
+                                        </div>
+                                        
+                                        {/* Design/Color */}
+                                        <div className="text-white text-xs font-semibold drop-shadow-lg transition-colors duration-300">
+                                          {product.color}
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    {/* Checkbox - Top Right */}
+                                    <div className="absolute top-2 right-2">
+                                      <input
+                                        type="checkbox"
+                                        checked={selectedMaterials.includes(product.id)}
+                                        onChange={(e) => {
+                                          if (e.target.checked) {
+                                            setSelectedMaterials(prev => [...prev, product.id]);
+                                          } else {
+                                            setSelectedMaterials(prev => prev.filter(id => id !== product.id));
+                                          }
+                                        }}
+                                        className="w-4 h-4 text-[#e90039] bg-white border-2 border-white rounded shadow-lg focus:ring-[#e90039] focus:ring-2"
+                                      />
+                                    </div>
+                                  </div>
+                                </label>
+                              ))}
+                            </div>
+                          )}
                         </div>
                         <div className="text-sm text-gray-500 mt-1 flex justify-between">
                           <span>Выбрано: {selectedMaterials.length} материалов</span>
