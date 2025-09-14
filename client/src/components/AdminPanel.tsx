@@ -3599,10 +3599,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                       {/* Material Image */}
                                       <div className="relative aspect-[2/1] overflow-hidden">
                                         {material.gallery?.[0] ? (
-                                          <OptimizedThumbnail 
+                                          <img 
                                             src={material.gallery[0]}
                                             alt={`${material.name} - ${material.collection}`}
-                                            size="100"
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover/material:scale-105"
                                           />
                                         ) : (
@@ -4036,12 +4035,12 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                               <label key={product.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
                                 <input
                                   type="checkbox"
-                                  checked={selectedMaterials.includes(product.id)}
+                                  checked={selectedMaterials.includes(product.productCode)}
                                   onChange={(e) => {
                                     if (e.target.checked) {
-                                      setSelectedMaterials(prev => [...prev, product.id]);
+                                      setSelectedMaterials(prev => [...prev, product.productCode]);
                                     } else {
-                                      setSelectedMaterials(prev => prev.filter(id => id !== product.id));
+                                      setSelectedMaterials(prev => prev.filter(code => code !== product.productCode));
                                     }
                                   }}
                                   className="rounded"
@@ -4054,7 +4053,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                 <div className="flex-1">
                                   <p className="text-sm font-medium">{product.color}</p>
                                   <p className="text-xs text-gray-500">{product.collection} - {product.format}</p>
-                                  <p className="text-xs text-gray-400">Артикул: {product.id}</p>
+                                  <p className="text-xs text-gray-400">Артикул: {product.productCode}</p>
                                 </div>
                               </label>
                               ))
