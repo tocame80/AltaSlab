@@ -141,21 +141,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  // Helper function to filter materials based on search query
-  const getFilteredMaterials = () => {
-    return products
-      .filter(p => p.category !== 'accessories')
-      .filter(product => {
-        if (!materialSearchQuery.trim()) return true;
-        const query = materialSearchQuery.toLowerCase();
-        return (
-          product.id.toLowerCase().includes(query) ||
-          product.name.toLowerCase().includes(query) ||
-          product.color.toLowerCase().includes(query) ||
-          product.collection.toLowerCase().includes(query)
-        );
-      });
-  };
 
   // Helper function to get paginated catalog products
   const getPaginatedCatalogProducts = () => {
@@ -642,6 +627,22 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const { data: catalogProducts = [], isLoading: catalogProductsLoading } = useQuery<CatalogProduct[]>({
     queryKey: ['/api/catalog-products'],
   });
+
+  // Function to filter materials for selection
+  const getFilteredMaterials = () => {
+    if (!catalogProducts || catalogProducts.length === 0) return [];
+    
+    return catalogProducts.filter((product) => {
+      if (!materialSearchQuery.trim()) return true;
+      
+      const searchLower = materialSearchQuery.toLowerCase();
+      return (
+        product.productCode?.toLowerCase().includes(searchLower) ||
+        product.name?.toLowerCase().includes(searchLower) ||
+        product.collection?.toLowerCase().includes(searchLower)
+      );
+    });
+  };
 
   const createCatalogProductMutation = useMutation({
     mutationFn: async (data: CatalogProductFormData) => {
@@ -4063,7 +4064,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         <div className="text-sm text-gray-500 mt-1 flex justify-between">
                           <span>Выбрано: {selectedMaterials.length} материалов</span>
                           <span>
-                            Показано: {getFilteredMaterials().length} из {products.filter(p => p.category !== 'accessories').length}
+                            Показано: {getFilteredMaterials().length} из {catalogProducts.length}
                           </span>
                         </div>
                       </div>
