@@ -35,6 +35,7 @@ export default function WhereToBuy() {
   const [detectedRegion, setDetectedRegion] = useState<string>('');
   const [showRegionDialog, setShowRegionDialog] = useState<boolean>(false);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapError, setMapError] = useState(false);
   const [mapInstance, setMapInstance] = useState<any>(null);
   const [selectedDealerId, setSelectedDealerId] = useState<string>('');
 
@@ -82,14 +83,44 @@ export default function WhereToBuy() {
     return filtered;
   }, [dealerLocations, selectedRegion, selectedCity, searchQuery]);
 
-  // Detect user's region by IP
+  // Detect user's region by IP with multiple fallbacks
   useEffect(() => {
     const detectRegion = async () => {
-      try {
-        // Use ipapi.co for region detection (free service)
-        const response = await fetch('https://ipapi.co/json/');
-        if (response.ok) {
+      const apis = [
+        // API 1: ipapi.co
+        async () => {
+          const response = await fetch('https://ipapi.co/json/');
           const data = await response.json();
+          return data;
+        },
+        // API 2: ip-api.com
+        async () => {
+          const response = await fetch('http://ip-api.com/json/');
+          const data = await response.json();
+          return {
+            country_code: data.countryCode,
+            country_name: data.country,
+            region: data.regionName,
+            city: data.city
+          };
+        },
+        // API 3: ipinfo.io
+        async () => {
+          const response = await fetch('https://ipinfo.io/json');
+          const data = await response.json();
+          return {
+            country_code: data.country,
+            country_name: data.country,
+            region: data.region,
+            city: data.city
+          };
+        }
+      ];
+
+      for (let i = 0; i < apis.length; i++) {
+        try {
+          console.log(`Trying location API ${i + 1}...`);
+          const data = await apis[i]();
           console.log('Detected location:', data);
           
           // Map country/region to our regions
@@ -110,11 +141,15 @@ export default function WhereToBuy() {
           
           setDetectedRegion(detectedRegionName);
           setShowRegionDialog(true);
+          return; // Success, exit loop
+        } catch (error) {
+          console.warn(`Location API ${i + 1} failed:`, error);
+          // Continue to next API
         }
-      } catch (error) {
-        console.warn('Could not detect region:', error);
-        // Silently fail - user can select region manually
       }
+      
+      console.warn('All location APIs failed - region detection disabled');
+      // All APIs failed - silently continue without region detection
     };
 
     detectRegion();
@@ -187,6 +222,7 @@ export default function WhereToBuy() {
         const timeout = setTimeout(() => {
           console.error('Yandex Maps v3 timeout - check API key and HTTP Referer settings');
           setMapLoaded(false);
+          setMapError(true); // Set error state for fallback UI
         }, 10000); // Увеличим timeout до 10 секунд
         
         script.onload = () => {
@@ -215,12 +251,14 @@ export default function WhereToBuy() {
           console.error('Добавьте текущий домен в настройки API ключа Яндекс.Карт');
           
           setMapLoaded(false);
+          setMapError(true); // Set error state for fallback UI
         };
         
         document.head.appendChild(script);
       } catch (error) {
         console.error('Error loading Yandex Maps v3:', error);
         setMapLoaded(false);
+        setMapError(true); // Set error state for fallback UI
       }
     };
 
@@ -680,20 +718,60 @@ export default function WhereToBuy() {
                 </p>
               </div>
               <div className="relative">
-                <div
-                  id="yandex-map"
-                  className="w-full h-96 lg:h-[500px]"
-                  data-testid="yandex-map"
-                >
-                  {!mapLoaded && (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                      <div className="text-center">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e90039] mx-auto mb-2"></div>
-                        <p className="text-secondary text-sm">Загрузка карты...</p>
+                {/* Show fallback UI if map failed to load */}
+                {mapError ? (
+                  <div className="w-full h-96 lg:h-[500px] bg-gray-50 border border-gray-200 rounded-lg p-6">
+                    <div className="h-full flex flex-col">
+                      <div className="text-center mb-6">
+                        <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </div>
+                        <p className="text-lg font-medium text-gray-900 mb-2">Карта временно недоступна</p>
+                        <p className="text-sm text-gray-600">Но вы можете выбрать дилера из списка справа</p>
+                      </div>
+                      
+                      {/* Quick dealer grid in map area */}
+                      <div className="flex-1 overflow-y-auto">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {filteredDealers.slice(0, 4).map((dealer) => (
+                            <div
+                              key={dealer.id}
+                              className="bg-white p-4 rounded-lg border border-gray-200 hover:border-[#e90039] transition-colors cursor-pointer"
+                              onClick={() => setSelectedDealerId(dealer.id)}
+                              data-testid={`card-dealer-${dealer.id}`}
+                            >
+                              <h3 className="font-semibold text-gray-900 text-sm mb-1">{dealer.name}</h3>
+                              <p className="text-xs text-gray-600 mb-1">{dealer.city}</p>
+                              <p className="text-xs text-gray-500 line-clamp-2">{dealer.address}</p>
+                            </div>
+                          ))}
+                        </div>
+                        {filteredDealers.length > 4 && (
+                          <p className="text-center text-sm text-gray-500 mt-4">
+                            И ещё {filteredDealers.length - 4} дилеров в списке справа
+                          </p>
+                        )}
                       </div>
                     </div>
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <div
+                    id="yandex-map"
+                    className="w-full h-96 lg:h-[500px]"
+                    data-testid="yandex-map"
+                  >
+                    {!mapLoaded && (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                        <div className="text-center">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e90039] mx-auto mb-2"></div>
+                          <p className="text-secondary text-sm">Загрузка карты...</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
