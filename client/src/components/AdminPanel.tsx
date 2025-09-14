@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit, Play, Database, Download, Image, RotateCw, HardDrive, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Star, Search, MapPin, Calendar, Maximize2 } from 'lucide-react';
+import { X, Upload, Trash2, Save, Eye, FileText, Plus, Edit, Play, Database, Download, Image, RotateCw, HardDrive, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Star, Search } from 'lucide-react';
 import { products } from '../data/products';
 import * as XLSX from 'xlsx';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -141,6 +141,21 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
+  // Helper function to filter materials based on search query
+  const getFilteredMaterials = () => {
+    return products
+      .filter(p => p.category !== 'accessories')
+      .filter(product => {
+        if (!materialSearchQuery.trim()) return true;
+        const query = materialSearchQuery.toLowerCase();
+        return (
+          product.id.toLowerCase().includes(query) ||
+          product.name.toLowerCase().includes(query) ||
+          product.color.toLowerCase().includes(query) ||
+          product.collection.toLowerCase().includes(query)
+        );
+      });
+  };
 
   // Helper function to get paginated catalog products
   const getPaginatedCatalogProducts = () => {
@@ -627,22 +642,6 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
   const { data: catalogProducts = [], isLoading: catalogProductsLoading } = useQuery<CatalogProduct[]>({
     queryKey: ['/api/catalog-products'],
   });
-
-  // Function to filter materials for selection
-  const getFilteredMaterials = () => {
-    if (!catalogProducts || catalogProducts.length === 0) return [];
-    
-    return catalogProducts.filter((product) => {
-      if (!materialSearchQuery.trim()) return true;
-      
-      const searchLower = materialSearchQuery.toLowerCase();
-      return (
-        product.productCode?.toLowerCase().includes(searchLower) ||
-        product.name?.toLowerCase().includes(searchLower) ||
-        product.collection?.toLowerCase().includes(searchLower)
-      );
-    });
-  };
 
   const createCatalogProductMutation = useMutation({
     mutationFn: async (data: CatalogProductFormData) => {
@@ -3454,195 +3453,253 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                   Загрузка проектов...
                 </div>
               ) : galleryProjects.length > 0 ? (
-                <div className="space-y-6">
-                  {/* Gallery Grid - User Style */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-                    {galleryProjects.map(project => (
-                      <div 
-                        key={project.id} 
-                        className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
-                        data-testid={`card-project-${project.id}`}
-                      >
-                        {/* Image with Text Overlay */}
-                        <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+                <div>
+                  <h4 className="text-lg font-semibold mb-6">Все проекты ({galleryProjects.length})</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {galleryProjects.map((project) => (
+                      <div key={project.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200 group">
+                        {/* Project Image Preview */}
+                        <div className="aspect-[4/3] relative bg-gray-100">
                           {project.images && project.images.length > 0 ? (
                             <>
                               <img
                                 src={project.images[0]}
                                 alt={project.title}
-                                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                  const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
+                                  if (nextElement) {
+                                    nextElement.style.display = 'flex';
+                                  }
+                                }}
                               />
-                              
-                              {/* Gradient Overlay */}
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                              
-                              {/* Title Overlay */}
-                              <div className="absolute bottom-0 left-0 right-0 p-4">
-                                <h3 className="text-lg font-bold line-clamp-2 text-white drop-shadow-lg">
-                                  {project.title}
-                                </h3>
+                              <div className="hidden w-full h-full bg-gray-200 items-center justify-center text-sm text-gray-500">
+                                <Image className="w-8 h-8 mb-2" />
+                                Изображение недоступно
                               </div>
-                              
-                              {/* Image Counter */}
                               {project.images.length > 1 && (
-                                <div className="absolute top-4 left-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
-                                  1 / {project.images.length}
+                                <div className="absolute top-3 right-3 bg-black/60 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                  +{project.images.length - 1}
                                 </div>
                               )}
-                              
-                              {/* Admin Controls */}
-                              <div className="absolute top-4 right-4 flex gap-1">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setEditingGalleryProject(project);
-                                    setSelectedMaterials(project.materialsUsed || []);
-                                    setGalleryImages(project.images || []);
-                                    galleryForm.reset({
-                                      title: project.title,
-                                      description: project.description,
-                                      application: project.application,
-                                      images: project.images || [],
-                                      materialsUsed: project.materialsUsed || [],
-                                      location: project.location || '',
-                                      area: project.area || '',
-                                      year: project.year || '',
-                                      sortOrder: project.sortOrder || 0,
-                                      isActive: project.isActive || 1,
-                                    });
-                                    setShowGalleryForm(true);
-                                  }}
-                                  className="bg-white/90 hover:bg-white text-gray-700 p-1.5 rounded shadow-sm transition-colors"
-                                  title="Редактировать"
-                                >
-                                  <Edit size={14} />
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (confirm('Удалить этот проект из галереи?')) {
-                                      deleteGalleryProjectMutation.mutate(project.id);
-                                    }
-                                  }}
-                                  className="bg-white/90 hover:bg-white text-red-600 p-1.5 rounded shadow-sm transition-colors"
-                                  title="Удалить"
-                                >
-                                  <Trash2 size={14} />
-                                </button>
-                              </div>
                             </>
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                              <div className="text-center text-gray-400">
-                                <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-gray-300 flex items-center justify-center">
-                                  <Image className="w-8 h-8" />
-                                </div>
-                                <p className="text-sm font-medium">Изображение недоступно</p>
-                              </div>
+                            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                              <Image className="w-12 h-12 text-gray-400" />
                             </div>
                           )}
+                          
+                          {/* Actions Overlay */}
+                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                            <button
+                              onClick={() => {
+                                setEditingGalleryProject(project);
+                                setSelectedMaterials(project.materialsUsed || []);
+                                setGalleryImages(project.images || []);
+                                galleryForm.reset({
+                                  title: project.title,
+                                  description: project.description,
+                                  application: project.application,
+                                  images: project.images || [],
+                                  materialsUsed: project.materialsUsed || [],
+                                  location: project.location || '',
+                                  area: project.area || '',
+                                  year: project.year || '',
+                                  sortOrder: project.sortOrder || 0,
+                                  isActive: project.isActive || 1,
+                                });
+                                setShowGalleryForm(true);
+                              }}
+                              className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full transition-colors"
+                              title="Редактировать проект"
+                            >
+                              <Edit size={16} />
+                            </button>
+                            <button
+                              onClick={() => window.open(`/project/${project.id}`, '_blank')}
+                              className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full transition-colors"
+                              title="Просмотреть проект"
+                            >
+                              <Eye size={16} />
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (confirm(`Удалить проект "${project.title}"?`)) {
+                                  deleteGalleryProjectMutation.mutate(project.id);
+                                }
+                              }}
+                              className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition-colors"
+                              title="Удалить проект"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
                         </div>
-                        
+
                         {/* Project Info */}
                         <div className="p-4">
-                          {/* Description */}
-                          <p className="text-gray-600 text-sm line-clamp-2 leading-relaxed mb-3">
-                            {project.description}
-                          </p>
+                          <div className="mb-3">
+                            <h5 className="font-semibold text-gray-900 mb-1 line-clamp-1">{project.title}</h5>
+                            <p className="text-sm text-gray-600 line-clamp-2">{project.description}</p>
+                          </div>
                           
                           {/* Project Details */}
-                          <div className="flex flex-wrap gap-2 mb-4">
+                          <div className="space-y-2 mb-3">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-gray-500">Тип:</span>
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                project.application === 'commercial' ? 'bg-blue-100 text-blue-700' :
+                                project.application === 'residential' ? 'bg-green-100 text-green-700' :
+                                project.application === 'interior' ? 'bg-purple-100 text-purple-700' :
+                                'bg-orange-100 text-orange-700'
+                              }`}>
+                                {project.application === 'commercial' ? 'Коммерческий' :
+                                 project.application === 'residential' ? 'Жилой' :
+                                 project.application === 'interior' ? 'Интерьер' : 'Экстерьер'}
+                              </span>
+                            </div>
+                            
                             {project.location && (
-                              <div className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 rounded text-xs text-gray-600">
-                                <MapPin className="w-3 h-3 text-[#E95D22]" />
-                                <span className="font-medium">{project.location}</span>
+                              <div className="flex items-center justify-between text-xs">
+                                <span className="text-gray-500">Локация:</span>
+                                <span className="text-gray-700 font-medium truncate ml-2">{project.location}</span>
                               </div>
                             )}
-                            {project.area && (
-                              <div className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 rounded text-xs text-gray-600">
-                                <Maximize2 className="w-3 h-3 text-[#E95D22]" />
-                                <span className="font-medium">{project.area}</span>
-                              </div>
-                            )}
-                            {project.year && (
-                              <div className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 rounded text-xs text-gray-600">
-                                <Calendar className="w-3 h-3 text-[#E95D22]" />
-                                <span className="font-medium">{project.year}</span>
+                            
+                            {(project.area || project.year) && (
+                              <div className="flex items-center justify-between text-xs">
+                                {project.area && (
+                                  <>
+                                    <span className="text-gray-500">Площадь:</span>
+                                    <span className="text-gray-700 font-medium">{project.area}</span>
+                                  </>
+                                )}
+                                {project.year && !project.area && (
+                                  <>
+                                    <span className="text-gray-500">Год:</span>
+                                    <span className="text-gray-700 font-medium">{project.year}</span>
+                                  </>
+                                )}
                               </div>
                             )}
                           </div>
-                        
-                          {/* Materials Used */}
-                          {(() => {
-                            const projectMaterials = catalogProducts.filter(product => 
-                              project.materialsUsed?.some(materialId => 
-                                product.productCode === materialId || 
-                                product.productCode === `SPC${materialId}` ||
-                                product.productCode?.replace('SPC', '') === materialId
-                              )
-                            );
-                            
-                            return projectMaterials.length > 0 && (
-                              <div className="border-t pt-4">
-                                <div className="flex items-center justify-between mb-3">
-                                  <h4 className="font-semibold text-[#2f378b] text-sm">МАТЕРИАЛЫ ПРОЕКТА</h4>
-                                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                                    {projectMaterials.length} шт.
-                                  </span>
-                                </div>
+                          
+                          {/* Materials Used Preview */}
+                          {project.materialsUsed && project.materialsUsed.length > 0 && (
+                            <div className="pt-3 border-t border-gray-100">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs font-medium text-gray-700">Используемые материалы</span>
+                                <span className="text-xs text-gray-500">{project.materialsUsed.length} шт.</span>
+                              </div>
                               
-                                <div className="grid grid-cols-3 gap-2">
-                                  {projectMaterials.slice(0, 3).map((material, index) => (
-                                    <div 
-                                      key={material.id} 
-                                      className="group/material rounded-lg overflow-hidden hover:shadow-md transition-all duration-300 cursor-pointer"
-                                    >
-                                      {/* Material Image */}
-                                      <div className="relative aspect-[2/1] overflow-hidden">
-                                        {material.gallery?.[0] ? (
-                                          <img 
-                                            src={material.gallery[0]}
-                                            alt={`${material.name} - ${material.collection}`}
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover/material:scale-105"
-                                          />
-                                        ) : (
-                                          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                                            <div className="w-6 h-6 bg-gray-400 rounded-sm"></div>
-                                          </div>
-                                        )}
-                                        
-                                        {/* Image Overlay */}
-                                        <div className="absolute inset-0 bg-black/20 transition-opacity duration-300 opacity-0 group-hover/material:opacity-100 pointer-events-none"></div>
-
-                                        {/* Product Info Overlay */}
-                                        <div className="absolute bottom-0 left-0 p-2 transition-all duration-300">
-                                          <div>
-                                            {/* Collection */}
-                                            <div className="text-white text-[10px] font-medium mb-1 drop-shadow-lg transition-colors duration-300">
-                                              {material.collection}
+                              {/* Expanded Material View */}
+                              {expandedMaterial && project.materialsUsed.includes(expandedMaterial) && (
+                                <div className="mb-3 p-3 bg-gray-50 rounded-lg border">
+                                  {(() => {
+                                    const material = catalogProducts.find(p => 
+                                      p.productCode === expandedMaterial || 
+                                      p.productCode === `SPC${expandedMaterial}` ||
+                                      p.productCode?.replace('SPC', '') === expandedMaterial
+                                    );
+                                    
+                                    return (
+                                      <div className="flex gap-3">
+                                        <div className="flex-shrink-0 w-16 h-16 rounded border border-gray-200 overflow-hidden bg-gray-100">
+                                          {material?.gallery?.[0] ? (
+                                            <OptimizedThumbnail
+                                              src={material.gallery[0]}
+                                              alt={material.name || `Материал ${expandedMaterial}`}
+                                              size="64"
+                                              className="w-full h-full object-cover"
+                                            />
+                                          ) : (
+                                            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                                              <div className="w-6 h-6 bg-gray-400 rounded-sm"></div>
                                             </div>
-                                            
-                                            {/* Design/Color */}
-                                            <div className="text-white text-xs font-semibold drop-shadow-lg transition-colors duration-300">
-                                              {material.name}
+                                          )}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                          <div className="flex items-start justify-between">
+                                            <div>
+                                              <h5 className="text-sm font-medium text-gray-900 truncate">
+                                                {material?.name || `Материал ${expandedMaterial}`}
+                                              </h5>
+                                              <p className="text-xs text-gray-500 mt-1">
+                                                Код: {material?.productCode || expandedMaterial}
+                                              </p>
+                                              {material?.collection && (
+                                                <p className="text-xs text-gray-500">
+                                                  Коллекция: {material.collection}
+                                                </p>
+                                              )}
                                             </div>
+                                            <button
+                                              onClick={() => setExpandedMaterial(null)}
+                                              className="text-gray-400 hover:text-gray-600 ml-2"
+                                            >
+                                              <X className="w-4 h-4" />
+                                            </button>
                                           </div>
                                         </div>
                                       </div>
-                                    </div>
-                                  ))}
+                                    );
+                                  })()}
                                 </div>
-                                
-                                {projectMaterials.length > 3 && (
-                                  <div className="mt-3 p-2 bg-gray-50 rounded-lg text-center">
-                                    <p className="text-xs text-gray-600">
-                                      + еще <span className="font-semibold text-[#E95D22]">{projectMaterials.length - 3}</span> материалов
-                                    </p>
+                              )}
+                              
+                              {/* Material Thumbnails */}
+                              <div className="flex gap-1 overflow-x-auto">
+                                {project.materialsUsed.slice(0, 8).map((materialId, index) => {
+                                  const material = catalogProducts.find(p => 
+                                    p.productCode === materialId || 
+                                    p.productCode === `SPC${materialId}` ||
+                                    p.productCode?.replace('SPC', '') === materialId
+                                  );
+                                  
+                                  return (
+                                    <button
+                                      key={index}
+                                      onClick={() => setExpandedMaterial(expandedMaterial === materialId ? null : materialId)}
+                                      className={`flex-shrink-0 w-8 h-8 rounded border overflow-hidden bg-gray-100 hover:ring-2 hover:ring-[#E95D22] transition-all ${
+                                        expandedMaterial === materialId ? 'ring-2 ring-[#E95D22]' : 'border-gray-200'
+                                      }`}
+                                    >
+                                      {material?.gallery?.[0] ? (
+                                        <OptimizedThumbnail
+                                          src={material.gallery[0]}
+                                          alt={material.name || `Материал ${materialId}`}
+                                          size="32"
+                                          className="w-full h-full object-cover"
+                                        />
+                                      ) : (
+                                        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                                          <div className="w-3 h-3 bg-gray-400 rounded-sm"></div>
+                                        </div>
+                                      )}
+                                    </button>
+                                  );
+                                })}
+                                {project.materialsUsed.length > 8 && (
+                                  <div className="flex-shrink-0 w-8 h-8 rounded border border-gray-200 bg-gray-100 flex items-center justify-center">
+                                    <span className="text-xs text-gray-600 font-medium">+{project.materialsUsed.length - 8}</span>
                                   </div>
                                 )}
                               </div>
-                            );
-                          })()}
+                            </div>
+                          )}
+                          
+                          {/* Summary Stats */}
+                          <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                            <div className="flex items-center gap-1 text-xs text-gray-500">
+                              <div className="w-2 h-2 bg-[#E95D22] rounded-full"></div>
+                              Материалы: {project.materialsUsed?.length || 0}
+                            </div>
+                            <div className="flex items-center gap-1 text-xs text-gray-500">
+                              <Image className="w-3 h-3" />
+                              Фото: {project.images?.length || 0}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -4036,12 +4093,12 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                               <label key={product.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
                                 <input
                                   type="checkbox"
-                                  checked={selectedMaterials.includes(product.productCode)}
+                                  checked={selectedMaterials.includes(product.id)}
                                   onChange={(e) => {
                                     if (e.target.checked) {
-                                      setSelectedMaterials(prev => [...prev, product.productCode]);
+                                      setSelectedMaterials(prev => [...prev, product.id]);
                                     } else {
-                                      setSelectedMaterials(prev => prev.filter(code => code !== product.productCode));
+                                      setSelectedMaterials(prev => prev.filter(id => id !== product.id));
                                     }
                                   }}
                                   className="rounded"
@@ -4054,7 +4111,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                 <div className="flex-1">
                                   <p className="text-sm font-medium">{product.color}</p>
                                   <p className="text-xs text-gray-500">{product.collection} - {product.format}</p>
-                                  <p className="text-xs text-gray-400">Артикул: {product.productCode}</p>
+                                  <p className="text-xs text-gray-400">Артикул: {product.id}</p>
                                 </div>
                               </label>
                               ))
@@ -4064,7 +4121,7 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                         <div className="text-sm text-gray-500 mt-1 flex justify-between">
                           <span>Выбрано: {selectedMaterials.length} материалов</span>
                           <span>
-                            Показано: {getFilteredMaterials().length} из {catalogProducts.length}
+                            Показано: {getFilteredMaterials().length} из {products.filter(p => p.category !== 'accessories').length}
                           </span>
                         </div>
                       </div>

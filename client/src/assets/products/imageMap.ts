@@ -141,7 +141,8 @@ const staticImageMap: Record<string, string[]> = {
   ], // Admin-set order for product 8886 - ЭКРЮ
   "8892": [
     "./fabric/ТканеваяРоскошьЛЁН/8892 (3).png",
-  ], // Admin-set order for product 8892 - ЛЁН  '8934': ["./concrete/8934 (коллаж).png","./concrete/8934 (2.2).png","./concrete/8934 (2.3).png"], // Admin-set order for product 8934
+  ], // Admin-set order for product 8892 - ЛЁН
+  '8934': ["./concrete/8934 (2.2).png","./concrete/8934 (2.3).png","./concrete/8934 (коллаж).png"], // Admin-set order for product 8934
 };
 
 // Helper function to get product gallery

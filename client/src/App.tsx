@@ -20,14 +20,6 @@ import NotFound from "@/pages/not-found";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import AdminPanel from "@/components/AdminPanel";
 
-function AdminPanelPage() {
-  return (
-    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999 }}>
-      <AdminPanel isOpen={true} onClose={() => window.history.back()} />
-    </div>
-  );
-}
-
 function Router() {
   return (
     <Switch>
@@ -43,7 +35,6 @@ function Router() {
       <Route path="/faq" component={FAQPage} />
       <Route path="/video" component={VideoPage} />
       <Route path="/contact" component={Contact} />
-      <Route path="/admin" component={() => <AdminPanelPage />} />
       <Route component={NotFound} />
     </Switch>
   );
