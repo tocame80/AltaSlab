@@ -3457,13 +3457,8 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                   <h4 className="text-lg font-semibold mb-6">Все проекты ({galleryProjects.length})</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                     {galleryProjects.map((project) => {
-                      const projectMaterials = catalogProducts.filter(p => 
-                        project.materialsUsed?.some(materialId => 
-                          p.productCode === materialId || 
-                          p.productCode === `SPC${materialId}` ||
-                          p.productCode?.replace('SPC', '') === materialId ||
-                          p.id === materialId
-                        )
+                      const projectMaterials = catalogProducts.filter(product => 
+                        project.materialsUsed?.includes(product.id)
                       );
                       
                       return (
