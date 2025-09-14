@@ -10,6 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useToast } from '@/hooks/use-toast';
 import OptimizedThumbnail from './OptimizedThumbnail';
+import { getProductMainImage } from '../assets/products/imageMap';
 import { LocalFileUploader } from './LocalFileUploader';
 import { FileDisplay } from './FileDisplay';
 
@@ -3600,18 +3601,21 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                       className="group/material rounded-lg overflow-hidden hover:shadow-md transition-all duration-300 cursor-pointer"
                                     >
                                       <div className="relative aspect-[2/1] overflow-hidden">
-                                        {material.images?.[0] ? (
-                                          <OptimizedThumbnail
-                                            src={material.images[0]}
+                                        {(() => {
+                                          const imageSrc = material.images?.[0] || getProductMainImage(material.productCode || '', material.collection || '', material.color || '');
+                                          return imageSrc ? (
+                                            <OptimizedThumbnail
+                                              src={imageSrc}
                                             alt={`${material.name} - ${material.collection}`}
                                             size={80}
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover/material:scale-105"
                                           />
-                                        ) : (
-                                          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                                            <div className="w-4 h-4 bg-gray-400 rounded-sm"></div>
-                                          </div>
-                                        )}
+                                          ) : (
+                                            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                                              <div className="w-4 h-4 bg-gray-400 rounded-sm"></div>
+                                            </div>
+                                          );
+                                        })()}
                                         
                                         <div className="absolute inset-0 bg-black/20 transition-opacity duration-300 opacity-0 group-hover/material:opacity-100 pointer-events-none"></div>
 
