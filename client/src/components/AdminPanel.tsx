@@ -3455,192 +3455,197 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
               ) : galleryProjects.length > 0 ? (
                 <div>
                   <h4 className="text-lg font-semibold mb-6">Все проекты ({galleryProjects.length})</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {galleryProjects.map((project) => (
-                      <div key={project.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200 group">
-                        {/* Project Image Preview */}
-                        <div className="aspect-[4/3] relative bg-gray-100">
-                          {project.images && project.images.length > 0 ? (
-                            <>
-                              <img
-                                src={project.images[0]}
-                                alt={project.title}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                                onError={(e) => {
-                                  e.currentTarget.style.display = 'none';
-                                  const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
-                                  if (nextElement) {
-                                    nextElement.style.display = 'flex';
-                                  }
-                                }}
-                              />
-                              <div className="hidden w-full h-full bg-gray-200 items-center justify-center text-sm text-gray-500">
-                                <Image className="w-8 h-8 mb-2" />
-                                Изображение недоступно
-                              </div>
-                              {project.images.length > 1 && (
-                                <div className="absolute top-3 right-3 bg-black/60 text-white px-2 py-1 rounded-full text-xs font-medium">
-                                  +{project.images.length - 1}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+                    {galleryProjects.map((project) => {
+                      const projectMaterials = catalogProducts.filter(p => 
+                        project.materialsUsed?.some(materialId => 
+                          p.productCode === materialId || 
+                          p.productCode === `SPC${materialId}` ||
+                          p.productCode?.replace('SPC', '') === materialId
+                        )
+                      );
+                      
+                      return (
+                        <div 
+                          key={project.id} 
+                          className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+                          data-testid={`card-admin-project-${project.id}`}
+                        >
+                          <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+                            {project.images && project.images.length > 0 ? (
+                              <>
+                                <img
+                                  src={project.images[0]}
+                                  alt={project.title}
+                                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                                <div className="absolute bottom-0 left-0 right-0 p-4">
+                                  <h3 className="text-lg font-bold line-clamp-2 text-white drop-shadow-lg">
+                                    {project.title}
+                                  </h3>
                                 </div>
-                              )}
-                            </>
-                          ) : (
-                            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                              <Image className="w-12 h-12 text-gray-400" />
-                            </div>
-                          )}
-                          
-                          {/* Actions Overlay */}
-                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                            <button
-                              onClick={() => {
-                                setEditingGalleryProject(project);
-                                setSelectedMaterials(project.materialsUsed || []);
-                                setGalleryImages(project.images || []);
-                                galleryForm.reset({
-                                  title: project.title,
-                                  description: project.description,
-                                  application: project.application,
-                                  images: project.images || [],
-                                  materialsUsed: project.materialsUsed || [],
-                                  location: project.location || '',
-                                  area: project.area || '',
-                                  year: project.year || '',
-                                  sortOrder: project.sortOrder || 0,
-                                  isActive: project.isActive || 1,
-                                });
-                                setShowGalleryForm(true);
-                              }}
-                              className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full transition-colors"
-                              title="Редактировать проект"
-                            >
-                              <Edit size={16} />
-                            </button>
-                            <button
-                              onClick={() => window.open(`/project/${project.id}`, '_blank')}
-                              className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full transition-colors"
-                              title="Просмотреть проект"
-                            >
-                              <Eye size={16} />
-                            </button>
-                            <button
-                              onClick={() => {
-                                if (confirm(`Удалить проект "${project.title}"?`)) {
-                                  deleteGalleryProjectMutation.mutate(project.id);
-                                }
-                              }}
-                              className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition-colors"
-                              title="Удалить проект"
-                            >
-                              <Trash2 size={16} />
-                            </button>
+                                {project.images.length > 1 && (
+                                  <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
+                                    1 / {project.images.length}
+                                  </div>
+                                )}
+                                <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                                  <button
+                                    onClick={() => {
+                                      setEditingGalleryProject(project);
+                                      setSelectedMaterials(project.materialsUsed || []);
+                                      setGalleryImages(project.images || []);
+                                      galleryForm.reset({
+                                        title: project.title,
+                                        description: project.description,
+                                        application: project.application,
+                                        images: project.images || [],
+                                        materialsUsed: project.materialsUsed || [],
+                                        location: project.location || '',
+                                        area: project.area || '',
+                                        year: project.year || '',
+                                        sortOrder: project.sortOrder || 0,
+                                        isActive: project.isActive || 1,
+                                      });
+                                      setShowGalleryForm(true);
+                                    }}
+                                    className="bg-blue-500 hover:bg-blue-600 text-white p-1.5 rounded-full transition-colors shadow-lg"
+                                    title="Редактировать проект"
+                                  >
+                                    <Edit size={14} />
+                                  </button>
+                                  <button
+                                    onClick={() => window.open(`/project/${project.id}`, '_blank')}
+                                    className="bg-green-500 hover:bg-green-600 text-white p-1.5 rounded-full transition-colors shadow-lg"
+                                    title="Просмотреть проект"
+                                  >
+                                    <Eye size={14} />
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      if (confirm(`Удалить проект "${project.title}"?`)) {
+                                        deleteGalleryProjectMutation.mutate(project.id);
+                                      }
+                                    }}
+                                    className="bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full transition-colors shadow-lg"
+                                    title="Удалить проект"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                </div>
+                              </>
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                                <div className="text-center text-gray-400">
+                                  <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-gray-300 flex items-center justify-center">
+                                    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                                      <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                                    </svg>
+                                  </div>
+                                  <p className="text-sm font-medium">Изображение недоступно</p>
+                                </div>
+                              </div>
+                            )}
                           </div>
-                        </div>
-
-                        {/* Project Info */}
-                        <div className="p-4">
-                          <div className="mb-3">
-                            <h5 className="font-semibold text-gray-900 mb-1 line-clamp-1">{project.title}</h5>
-                            <p className="text-sm text-gray-600 line-clamp-2">{project.description}</p>
-                          </div>
                           
-                          {/* Project Details */}
-                          <div className="space-y-2 mb-3">
-                            <div className="flex items-center justify-between text-xs">
-                              <span className="text-gray-500">Тип:</span>
-                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          <div className="p-4">
+                            <p className="text-gray-600 text-sm line-clamp-2 leading-relaxed mb-3">
+                              {project.description}
+                            </p>
+                            
+                            <div className="flex flex-wrap gap-2 mb-4">
+                              <div className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs ${
                                 project.application === 'commercial' ? 'bg-blue-100 text-blue-700' :
                                 project.application === 'residential' ? 'bg-green-100 text-green-700' :
                                 project.application === 'interior' ? 'bg-purple-100 text-purple-700' :
                                 'bg-orange-100 text-orange-700'
                               }`}>
-                                {project.application === 'commercial' ? 'Коммерческий' :
-                                 project.application === 'residential' ? 'Жилой' :
-                                 project.application === 'interior' ? 'Интерьер' : 'Экстерьер'}
-                              </span>
+                                <span className="font-medium">
+                                  {project.application === 'commercial' ? 'Коммерческий' :
+                                   project.application === 'residential' ? 'Жилой' :
+                                   project.application === 'interior' ? 'Интерьер' : 'Экстерьер'}
+                                </span>
+                              </div>
+                              {project.location && (
+                                <div className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 rounded text-xs text-gray-600">
+                                  <span className="font-medium">{project.location}</span>
+                                </div>
+                              )}
+                              {project.area && (
+                                <div className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 rounded text-xs text-gray-600">
+                                  <span className="font-medium">{project.area}</span>
+                                </div>
+                              )}
+                              {project.year && (
+                                <div className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 rounded text-xs text-gray-600">
+                                  <span className="font-medium">{project.year}</span>
+                                </div>
+                              )}
                             </div>
-                            
-                            {project.location && (
-                              <div className="flex items-center justify-between text-xs">
-                                <span className="text-gray-500">Локация:</span>
-                                <span className="text-gray-700 font-medium truncate ml-2">{project.location}</span>
-                              </div>
-                            )}
-                            
-                            {(project.area || project.year) && (
-                              <div className="flex items-center justify-between text-xs">
-                                {project.area && (
-                                  <>
-                                    <span className="text-gray-500">Площадь:</span>
-                                    <span className="text-gray-700 font-medium">{project.area}</span>
-                                  </>
-                                )}
-                                {project.year && !project.area && (
-                                  <>
-                                    <span className="text-gray-500">Год:</span>
-                                    <span className="text-gray-700 font-medium">{project.year}</span>
-                                  </>
-                                )}
-                              </div>
-                            )}
-                          </div>
                           
-                          {/* Materials Used Preview */}
-                          {project.materialsUsed && project.materialsUsed.length > 0 && (
-                            <div className="pt-3 border-t border-gray-100">
-                              <div className="flex items-center justify-between mb-2">
-                                <span className="text-xs font-medium text-gray-700">Используемые материалы</span>
-                                <span className="text-xs text-gray-500">{project.materialsUsed.length} шт.</span>
-                              </div>
+                            {projectMaterials.length > 0 && (
+                              <div className="border-t pt-4">
+                                <div className="flex items-center justify-between mb-3">
+                                  <h4 className="font-semibold text-[#2f378b] text-sm">МАТЕРИАЛЫ ПРОЕКТА</h4>
+                                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                                    {projectMaterials.length} шт.
+                                  </span>
+                                </div>
                               
-                              {/* Simple horizontal list */}
-                              <div className="flex gap-1 overflow-x-auto">
-                                {project.materialsUsed.map((materialId, index) => {
-                                  const material = catalogProducts.find(p => 
-                                    p.productCode === materialId || 
-                                    p.productCode === `SPC${materialId}` ||
-                                    p.productCode?.replace('SPC', '') === materialId
-                                  );
-                                  
-                                  return (
-                                    <div
-                                      key={index}
-                                      className="flex-shrink-0 w-12 h-12 rounded border border-gray-200 overflow-hidden bg-gray-100"
-                                      title={material?.name || `Материал ${materialId}`}
+                                <div className="grid grid-cols-3 gap-2">
+                                  {projectMaterials.slice(0, 3).map((material, index) => (
+                                    <div 
+                                      key={material.id} 
+                                      className="group/material rounded-lg overflow-hidden hover:shadow-md transition-all duration-300 cursor-pointer"
                                     >
-                                      {material?.images?.[0] ? (
-                                        <OptimizedThumbnail
-                                          src={material.images[0]}
-                                          alt={material.name || `Материал ${materialId}`}
-                                          size={48}
-                                          className="w-full h-full object-cover"
-                                        />
-                                      ) : (
-                                        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                                          <div className="w-3 h-3 bg-gray-400 rounded-sm"></div>
+                                      <div className="relative aspect-[2/1] overflow-hidden">
+                                        {material.images?.[0] ? (
+                                          <OptimizedThumbnail
+                                            src={material.images[0]}
+                                            alt={`${material.name} - ${material.collection}`}
+                                            size={80}
+                                            className="w-full h-full object-cover transition-transform duration-500 group-hover/material:scale-105"
+                                          />
+                                        ) : (
+                                          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                                            <div className="w-4 h-4 bg-gray-400 rounded-sm"></div>
+                                          </div>
+                                        )}
+                                        
+                                        <div className="absolute inset-0 bg-black/20 transition-opacity duration-300 opacity-0 group-hover/material:opacity-100 pointer-events-none"></div>
+
+                                        <div className="absolute bottom-0 left-0 p-2 transition-all duration-300">
+                                          <div>
+                                            <div className="text-white text-[10px] font-medium mb-1 drop-shadow-lg transition-colors duration-300">
+                                              {material.collection === 'МАГИЯ БЕТОНА' ? 'МАГИЯ БЕТОНА' : 
+                                               material.collection === 'ТКАНЕВАЯ РОСКОШЬ' ? 'ТКАНЕВАЯ РОСКОШЬ' : 
+                                               material.collection === 'МАТОВАЯ ЭСТЕТИКА' ? 'МАТОВАЯ ЭСТЕТИКА' : 
+                                               material.collection === 'МРАМОРНАЯ ФЕЕРИЯ' ? 'МРАМОРНАЯ ФЕЕРИЯ' : 
+                                               material.collection || 'Материал'}
+                                            </div>
+                                            
+                                            <div className="text-white text-[11px] font-semibold drop-shadow-lg transition-colors duration-300">
+                                              {material.color || material.name || material.productCode}
+                                            </div>
+                                          </div>
                                         </div>
-                                      )}
+                                      </div>
                                     </div>
-                                  );
-                                })}
+                                  ))}
+                                  
+                                  {projectMaterials.length > 3 && (
+                                    <div className="aspect-[2/1] rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 flex items-center justify-center">
+                                      <span className="text-xs text-gray-500 font-medium">+{projectMaterials.length - 3}</span>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          )}
-                          
-                          {/* Summary Stats */}
-                          <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                            <div className="flex items-center gap-1 text-xs text-gray-500">
-                              <div className="w-2 h-2 bg-[#E95D22] rounded-full"></div>
-                              Материалы: {project.materialsUsed?.length || 0}
-                            </div>
-                            <div className="flex items-center gap-1 text-xs text-gray-500">
-                              <Image className="w-3 h-3" />
-                              Фото: {project.images?.length || 0}
-                            </div>
+                            )}
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               ) : (
