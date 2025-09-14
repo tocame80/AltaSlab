@@ -3593,64 +3593,9 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                 <span className="text-xs text-gray-500">{project.materialsUsed.length} шт.</span>
                               </div>
                               
-                              {/* Expanded Material View */}
-                              {expandedMaterial && project.materialsUsed.includes(expandedMaterial) && (
-                                <div className="mb-3 p-3 bg-gray-50 rounded-lg border">
-                                  {(() => {
-                                    const material = catalogProducts.find(p => 
-                                      p.productCode === expandedMaterial || 
-                                      p.productCode === `SPC${expandedMaterial}` ||
-                                      p.productCode?.replace('SPC', '') === expandedMaterial
-                                    );
-                                    
-                                    return (
-                                      <div className="flex gap-3">
-                                        <div className="flex-shrink-0 w-16 h-16 rounded border border-gray-200 overflow-hidden bg-gray-100">
-                                          {material?.images?.[0] ? (
-                                            <OptimizedThumbnail
-                                              src={material.images[0]}
-                                              alt={material.name || `Материал ${expandedMaterial}`}
-                                              size={64}
-                                              className="w-full h-full object-cover"
-                                            />
-                                          ) : (
-                                            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                                              <div className="w-6 h-6 bg-gray-400 rounded-sm"></div>
-                                            </div>
-                                          )}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                          <div className="flex items-start justify-between">
-                                            <div>
-                                              <h5 className="text-sm font-medium text-gray-900 truncate">
-                                                {material?.name || `Материал ${expandedMaterial}`}
-                                              </h5>
-                                              <p className="text-xs text-gray-500 mt-1">
-                                                Код: {material?.productCode || expandedMaterial}
-                                              </p>
-                                              {material?.collection && (
-                                                <p className="text-xs text-gray-500">
-                                                  Коллекция: {material.collection}
-                                                </p>
-                                              )}
-                                            </div>
-                                            <button
-                                              onClick={() => setExpandedMaterial(null)}
-                                              className="text-gray-400 hover:text-gray-600 ml-2"
-                                            >
-                                              <X className="w-4 h-4" />
-                                            </button>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    );
-                                  })()}
-                                </div>
-                              )}
-                              
-                              {/* Material Thumbnails */}
-                              <div className="grid grid-cols-4 gap-2">
-                                {project.materialsUsed.slice(0, 8).map((materialId, index) => {
+                              {/* Simple horizontal list */}
+                              <div className="flex gap-1 overflow-x-auto">
+                                {project.materialsUsed.map((materialId, index) => {
                                   const material = catalogProducts.find(p => 
                                     p.productCode === materialId || 
                                     p.productCode === `SPC${materialId}` ||
@@ -3658,61 +3603,26 @@ export default function AdminPanel({ isOpen, onClose }: AdminPanelProps) {
                                   );
                                   
                                   return (
-                                    <button
+                                    <div
                                       key={index}
-                                      onClick={() => setExpandedMaterial(expandedMaterial === materialId ? null : materialId)}
-                                      className={`group/gallery-material rounded-lg overflow-hidden hover:shadow-md transition-all duration-300 relative ${
-                                        expandedMaterial === materialId ? 'ring-2 ring-[#E95D22]' : ''
-                                      }`}
+                                      className="flex-shrink-0 w-12 h-12 rounded border border-gray-200 overflow-hidden bg-gray-100"
+                                      title={material?.name || `Материал ${materialId}`}
                                     >
-                                      {/* Material Image */}
-                                      <div className="relative aspect-[2/1] overflow-hidden">
-                                        {material?.images?.[0] ? (
-                                          <OptimizedThumbnail
-                                            src={material.images[0]}
-                                            alt={material.name || `Материал ${materialId}`}
-                                            size={80}
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover/gallery-material:scale-105"
-                                          />
-                                        ) : (
-                                          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                                            <div className="w-4 h-4 bg-gray-400 rounded-sm"></div>
-                                          </div>
-                                        )}
-                                        
-                                        {/* Image Overlay - darkening effect on hover */}
-                                        <div className="absolute inset-0 bg-black/20 transition-opacity duration-300 opacity-0 group-hover/gallery-material:opacity-100 pointer-events-none"></div>
-
-                                        {/* Product Info Overlay - Bottom Left */}
-                                        {material && (
-                                          <div className="absolute bottom-0 left-0 p-1 transition-all duration-300">
-                                            <div>
-                                              {/* Collection */}
-                                              <div className="text-white text-[8px] font-medium mb-0.5 drop-shadow-lg transition-colors duration-300">
-                                                {material.collection || 'Материал'}
-                                              </div>
-                                              
-                                              {/* Material Name/Code */}
-                                              <div className="text-white text-[9px] font-semibold drop-shadow-lg transition-colors duration-300">
-                                                {material.color || material.name || materialId}
-                                              </div>
-                                            </div>
-                                          </div>
-                                        )}
-
-                                        {/* Selection indicator - Top Right */}
-                                        {expandedMaterial === materialId && (
-                                          <div className="absolute top-1 right-1 w-2 h-2 bg-[#E95D22] rounded-full shadow-lg"></div>
-                                        )}
-                                      </div>
-                                    </button>
+                                      {material?.images?.[0] ? (
+                                        <OptimizedThumbnail
+                                          src={material.images[0]}
+                                          alt={material.name || `Материал ${materialId}`}
+                                          size={48}
+                                          className="w-full h-full object-cover"
+                                        />
+                                      ) : (
+                                        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                                          <div className="w-3 h-3 bg-gray-400 rounded-sm"></div>
+                                        </div>
+                                      )}
+                                    </div>
                                   );
                                 })}
-                                {project.materialsUsed.length > 8 && (
-                                  <div className="flex items-center justify-center aspect-[2/1] rounded-lg border border-gray-200 bg-gray-100">
-                                    <span className="text-xs text-gray-600 font-medium">+{project.materialsUsed.length - 8}</span>
-                                  </div>
-                                )}
                               </div>
                             </div>
                           )}
