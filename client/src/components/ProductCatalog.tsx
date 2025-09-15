@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, Package, Tag, Truck } from 'lucide-react';
+import { getProductMainImage, getProductGallery } from '@/assets/products/imageMap';
 
 interface Product {
   id: string;
@@ -144,13 +145,15 @@ export function ProductCatalog() {
               <div className="aspect-[2/1] overflow-hidden rounded-t-lg">
                 <img
                   src={(() => {
-                    // Отладка для продукта 8934
-                    if (product.id === 'a917381e-755c-48f7-946e-25651f05077e') {
-                      console.log('Product 8934 image debug:', {
-                        id: product.id,
-                        images: product.images,
-                        image: product.image
-                      });
+                    // Handle USE_IMAGEMAP signal like ProductCard does
+                    if (product.image?.startsWith('USE_IMAGEMAP:') || product.gallery?.[0]?.startsWith('USE_IMAGEMAP:')) {
+                      // Extract productId for imageMap lookup
+                      const productCode = (product as any).productCode;
+                      const productId = productCode?.replace('SPC', '') || product.id?.replace('SPC', '') || product.id;
+                      
+                      // Use imageMap functions to get the main image
+                      const mainImage = getProductMainImage(productId, product.collection, product.color);
+                      return mainImage;
                     }
                     
                     if (product.images) {
