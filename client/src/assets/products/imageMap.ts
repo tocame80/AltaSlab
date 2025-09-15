@@ -144,6 +144,10 @@ const staticImageMap: Record<string, string[]> = {
   ], // Admin-set order for product 8892 - ЛЁН  '8934': ["./concrete/8934 (коллаж).png","./concrete/8934 (2.2).png","./concrete/8934 (2.3).png"], // Admin-set order for product 8934
   '8938': ["./concrete/8938_5.png","./concrete/8938_1.png","./concrete/8938_2.png","./concrete/8938_3.png","./concrete/8938_6.png","./concrete/8938_7.png"], // Admin-set order for product 8938
   '8931': ["./concrete/8931_5.png","./concrete/8931_1.png","./concrete/8931_2.png","./concrete/8931_3.png","./concrete/8931_6.png","./concrete/8931_7.png"], // Admin-set order for product 8931
+  '8937': ["./concrete/8937_7.png","./concrete/8937_1.png","./concrete/8937_2.png","./concrete/8937_3.png","./concrete/8937_4s.png","./concrete/8937_5.png","./concrete/8937_6.png"], // Admin-set order for product 8937  '8941': ["./concrete/8941_7.png","./concrete/8941_1.png","./concrete/8941_2.png","./concrete/8941_3.png","./concrete/8941_5.png","./concrete/8941_6.png"], // Admin-set order for product 8941
+  '8940': ["./concrete/8940_7.png","./concrete/8940_1.png","./concrete/8940_2.png","./concrete/8940_3.png","./concrete/8940_5.png","./concrete/8940_6.png"], // Admin-set order for product 8940
+  '8939': ["./concrete/8939_6.png","./concrete/8939_1.png","./concrete/8939_2.png","./concrete/8939_3.png","./concrete/8939_5.png","./concrete/8939_7.png"], // Admin-set order for product 8939
+  '8933': ["./concrete/8933 (3).png","./concrete/8933 (2.2).png","./concrete/8933 (2.3).png"], // Admin-set order for product 8933
 };
 
 // Helper function to get product gallery
