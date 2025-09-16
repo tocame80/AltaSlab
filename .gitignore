@@ -4,3 +4,16 @@ dist
 server/public
 vite.config.ts.*
 *.tar.gz
+
+# Product images - exclude all image files in product folders but keep folder structure
+client/src/assets/products/**/*.png
+client/src/assets/products/**/*.jpg
+client/src/assets/products/**/*.jpeg
+client/src/assets/products/**/*.webp
+client/src/assets/products/**/*.gif
+client/src/assets/products/**/*.svg
+
+# But keep README files and other documentation
+!client/src/assets/products/**/README.md
+!client/src/assets/products/**/UPLOAD_INSTRUCTIONS.md
+!client/src/assets/products/**/ИНСТРУКЦИЯ.md
