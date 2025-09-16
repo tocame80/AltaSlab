@@ -181,6 +181,11 @@ sudo -u $USER npm ci
 # Сборка приложения
 sudo -u $USER npm run build
 
+# Исправление проблем совместимости с Node.js
+if [ -f "deploy/fix-import-meta-dirname.js" ]; then
+    node deploy/fix-import-meta-dirname.js ./dist
+fi
+
 # Удаление dev зависимостей
 sudo -u $USER npm prune --omit=dev
 
