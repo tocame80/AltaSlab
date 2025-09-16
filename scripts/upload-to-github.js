@@ -121,8 +121,9 @@ async function uploadToGitHub() {
     const { data: user } = await octokit.rest.users.getAuthenticated();
     console.log(`👋 Привет, ${user.login}!`);
     
-    // Repository name
-    const repoName = 'alta-slab-catalog';
+    // Repository info  
+    const repoOwner = 'tocame80';
+    const repoName = 'AltaSlab';
     
     console.log('📂 Собираем файлы проекта...');
     const projectRoot = path.resolve(__dirname, '..');
@@ -133,24 +134,13 @@ async function uploadToGitHub() {
     try {
       // Try to get existing repository
       await octokit.rest.repos.get({
-        owner: user.login,
+        owner: repoOwner,
         repo: repoName
       });
-      console.log(`📦 Репозиторий ${repoName} уже существует, обновляем...`);
+      console.log(`📦 Репозиторий ${repoOwner}/${repoName} найден, обновляем...`);
     } catch (error) {
       if (error.status === 404) {
-        // Create new repository
-        console.log(`📦 Создаем новый репозиторий ${repoName}...`);
-        await octokit.rest.repos.createForAuthenticatedUser({
-          name: repoName,
-          description: 'Каталог продукции АЛЬТА СЛЭБ - веб-приложение для отображения строительных материалов',
-          private: false,
-          auto_init: true
-        });
-        console.log('✅ Репозиторий создан!');
-        
-        // Wait a bit for repo to be fully initialized
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        throw new Error(`Репозиторий ${repoOwner}/${repoName} не найден. Создайте его сначала на GitHub.`);
       } else {
         throw error;
       }
@@ -160,7 +150,7 @@ async function uploadToGitHub() {
     let mainSha;
     try {
       const { data: ref } = await octokit.rest.git.getRef({
-        owner: user.login,
+        owner: repoOwner,
         repo: repoName,
         ref: 'heads/main'
       });
@@ -169,7 +159,7 @@ async function uploadToGitHub() {
       // If main doesn't exist, try master
       try {
         const { data: ref } = await octokit.rest.git.getRef({
-          owner: user.login,
+          owner: repoOwner,
           repo: repoName,
           ref: 'heads/master'
         });
@@ -182,22 +172,22 @@ async function uploadToGitHub() {
     // Create tree with all files
     console.log('🌳 Создаем дерево файлов...');
     const { data: tree } = await octokit.rest.git.createTree({
-      owner: user.login,
+      owner: repoOwner,
       repo: repoName,
       tree: files.map(file => ({
         path: file.path,
         mode: '100644',
         type: 'blob',
-        content: Buffer.from(file.content, 'base64').toString('utf8')
+        content: file.content
       }))
     });
     
     // Create commit
     console.log('💾 Создаем коммит...');
     const { data: commit } = await octokit.rest.git.createCommit({
-      owner: user.login,
+      owner: repoOwner,
       repo: repoName,
-      message: '🚀 Загрузка каталога продукции АЛЬТА СЛЭБ\n\n- Веб-приложение с каталогом продукции\n- Система управления изображениями\n- Админ-панель для управления продуктами\n- Готово к добавлению изображений продуктов',
+      message: '🔄 Обновление каталога АЛЬТА СЛЭБ\n\n- Обновлены все файлы проекта\n- Исправлены проблемы совместимости с TimeWeb\n- Добавлены скрипты деплоя и исправления\n- Готов к развертыванию в продакшн',
       tree: tree.sha,
       parents: mainSha ? [mainSha] : []
     });
@@ -207,26 +197,27 @@ async function uploadToGitHub() {
     const branchName = mainSha ? 'main' : 'master';
     if (mainSha) {
       await octokit.rest.git.updateRef({
-        owner: user.login,
+        owner: repoOwner,
         repo: repoName,
         ref: `heads/${branchName}`,
         sha: commit.sha
       });
     } else {
       await octokit.rest.git.createRef({
-        owner: user.login,
+        owner: repoOwner,
         repo: repoName,
         ref: `refs/heads/${branchName}`,
         sha: commit.sha
       });
     }
     
-    console.log('✅ Проект успешно загружен на GitHub!');
-    console.log(`🔗 Ссылка на репозиторий: https://github.com/${user.login}/${repoName}`);
-    console.log('\n📝 Что дальше:');
-    console.log('1. Загрузите изображения продуктов в соответствующие папки');
-    console.log('2. Система автоматически обнаружит новые изображения');
-    console.log('3. Используйте админ-панель для установки главных изображений');
+    console.log('✅ Проект успешно обновлен на GitHub!');
+    console.log(`🔗 Ссылка на репозиторий: https://github.com/${repoOwner}/${repoName}`);
+    console.log('\n📝 Обновлено:');
+    console.log('1. ✅ Все файлы проекта синхронизированы');
+    console.log('2. ✅ Скрипты деплоя для TimeWeb готовы');
+    console.log('3. ✅ Исправления совместимости Node.js добавлены');
+    console.log('4. ✅ Резервная копия базы данных включена');
     
   } catch (error) {
     console.error('❌ Ошибка при загрузке:', error.message);
