@@ -43,7 +43,7 @@ apt update && apt upgrade -y
 
 # 2. Установка базовых пакетов
 log "🔧 Установка необходимых пакетов..."
-apt install -y curl git nginx ufw htop unzip wget
+apt install -y curl git nginx ufw htop unzip wget dnsutils
 
 # 3. Настройка UFW (Firewall)
 log "🛡️ Настройка firewall..."
@@ -95,48 +95,8 @@ server {
     listen 80;
     server_name _;
 
-    # Gzip compression
-    gzip on;
-    gzip_vary on;
-    gzip_min_length 1024;
-    gzip_types text/plain text/css text/xml text/javascript application/javascript application/xml+rss application/json;
-
-    # Security headers
-    add_header X-Frame-Options "SAMEORIGIN" always;
-    add_header X-XSS-Protection "1; mode=block" always;
-    add_header X-Content-Type-Options "nosniff" always;
-    add_header Referrer-Policy "no-referrer-when-downgrade" always;
-    add_header Content-Security-Policy "default-src 'self' http: https: data: blob: 'unsafe-inline'" always;
-
-    # Static files handling
-    location /assets {
-        alias /var/www/alta-slab/client/src/assets;
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-        try_files $uri $uri/ =404;
-    }
-
-    # API и основное приложение
-    location / {
-        proxy_pass http://localhost:5000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-        
-        # Таймауты
-        proxy_connect_timeout 60s;
-        proxy_send_timeout 60s;
-        proxy_read_timeout 60s;
-    }
-
-    # Логи
-    access_log /var/log/nginx/alta-slab.access.log;
-    error_log /var/log/nginx/alta-slab.error.log;
+    # Базовая конфигурация - детали в nginx-common.conf
+    include /etc/nginx/conf.d/alta-slab-common.conf;
 }
 EOF
 
@@ -216,10 +176,13 @@ sudo -u $USER pm2 stop alta-slab || true
 sudo -u $USER git pull origin main
 
 # Установка зависимостей
-sudo -u $USER npm ci --production
+sudo -u $USER npm ci
 
 # Сборка приложения
 sudo -u $USER npm run build
+
+# Удаление dev зависимостей
+sudo -u $USER npm prune --omit=dev
 
 # Запуск приложения
 sudo -u $USER pm2 start ecosystem.config.js

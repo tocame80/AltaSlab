@@ -60,7 +60,7 @@ module.exports = {
       repo: 'https://github.com/your-username/alta-slab-catalog.git',
       path: '/var/www/alta-slab',
       'pre-deploy-local': '',
-      'post-deploy': 'npm ci --production && npm run build && pm2 reload ecosystem.config.js --env production',
+      'post-deploy': 'npm ci && npm run build && npm prune --omit=dev && pm2 reload ecosystem.config.js --env production',
       'pre-setup': ''
     }
   }
