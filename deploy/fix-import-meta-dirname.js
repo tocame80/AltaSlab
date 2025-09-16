@@ -115,7 +115,7 @@ function fixImportMetaDirname(distPath) {
       let needsPathImport = false;
       let needsUrlImport = false;
       
-      // Проверяем есть ли импорт path
+      // Проверяем есть ли импорт path (CommonJS или ES)
       if (!content.includes('require("path")') && !content.includes('require(\'path\')') && 
           !content.includes('import path') && !content.includes('import * as path')) {
         needsPathImport = true;
@@ -124,19 +124,30 @@ function fixImportMetaDirname(distPath) {
       // Проверяем есть ли импорт URL (если используется в замене)
       if (content.includes('new URL(import.meta.url)') && 
           !content.includes('require("url")') && !content.includes('require(\'url\')') &&
-          !content.includes('import { URL }') && !content.includes('import * as url')) {
+          !content.includes('import { URL }') && !content.includes('import * as url') &&
+          !content.includes('import url')) {
         needsUrlImport = true;
       }
       
-      // Добавляем необходимые импорты
+      // Удаляем старые неправильные CommonJS импорты если они в начале файла
+      if (content.startsWith('const { URL } = require(\'url\');\n')) {
+        content = content.replace(/^const { URL } = require\('url'\);\n/, '');
+        console.log('🧹 Удален старый CommonJS импорт URL');
+      }
+      if (content.startsWith('const path = require(\'path\');\n')) {
+        content = content.replace(/^const path = require\('path'\);\n/, '');
+        console.log('🧹 Удален старый CommonJS импорт path');
+      }
+      
+      // Добавляем необходимые импорты в ES стиле
       let imports = '';
       if (needsPathImport) {
-        imports += 'const path = require(\'path\');\n';
-        console.log('✅ Добавлен импорт модуля path');
+        imports += 'import path from \'path\';\n';
+        console.log('✅ Добавлен ES импорт модуля path');
       }
       if (needsUrlImport) {
-        imports += 'const { URL } = require(\'url\');\n';
-        console.log('✅ Добавлен импорт модуля URL');
+        imports += 'import { URL } from \'url\';\n';
+        console.log('✅ Добавлен ES импорт модуля URL');
       }
       
       if (imports) {
