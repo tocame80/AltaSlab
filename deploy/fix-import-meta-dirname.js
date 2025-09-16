@@ -24,7 +24,7 @@ function fixImportMetaDirname(distPath) {
     // Счетчик замен
     let replacements = 0;
     
-    // Паттерны для замены import.meta.dirname
+    // Расширенные паттерны для замены import.meta.dirname
     const patterns = [
       // Прямое использование import.meta.dirname
       {
@@ -45,27 +45,97 @@ function fixImportMetaDirname(distPath) {
         search: /path\.dirname\(fileURLToPath\(import\.meta\.url\)\)/g,
         replace: '(__dirname || path.dirname(new URL(import.meta.url).pathname))',
         description: 'стандартный ES modules __dirname fallback'
+      },
+      
+      // Дополнительные паттерны для скомпилированного кода
+      {
+        search: /path\.resolve\(\s*void\s+0\s*,([^)]+)\)/g,
+        replace: 'path.resolve(__dirname || path.dirname(new URL(import.meta.url).pathname), $1)',
+        description: 'path.resolve(void 0, ...) -> исправление undefined'
+      },
+      
+      // Паттерны для undefined в первом аргументе path.resolve
+      {
+        search: /path\.resolve\(\s*undefined\s*,([^)]+)\)/g,
+        replace: 'path.resolve(__dirname || path.dirname(new URL(import.meta.url).pathname), $1)',
+        description: 'path.resolve(undefined, ...) -> исправление undefined'
+      },
+      
+      // Если переменная была undefined
+      {
+        search: /path\.resolve\(\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*,([^)]+)\)/g,
+        replace: (match, varName, rest) => {
+          if (varName === '__dirname') return match; // Не заменяем если уже __dirname
+          return `path.resolve((${varName} || __dirname || path.dirname(new URL(import.meta.url).pathname)), ${rest})`;
+        },
+        description: 'path.resolve(variable, ...) -> добавление fallback'
+      },
+      
+      // Защита для случаев когда path не определен
+      {
+        search: /(\w+)\.resolve\(/g,
+        replace: (match, pathVar) => {
+          if (pathVar === 'path') return match;
+          return `(${pathVar} || path).resolve(`;
+        },
+        description: 'защита от undefined path объекта'
       }
     ];
     
     patterns.forEach(pattern => {
-      const matches = content.match(pattern.search);
-      if (matches) {
-        content = content.replace(pattern.search, pattern.replace);
-        replacements += matches.length;
-        console.log(`✅ ${pattern.description}: ${matches.length} замен`);
+      const searchPattern = pattern.search;
+      const replaceValue = pattern.replace;
+      
+      if (typeof replaceValue === 'function') {
+        // Для функций замены
+        const matches = [...content.matchAll(searchPattern)];
+        if (matches.length > 0) {
+          content = content.replace(searchPattern, replaceValue);
+          replacements += matches.length;
+          console.log(`✅ ${pattern.description}: ${matches.length} замен`);
+        }
+      } else {
+        // Для строковых замен
+        const matches = content.match(searchPattern);
+        if (matches) {
+          content = content.replace(searchPattern, replaceValue);
+          replacements += matches.length;
+          console.log(`✅ ${pattern.description}: ${matches.length} замен`);
+        }
       }
     });
     
-    // Убедимся что path модуль импортирован
+    // Убедимся что path модуль импортирован и URL доступен
     if (replacements > 0) {
+      let needsPathImport = false;
+      let needsUrlImport = false;
+      
       // Проверяем есть ли импорт path
       if (!content.includes('require("path")') && !content.includes('require(\'path\')') && 
           !content.includes('import path') && !content.includes('import * as path')) {
-        
-        // Добавляем импорт path в начало файла
-        content = `const path = require('path');\n` + content;
+        needsPathImport = true;
+      }
+      
+      // Проверяем есть ли импорт URL (если используется в замене)
+      if (content.includes('new URL(import.meta.url)') && 
+          !content.includes('require("url")') && !content.includes('require(\'url\')') &&
+          !content.includes('import { URL }') && !content.includes('import * as url')) {
+        needsUrlImport = true;
+      }
+      
+      // Добавляем необходимые импорты
+      let imports = '';
+      if (needsPathImport) {
+        imports += 'const path = require(\'path\');\n';
         console.log('✅ Добавлен импорт модуля path');
+      }
+      if (needsUrlImport) {
+        imports += 'const { URL } = require(\'url\');\n';
+        console.log('✅ Добавлен импорт модуля URL');
+      }
+      
+      if (imports) {
+        content = imports + content;
       }
       
       // Сохраняем исправленный файл
