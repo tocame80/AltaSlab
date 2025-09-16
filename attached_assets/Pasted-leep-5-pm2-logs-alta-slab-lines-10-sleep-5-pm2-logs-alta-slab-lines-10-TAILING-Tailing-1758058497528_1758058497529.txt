@@ -1,0 +1,48 @@
+leep 5 && pm2 logs alta-slab --lines 10# sleep 5 && pm2 logs alta-slab --lines 10
+[TAILING] Tailing last 10 lines for [alta-slab] process (change the value with --lines option)
+/root/.pm2/logs/alta-slab-error-0.log last 10 lines:
+0|alta-sla |     at An._connectionCallback (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:1384:72)
+0|alta-sla |     at An._handleErrorWhileConnecting (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:1290:38)
+0|alta-sla |     at An._handleErrorEvent (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:1291:33)
+0|alta-sla |     at fn.emit (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:397:12)
+0|alta-sla |     at v.reportStreamError (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:1201:46)
+0|alta-sla |     at v.emit (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:397:12)
+0|alta-sla |     at WebSocket.<anonymous> (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:986:42)
+0|alta-sla |     at callListener (/root/my_sites/AltaSlab/node_modules/ws/lib/event-target.js:290:14)
+0|alta-sla |     at WebSocket.onError (/root/my_sites/AltaSlab/node_modules/ws/lib/event-target.js:230:9)
+0|alta-sla |     at WebSocket.emit (node:events:517:28)
+
+/root/.pm2/logs/alta-slab-out-0.log last 10 lines:
+0|alta-sla | Initializing database connection at startup...
+0|alta-sla | Initializing database connection (attempt 1/3)...
+0|alta-sla | Initializing database connection at startup...
+0|alta-sla | Initializing database connection (attempt 1/3)...
+0|alta-sla | Initializing database connection at startup...
+0|alta-sla | Initializing database connection (attempt 1/3)...
+
+0|alta-slab  | TypeError: Cannot set property message of #<ErrorEvent> which has only a getter
+0|alta-slab  |     at An._connectionCallback (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:1384:72)
+0|alta-slab  |     at An._handleErrorWhileConnecting (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:1290:38)
+0|alta-slab  |     at An._handleErrorEvent (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:1291:33)
+0|alta-slab  |     at fn.emit (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:397:12)
+0|alta-slab  |     at v.reportStreamError (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:1201:46)
+0|alta-slab  |     at v.emit (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:397:12)
+0|alta-slab  |     at WebSocket.<anonymous> (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:986:42)
+0|alta-slab  |     at callListener (/root/my_sites/AltaSlab/node_modules/ws/lib/event-target.js:290:14)
+0|alta-slab  |     at WebSocket.onError (/root/my_sites/AltaSlab/node_modules/ws/lib/event-target.js:230:9)
+0|alta-slab  |     at WebSocket.emit (node:events:517:28)
+0|alta-slab  | Initializing database connection at startup...
+0|alta-slab  | Initializing database connection (attempt 1/3)...
+0|alta-slab  | TypeError: Cannot set property message of #<ErrorEvent> which has only a getter
+0|alta-slab  |     at An._connectionCallback (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:1384:72)
+0|alta-slab  |     at An._handleErrorWhileConnecting (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:1290:38)
+0|alta-slab  |     at An._handleErrorEvent (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:1291:33)
+0|alta-slab  |     at fn.emit (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:397:12)
+0|alta-slab  |     at v.reportStreamError (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:1201:46)
+0|alta-slab  |     at v.emit (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:397:12)
+0|alta-slab  |     at WebSocket.<anonymous> (file:///root/my_sites/AltaSlab/node_modules/@neondatabase/serverless/index.mjs:986:42)
+0|alta-slab  |     at callListener (/root/my_sites/AltaSlab/node_modules/ws/lib/event-target.js:290:14)
+0|alta-slab  |     at WebSocket.onError (/root/my_sites/AltaSlab/node_modules/ws/lib/event-target.js:230:9)
+0|alta-slab  |     at WebSocket.emit (node:events:517:28)
+0|alta-slab  | Initializing database connection at startup...
+0|alta-slab  | Initializing database connection (attempt 1/3)...
