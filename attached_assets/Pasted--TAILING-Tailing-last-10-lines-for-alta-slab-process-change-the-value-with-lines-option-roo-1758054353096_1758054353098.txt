@@ -1,0 +1,135 @@
+[TAILING] Tailing last 10 lines for [alta-slab] process (change the value with --lines option)
+/root/.pm2/logs/alta-slab-out.log last 10 lines:
+0|alta-sla | Initializing database connection at startup...
+0|alta-sla | Initializing database connection (attempt 1/3)...
+0|alta-sla | Initializing database connection at startup...
+0|alta-sla | Initializing database connection (attempt 1/3)...
+0|alta-sla | Initializing database connection at startup...
+0|alta-sla | Initializing database connection (attempt 1/3)...
+0|alta-sla | Initializing database connection at startup...
+0|alta-sla | Initializing database connection (attempt 1/3)...
+0|alta-sla | Initializing database connection at startup...
+0|alta-sla | Initializing database connection (attempt 1/3)...
+
+/root/.pm2/logs/alta-slab-error.log last 10 lines:
+0|alta-sla | 
+0|alta-sla | Error: Missing required environment variables: SOME_OTHER_PATH
+0|alta-sla |     at validateEnvironment (file:///root/my_sites/AltaSlab/dist/index.js:4654:11)
+0|alta-sla |     at file:///root/my_sites/AltaSlab/dist/index.js:4657:1
+0|alta-sla |     at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+0|alta-sla |     at async ModuleLoader.import (node:internal/modules/esm/loader:336:24)
+0|alta-sla |     at async loadESM (node:internal/process/esm_loader:34:7)
+0|alta-sla |     at async handleMainPromise (node:internal/modules/run_main:106:12)
+0|alta-sla | 
+0|alta-sla | Node.js v18.19.1
+
+0|alta-slab  | file:///root/my_sites/AltaSlab/dist/index.js:4654
+0|alta-slab  |     throw new Error(`Missing required environment variables: ${missingVars.join(", ")}`);
+0|alta-slab  |           ^
+0|alta-slab  | Error: Missing required environment variables: SOME_OTHER_PATH
+0|alta-slab  |     at validateEnvironment (file:///root/my_sites/AltaSlab/dist/index.js:4654:11)
+0|alta-slab  |     at file:///root/my_sites/AltaSlab/dist/index.js:4657:1
+0|alta-slab  |     at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+0|alta-slab  |     at async ModuleLoader.import (node:internal/modules/esm/loader:336:24)
+0|alta-slab  |     at async loadESM (node:internal/process/esm_loader:34:7)
+0|alta-slab  |     at async handleMainPromise (node:internal/modules/run_main:106:12)
+0|alta-slab  | Node.js v18.19.1
+0|alta-slab  | file:///root/my_sites/AltaSlab/dist/index.js:4654
+0|alta-slab  |     throw new Error(`Missing required environment variables: ${missingVars.join(", ")}`);
+0|alta-slab  |           ^
+0|alta-slab  | Error: Missing required environment variables: SOME_OTHER_PATH
+0|alta-slab  |     at validateEnvironment (file:///root/my_sites/AltaSlab/dist/index.js:4654:11)
+0|alta-slab  |     at file:///root/my_sites/AltaSlab/dist/index.js:4657:1
+0|alta-slab  |     at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+0|alta-slab  |     at async ModuleLoader.import (node:internal/modules/esm/loader:336:24)
+0|alta-slab  |     at async loadESM (node:internal/process/esm_loader:34:7)
+0|alta-slab  |     at async handleMainPromise (node:internal/modules/run_main:106:12)
+0|alta-slab  | Node.js v18.19.1
+0|alta-slab  | file:///root/my_sites/AltaSlab/dist/index.js:4654
+0|alta-slab  |     throw new Error(`Missing required environment variables: ${missingVars.join(", ")}`);
+0|alta-slab  |           ^
+0|alta-slab  | Error: Missing required environment variables: SOME_OTHER_PATH
+0|alta-slab  |     at validateEnvironment (file:///root/my_sites/AltaSlab/dist/index.js:4654:11)
+0|alta-slab  |     at file:///root/my_sites/AltaSlab/dist/index.js:4657:1
+0|alta-slab  |     at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+0|alta-slab  |     at async ModuleLoader.import (node:internal/modules/esm/loader:336:24)
+0|alta-slab  |     at async loadESM (node:internal/process/esm_loader:34:7)
+0|alta-slab  |     at async handleMainPromise (node:internal/modules/run_main:106:12)
+0|alta-slab  | Node.js v18.19.1
+0|alta-slab  | file:///root/my_sites/AltaSlab/dist/index.js:4654
+0|alta-slab  |     throw new Error(`Missing required environment variables: ${missingVars.join(", ")}`);
+0|alta-slab  |           ^
+0|alta-slab  | Error: Missing required environment variables: SOME_OTHER_PATH
+0|alta-slab  |     at validateEnvironment (file:///root/my_sites/AltaSlab/dist/index.js:4654:11)
+0|alta-slab  |     at file:///root/my_sites/AltaSlab/dist/index.js:4657:1
+0|alta-slab  |     at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+0|alta-slab  |     at async ModuleLoader.import (node:internal/modules/esm/loader:336:24)
+0|alta-slab  |     at async loadESM (node:internal/process/esm_loader:34:7)
+0|alta-slab  |     at async handleMainPromise (node:internal/modules/run_main:106:12)
+0|alta-slab  | Node.js v18.19.1
+0|alta-slab  | file:///root/my_sites/AltaSlab/dist/index.js:4654
+0|alta-slab  |     throw new Error(`Missing required environment variables: ${missingVars.join(", ")}`);
+0|alta-slab  |           ^
+0|alta-slab  | Error: Missing required environment variables: SOME_OTHER_PATH
+0|alta-slab  |     at validateEnvironment (file:///root/my_sites/AltaSlab/dist/index.js:4654:11)
+0|alta-slab  |     at file:///root/my_sites/AltaSlab/dist/index.js:4657:1
+0|alta-slab  |     at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+0|alta-slab  |     at async ModuleLoader.import (node:internal/modules/esm/loader:336:24)
+0|alta-slab  |     at async loadESM (node:internal/process/esm_loader:34:7)
+0|alta-slab  |     at async handleMainPromise (node:internal/modules/run_main:106:12)
+0|alta-slab  | Node.js v18.19.1
+0|alta-slab  | file:///root/my_sites/AltaSlab/dist/index.js:4654
+0|alta-slab  |     throw new Error(`Missing required environment variables: ${missingVars.join(", ")}`);
+0|alta-slab  |           ^
+0|alta-slab  | Error: Missing required environment variables: SOME_OTHER_PATH
+0|alta-slab  |     at validateEnvironment (file:///root/my_sites/AltaSlab/dist/index.js:4654:11)
+0|alta-slab  |     at file:///root/my_sites/AltaSlab/dist/index.js:4657:1
+0|alta-slab  |     at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+0|alta-slab  |     at async ModuleLoader.import (node:internal/modules/esm/loader:336:24)
+0|alta-slab  |     at async loadESM (node:internal/process/esm_loader:34:7)
+0|alta-slab  |     at async handleMainPromise (node:internal/modules/run_main:106:12)
+0|alta-slab  | Node.js v18.19.1
+0|alta-slab  | file:///root/my_sites/AltaSlab/dist/index.js:4654
+0|alta-slab  |     throw new Error(`Missing required environment variables: ${missingVars.join(", ")}`);
+0|alta-slab  |           ^
+0|alta-slab  | Error: Missing required environment variables: SOME_OTHER_PATH
+0|alta-slab  |     at validateEnvironment (file:///root/my_sites/AltaSlab/dist/index.js:4654:11)
+0|alta-slab  |     at file:///root/my_sites/AltaSlab/dist/index.js:4657:1
+0|alta-slab  |     at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+0|alta-slab  |     at async ModuleLoader.import (node:internal/modules/esm/loader:336:24)
+0|alta-slab  |     at async loadESM (node:internal/process/esm_loader:34:7)
+0|alta-slab  |     at async handleMainPromise (node:internal/modules/run_main:106:12)
+0|alta-slab  | Node.js v18.19.1
+0|alta-slab  | file:///root/my_sites/AltaSlab/dist/index.js:4654
+0|alta-slab  |     throw new Error(`Missing required environment variables: ${missingVars.join(", ")}`);
+0|alta-slab  |           ^
+0|alta-slab  | Error: Missing required environment variables: SOME_OTHER_PATH
+0|alta-slab  |     at validateEnvironment (file:///root/my_sites/AltaSlab/dist/index.js:4654:11)
+0|alta-slab  |     at file:///root/my_sites/AltaSlab/dist/index.js:4657:1
+0|alta-slab  |     at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+0|alta-slab  |     at async ModuleLoader.import (node:internal/modules/esm/loader:336:24)
+0|alta-slab  |     at async loadESM (node:internal/process/esm_loader:34:7)
+0|alta-slab  |     at async handleMainPromise (node:internal/modules/run_main:106:12)
+0|alta-slab  | Node.js v18.19.1
+0|alta-slab  | file:///root/my_sites/AltaSlab/dist/index.js:4654
+0|alta-slab  |     throw new Error(`Missing required environment variables: ${missingVars.join(", ")}`);
+0|alta-slab  |           ^
+0|alta-slab  | Error: Missing required environment variables: SOME_OTHER_PATH
+0|alta-slab  |     at validateEnvironment (file:///root/my_sites/AltaSlab/dist/index.js:4654:11)
+0|alta-slab  |     at file:///root/my_sites/AltaSlab/dist/index.js:4657:1
+0|alta-slab  |     at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+0|alta-slab  |     at async ModuleLoader.import (node:internal/modules/esm/loader:336:24)
+0|alta-slab  |     at async loadESM (node:internal/process/esm_loader:34:7)
+0|alta-slab  |     at async handleMainPromise (node:internal/modules/run_main:106:12)
+0|alta-slab  | Node.js v18.19.1
+0|alta-slab  | file:///root/my_sites/AltaSlab/dist/index.js:4654
+0|alta-slab  |     throw new Error(`Missing required environment variables: ${missingVars.join(", ")}`);
+0|alta-slab  |           ^
+0|alta-slab  | Error: Missing required environment variables: SOME_OTHER_PATH
+0|alta-slab  |     at validateEnvironment (file:///root/my_sites/AltaSlab/dist/index.js:4654:11)
+0|alta-slab  |     at file:///root/my_sites/AltaSlab/dist/index.js:4657:1
+0|alta-slab  |     at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+0|alta-slab  |     at async ModuleLoader.import (node:internal/modules/esm/loader:336:24)
+0|alta-slab  |     at async loadESM (node:internal/process/esm_loader:34:7)
+0|alta-slab  |     at async handleMainPromise (node:internal/modules/run_main:106:12)
+0|alta-slab  | Node.js v18.19.1
