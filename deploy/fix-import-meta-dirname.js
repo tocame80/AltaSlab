@@ -5,8 +5,13 @@
  * Заменяет все вхождения import.meta.dirname на совместимый код
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// ES modules эквивалент __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function fixImportMetaDirname(distPath) {
   const indexJsPath = path.join(distPath, 'index.js');
@@ -160,8 +165,11 @@ function fixImportMetaDirname(distPath) {
   }
 }
 
-// Запуск из командной строки
-if (require.main === module) {
+// Запуск из командной строки (ES modules)
+const isMainModule = import.meta.url === `file://${process.argv[1]}` || 
+                     import.meta.url === new URL(process.argv[1], 'file://').href;
+
+if (isMainModule) {
   const distPath = process.argv[2] || './dist';
   
   console.log('🚀 Исправление проблем с import.meta.dirname для продакшн');
@@ -176,4 +184,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { fixImportMetaDirname };
+export { fixImportMetaDirname };
