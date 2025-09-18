@@ -130,6 +130,7 @@ const staticImageMap: Record<string, string[]> = {
   '8931': ["./concrete/8931_7.png","./concrete/8931_1.png","./concrete/8931_2.png","./concrete/8931_3.png","./concrete/8931_5.png","./concrete/8931_6.png"], // Admin-set order for product 8931
   '8883': ["./matte/8883 (3).png","./matte/8883 (1).png"], // Admin-set order for product 8883
   '8937': ["./concrete/8937_7.png","./concrete/8937_1.png","./concrete/8937_2.png","./concrete/8937_3.png","./concrete/8937_5.png","./concrete/8937_6.png"], // Admin-set order for product 8937
+  '8940': ["./concrete/8940_7.png","./concrete/8940_1.png","./concrete/8940_2.png","./concrete/8940_3.png","./concrete/8940_5.png","./concrete/8940_6.png"], // Admin-set order for product 8940
 };
 
 // Helper function to get product gallery
