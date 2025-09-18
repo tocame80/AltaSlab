@@ -7,13 +7,14 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import path from "path";
 
-// Environment variables validation
+// Environment variables validation (DATABASE_URL optional for SQLite)
 function validateEnvironment() {
-  const requiredEnvVars = ['DATABASE_URL'];
-  const missingVars = requiredEnvVars.filter(env => !process.env[env]);
-  
-  if (missingVars.length > 0) {
-    throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
+  // DATABASE_URL is no longer required for SQLite deployments
+  // SQLite uses local file: ./data/database.db
+  if (process.env.DATABASE_URL) {
+    console.log('DATABASE_URL detected - PostgreSQL mode (legacy)');
+  } else {
+    console.log('No DATABASE_URL - SQLite mode (recommended)');
   }
 }
 
