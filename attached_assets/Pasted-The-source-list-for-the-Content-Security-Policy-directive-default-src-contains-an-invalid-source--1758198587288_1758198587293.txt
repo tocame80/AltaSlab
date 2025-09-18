@@ -1,0 +1,782 @@
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+10The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+10The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/css/9d11eaeb68b9a551.css.map: HTTP error: status code 404, net::ERR_HTTP_RESPONSE_CODE_FAILURE
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/css/abe12dc207fb31c0.css.map: HTTP error: status code 404, net::ERR_HTTP_RESPONSE_CODE_FAILURE
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/css/6470dca580e10205.css.map: HTTP error: status code 404, net::ERR_HTTP_RESPONSE_CODE_FAILURE
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/css/cfca75a7e7213430.css.map: HTTP error: status code 404, net::ERR_HTTP_RESPONSE_CODE_FAILURE
+_app-da9a1e2067458860.js:38 
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      
+_app-da9a1e2067458860.js:38 [LaunchDarkly] LaunchDarkly client initialized
+stallwart.build.js:1 stallwart: failed ping 1
+framework-a8d4f779e0a448ee.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-a8d4f779e0a448ee.js:1
+(anonymous) @ framework-a8d4f779e0a448ee.js:1
+uD @ framework-a8d4f779e0a448ee.js:1
+uI @ framework-a8d4f779e0a448ee.js:1
+uM @ framework-a8d4f779e0a448ee.js:1
+uS @ framework-a8d4f779e0a448ee.js:1
+C @ framework-a8d4f779e0a448ee.js:1
+z @ framework-a8d4f779e0a448ee.js:1
+framework-a8d4f779e0a448ee.js:1 Unrecognized feature: 'ambient-light-sensor'.
+_ @ framework-a8d4f779e0a448ee.js:1
+(anonymous) @ framework-a8d4f779e0a448ee.js:1
+uD @ framework-a8d4f779e0a448ee.js:1
+uI @ framework-a8d4f779e0a448ee.js:1
+uM @ framework-a8d4f779e0a448ee.js:1
+uS @ framework-a8d4f779e0a448ee.js:1
+C @ framework-a8d4f779e0a448ee.js:1
+z @ framework-a8d4f779e0a448ee.js:1
+framework-a8d4f779e0a448ee.js:1 Unrecognized feature: 'battery'.
+_ @ framework-a8d4f779e0a448ee.js:1
+(anonymous) @ framework-a8d4f779e0a448ee.js:1
+uD @ framework-a8d4f779e0a448ee.js:1
+uI @ framework-a8d4f779e0a448ee.js:1
+uM @ framework-a8d4f779e0a448ee.js:1
+uS @ framework-a8d4f779e0a448ee.js:1
+C @ framework-a8d4f779e0a448ee.js:1
+z @ framework-a8d4f779e0a448ee.js:1
+framework-a8d4f779e0a448ee.js:1 Unrecognized feature: 'execution-while-not-rendered'.
+_ @ framework-a8d4f779e0a448ee.js:1
+(anonymous) @ framework-a8d4f779e0a448ee.js:1
+uD @ framework-a8d4f779e0a448ee.js:1
+uI @ framework-a8d4f779e0a448ee.js:1
+uM @ framework-a8d4f779e0a448ee.js:1
+uS @ framework-a8d4f779e0a448ee.js:1
+C @ framework-a8d4f779e0a448ee.js:1
+z @ framework-a8d4f779e0a448ee.js:1
+framework-a8d4f779e0a448ee.js:1 Unrecognized feature: 'execution-while-out-of-viewport'.
+_ @ framework-a8d4f779e0a448ee.js:1
+(anonymous) @ framework-a8d4f779e0a448ee.js:1
+uD @ framework-a8d4f779e0a448ee.js:1
+uI @ framework-a8d4f779e0a448ee.js:1
+uM @ framework-a8d4f779e0a448ee.js:1
+uS @ framework-a8d4f779e0a448ee.js:1
+C @ framework-a8d4f779e0a448ee.js:1
+z @ framework-a8d4f779e0a448ee.js:1
+framework-a8d4f779e0a448ee.js:1 Unrecognized feature: 'layout-animations'.
+_ @ framework-a8d4f779e0a448ee.js:1
+(anonymous) @ framework-a8d4f779e0a448ee.js:1
+uD @ framework-a8d4f779e0a448ee.js:1
+uI @ framework-a8d4f779e0a448ee.js:1
+uM @ framework-a8d4f779e0a448ee.js:1
+uS @ framework-a8d4f779e0a448ee.js:1
+C @ framework-a8d4f779e0a448ee.js:1
+z @ framework-a8d4f779e0a448ee.js:1
+framework-a8d4f779e0a448ee.js:1 Unrecognized feature: 'legacy-image-formats'.
+_ @ framework-a8d4f779e0a448ee.js:1
+(anonymous) @ framework-a8d4f779e0a448ee.js:1
+uD @ framework-a8d4f779e0a448ee.js:1
+uI @ framework-a8d4f779e0a448ee.js:1
+uM @ framework-a8d4f779e0a448ee.js:1
+uS @ framework-a8d4f779e0a448ee.js:1
+C @ framework-a8d4f779e0a448ee.js:1
+z @ framework-a8d4f779e0a448ee.js:1
+framework-a8d4f779e0a448ee.js:1 Unrecognized feature: 'navigation-override'.
+_ @ framework-a8d4f779e0a448ee.js:1
+(anonymous) @ framework-a8d4f779e0a448ee.js:1
+uD @ framework-a8d4f779e0a448ee.js:1
+uI @ framework-a8d4f779e0a448ee.js:1
+uM @ framework-a8d4f779e0a448ee.js:1
+uS @ framework-a8d4f779e0a448ee.js:1
+C @ framework-a8d4f779e0a448ee.js:1
+z @ framework-a8d4f779e0a448ee.js:1
+framework-a8d4f779e0a448ee.js:1 Unrecognized feature: 'oversized-images'.
+_ @ framework-a8d4f779e0a448ee.js:1
+(anonymous) @ framework-a8d4f779e0a448ee.js:1
+uD @ framework-a8d4f779e0a448ee.js:1
+uI @ framework-a8d4f779e0a448ee.js:1
+uM @ framework-a8d4f779e0a448ee.js:1
+uS @ framework-a8d4f779e0a448ee.js:1
+C @ framework-a8d4f779e0a448ee.js:1
+z @ framework-a8d4f779e0a448ee.js:1
+framework-a8d4f779e0a448ee.js:1 Unrecognized feature: 'publickey-credentials'.
+_ @ framework-a8d4f779e0a448ee.js:1
+(anonymous) @ framework-a8d4f779e0a448ee.js:1
+uD @ framework-a8d4f779e0a448ee.js:1
+uI @ framework-a8d4f779e0a448ee.js:1
+uM @ framework-a8d4f779e0a448ee.js:1
+uS @ framework-a8d4f779e0a448ee.js:1
+C @ framework-a8d4f779e0a448ee.js:1
+z @ framework-a8d4f779e0a448ee.js:1
+framework-a8d4f779e0a448ee.js:1 Unrecognized feature: 'speaker-selection'.
+_ @ framework-a8d4f779e0a448ee.js:1
+(anonymous) @ framework-a8d4f779e0a448ee.js:1
+uD @ framework-a8d4f779e0a448ee.js:1
+uI @ framework-a8d4f779e0a448ee.js:1
+uM @ framework-a8d4f779e0a448ee.js:1
+uS @ framework-a8d4f779e0a448ee.js:1
+C @ framework-a8d4f779e0a448ee.js:1
+z @ framework-a8d4f779e0a448ee.js:1
+framework-a8d4f779e0a448ee.js:1 Unrecognized feature: 'unoptimized-images'.
+_ @ framework-a8d4f779e0a448ee.js:1
+(anonymous) @ framework-a8d4f779e0a448ee.js:1
+uD @ framework-a8d4f779e0a448ee.js:1
+uI @ framework-a8d4f779e0a448ee.js:1
+uM @ framework-a8d4f779e0a448ee.js:1
+uS @ framework-a8d4f779e0a448ee.js:1
+C @ framework-a8d4f779e0a448ee.js:1
+z @ framework-a8d4f779e0a448ee.js:1
+framework-a8d4f779e0a448ee.js:1 Unrecognized feature: 'unsized-media'.
+_ @ framework-a8d4f779e0a448ee.js:1
+(anonymous) @ framework-a8d4f779e0a448ee.js:1
+uD @ framework-a8d4f779e0a448ee.js:1
+uI @ framework-a8d4f779e0a448ee.js:1
+uM @ framework-a8d4f779e0a448ee.js:1
+uS @ framework-a8d4f779e0a448ee.js:1
+C @ framework-a8d4f779e0a448ee.js:1
+z @ framework-a8d4f779e0a448ee.js:1
+framework-a8d4f779e0a448ee.js:1 Unrecognized feature: 'web-share'.
+_ @ framework-a8d4f779e0a448ee.js:1
+(anonymous) @ framework-a8d4f779e0a448ee.js:1
+uD @ framework-a8d4f779e0a448ee.js:1
+uI @ framework-a8d4f779e0a448ee.js:1
+uM @ framework-a8d4f779e0a448ee.js:1
+uS @ framework-a8d4f779e0a448ee.js:1
+C @ framework-a8d4f779e0a448ee.js:1
+z @ framework-a8d4f779e0a448ee.js:1
+framework-a8d4f779e0a448ee.js:1 Unrecognized feature: 'pointer-lock'.
+_ @ framework-a8d4f779e0a448ee.js:1
+(anonymous) @ framework-a8d4f779e0a448ee.js:1
+uD @ framework-a8d4f779e0a448ee.js:1
+uI @ framework-a8d4f779e0a448ee.js:1
+uM @ framework-a8d4f779e0a448ee.js:1
+uS @ framework-a8d4f779e0a448ee.js:1
+C @ framework-a8d4f779e0a448ee.js:1
+z @ framework-a8d4f779e0a448ee.js:1
+framework-a8d4f779e0a448ee.js:1 Allow attribute will take precedence over 'allowfullscreen'.
+_ @ framework-a8d4f779e0a448ee.js:1
+(anonymous) @ framework-a8d4f779e0a448ee.js:1
+uD @ framework-a8d4f779e0a448ee.js:1
+uI @ framework-a8d4f779e0a448ee.js:1
+uM @ framework-a8d4f779e0a448ee.js:1
+uS @ framework-a8d4f779e0a448ee.js:1
+C @ framework-a8d4f779e0a448ee.js:1
+z @ framework-a8d4f779e0a448ee.js:1
+framework-a8d4f779e0a448ee.js:1 Allow attribute will take precedence over 'allowpaymentrequest'.
+_ @ framework-a8d4f779e0a448ee.js:1
+(anonymous) @ framework-a8d4f779e0a448ee.js:1
+uD @ framework-a8d4f779e0a448ee.js:1
+uI @ framework-a8d4f779e0a448ee.js:1
+uM @ framework-a8d4f779e0a448ee.js:1
+uS @ framework-a8d4f779e0a448ee.js:1
+C @ framework-a8d4f779e0a448ee.js:1
+z @ framework-a8d4f779e0a448ee.js:1
+stallwart.build.js:1 stallwart: failed ping 1
+workspace_iframe.html:32 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+workspace_iframe.html:32 Unrecognized feature: 'ambient-light-sensor'.
+workspace_iframe.html:32 Unrecognized feature: 'battery'.
+workspace_iframe.html:32 Unrecognized feature: 'execution-while-not-rendered'.
+workspace_iframe.html:32 Unrecognized feature: 'execution-while-out-of-viewport'.
+workspace_iframe.html:32 Unrecognized feature: 'layout-animations'.
+workspace_iframe.html:32 Unrecognized feature: 'legacy-image-formats'.
+workspace_iframe.html:32 Unrecognized feature: 'navigation-override'.
+workspace_iframe.html:32 Unrecognized feature: 'oversized-images'.
+workspace_iframe.html:32 Unrecognized feature: 'publickey-credentials'.
+workspace_iframe.html:32 Unrecognized feature: 'speaker-selection'.
+workspace_iframe.html:32 Unrecognized feature: 'unoptimized-images'.
+workspace_iframe.html:32 Unrecognized feature: 'unsized-media'.
+workspace_iframe.html:32 Unrecognized feature: 'web-share'.
+workspace_iframe.html:32 Allow attribute will take precedence over 'allowfullscreen'.
+workspace_iframe.html:32 Allow attribute will take precedence over 'allowpaymentrequest'.
+2cc53e8d-20ae-45b9-89e0-59eb4439d1ce-00-2y0e5u22f649a.janeway.replit.dev/:1 The page requested an origin-keyed agent cluster using the Origin-Agent-Cluster header, but could not be origin-keyed since the origin 'https://2cc53e8d-20ae-45b9-89e0-59eb4439d1ce-00-2y0e5u22f649a.janeway.replit.dev' had previously been placed in a site-keyed agent cluster. Update your headers to uniformly request origin-keying for all pages on the origin.
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 2
+stallwart.build.js:1 stallwart: failed ping 3
+stallwart.build.js:1 stallwart: failed ping 4
+stallwart.build.js:1 stallwart: failed ping 5
+stallwart.build.js:1 stallwart: session stalled
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/pages/_app-da9a1e2067458860.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/275e5802-1a17ce9a4707112a.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/f44716c1-f969ccb83986a378.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/7973e378-671ea5fd288ea075.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/44cb5275-348dc2d2c2312de0.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/9c08d426-9698c7c66266f84a.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/27dcceb2-d19479670ec4d775.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/1938-1236b8e80bd99a72.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/2315-0dd7817e8002562c.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/8463-3b0f42e8b3b9f09b.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/2647-59bd296e4b460164.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/6614-7535753c4d13150e.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/7368-f394cf1307f8a328.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/8508-27082908bf55739b.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/9066-161b547253ea78f6.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/1425-f5fa7d8b52bad2b3.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/4611-ec85d9524e2178a9.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/4357-ee3340f2b31fea09.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/3030-c4d56689c58b4150.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/2634-640ed6ce8f5ef59b.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/6549-f6e10bb5090d9439.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/4739-51603081a4874444.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/5621-4d83392827235851.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/6128-d2f7453946196c7c.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/4254-3a0ced63ff89d294.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/4490-8c1eeb11a4d275a1.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/5091-e48d866a78059b0d.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/549-dcf14863f49396f6.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/1630-cdd8c2cb2b874135.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/2372-311d11eae00a9a74.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/6631-e1e43f17b07c5f46.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/6504-94ef618d9d0fb5e7.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/649-64825e6ca5274a44.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/580-b5b629c375805c3e.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/3655-c021636cca944bce.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/474-dc993ebf5c2e1a0f.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/5235-429cdda966093a2e.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/9362-2c43246af19ee4a7.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/9451-7d839ac25fc7c1cb.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/7313-16b90a100079bc6e.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/1701-d7d3fb3b359f6bf3.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/3245-22550d6da36bae10.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/1316-6ae58e83cde4c019.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/2290-f00c52a89931ee82.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/3577-144b2ef13437fe52.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/8229-607840c8f4d6fc3a.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/3739-38df94b5ec482b8d.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/464-8fd82fd1bafcd1ff.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/1520-e8e1794022210356.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/7623-e619ca8b9c6a3538.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/8519-5a325945751a06dc.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/7580-9a4271e81de8e03e.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/251-5279711aa35bc899.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/4869-54b8a4eebcabb342.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/2669-7fd91157a2a2ccd1.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/5296-4e425b936452b3ab.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/479-69d29d0dc0cdbc4f.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/7682-92e86b188c9b9c42.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/4908-7cc4821e7ac27447.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/1990-7e360c4cf9aa2899.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/7276-fab2439ab5abd7c1.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/4796-ecdf100503a6f333.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/837-0b897fbab287db0c.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/7420-136294b7e65ef525.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/1574-36a1d32a43cb0485.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/7949-bbfd6312a8c4478a.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/8010-3bd4f0c1964ad905.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/3953-c646ea562333a39c.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/1973-6db651b5df7d85db.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/3820-504342d295e2d3a1.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/7339-808faa24d0576a7b.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/9398-a206e5b841477ba9.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/3251-b1d8b09c248c3e59.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/4644-a2966af73daddb22.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/662-b2d955cc056864c9.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/7410-e5aee885e2ccece1.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/9649-4486261fe1c3ae5f.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/8200-eb7c78343d9cd76f.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/pages/replEnvironmentDesktop-d3437dd0a4ab3f3d.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.segment.com/next-integrations/actions/tiktok-pixel/1526190d7b84ef9800b4.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/5123.c2d015bad0e9ce16.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.segment.com/next-integrations/actions/845/b71991e64b93843f6eeb.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.segment.com/next-integrations/integrations/twitter-ads/2.5.4/twitter-ads.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.segment.com/next-integrations/integrations/google-adwords-new/1.3.0/google-adwords-new.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.segment.com/next-integrations/integrations/google-analytics/2.18.6/google-analytics.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.segment.com/next-integrations/integrations/vendor/commons.59560acdd69ed701c941.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.segment.com/next-integrations/integrations/vendor/commons.a61d7bea37d2de5d4b69.js.map: Load canceled due to load timeout
+js?id=AW-11411994397:134          GET https://googleads.g.doubleclick.net/pagead/viewthroughconversion/11411994397/?random=1758198403053&cv=11&fst=1758198403053&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be59g0v9171242957za200zd9171242957xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=101509157~103116026~103200004~103233427~104527906~104528500~104630779~104630781~104684208~104684211~104948813~105367987~105367989~105424848~105426769~105426771~115480710~115616986~115688283~115688285&u_w=1920&u_h=1080&url=https%3A%2F%2Freplit.com%2F%40goryacheff%2FAltaSlab&ref=https%3A%2F%2Freplit.com%2Flogin%3Fgoto%3D%252F%2540goryacheff%252FAltaSlab%26redirecting%3D1&frm=0&tiba=AltaSlab%20-%20Replit&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=275680381.1758193055&data=event%3Dgtag.config&rfmt=3&fmt=4 net::ERR_TIMED_OUT
+Lc @ js?id=AW-11411994397:134
+Qk @ js?id=AW-11411994397:276
+el @ js?id=AW-11411994397:278
+ez @ js?id=AW-11411994397:564
+(anonymous) @ js?id=AW-11411994397:571
+pz @ js?id=AW-11411994397:575
+qz @ js?id=AW-11411994397:570
+gJ @ js?id=AW-11411994397:697
+UJ @ js?id=AW-11411994397:716
+f @ js?id=AW-11411994397:717
+(anonymous) @ js?id=AW-11411994397:719
+vl @ js?id=AW-11411994397:288
+In @ js?id=AW-11411994397:308
+WJ @ js?id=AW-11411994397:719
+v @ js?id=AW-11411994397:354
+El @ js?id=AW-11411994397:290
+Lp @ js?id=AW-11411994397:354
+Kp.flush @ js?id=AW-11411994397:358
+Kp.push @ js?id=AW-11411994397:356
+config @ js?id=AW-11411994397:608
+KB @ js?id=AW-11411994397:616
+NB.b.push @ js?id=AW-11411994397:622
+window.gtag @ google-adwords-new.dynamic.js.gz:1
+(anonymous) @ google-adwords-new.dynamic.js.gz:1
+(anonymous) @ commons.a61d7bea37d2de5d4b69.js.gz:1
+(anonymous) @ commons.a61d7bea37d2de5d4b69.js.gz:1
+n @ _app-da9a1e2067458860.js:38
+load (async)
+(anonymous) @ _app-da9a1e2067458860.js:38
+(anonymous) @ _app-da9a1e2067458860.js:38
+(anonymous) @ commons.a61d7bea37d2de5d4b69.js.gz:1
+t.exports @ commons.a61d7bea37d2de5d4b69.js.gz:1
+YoZL.t.exports @ commons.a61d7bea37d2de5d4b69.js.gz:1
+e.load @ commons.a61d7bea37d2de5d4b69.js.gz:1
+OMmk.d.initialize @ google-adwords-new.dynamic.js.gz:1
+initialize @ commons.a61d7bea37d2de5d4b69.js.gz:1
+(anonymous) @ index.ts:171
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+s @ tslib.es6.js:73
+Promise.then (async)
+a @ tslib.es6.js:76
+(anonymous) @ tslib.es6.js:76
+u @ tslib.es6.js:72
+t.load @ ajs-destination.bundle.8e6b895db75187c55313.js:1
+(anonymous) @ event-queue.js:50
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+(anonymous) @ tslib.es6.js:80
+u @ tslib.es6.js:72
+n.register @ event-queue.js:30
+(anonymous) @ index.ts:410
+(anonymous) @ index.ts:408
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+(anonymous) @ tslib.es6.js:80
+u @ tslib.es6.js:72
+n.register @ index.ts:404
+(anonymous) @ index.ts:200
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+s @ tslib.es6.js:73
+Promise.then (async)
+a @ tslib.es6.js:76
+s @ tslib.es6.js:73
+Promise.then (async)
+a @ tslib.es6.js:76
+s @ tslib.es6.js:73
+Promise.then (async)
+a @ tslib.es6.js:76
+s @ tslib.es6.js:73
+Promise.then (async)
+a @ tslib.es6.js:76
+(anonymous) @ tslib.es6.js:76
+u @ tslib.es6.js:72
+ne @ index.ts:116
+(anonymous) @ index.ts:304
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+s @ tslib.es6.js:73
+Promise.then (async)
+a @ tslib.es6.js:76
+(anonymous) @ tslib.es6.js:76
+u @ tslib.es6.js:72
+re @ index.ts:239
+(anonymous) @ index.ts:338
+Promise.then (async)
+(anonymous) @ index.ts:339
+t @ index.ts:307
+n @ index.ts:337
+n.load @ index.ts:389
+n.standalone @ index.ts:393
+(anonymous) @ standalone-analytics.ts:53
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+(anonymous) @ tslib.es6.js:80
+u @ tslib.es6.js:72
+se @ standalone-analytics.ts:49
+(anonymous) @ standalone.ts:69
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+(anonymous) @ tslib.es6.js:80
+u @ tslib.es6.js:72
+de @ sdk.min.js:1
+(anonymous) @ sdk.min.js:1
+(anonymous) @ sdk.min.js:1
+(anonymous) @ sdk.min.js:1
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/2899.bd30c6972b2b7e51.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/8531.01b0ba941270db01.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/6344.bf16633728b86d9b.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/127.68ad4449b462edca.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/9228.1b9aa4c5cf6b9403.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/1227.e357a2e0239f1279.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/427.4df953f44f260638.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/7b975a49.40ac63e30402ac11.js.map: Load canceled due to load timeout
+DevTools failed to load source map: Could not load content for https://cdn.replit.com/_next/static/chunks/6613.6089a8e4cd72e087.js.map: Load canceled due to load timeout
+eruda.js:2 Hero image loaded: Производственные мощности АЛЬТА СЛЭБ
+eruda.js:2 Hero image loaded: Качественные строительные материалы
+eruda.js:2 Hero image loaded: Высокотехнологичное производство панелей
+DevTools failed to load source map: Could not load content for https://2cc53e8d-20ae-45b9-89e0-59eb4439d1ce-00-2y0e5u22f649a.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js.map: Load canceled due to load timeout
+eruda.js:2 Hero image loaded: Инновационные решения для строительства
+eruda.js:2 Hero image loaded: Современное оборудование и технологии
+_app-da9a1e2067458860.js:38          POST https://stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j102&tid=UA-25629695-1&cid=1664906428.1758193055&jid=619656198&gjid=1328107613&_gid=901976357.1758193055&_u=SCCAgEAjQAAAAGgCIAD~&z=783636619 net::ERR_TIMED_OUT
+(anonymous) @ _app-da9a1e2067458860.js:38
+(anonymous) @ _app-da9a1e2067458860.js:38
+wd @ analytics.js:46
+pe @ analytics.js:44
+(anonymous) @ analytics.js:83
+Ha.D @ analytics.js:47
+pc.send @ analytics.js:87
+X.b.<computed> @ analytics.js:68
+Z.v @ analytics.js:102
+Z.D @ analytics.js:101
+N @ analytics.js:103
+w.track @ google-analytics.dynamic.js.gz:1
+track @ commons.59560acdd69ed701c941.js.gz:1
+e.invoke @ commons.59560acdd69ed701c941.js.gz:1
+(anonymous) @ index.ts:270
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+s @ tslib.es6.js:73
+Promise.then (async)
+a @ tslib.es6.js:76
+(anonymous) @ tslib.es6.js:76
+u @ tslib.es6.js:72
+t.send @ ajs-destination.bundle.8e6b895db75187c55313.js:1
+(anonymous) @ index.ts:286
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+(anonymous) @ tslib.es6.js:80
+u @ tslib.es6.js:72
+t.track @ ajs-destination.bundle.8e6b895db75187c55313.js:1
+(anonymous) @ delivery.js:28
+(anonymous) @ delivery.js:11
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+(anonymous) @ tslib.es6.js:80
+u @ tslib.es6.js:72
+(anonymous) @ delivery.js:4
+o @ delivery.js:27
+(anonymous) @ event-queue.js:325
+(anonymous) @ event-queue.js:323
+n @ _app-da9a1e2067458860.js:38
+setTimeout (async)
+(anonymous) @ _app-da9a1e2067458860.js:38
+(anonymous) @ event-queue.js:321
+(anonymous) @ event-queue.js:320
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+s @ tslib.es6.js:73
+Promise.then (async)
+a @ tslib.es6.js:76
+s @ tslib.es6.js:73
+Promise.then (async)
+a @ tslib.es6.js:76
+(anonymous) @ tslib.es6.js:76
+u @ tslib.es6.js:72
+n.flushOne @ event-queue.js:273
+(anonymous) @ event-queue.js:181
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+s @ tslib.es6.js:73
+Promise.then (async)
+a @ tslib.es6.js:76
+(anonymous) @ tslib.es6.js:76
+u @ tslib.es6.js:72
+n.deliver @ event-queue.js:169
+(anonymous) @ event-queue.js:135
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+(anonymous) @ tslib.es6.js:80
+u @ tslib.es6.js:72
+n.dispatchSingle @ event-queue.js:128
+(anonymous) @ dispatch.js:25
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+(anonymous) @ tslib.es6.js:80
+u @ tslib.es6.js:72
+p @ dispatch.js:18
+(anonymous) @ index.ts:460
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+(anonymous) @ tslib.es6.js:80
+u @ tslib.es6.js:72
+n._dispatch @ index.ts:454
+(anonymous) @ index.ts:253
+(anonymous) @ tslib.es6.js:103
+(anonymous) @ tslib.es6.js:108
+(anonymous) @ tslib.es6.js:80
+u @ tslib.es6.js:72
+n.track @ index.ts:241
+A @ _app-da9a1e2067458860.js:1
+(anonymous) @ replEnvironmentDesktop-d3437dd0a4ab3f3d.js:2
+(anonymous) @ main-4a72a4f8dcd0f288.js:1
+n @ main-4a72a4f8dcd0f288.js:1
+u @ main-4a72a4f8dcd0f288.js:1
+Promise.then (async)
+n @ main-4a72a4f8dcd0f288.js:1
+u @ main-4a72a4f8dcd0f288.js:1
+(anonymous) @ main-4a72a4f8dcd0f288.js:1
+(anonymous) @ main-4a72a4f8dcd0f288.js:1
+(anonymous) @ replEnvironmentDesktop-d3437dd0a4ab3f3d.js:2
+n @ _app-da9a1e2067458860.js:38
+setTimeout (async)
+(anonymous) @ _app-da9a1e2067458860.js:38
+(anonymous) @ replEnvironmentDesktop-d3437dd0a4ab3f3d.js:2
+oO @ framework-a8d4f779e0a448ee.js:1
+uB @ framework-a8d4f779e0a448ee.js:1
+(anonymous) @ framework-a8d4f779e0a448ee.js:1
+uO @ framework-a8d4f779e0a448ee.js:1
+u_ @ framework-a8d4f779e0a448ee.js:1
+r6 @ framework-a8d4f779e0a448ee.js:1
+(anonymous) @ framework-a8d4f779e0a448ee.js:1
+eruda.js:2 Loading Yandex Maps v3 for Russia...
+WhereToBuy.tsx? [sm]:227 Refused to load the script 'https://api-maps.yandex.ru/v3/?apikey=0e8aff63-579c-4dd3-b4cb-c2b48b0d4b93&lang=ru_RU' because it violates the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://replit.com". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+
+loadYandexMapsV3 @ WhereToBuy.tsx? [sm]:227
+(anonymous) @ WhereToBuy.tsx? [sm]:234
+commitHookEffectListMount @ react-dom.development.js:23189
+commitPassiveMountOnFiber @ react-dom.development.js:24965
+commitPassiveMountEffects_complete @ react-dom.development.js:24930
+commitPassiveMountEffects_begin @ react-dom.development.js:24917
+commitPassiveMountEffects @ react-dom.development.js:24905
+flushPassiveEffectsImpl @ react-dom.development.js:27078
+flushPassiveEffects @ react-dom.development.js:27023
+commitRootImpl @ react-dom.development.js:26974
+commitRoot @ react-dom.development.js:26721
+performSyncWorkOnRoot @ react-dom.development.js:26156
+flushSyncCallbacks @ react-dom.development.js:12042
+(anonymous) @ react-dom.development.js:25690
+Show 12 more frames
+eruda.js:2 Failed to load Yandex Maps v3 script: Event {isTrusted: true, type: 'error', target: script, currentTarget: script, eventPhase: 2, …}
+Mt.forEach.n.<computed> @ eruda.js:2
+script.onerror @ WhereToBuy.tsx? [sm]:206
+error (async)
+loadYandexMapsV3 @ WhereToBuy.tsx? [sm]:204
+(anonymous) @ WhereToBuy.tsx? [sm]:234
+commitHookEffectListMount @ react-dom.development.js:23189
+commitPassiveMountOnFiber @ react-dom.development.js:24965
+commitPassiveMountEffects_complete @ react-dom.development.js:24930
+commitPassiveMountEffects_begin @ react-dom.development.js:24917
+commitPassiveMountEffects @ react-dom.development.js:24905
+flushPassiveEffectsImpl @ react-dom.development.js:27078
+flushPassiveEffects @ react-dom.development.js:27023
+commitRootImpl @ react-dom.development.js:26974
+commitRoot @ react-dom.development.js:26721
+performSyncWorkOnRoot @ react-dom.development.js:26156
+flushSyncCallbacks @ react-dom.development.js:12042
+(anonymous) @ react-dom.development.js:25690
+Show 12 more frames
+eruda.js:2 Script URL: https://api-maps.yandex.ru/v3/?apikey=0e8aff63-579c-4dd3-b4cb-c2b48b0d4b93&lang=ru_RU
+Mt.forEach.n.<computed> @ eruda.js:2
+script.onerror @ WhereToBuy.tsx? [sm]:207
+error (async)
+loadYandexMapsV3 @ WhereToBuy.tsx? [sm]:204
+(anonymous) @ WhereToBuy.tsx? [sm]:234
+commitHookEffectListMount @ react-dom.development.js:23189
+commitPassiveMountOnFiber @ react-dom.development.js:24965
+commitPassiveMountEffects_complete @ react-dom.development.js:24930
+commitPassiveMountEffects_begin @ react-dom.development.js:24917
+commitPassiveMountEffects @ react-dom.development.js:24905
+flushPassiveEffectsImpl @ react-dom.development.js:27078
+flushPassiveEffects @ react-dom.development.js:27023
+commitRootImpl @ react-dom.development.js:26974
+commitRoot @ react-dom.development.js:26721
+performSyncWorkOnRoot @ react-dom.development.js:26156
+flushSyncCallbacks @ react-dom.development.js:12042
+(anonymous) @ react-dom.development.js:25690
+Show 12 more frames
+eruda.js:2 Current domain: 2cc53e8d-20ae-45b9-89e0-59eb4439d1ce-00-2y0e5u22f649a.janeway.replit.dev
+Mt.forEach.n.<computed> @ eruda.js:2
+script.onerror @ WhereToBuy.tsx? [sm]:208
+error (async)
+loadYandexMapsV3 @ WhereToBuy.tsx? [sm]:204
+(anonymous) @ WhereToBuy.tsx? [sm]:234
+commitHookEffectListMount @ react-dom.development.js:23189
+commitPassiveMountOnFiber @ react-dom.development.js:24965
+commitPassiveMountEffects_complete @ react-dom.development.js:24930
+commitPassiveMountEffects_begin @ react-dom.development.js:24917
+commitPassiveMountEffects @ react-dom.development.js:24905
+flushPassiveEffectsImpl @ react-dom.development.js:27078
+flushPassiveEffects @ react-dom.development.js:27023
+commitRootImpl @ react-dom.development.js:26974
+commitRoot @ react-dom.development.js:26721
+performSyncWorkOnRoot @ react-dom.development.js:26156
+flushSyncCallbacks @ react-dom.development.js:12042
+(anonymous) @ react-dom.development.js:25690
+Show 12 more frames
+eruda.js:2 Current referer: https://2cc53e8d-20ae-45b9-89e0-59eb4439d1ce-00-2y0e5u22f649a.janeway.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar1o%3A
+Mt.forEach.n.<computed> @ eruda.js:2
+script.onerror @ WhereToBuy.tsx? [sm]:209
+error (async)
+loadYandexMapsV3 @ WhereToBuy.tsx? [sm]:204
+(anonymous) @ WhereToBuy.tsx? [sm]:234
+commitHookEffectListMount @ react-dom.development.js:23189
+commitPassiveMountOnFiber @ react-dom.development.js:24965
+commitPassiveMountEffects_complete @ react-dom.development.js:24930
+commitPassiveMountEffects_begin @ react-dom.development.js:24917
+commitPassiveMountEffects @ react-dom.development.js:24905
+flushPassiveEffectsImpl @ react-dom.development.js:27078
+flushPassiveEffects @ react-dom.development.js:27023
+commitRootImpl @ react-dom.development.js:26974
+commitRoot @ react-dom.development.js:26721
+performSyncWorkOnRoot @ react-dom.development.js:26156
+flushSyncCallbacks @ react-dom.development.js:12042
+(anonymous) @ react-dom.development.js:25690
+Show 12 more frames
+2cc53e8d-20ae-45b9-89e0-59eb4439d1ce-00-2y0e5u22f649a.janeway.replit.dev/where-to-buy:1 Access to fetch at 'https://api-maps.yandex.ru/v3/?apikey=0e8aff63-579c-4dd3-b4cb-c2b48b0d4b93&lang=ru_RU' from origin 'https://2cc53e8d-20ae-45b9-89e0-59eb4439d1ce-00-2y0e5u22f649a.janeway.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+eruda.js:2          GET https://api-maps.yandex.ru/v3/?apikey=0e8aff63-579c-4dd3-b4cb-c2b48b0d4b93&lang=ru_RU net::ERR_FAILED 200
+window.fetch @ eruda.js:2
+apply @ injected.js:278
+script.onerror @ WhereToBuy.tsx? [sm]:212
+error (async)
+loadYandexMapsV3 @ WhereToBuy.tsx? [sm]:204
+(anonymous) @ WhereToBuy.tsx? [sm]:234
+commitHookEffectListMount @ react-dom.development.js:23189
+commitPassiveMountOnFiber @ react-dom.development.js:24965
+commitPassiveMountEffects_complete @ react-dom.development.js:24930
+commitPassiveMountEffects_begin @ react-dom.development.js:24917
+commitPassiveMountEffects @ react-dom.development.js:24905
+flushPassiveEffectsImpl @ react-dom.development.js:27078
+flushPassiveEffects @ react-dom.development.js:27023
+commitRootImpl @ react-dom.development.js:26974
+commitRoot @ react-dom.development.js:26721
+performSyncWorkOnRoot @ react-dom.development.js:26156
+flushSyncCallbacks @ react-dom.development.js:12042
+(anonymous) @ react-dom.development.js:25690
+Show 12 more frames
+eruda.js:2 API URL fetch failed: TypeError: Failed to fetch
+    at window.fetch (eruda.js:2:218642)
+    at Object.apply (injected.js:278:39)
+    at script.onerror (WhereToBuy.tsx? [sm]:212:11)
+Mt.forEach.n.<computed> @ eruda.js:2
+(anonymous) @ WhereToBuy.tsx? [sm]:221
+Promise.catch (async)
+script.onerror @ WhereToBuy.tsx? [sm]:220
+error (async)
+loadYandexMapsV3 @ WhereToBuy.tsx? [sm]:204
+(anonymous) @ WhereToBuy.tsx? [sm]:234
+commitHookEffectListMount @ react-dom.development.js:23189
+commitPassiveMountOnFiber @ react-dom.development.js:24965
+commitPassiveMountEffects_complete @ react-dom.development.js:24930
+commitPassiveMountEffects_begin @ react-dom.development.js:24917
+commitPassiveMountEffects @ react-dom.development.js:24905
+flushPassiveEffectsImpl @ react-dom.development.js:27078
+flushPassiveEffects @ react-dom.development.js:27023
+commitRootImpl @ react-dom.development.js:26974
+commitRoot @ react-dom.development.js:26721
+performSyncWorkOnRoot @ react-dom.development.js:26156
+flushSyncCallbacks @ react-dom.development.js:12042
+(anonymous) @ react-dom.development.js:25690
+Show 12 more frames
+eruda.js:2                  Uncaught (in promise) TypeError: Failed to fetch
+    at window.fetch (eruda.js:2:218642)
+    at Object.apply (injected.js:278:39)
+    at script.onerror (WhereToBuy.tsx? [sm]:212:11)
+window.fetch @ eruda.js:2
+apply @ injected.js:278
+script.onerror @ WhereToBuy.tsx? [sm]:212
+Promise.then (async)
+t.send @ eruda.js:2
+window.fetch @ eruda.js:2
+apply @ injected.js:278
+script.onerror @ WhereToBuy.tsx? [sm]:212
+error (async)
+loadYandexMapsV3 @ WhereToBuy.tsx? [sm]:204
+(anonymous) @ WhereToBuy.tsx? [sm]:234
+commitHookEffectListMount @ react-dom.development.js:23189
+commitPassiveMountOnFiber @ react-dom.development.js:24965
+commitPassiveMountEffects_complete @ react-dom.development.js:24930
+commitPassiveMountEffects_begin @ react-dom.development.js:24917
+commitPassiveMountEffects @ react-dom.development.js:24905
+flushPassiveEffectsImpl @ react-dom.development.js:27078
+flushPassiveEffects @ react-dom.development.js:27023
+commitRootImpl @ react-dom.development.js:26974
+commitRoot @ react-dom.development.js:26721
+performSyncWorkOnRoot @ react-dom.development.js:26156
+flushSyncCallbacks @ react-dom.development.js:12042
+(anonymous) @ react-dom.development.js:25690
+Show 12 more frames
+2cc53e8d-20ae-45b9-89e0-59eb4439d1ce-00-2y0e5u22f649a.janeway.replit.dev/where-to-buy:1 Access to fetch at 'https://ipapi.co/json/' from origin 'https://2cc53e8d-20ae-45b9-89e0-59eb4439d1ce-00-2y0e5u22f649a.janeway.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+eruda.js:2          GET https://ipapi.co/json/ net::ERR_FAILED 403
+window.fetch @ eruda.js:2
+apply @ injected.js:278
+detectRegion @ WhereToBuy.tsx? [sm]:90
+(anonymous) @ WhereToBuy.tsx? [sm]:118
+commitHookEffectListMount @ react-dom.development.js:23189
+commitPassiveMountOnFiber @ react-dom.development.js:24965
+commitPassiveMountEffects_complete @ react-dom.development.js:24930
+commitPassiveMountEffects_begin @ react-dom.development.js:24917
+commitPassiveMountEffects @ react-dom.development.js:24905
+flushPassiveEffectsImpl @ react-dom.development.js:27078
+flushPassiveEffects @ react-dom.development.js:27023
+commitRootImpl @ react-dom.development.js:26974
+commitRoot @ react-dom.development.js:26721
+performSyncWorkOnRoot @ react-dom.development.js:26156
+flushSyncCallbacks @ react-dom.development.js:12042
+(anonymous) @ react-dom.development.js:25690
+Show 12 more frames
+eruda.js:2 Could not detect region: TypeError: Failed to fetch
+    at window.fetch (eruda.js:2:218642)
+    at Object.apply (injected.js:278:39)
+    at detectRegion (WhereToBuy.tsx? [sm]:90:32)
+    at WhereToBuy.tsx? [sm]:118:5
+    at commitHookEffectListMount (react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (react-dom.development.js:24965:13)
+    at commitPassiveMountEffects_complete (react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (react-dom.development.js:27078:3)
+Mt.forEach.n.<computed> @ eruda.js:2
+detectRegion @ WhereToBuy.tsx? [sm]:113
+await in detectRegion (async)
+(anonymous) @ WhereToBuy.tsx? [sm]:118
+commitHookEffectListMount @ react-dom.development.js:23189
+commitPassiveMountOnFiber @ react-dom.development.js:24965
+commitPassiveMountEffects_complete @ react-dom.development.js:24930
+commitPassiveMountEffects_begin @ react-dom.development.js:24917
+commitPassiveMountEffects @ react-dom.development.js:24905
+flushPassiveEffectsImpl @ react-dom.development.js:27078
+flushPassiveEffects @ react-dom.development.js:27023
+commitRootImpl @ react-dom.development.js:26974
+commitRoot @ react-dom.development.js:26721
+performSyncWorkOnRoot @ react-dom.development.js:26156
+flushSyncCallbacks @ react-dom.development.js:12042
+(anonymous) @ react-dom.development.js:25690
+Show 12 more frames
+eruda.js:2                  Uncaught (in promise) TypeError: Failed to fetch
+    at window.fetch (eruda.js:2:218642)
+    at Object.apply (injected.js:278:39)
+    at detectRegion (WhereToBuy.tsx? [sm]:90:32)
+    at WhereToBuy.tsx? [sm]:118:5
+    at commitHookEffectListMount (react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (react-dom.development.js:24965:13)
+    at commitPassiveMountEffects_complete (react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (react-dom.development.js:27078:3)
+window.fetch @ eruda.js:2
+apply @ injected.js:278
+detectRegion @ WhereToBuy.tsx? [sm]:90
+(anonymous) @ WhereToBuy.tsx? [sm]:118
+commitHookEffectListMount @ react-dom.development.js:23189
+commitPassiveMountOnFiber @ react-dom.development.js:24965
+commitPassiveMountEffects_complete @ react-dom.development.js:24930
+commitPassiveMountEffects_begin @ react-dom.development.js:24917
+commitPassiveMountEffects @ react-dom.development.js:24905
+flushPassiveEffectsImpl @ react-dom.development.js:27078
+flushPassiveEffects @ react-dom.development.js:27023
+commitRootImpl @ react-dom.development.js:26974
+commitRoot @ react-dom.development.js:26721
+performSyncWorkOnRoot @ react-dom.development.js:26156
+flushSyncCallbacks @ react-dom.development.js:12042
+(anonymous) @ react-dom.development.js:25690
+Promise.then (async)
+t.send @ eruda.js:2
+window.fetch @ eruda.js:2
+apply @ injected.js:278
+detectRegion @ WhereToBuy.tsx? [sm]:90
+(anonymous) @ WhereToBuy.tsx? [sm]:118
+commitHookEffectListMount @ react-dom.development.js:23189
+commitPassiveMountOnFiber @ react-dom.development.js:24965
+commitPassiveMountEffects_complete @ react-dom.development.js:24930
+commitPassiveMountEffects_begin @ react-dom.development.js:24917
+commitPassiveMountEffects @ react-dom.development.js:24905
+flushPassiveEffectsImpl @ react-dom.development.js:27078
+flushPassiveEffects @ react-dom.development.js:27023
+commitRootImpl @ react-dom.development.js:26974
+commitRoot @ react-dom.development.js:26721
+performSyncWorkOnRoot @ react-dom.development.js:26156
+flushSyncCallbacks @ react-dom.development.js:12042
+(anonymous) @ react-dom.development.js:25690
+Show 24 more frames

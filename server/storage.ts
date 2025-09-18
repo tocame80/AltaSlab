@@ -214,7 +214,15 @@ export class DatabaseStorage implements IStorage {
       const result = await db.select().from(galleryProjects).orderBy(asc(galleryProjects.sortOrder));
       console.log('DatabaseStorage: Successfully queried galleryProjects, got', result.length, 'projects');
       // Filter active projects in application layer as fallback
-      return result.filter((p: any) => p.isActive !== 0);
+      const activeProjects = result.filter((p: any) => p.isActive !== 0);
+      
+      // Use fallback if database is empty
+      if (activeProjects.length === 0) {
+        console.log('DatabaseStorage: Database empty, using static fallback data for gallery projects');
+        return this.getFallbackGalleryProjects();
+      }
+      
+      return activeProjects;
     } catch (error: any) {
       console.error('DatabaseStorage: Error querying galleryProjects:', error);
       console.log('DatabaseStorage: Using static fallback data for gallery projects');
@@ -364,7 +372,15 @@ export class DatabaseStorage implements IStorage {
       const result = await db.select().from(catalogProducts).orderBy(asc(catalogProducts.sortOrder));
       console.log('DatabaseStorage: Successfully queried catalogProducts, got', result.length, 'products');
       // Filter active products in application layer as fallback
-      return result.filter((p: any) => p.isActive !== 0);
+      const activeProducts = result.filter((p: any) => p.isActive !== 0);
+      
+      // Use fallback if database is empty
+      if (activeProducts.length === 0) {
+        console.log('DatabaseStorage: Database empty, using static fallback data for catalog products');
+        return this.getFallbackCatalogProducts();
+      }
+      
+      return activeProducts;
     } catch (error: any) {
       console.error('DatabaseStorage: Error querying catalogProducts:', error);
       console.log('DatabaseStorage: Using static fallback data for catalog products');
