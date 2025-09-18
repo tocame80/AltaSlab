@@ -22,11 +22,11 @@ function validateEnvironment() {
 validateEnvironment();
 
 // Initialize database connection early
-import { db } from "./db";
+import { initializeConnection } from "./db";
 async function initDatabase() {
   try {
     console.log('Initializing database connection at startup...');
-    await (db as any).init();
+    await initializeConnection();
     console.log('Database initialized successfully');
   } catch (error) {
     console.error('Database initialization failed:', error);

@@ -1,6 +1,6 @@
 import { type User, type InsertUser, type Certificate, type InsertCertificate, type InstallationInstruction, type InsertInstallationInstruction, type VideoInstruction, type InsertVideoInstruction, type HeroImage, type InsertHeroImage, type GalleryProject, type InsertGalleryProject, type DealerLocation, type InsertDealerLocation, type CatalogProduct, type InsertCatalogProduct, users, certificates, installationInstructions, videoInstructions, heroImages, galleryProjects, dealerLocations, catalogProducts } from "@shared/schema";
 import { db } from "./db";
-import { eq, asc } from "drizzle-orm";
+import { eq, asc, sql } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -103,7 +103,7 @@ export class DatabaseStorage implements IStorage {
   async updateCertificate(id: string, updates: Partial<InsertCertificate>): Promise<Certificate> {
     const [certificate] = await db
       .update(certificates)
-      .set({ ...updates, updatedAt: new Date() })
+      .set({ ...updates, updatedAt: new Date().toISOString() })
       .where(eq(certificates.id, id))
       .returning();
     return certificate;
@@ -134,7 +134,7 @@ export class DatabaseStorage implements IStorage {
   async updateInstallationInstruction(id: string, updates: Partial<InsertInstallationInstruction>): Promise<InstallationInstruction> {
     const [instruction] = await db
       .update(installationInstructions)
-      .set({ ...updates, updatedAt: new Date() })
+      .set({ ...updates, updatedAt: new Date().toISOString() })
       .where(eq(installationInstructions.id, id))
       .returning();
     return instruction;
@@ -165,7 +165,7 @@ export class DatabaseStorage implements IStorage {
   async updateVideoInstruction(id: string, updates: Partial<InsertVideoInstruction>): Promise<VideoInstruction> {
     const [videoInstruction] = await db
       .update(videoInstructions)
-      .set({ ...updates, updatedAt: new Date() })
+      .set({ ...updates, updatedAt: new Date().toISOString() })
       .where(eq(videoInstructions.id, id))
       .returning();
     return videoInstruction;
@@ -196,7 +196,7 @@ export class DatabaseStorage implements IStorage {
   async updateHeroImage(id: string, updates: Partial<InsertHeroImage>): Promise<HeroImage> {
     const [heroImage] = await db
       .update(heroImages)
-      .set({ ...updates, updatedAt: new Date() })
+      .set({ ...updates, updatedAt: new Date().toISOString() })
       .where(eq(heroImages.id, id))
       .returning();
     return heroImage;
@@ -237,8 +237,8 @@ export class DatabaseStorage implements IStorage {
         year: "2024",
         isActive: 1,
         sortOrder: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "2307e4c9-4029-48f0-b69d-bee202a9c5e1",
@@ -252,8 +252,8 @@ export class DatabaseStorage implements IStorage {
         year: "2024",
         isActive: 1,
         sortOrder: 2,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "a91f384e-755c-48f7-946e-25651f05077a",
@@ -267,8 +267,8 @@ export class DatabaseStorage implements IStorage {
         year: "2024",
         isActive: 1,
         sortOrder: 3,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "b12f394f-866d-59g8-a57f-36752g16088b",
@@ -282,8 +282,8 @@ export class DatabaseStorage implements IStorage {
         year: "2023",
         isActive: 1,
         sortOrder: 4,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       }
     ];
   }
@@ -304,7 +304,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateGalleryProject(id: string, updates: Partial<InsertGalleryProject>): Promise<GalleryProject> {
-    const updateData: any = { ...updates, updatedAt: new Date() };
+    const updateData: any = { ...updates, updatedAt: new Date().toISOString() };
     const [galleryProject] = await db
       .update(galleryProjects)
       .set(updateData)
@@ -338,7 +338,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateDealerLocation(id: string, updates: Partial<InsertDealerLocation>): Promise<DealerLocation> {
-    const updateData: any = { ...updates, updatedAt: new Date() };
+    const updateData: any = { ...updates, updatedAt: new Date().toISOString() };
     const [dealerLocation] = await db
       .update(dealerLocations)
       .set(updateData)
@@ -353,7 +353,7 @@ export class DatabaseStorage implements IStorage {
 
   async clearAllDealerLocations(): Promise<number> {
     const result = await db.delete(dealerLocations);
-    return result.rowCount || 0;
+    return result.changes || 0;
   }
 
   // Catalog product methods
@@ -401,8 +401,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "bb0b5e64-3bc9-407b-9432-44865392a84b",
@@ -427,8 +427,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "6cdbec9c-6ba7-40a9-961f-3c16ec3b23ff",
@@ -453,8 +453,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "6c631f20-3a11-46a6-9a13-3448de6ef15b",
@@ -479,8 +479,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "53ace7db-2409-4b03-80aa-4746300a517a",
@@ -505,8 +505,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "f39878d1-3e68-4fba-9b44-788591cf6db6",
@@ -531,8 +531,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "71642845-d73a-4c9b-90a6-88697bffb11c",
@@ -557,8 +557,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "22ddd059-c214-42eb-ac2d-3a55da007cc8",
@@ -583,8 +583,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "45b4546c-a89e-483a-bb15-b36af8ae59a8",
@@ -609,8 +609,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "e34bd522-57b8-4bda-85f4-0040368c77ac",
@@ -635,8 +635,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "1d7dce68-0128-4a96-8504-bc3ec7c4dc6c",
@@ -661,8 +661,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "03e56280-0450-44c6-806d-3a8ead18d5e5",
@@ -687,8 +687,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "7ed3e97a-2c36-4fa7-a471-577f57f3a547",
@@ -713,8 +713,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "641073f5-d7af-4f3d-b7e3-afe48527523c",
@@ -739,8 +739,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "58a8cf20-ff44-4c12-9d01-152d0689ce30",
@@ -765,8 +765,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "e1fff51b-853a-487a-b380-c7ca0d6108bb",
@@ -791,8 +791,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "4073a6a6-eef7-4624-8de9-bfa7763f893c",
@@ -817,8 +817,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "c099784c-fcff-409c-ab4a-31bc56075f31",
@@ -843,8 +843,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "524bd2f4-0b94-4277-85a9-37d36f0f620b",
@@ -869,8 +869,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "17b39ab7-a3ad-41b0-b9b8-710cc72b22b3",
@@ -895,8 +895,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "1dcac730-1586-4465-8c79-7b3ae73762a1",
@@ -921,8 +921,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "85a912e3-2ac7-474d-a118-3b2459ffe3ea",
@@ -947,8 +947,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "0c58a952-120a-493f-80ee-dffd2431a78e",
@@ -973,8 +973,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "40ec5cf5-c3e2-453a-95c1-506d30a1a04d",
@@ -999,8 +999,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "40126caa-c1dd-46da-8e94-26010e10d9e8",
@@ -1025,8 +1025,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "84bcfeb1-2863-4870-a5b5-2247b1602cc2",
@@ -1051,8 +1051,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "d9b2ade0-5c50-466a-a102-1f8b6f6d8273",
@@ -1077,8 +1077,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "09703450-e3b6-44fc-81be-00d51d75f730",
@@ -1103,8 +1103,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "584e9d69-aff4-40e1-8d78-e5e27cb52695",
@@ -1129,8 +1129,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "26556114-1f51-41c1-bcc9-2cb0c74076da",
@@ -1155,8 +1155,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "472a4833-e757-4a52-8e90-442a85a87594",
@@ -1181,8 +1181,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "e4fcd6df-d574-416e-854b-769687e90334",
@@ -1207,8 +1207,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "5dbfa8e3-9199-4962-8dc0-edce7e23defb",
@@ -1233,8 +1233,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "91a3ad15-0e8d-4ed9-8746-c5e5f965ab3f",
@@ -1259,8 +1259,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "43f1f1e8-acce-4f56-8184-c84f754db6be",
@@ -1285,8 +1285,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "0a43c494-5725-4565-af37-6a11b2924899",
@@ -1311,8 +1311,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "b75785b2-17c6-4e11-b322-3be1d0102a2f",
@@ -1337,8 +1337,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "f0de0dab-e8bf-4924-9e68-a055c215f47a",
@@ -1363,8 +1363,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "d7839760-3346-40ed-8800-b1492c1313e8",
@@ -1389,8 +1389,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "5500aa32-5f59-449d-958c-0aaef9e73c90",
@@ -1415,8 +1415,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "90b81efd-b989-4cdb-b266-fd3d5acac121",
@@ -1441,8 +1441,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "eb23fb85-f9c5-458a-94f9-f4785d118307",
@@ -1467,8 +1467,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "eb796a52-ccff-4976-b623-8a501635a13e",
@@ -1493,8 +1493,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "ced3d579-5e2e-4cac-a727-df1121da3bad",
@@ -1519,8 +1519,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "b9f4df97-c9e0-4f57-bc76-78b5f3c15270",
@@ -1545,8 +1545,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "32354775-c8aa-459a-ac81-09f291d374a4",
@@ -1571,8 +1571,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "acc21de5-69c5-45f7-93f0-819cd5eee32f",
@@ -1597,8 +1597,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "06622448-42dd-4315-b81c-2a561fc54ae2",
@@ -1623,8 +1623,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "e352762a-4ca6-402b-82d2-d6016644f34b",
@@ -1649,8 +1649,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "a0387392-f172-464c-ba1e-f5772f216f88",
@@ -1675,8 +1675,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "584ee0c6-fc09-4cab-a7db-bcd42fe974b6",
@@ -1701,8 +1701,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "e0664722-6003-408f-b6cf-737a52efd223",
@@ -1727,8 +1727,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "acdd456a-49dd-48e0-9e1e-0a5f8a5eb54e",
@@ -1753,8 +1753,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "37f94173-2772-4c14-b8be-35f6b5295477",
@@ -1779,8 +1779,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "b79bfe9e-2200-4fd5-9579-ae0904c29b6a",
@@ -1805,8 +1805,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "beafbac6-62b4-43ba-94ab-785ea33df0eb",
@@ -1831,8 +1831,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "5b6578f5-4152-4922-9b3b-1ccf3baa4edb",
@@ -1857,8 +1857,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "3fab78c0-97c3-4579-b955-15744cb1b90c",
@@ -1883,8 +1883,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "8034f265-bfcb-4308-9918-a7c9c35c3be8",
@@ -1909,8 +1909,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "dc2a2d0a-41e7-4dbf-b520-ce7630ff1c9e",
@@ -1935,8 +1935,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "a1d7f2aa-1455-4c2b-a36c-fd2fd6cbe2af",
@@ -1961,8 +1961,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "2a5738b1-40c6-4741-93a6-fe288e5b85c4",
@@ -1987,8 +1987,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "546110d7-02d9-4717-989f-cb0c4c3284e4",
@@ -2013,8 +2013,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "b7747ad6-d1e7-4110-9055-b08d4e7e501e",
@@ -2039,8 +2039,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "5916f809-d8a5-4ffa-aad0-bf6ad9a0b6c9",
@@ -2065,8 +2065,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "137dcd16-f2dd-4732-b2be-92bd9950dc15",
@@ -2091,8 +2091,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "82a546ad-d4a3-45de-87c0-d3a8f77c88a3",
@@ -2117,8 +2117,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "b3bd040d-a1ef-4436-9c99-e0e65733ec86",
@@ -2143,8 +2143,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       },
       {
         id: "d606acbd-340b-4ce2-a8b9-a6ba215a8cf5",
@@ -2169,8 +2169,8 @@ export class DatabaseStorage implements IStorage {
         specifications: {},
         profile: null,
         isActive: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       }
     ];
   }
@@ -2194,7 +2194,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateCatalogProduct(id: string, updates: Partial<InsertCatalogProduct>): Promise<CatalogProduct> {
-    const updateData: any = { ...updates, updatedAt: new Date() };
+    const updateData: any = { ...updates, updatedAt: new Date().toISOString() };
     const [catalogProduct] = await db
       .update(catalogProducts)
       .set(updateData)
