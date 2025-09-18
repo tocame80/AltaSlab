@@ -65,8 +65,8 @@ export const galleryProjects = sqliteTable("gallery_projects", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   application: text("application").notNull(), // interior, exterior, commercial, residential
-  images: text("images", { mode: 'json' }).$type<string[]>().notNull().default('[]'),
-  materialsUsed: text("materials_used", { mode: 'json' }).$type<string[]>().notNull().default('[]'), // Product IDs from catalog
+  images: text("images", { mode: 'json' }).$type<string[]>().notNull().default(sql`'[]'`),
+  materialsUsed: text("materials_used", { mode: 'json' }).$type<string[]>().notNull().default(sql`'[]'`), // Product IDs from catalog
   location: text("location"),
   area: text("area"),
   year: text("year"),
@@ -88,7 +88,7 @@ export const dealerLocations = sqliteTable("dealer_locations", {
   latitude: text("latitude").notNull(),
   longitude: text("longitude").notNull(),
   dealerType: text("dealer_type").notNull(), // retail, wholesale, authorized
-  services: text("services", { mode: 'json' }).$type<string[]>().notNull().default('[]'), // installation, delivery, consultation
+  services: text("services", { mode: 'json' }).$type<string[]>().notNull().default(sql`'[]'`), // installation, delivery, consultation
   workingHours: text("working_hours"),
   isActive: integer("is_active").default(1),
   sortOrder: integer("sort_order").default(0),
@@ -96,14 +96,14 @@ export const dealerLocations = sqliteTable("dealer_locations", {
   updatedAt: text("updated_at").default(sql`(current_timestamp)`),
 });
 
-export const catalogProducts = pgTable("catalog_products", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+export const catalogProducts = sqliteTable("catalog_products", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   productCode: text("product_code").notNull().unique(), // Код товара (например: SS34, SS35, SS30)
   name: text("name").notNull(), // Наименование товара
   unit: text("unit").notNull().default("упак"), // Единица измерения 
   quantity: integer("quantity").default(0), // Количество
-  pcsPerPackage: numeric("pcs_per_package"), // Шт в уп
-  areaPerPackage: numeric("area_per_package"), // м2 в уп
+  pcsPerPackage: real("pcs_per_package"), // Шт в уп
+  areaPerPackage: real("area_per_package"), // м2 в уп
   barcode: text("barcode"), // Штрих код
   price: text("price"), // Цена
   category: text("category").notNull(), // Категория (например: АЛЬТА ИНТЕРЬЕР, Альта Слэб, Матовая Эстетика)
@@ -112,15 +112,15 @@ export const catalogProducts = pgTable("catalog_products", {
   format: text("format"), // Формат (размеры)
   surface: text("surface"), // Поверхность
   imageUrl: text("image_url"), // Ссылка на фото
-  images: json("images").$type<string[]>().notNull().default(sql`'[]'`), // Дополнительные фото
+  images: text("images", { mode: 'json' }).$type<string[]>().notNull().default(sql`'[]'`), // Дополнительные фото
   description: text("description"), // Описание
-  specifications: json("specifications").$type<Record<string, string>>().default(sql`'{}'`), // Технические характеристики
+  specifications: text("specifications", { mode: 'json' }).$type<Record<string, string>>().default(sql`'{}'`), // Технические характеристики
   profile: text("profile"), // Соответствие профиля
   availability: text("availability").default("В наличии"), // Наличие товара
   isActive: integer("is_active").default(1),
   sortOrder: integer("sort_order").default(0),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  createdAt: text("created_at").default(sql`(current_timestamp)`),
+  updatedAt: text("updated_at").default(sql`(current_timestamp)`),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
