@@ -124,8 +124,7 @@ const resolveStaticImages = (paths: string[]): string[] => {
 
 // Static fallback mappings for products with special paths
 const staticImageMap: Record<string, string[]> = {
-  // Admin-set image orders will be populated here dynamically when product images are uploaded  '8938': ["./concrete/8938_7.png","./concrete/8938_1.png","./concrete/8938_2.png","./concrete/8938_3.png","./concrete/8938_5.png","./concrete/8938_6.png"], // Admin-set order for product 8938
-  '8931': ["./concrete/8931_7.png","./concrete/8931_1.png","./concrete/8931_2.png","./concrete/8931_3.png","./concrete/8931_5.png","./concrete/8931_6.png"], // Admin-set order for product 8931
+  // Admin-set image orders will be populated here dynamically when product images are uploaded  '8931': ["./concrete/8931_7.png","./concrete/8931_1.png","./concrete/8931_2.png","./concrete/8931_3.png","./concrete/8931_5.png","./concrete/8931_6.png"], // Admin-set order for product 8931
   '8883': ["./matte/8883 (3).png","./matte/8883 (1).png"], // Admin-set order for product 8883
   '8937': ["./concrete/8937_7.png","./concrete/8937_1.png","./concrete/8937_2.png","./concrete/8937_3.png","./concrete/8937_5.png","./concrete/8937_6.png"], // Admin-set order for product 8937
   '8940': ["./concrete/8940_7.png","./concrete/8940_1.png","./concrete/8940_2.png","./concrete/8940_3.png","./concrete/8940_5.png","./concrete/8940_6.png"], // Admin-set order for product 8940
@@ -133,6 +132,7 @@ const staticImageMap: Record<string, string[]> = {
   '8933': ["./concrete/8933 (3).png","./concrete/8933 (2.2).png","./concrete/8933 (2.3).png"], // Admin-set order for product 8933
   '8941': ["./concrete/8941_7.png","./concrete/8941_1.png","./concrete/8941_2.png","./concrete/8941_3.png","./concrete/8941_5.png","./concrete/8941_6.png"], // Admin-set order for product 8941
   '8886': ["./matte/8886 (3).png","./matte/8886 (1).png"], // Admin-set order for product 8886
+  '8938': ["./concrete/8938_7.png","./concrete/8938_1.png","./concrete/8938_2.png","./concrete/8938_3.png","./concrete/8938_5.png","./concrete/8938_6.png"], // Admin-set order for product 8938
 };
 
 // Helper function to get product gallery

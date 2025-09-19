@@ -4,62 +4,85 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="referrer" content="origin" />
-    
+
     <!-- Content Security Policy for iframe support -->
-    <meta http-equiv="Content-Security-Policy" 
-          content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: https:; 
-                   frame-src 'self' https://rutube.ru https://*.rutube.ru https://youtube.com https://*.youtube.com https://youtube-nocookie.com https://*.youtube-nocookie.com https://vk.com https://*.vk.com; 
-                   script-src 'self' 'unsafe-inline' 'unsafe-eval' https://replit.com; 
-                   connect-src 'self' https: wss:;">
-    
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https:; 
+               frame-src 'self' https://rutube.ru https://*.rutube.ru https://youtube.com https://*.youtube.com https://youtube-nocookie.com https://*.youtube-nocookie.com https://vk.com https://*.vk.com; 
+               script-src 'self' 'unsafe-inline' 'unsafe-eval'; 
+               connect-src 'self' https: wss:;"
+    />
+
     <!-- SEO Meta Tags -->
-    <title>АЛЬТА СЛЭБ - Панели SPC стеновые и потолочные | Купить в России</title>
-    <meta name="description" content="Премиум панели SPC АЛЬТА СЛЭБ для стен и потолков. Водостойкие, экологичные, простой монтаж. Коллекции бетон, ткань, мрамор. Доставка по России." />
-    <meta name="keywords" content="SPC панели, стеновые панели, потолочные панели, АЛЬТА СЛЭБ, водостойкие панели, ремонт, отделка" />
+    <title>
+      АЛЬТА СЛЭБ - Панели SPC стеновые и потолочные | Купить в России
+    </title>
+    <meta
+      name="description"
+      content="Премиум панели SPC АЛЬТА СЛЭБ для стен и потолков. Водостойкие, экологичные, простой монтаж. Коллекции бетон, ткань, мрамор. Доставка по России."
+    />
+    <meta
+      name="keywords"
+      content="SPC панели, стеновые панели, потолочные панели, АЛЬТА СЛЭБ, водостойкие панели, ремонт, отделка"
+    />
     <meta name="author" content="АЛЬТА СЛЭБ" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://altaslab.ru/" />
-    
+
     <!-- Open Graph Tags -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="АЛЬТА СЛЭБ - Панели SPC стеновые и потолочные" />
-    <meta property="og:description" content="Премиум панели SPC для стен и потолков. Водостойкие, экологичные, простой монтаж." />
+    <meta
+      property="og:title"
+      content="АЛЬТА СЛЭБ - Панели SPC стеновые и потолочные"
+    />
+    <meta
+      property="og:description"
+      content="Премиум панели SPC для стен и потолков. Водостойкие, экологичные, простой монтаж."
+    />
     <meta property="og:url" content="https://altaslab.ru/" />
     <meta property="og:site_name" content="АЛЬТА СЛЭБ" />
     <meta property="og:locale" content="ru_RU" />
-    
+
     <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="АЛЬТА СЛЭБ - Панели SPC стеновые и потолочные" />
-    <meta name="twitter:description" content="Премиум панели SPC для стен и потолков. Водостойкие, экологичные, простой монтаж." />
-    
+    <meta
+      name="twitter:title"
+      content="АЛЬТА СЛЭБ - Панели SPC стеновые и потолочные"
+    />
+    <meta
+      name="twitter:description"
+      content="Премиум панели SPC для стен и потолков. Водостойкие, экологичные, простой монтаж."
+    />
+
     <!-- Preload critical fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- Schema.org JSON-LD -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "АЛЬТА СЛЭБ",
-      "description": "Производитель премиум панелей SPC для стен и потолков",
-      "url": "https://altaslab.ru/",
-      "logo": "https://altaslab.ru/logo.png",
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "contactType": "customer service",
-        "availableLanguage": ["Russian"]
-      },
-      "sameAs": []
-    }
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "АЛЬТА СЛЭБ",
+        "description": "Производитель премиум панелей SPC для стен и потолков",
+        "url": "https://altaslab.ru/",
+        "logo": "https://altaslab.ru/logo.png",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer service",
+          "availableLanguage": ["Russian"]
+        },
+        "sameAs": []
+      }
     </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
-    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
   </body>
 </html>
